@@ -6,13 +6,13 @@ import { Edit, Trash } from "lucide-react";
 import DeleteConfirmDialog from "@/components/common/dialogs/delete-confirm-dialog";
 import { useSoftDeleteArtwork } from "../../service/artspace/soft-delete-artwork";
 import { Pagination } from "@/components/common/pagination";
-import { useSearchParams } from "react-router";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { keepPreviousData } from "@tanstack/react-query";
 import type { Artwork } from "@/types";
 import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-modal";
 
 const ProfileArtworksPage = () => {
-   const [searchParams, setSearchParams] = useSearchParams(); // ✅ for syncing URL
+   const searchParams = useSearchParams(); // ✅ for syncing URL
    const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
    const [limit, setLimit] = useState(Number(searchParams.get("limit")) || 12);
    const uploadedArtworksQuery = useGetUploadedArtworks({

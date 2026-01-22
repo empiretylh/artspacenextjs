@@ -1,26 +1,14 @@
+'use client'
 import { Fragment } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-   Select,
-   SelectContent,
-   SelectItem,
-   SelectTrigger,
-   SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { XIcon } from "lucide-react";
 
-import ProfileCard from "@/components/app/profile/profile-card";
-import { FilterRow } from "@/components/app/user/user-filter-row";
 import { EmptyState } from "@/components/layout/empty-state";
 
 import type { ColumnFiltersState, Event, SortingState } from "@/types";
-import EventsListLoading from "./events-list-loading";
-import { EventCard } from "./event-card";
 import { EventSmallCard } from "./event-small-card";
+import EventsListLoading from "./events-list-loading";
 
 interface Props {
    isLoading: boolean;
@@ -179,8 +167,8 @@ const EventsPageView = ({
                                     {isFetchingNextPage
                                        ? "Loading more..."
                                        : hasNextPage
-                                         ? "Load More"
-                                         : "Nothing more to load"}
+                                          ? "Load More"
+                                          : "Nothing more to load"}
                                  </Button>
                               </div>
                            </>

@@ -1,3 +1,4 @@
+'use client'
 import ArtworkCard from "@/components/app/artwork-card";
 import { SectionTitle } from "@/components/common";
 import Link from "@/components/common/link";

@@ -6,6 +6,16 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   // Override default ignores of eslint-config-next.
+  {
+    rules: {
+      "no-console": "warn",
+      "@typescript-eslint/no-unused-vars": "error",
+      "react/no-unescaped-entities": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "no-unused-vars": "off",
+      "react-refresh/only-export-components": "warn",
+    },
+  },
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",

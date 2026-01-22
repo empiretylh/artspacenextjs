@@ -47,7 +47,7 @@ const DashboardLayout = ({ children }: { children?: React.ReactNode }) => {
           <Footer />
         </SidebarInset>
       </SidebarProvider>
-      <EventPopupSlider />
+      {/* <EventPopupSlider /> */}
     </>
   );
 };

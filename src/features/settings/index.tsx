@@ -1,3 +1,4 @@
+'use client'
 import ProfileEditForm from "./components/profile-edit-form";
 import {
    Card,
@@ -28,7 +29,7 @@ const SettingsPage = () => {
                   <CardDescription>Update your profile</CardDescription>
                </CardHeader>
                <CardContent>
-                  <ProfileEditForm onUpdateSuccess={() => {}} />
+                  <ProfileEditForm onUpdateSuccess={() => { }} />
                </CardContent>
             </Card>
          </div>

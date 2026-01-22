@@ -1,3 +1,4 @@
+'use client'
 import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
 import { getImage } from "@/lib/utils";

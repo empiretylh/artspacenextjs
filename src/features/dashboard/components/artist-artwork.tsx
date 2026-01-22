@@ -8,11 +8,11 @@ import { useSoftDeleteArtwork } from "../api/soft-delete-artwork";
 import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
 import { Pagination } from "@/components/common/pagination";
-import { useSearchParams } from "react-router";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { keepPreviousData } from "@tanstack/react-query";
 
 const ArtistArtworks = () => {
-   const [searchParams, setSearchParams] = useSearchParams(); // ✅ for syncing URL
+   const searchParams = useSearchParams(); // ✅ for syncing URL
    const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
    const [limit, setLimit] = useState(Number(searchParams.get("limit")) || 12);
    const uploadedArtworksQuery = useGetUploadedArtworks({

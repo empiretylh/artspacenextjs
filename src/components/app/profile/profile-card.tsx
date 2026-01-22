@@ -6,8 +6,6 @@ import type { User } from "@/types";
 import { UserIcon } from "lucide-react";
 import FollowButton from "../follow-button";
 import { useAuth } from "@/features/auth/store";
-import DefaultProfileImage from "@/assets/profile-default.png";
-import DefaultProfileCoverImage from "@/assets/profile-cover-default.png";
 
 export default function ProfileCard({ user }: { user: User }) {
    const { user: authUser } = useAuth();
@@ -20,7 +18,7 @@ export default function ProfileCard({ user }: { user: User }) {
                   src={
                      user?.profile?.cover_photo
                         ? getImage(user?.profile?.cover_photo)
-                        : DefaultProfileCoverImage
+                        : "/assets/profile-cover-default.png"
                   }
                   className="h-[110px] shrink-0 w-full bg-cover"
                   alt={user.first_name + " " + user.last_name + " cover"}
@@ -34,7 +32,7 @@ export default function ProfileCard({ user }: { user: User }) {
                      src={
                         user?.profile?.profile_picture
                            ? getImage(user?.profile?.profile_picture)
-                           : DefaultProfileImage
+                           : "/assets/profile-default.png"
                      }
                      alt={user.first_name + " " + user.last_name}
                      className="w-16 h-16 bg-white rounded-full border-2 border-background object-cover"

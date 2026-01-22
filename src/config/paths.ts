@@ -15,38 +15,6 @@ export const paths = {
       path: "/checkout",
       getHref: () => "/checkout",
    },
-   dashboard: {
-      path: "/dashboard",
-      getHref: () => "/dashboard",
-      uploadArtwork: {
-         path: "/dashboard/upload-artwork",
-         getHref: () => "/dashboard/upload-artwork",
-      },
-      artworkEdit: {
-         path: "/dashboard/artworks/:id/edit",
-         getHref: (id: string) => `/dashboard/artworks/${id}/edit`,
-      },
-      artistArtworks: {
-         path: "/dashboard/artworks",
-         getHref: () => "/dashboard/artworks",
-      },
-      analytics: {
-         path: "/dashboard/analytics",
-         getHref: () => "/dashboard/analytics",
-      },
-      orders: {
-         path: "/dashboard/orders",
-         getHref: () => "/dashboard/orders",
-      },
-      profile: {
-         path: "/dashboard/profile",
-         getHref: () => "/dashboard/profile",
-      },
-      profileEdit: {
-         path: "/dashboard/profile/edit",
-         getHref: () => "/dashboard/profile/edit",
-      },
-   },
    artworks: {
       path: "/artworks",
       getHref: () => "/artworks",

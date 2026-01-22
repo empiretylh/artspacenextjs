@@ -1,3 +1,4 @@
+'use client'
 import { paths } from "@/config/paths";
 import { cn, getImage } from "@/lib/utils";
 import React, { useEffect, useState } from "react";

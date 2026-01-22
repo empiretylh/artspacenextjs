@@ -1,14 +1,10 @@
+import { useAuth } from "@/features/auth/store";
 import { cn, getImage, getUserLink } from "@/lib/utils";
+import type { User } from "@/types";
 import Image from "../common/image";
 import Link from "../common/link";
-import { paths } from "@/config/paths";
-import type { User } from "@/types";
-import FollowButton from "./follow-button";
-import { useSidebar } from "../ui/sidebar";
-import { useAuth } from "@/features/auth/store";
-import { UnblockButton } from "./unblock-button";
 import { Button } from "../ui/button";
-import defaultUserProfile from "@/assets/profile-default.png";
+import { useSidebar } from "../ui/sidebar";
 
 const UnblockUserListCard = ({
    user,
@@ -37,7 +33,7 @@ const UnblockUserListCard = ({
                src={
                   user.profile.profile_picture
                      ? getImage(user.profile.profile_picture)
-                     : defaultUserProfile
+                     : "/assets/profile-default.png"
                }
                className="w-10 h-10 shrink-0 aspect-square overflow-hidden rounded-full"
                alt=""

@@ -1,18 +1,19 @@
+'use client'
 import CollectorsIcon from "@/components/icons/collector-icon";
 import AwardIcon from "@/components/icons/award-icon";
 import CheckMarkIcon from "@/components/icons/check-mark-icon";
 import Layers2Icon from "@/components/icons/layers-2-icon";
 import SquareStackIcon from "@/components/icons/square-stack-icon";
-import { useOutletContext } from "react-router";
 import type { User } from "@/types";
 import { getImage } from "@/lib/utils";
+import { useProfileUser } from "@/components/providers/profile-user-provider";
 
 type OutletContext = {
    user: User;
 };
 
 const CollectorOverviewPage = () => {
-   const { user } = useOutletContext<OutletContext>();
+   const { data: user } = useProfileUser();
 
    if (!user) return null;
 

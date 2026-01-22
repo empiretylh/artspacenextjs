@@ -1,5 +1,5 @@
+'use client'
 // app/collections/page.tsx (or pages/collections.tsx)
-
 import { CollectionRow } from "../components/collection-row";
 import { dummyArtworks } from "../data/dummy-artworks";
 
@@ -21,7 +21,6 @@ export default function CollectionsPage() {
          <CollectionRow
             title="Myanmar Artspace Collections"
             description="Hand-selected works by our curators"
-            artworks={dummyArtworks}
          />
 
          {/* <CollectionRow title="Trending This Week" artworks={dummyArtworks} /> */}

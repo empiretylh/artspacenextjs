@@ -1,3 +1,4 @@
+'use client'
 import ArtistsIcon from "@/components/icons/artists-icon";
 import AwardIcon from "@/components/icons/award-icon";
 import CheckMarkIcon from "@/components/icons/check-mark-icon";

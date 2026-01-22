@@ -1,14 +1,17 @@
+'use client'
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
 import { keepPreviousData } from "@tanstack/react-query";
 import type { Artwork, ListApiResponse } from "@/types";
 import type { AxiosResponse } from "axios";
 import ArtworkCard from "@/components/app/artwork-card";
 import RelatedArtworksListView from "./related-artwork-list-view";
 import { useGetRelatedArtworksInfinite } from "@/features/service/artspace/get-related-artworks";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 const RelatedArtworkListContainer = ({ artwork }: { artwork: Artwork }) => {
-   const [searchParams, setSearchParams] = useSearchParams();
+   const searchParams = useSearchParams();
+   const pathname = usePathname();
+   const { replace } = useRouter();
 
    // State
    const [oldData, setOldData] = useState<
@@ -44,14 +47,19 @@ const RelatedArtworkListContainer = ({ artwork }: { artwork: Artwork }) => {
    // Update URL when state changes
    useEffect(() => {
       const params = buildParams();
-      setSearchParams(
-         decodeURI(
-            Object.entries(params)
-               .map(([k, v]) => `${k}=${v}`)
-               .join("&")
-         ),
-         { replace: true }
-      );
+      // setSearchParams(
+      //    decodeURI(
+      //       Object.entries(params)
+      //          .map(([k, v]) => `${k}=${v}`)
+      //          .join("&")
+      //    ),
+      //    { replace: true }
+      // );
+      replace(`${pathname}?${decodeURI(
+         Object.entries(params)
+            .map(([k, v]) => `${k}=${v}`)
+            .join("&")
+      )}`);
    }, [page, limit]);
 
    // Parse URL on mount

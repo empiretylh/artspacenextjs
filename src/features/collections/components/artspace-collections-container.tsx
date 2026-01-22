@@ -1,5 +1,6 @@
+'use client'
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { keepPreviousData } from "@tanstack/react-query";
 import type { Artwork, ListApiResponse } from "@/types";
 import type { AxiosResponse } from "axios";
@@ -8,7 +9,9 @@ import ArtspaceCollectionsView from "./artspace-collections-view";
 import { useGetArtspaceCollectionsInfinite } from "@/features/service/artspace/get-artspace-collections";
 
 const ArtspaceCollectionsContainer = () => {
-   const [searchParams, setSearchParams] = useSearchParams();
+   const searchParams = useSearchParams();
+   const pathname = usePathname();
+   const { replace } = useRouter();
 
    // State
    const [oldData, setOldData] = useState<
@@ -43,14 +46,11 @@ const ArtspaceCollectionsContainer = () => {
    // Update URL when state changes
    useEffect(() => {
       const params = buildParams();
-      setSearchParams(
-         decodeURI(
-            Object.entries(params)
-               .map(([k, v]) => `${k}=${v}`)
-               .join("&")
-         ),
-         { replace: true }
-      );
+      replace(`${pathname}?${decodeURI(
+         Object.entries(params)
+            .map(([k, v]) => `${k}=${v}`)
+            .join("&")
+      )}`);
    }, [page, limit]);
 
    // Parse URL on mount

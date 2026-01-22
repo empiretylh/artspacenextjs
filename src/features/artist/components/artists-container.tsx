@@ -1,5 +1,6 @@
+'use client'
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import debounce from "lodash/debounce";
 import { keepPreviousData } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
@@ -18,7 +19,9 @@ const ArtistsPageContainer = () => {
    // -----------------------------------------
    // State
    // -----------------------------------------
-   const [searchParams, setSearchParams] = useSearchParams();
+   const searchParams = useSearchParams();
+   const pathname = usePathname();
+   const { replace } = useRouter();
    const [oldData, setOldData] = useState<
       AxiosResponse<ListApiResponse<User>, any>[]
    >([]);
@@ -131,14 +134,11 @@ const ArtistsPageContainer = () => {
          params.sort = `${sorts[0].id}-${sorts[0].desc ? "desc" : "asc"}`;
       }
 
-      setSearchParams(
-         decodeURI(
-            Object.entries(params)
-               .map(([k, v]) => `${k}=${v}`)
-               .join("&")
-         ),
-         { replace: true }
-      );
+      replace(`${pathname}?${decodeURI(
+         Object.entries(params)
+            .map(([k, v]) => `${k}=${v}`)
+            .join("&")
+      )}`);
    }, [page, limit, debouncedSearch, filters, sorts]);
 
    // -----------------------------------------

@@ -1,28 +1,25 @@
-import banner from "@/assets/profile-cover-default.png";
-import profileDefault from "@/assets/profile-default.png";
+'use client'
 import Link from "@/components/common/link";
-import ArtistMarkIcon from "@/components/icons/artist-mark-icon";
-import ShareIcon from "@/components/icons/share-icon";
+import { ShareButton } from "@/components/common/share-button";
+import { ProfileUserProvider } from "@/components/providers/profile-user-provider";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { paths } from "@/config/paths";
+import { useAuth } from "@/features/auth/store";
 import { cn, getImage, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
-import { Outlet, useLocation, useNavigate } from "react-router";
-import FollowButton from "../follow-button";
-import { ShareButton } from "@/components/common/share-button";
-import { BlockButton } from "../block-button";
-import { ProfileActions } from "./profile-actions";
-import { useAuth } from "@/features/auth/store";
-import { paths } from "@/config/paths";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import FollowButton from "../follow-button";
+import { ProfileActions } from "./profile-actions";
 
 const ProfileLayoutView = ({
    user,
    variant,
    navLinks,
+   children,
 }: {
-   user?: User;
+   user: User;
    variant?: string;
    navLinks: Array<{
       title: string;
@@ -32,16 +29,10 @@ const ProfileLayoutView = ({
    }>;
    children?: React.ReactNode;
 }) => {
-   const location = useLocation();
-   const isActive = (href: string) => location.pathname === href;
+   const pathname = usePathname()
+   const isActive = (href: string) => pathname === href;
    const { user: authUser } = useAuth();
    const router = useRouter();
-
-   useEffect(() => {
-      if (!user) {
-         router.push(paths.root.path);
-      }
-   }, []);
 
    return (
       <div className="">
@@ -56,7 +47,7 @@ const ProfileLayoutView = ({
             style={{
                backgroundImage: `url(${user?.profile.cover_photo
                   ? getImage(user.profile.cover_photo)
-                  : banner
+                  : "/assets/profile-cover-default.png"
                   })`,
                // backgroundImage: `url(${banner})`,
             }}
@@ -66,7 +57,7 @@ const ProfileLayoutView = ({
                   src={
                      user?.profile.profile_picture
                         ? getImage(user.profile.profile_picture)
-                        : profileDefault
+                        : '/assets/profile-default.png'
                   }
                   alt=""
                   className="mx-auto aspect-square w-[120px] sm:w-[150px] rounded-full border border-white object-cover"
@@ -143,7 +134,10 @@ const ProfileLayoutView = ({
          </div>
 
          <div className="container my-6">
-            <Outlet context={{ user }} />
+            {/* <Outlet context={{ user }} /> */}
+            <ProfileUserProvider initialValue={user}>
+               {children}
+            </ProfileUserProvider>
          </div>
       </div>
    );

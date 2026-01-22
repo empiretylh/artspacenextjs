@@ -1,7 +1,7 @@
-const HomePage = () => {
-  return (
-    <div>HomePage</div>
-  )
-}
+import HomePage from "@/features/home/pages";
 
-export default HomePage
+const HomePageRoute = () => {
+  return <HomePage />;
+};
+
+export default HomePageRoute;

@@ -1,18 +1,14 @@
+'use client'
 import ArtistsIcon from "@/components/icons/artists-icon";
 import AwardIcon from "@/components/icons/award-icon";
 import CheckMarkIcon from "@/components/icons/check-mark-icon";
 import Layers2Icon from "@/components/icons/layers-2-icon";
 import SquareStackIcon from "@/components/icons/square-stack-icon";
-import { useOutletContext } from "react-router";
-import type { User } from "@/types";
 import { getImage } from "@/lib/utils";
-
-type OutletContext = {
-   user: User;
-};
+import { useProfileUser } from "@/components/providers/profile-user-provider";
 
 const ArtistOverviewPage = () => {
-   const { user } = useOutletContext<OutletContext>();
+   const { data: user } = useProfileUser();
 
    return (
       <div className="">

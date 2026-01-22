@@ -8,7 +8,7 @@ import { paths } from "@/config/paths";
 import { useGetProfile } from "../api/get-profile";
 import { ClipboardPenLineIcon } from "lucide-react";
 
-const ProfileDetailLayout = () => {
+const ProfileDetailLayout = ({ children }: { children: React.ReactNode }) => {
    const { data } = useGetProfile();
 
    const profile = data?.data;
@@ -49,7 +49,9 @@ const ProfileDetailLayout = () => {
    ];
 
    return (
-      <ProfileLayoutView variant="profile" user={profile} navLinks={navLinks} />
+      <ProfileLayoutView variant="profile" user={profile} navLinks={navLinks}>
+         {children}
+      </ProfileLayoutView>
    );
 };
 

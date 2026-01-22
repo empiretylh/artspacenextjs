@@ -1,3 +1,4 @@
+'use client'
 import { useEventsListInfinite } from "../hooks/use-events-list-infinite-hook";
 import { EventSmallCard } from "./event-small-card";
 import EventsPageView from "./events-page-view";

@@ -1,28 +1,16 @@
+'use client'
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { User } from "lucide-react";
-import { ArtworkCharacteristicsCard } from "../components/artwork-characteristics-card";
-import { cn, getImage } from "@/lib/utils";
-import { SectionTitle } from "@/components/common";
-import { useCartStore } from "@/features/cart/store/cart-store";
-import { Badge } from "@/components/ui/badge";
-import { ProductInfoCard } from "../components/product-info-card";
-import { ArtistProfile } from "../components/artist-profile";
-import "viewerjs/dist/viewer.css";
-import ArtworkImageCarousel from "../components/artwork-image-carousel";
-import ArtworkDetailPageSkeleton from "./artwork-skeleton";
 import { useGetArtwork } from "@/features/service/artspace/get-artwork";
-import { ReportButton } from "@/components/app/report-button";
-import Image from "@/components/common/image";
-import { useEffect, useRef } from "react";
-import ArtworkImage from "../components/artwork-image";
-import { fakeArtworks } from "@/mocks/artwork";
-import type { Artwork } from "@/types";
-import { artworks } from "@/mocks";
-import MasonryItem from "@/components/app/masonry-item";
-import ArtworkCard from "@/components/app/artwork-card";
-import RelatedArtworkListContainer from "../components/related-artwork-list-container";
+import { useRef } from "react";
+import "viewerjs/dist/viewer.css";
+import { ArtistProfile } from "../components/artist-profile";
+import { ArtworkCharacteristicsCard } from "../components/artwork-characteristics-card";
 import ArtworkDetailMore from "../components/artwork-detail-more";
+import ArtworkImage from "../components/artwork-image";
+import { ProductInfoCard } from "../components/product-info-card";
+import RelatedArtworkListContainer from "../components/related-artwork-list-container";
+import ArtworkDetailPageSkeleton from "./artwork-skeleton";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
    const artworkQuery = useGetArtwork({ artworkId: id });

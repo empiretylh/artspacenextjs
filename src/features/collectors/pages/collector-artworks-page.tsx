@@ -1,5 +1,6 @@
+'use client'
 import { useEffect, useMemo, useState } from "react";
-import { useOutletContext, useSearchParams } from "react-router";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import debounce from "lodash/debounce";
 import { keepPreviousData } from "@tanstack/react-query";
 import type {
@@ -16,6 +17,7 @@ import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-mod
 import { useGetArtworksByUserIdInfinite } from "@/features/service/artspace/get-artworks-by-user-id";
 import { useAuth } from "@/features/auth/store";
 import NotFound from "@/components/layout/not-found";
+import { useProfileUser } from "@/components/providers/profile-user-provider";
 
 type ControlledArtworkCardProps = {
    artwork: Artwork;
@@ -41,8 +43,10 @@ type OutletContext = {
 };
 
 const ArtworksPageContainer = () => {
-   const [searchParams, setSearchParams] = useSearchParams();
-   const { user } = useOutletContext<OutletContext>();
+   const searchParams = useSearchParams();
+   const pathname = usePathname();
+   const { replace } = useRouter();
+   const { data: user } = useProfileUser();
    // State
    const [oldData, setOldData] = useState<
       AxiosResponse<ListApiResponse<Artwork>, any>[]
@@ -142,14 +146,11 @@ const ArtworksPageContainer = () => {
    // Update URL when state changes
    useEffect(() => {
       const params = buildParams();
-      setSearchParams(
-         decodeURI(
-            Object.entries(params)
-               .map(([k, v]) => `${k}=${v}`)
-               .join("&")
-         ),
-         { replace: true }
-      );
+      replace(`${pathname}?${decodeURI(
+         Object.entries(params)
+            .map(([k, v]) => `${k}=${v}`)
+            .join("&")
+      )}`);
    }, [page, limit, debouncedSearch, filters, sorts]);
 
    // Parse URL on mount

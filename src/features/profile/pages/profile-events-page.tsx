@@ -1,3 +1,5 @@
+'use client'
+
 import { EventControlActions } from "@/components/app/event-control-actions";
 import DeleteConfirmDialog from "@/components/common/dialogs/delete-confirm-dialog";
 import { Button } from "@/components/ui/button";
@@ -126,7 +128,7 @@ const ProfileEventsPage = () => {
       setIsEventInviteEmailModalOpen(true);
    };
 
-   const handleEventInviteEmail = () => {};
+   const handleEventInviteEmail = () => { };
 
    return (
       <div>

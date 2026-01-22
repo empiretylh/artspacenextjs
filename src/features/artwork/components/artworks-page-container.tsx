@@ -1,5 +1,5 @@
+'use client'
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router";
 import debounce from "lodash/debounce";
 import { keepPreviousData } from "@tanstack/react-query";
 import type {
@@ -12,9 +12,12 @@ import type { AxiosResponse } from "axios";
 import ArtworksPageView from "./artworks-page-view";
 import { useGetArtworksInfinite } from "@/features/service/artspace/get-artworks";
 import ArtworkCard from "@/components/app/artwork-card";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 const ArtworksPageContainer = () => {
-   const [searchParams, setSearchParams] = useSearchParams();
+   const searchParams = useSearchParams();
+   const pathname = usePathname();
+   const { replace } = useRouter();
 
    // State
    const [oldData, setOldData] = useState<
@@ -60,28 +63,6 @@ const ArtworksPageContainer = () => {
    }, [data, isLoading]);
 
    const pagesToRender = isLoading ? oldData : data?.pages || [];
-
-   // Debounced search
-   const debouncedSetSearch = useMemo(
-      () =>
-         debounce((value: string) => {
-            setDebouncedSearch(value);
-            setPage(1);
-         }, 500),
-      []
-   );
-
-   // Handlers
-   const handleSearchChange = (value: string) => {
-      setGlobalFilter({ search: value });
-      debouncedSetSearch(value);
-   };
-
-   const handlePageChange = (newPage: number) => setPage(newPage);
-   const handleLimitChange = (newLimit: number) => {
-      setLimit(newLimit);
-      setPage(1);
-   };
 
    const removeFromFilter = (filterId: string, key: string) => {
       setFilters((prev) =>
@@ -130,12 +111,9 @@ const ArtworksPageContainer = () => {
    useEffect(() => {
       if (isHydrated.current) {
          const params = buildParams();
-         setSearchParams(
-            Object.entries(params)
-               .map(([k, v]) => `${k}=${v}`)
-               .join("&"),
-            { replace: true }
-         );
+         replace(`${pathname}?${Object.entries(params)
+            .map(([k, v]) => `${k}=${v}`)
+            .join("&")}`);
       }
    }, [page, limit, debouncedSearch, filters, sorts]);
 

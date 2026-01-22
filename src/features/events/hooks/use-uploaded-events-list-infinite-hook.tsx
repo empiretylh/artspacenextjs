@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import debounce from "lodash/debounce";
 import { keepPreviousData } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
@@ -13,7 +13,9 @@ import type {
 import { useGetUploadedEventsInfinite } from "@/features/service/artspace/get-uploaded-events";
 
 export const useUploadedEventsListInfinite = () => {
-   const [searchParams, setSearchParams] = useSearchParams();
+   const searchParams = useSearchParams();
+   const pathname = usePathname();
+   const { replace } = useRouter();
 
    // -----------------------------------------
    // State
@@ -133,14 +135,11 @@ export const useUploadedEventsListInfinite = () => {
          params.sort = `${sorts[0].id}-${sorts[0].desc ? "desc" : "asc"}`;
       }
 
-      setSearchParams(
-         decodeURI(
-            Object.entries(params)
-               .map(([k, v]) => `${k}=${v}`)
-               .join("&")
-         ),
-         { replace: true }
-      );
+      replace(`${pathname}?${decodeURI(
+         Object.entries(params)
+            .map(([k, v]) => `${k}=${v}`)
+            .join("&")
+      )}`);
    }, [page, limit, debouncedSearch, filters, sorts]);
 
    // -----------------------------------------

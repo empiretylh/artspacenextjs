@@ -7,7 +7,6 @@ import FollowButton from "./follow-button";
 import { useSidebar } from "../ui/sidebar";
 import { useAuth } from "@/features/auth/store";
 import { UnblockButton } from "./unblock-button";
-import profileDefault from "@/assets/profile-default.png";
 
 const UserListItem = ({
    user,
@@ -36,7 +35,7 @@ const UserListItem = ({
                src={
                   user.profile.profile_picture
                      ? getImage(user.profile.profile_picture)
-                     : profileDefault
+                     : "/assets/profile-default.png"
                }
                className="w-10 h-10 shrink-0 aspect-square overflow-hidden rounded-full"
                alt=""

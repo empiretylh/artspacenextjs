@@ -1,7 +1,7 @@
-const ProfilePage = () => {
-  return (
-    <div>ProfilePage</div>
-  )
-}
+import ProfilePage from "@/features/profile/pages/profile-overview-page";
 
-export default ProfilePage
+const ProfileRoute = () => {
+  return <ProfilePage />;
+};
+
+export default ProfileRoute;

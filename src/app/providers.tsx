@@ -9,6 +9,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Toaster } from "sonner";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import GlobalProvider from "@/components/providers/global-provider";
+import { ScrollToTop } from "@/components/common/scroll-to-top";
 
 interface IProviderProps {
   children: React.ReactNode;
@@ -45,6 +46,7 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
         <QueryClientProvider client={queryClient}>
           <Toaster richColors className="[&>li]:w-full" />
           <GlobalProvider>
+            <ScrollToTop />
             {children}
           </GlobalProvider>
           <ReactQueryDevtools initialIsOpen={false} />

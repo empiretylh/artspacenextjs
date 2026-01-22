@@ -2,7 +2,6 @@ import Link from "@/components/common/link";
 import { getImage, getUserIcon, getUserLink } from "@/lib/utils";
 import type { User } from "@/types";
 import { useAuth } from "@/features/auth/store";
-import DefaultProfileImage from "@/assets/profile-default.png";
 import Image from "../common/image";
 
 export default function UserSmallCard({ user }: { user: User }) {
@@ -23,7 +22,7 @@ export default function UserSmallCard({ user }: { user: User }) {
                src={
                   user?.profile?.profile_picture
                      ? getImage(user.profile.profile_picture)
-                     : DefaultProfileImage
+                     : "/assets/profile-default.png"
                }
                alt={`${user.first_name} ${user.last_name}`}
                className="

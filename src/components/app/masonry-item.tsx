@@ -1,3 +1,4 @@
+'use client'
 import ArtworkCard from "@/components/app/artwork-card";
 import type { Artwork } from "@/types";
 import { useEffect, useRef, useState } from "react";
@@ -19,7 +20,7 @@ const MasonryItem = ({
       return (
          Math.ceil(
             ((artwork.original_height / artwork.original_width) * 200) /
-               rowHeight
+            rowHeight
          ) + extra
       );
       // 300 is a reasonable default width if exact width is unknown

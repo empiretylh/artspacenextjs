@@ -9,7 +9,6 @@ import { format, formatDistanceToNow, parseISO } from "date-fns";
 import type { Path, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
-import logo from "@/assets/logo.png";
 import { paths } from "@/config/paths";
 
 export function cn(...inputs: ClassValue[]) {
@@ -25,7 +24,7 @@ export function convertBase64(file: File): Promise<string> {
          reject(
             new Error(
                (error.target as FileReader).error?.message ??
-                  "An error occurred"
+               "An error occurred"
             )
          );
       };
@@ -101,7 +100,7 @@ export const getImage = (src: string | undefined | null) => {
    if (src && src?.startsWith("https")) {
       return src;
    }
-   return `${src ? env.API_URL + src : logo}`;
+   return `${src ? env.API_URL + src : '/assets/logo.png'}`;
 };
 
 export const getDate = (date: string) => {
@@ -151,7 +150,7 @@ export const slugify = (text: string) => {
 };
 
 export const getUserIcon = (type: string) => {
-   return <img src={logo} alt="logo" className="h-4 w-4 inline-block" />;
+   return <img src={'/assets/logo.png'} alt="logo" className="h-4 w-4 inline-block" />;
    // if (type === "ARTIST") {
    //    return (
    //       <span className="inline-block border-2 border-primary p-1 rounded-full">

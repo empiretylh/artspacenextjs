@@ -7,10 +7,9 @@ import ArtspaceCollectionsContainer from "./artspace-collections-container";
 interface Props {
    title: string;
    description?: string;
-   artworks: Artwork[];
 }
 
-export function CollectionRow({ title, description, artworks }: Props) {
+export function CollectionRow({ title, description }: Props) {
    return (
       <section className="space-y-3">
          <div>

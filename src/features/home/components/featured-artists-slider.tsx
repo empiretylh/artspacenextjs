@@ -1,3 +1,4 @@
+'use client'
 import { SectionTitle } from "@/components/common";
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
