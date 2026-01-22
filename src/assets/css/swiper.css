@@ -1,0 +1,47 @@
+@import "swiper/css/free-mode";
+@import "swiper/css/thumbs";
+
+.artwork-image-viewer .swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.artwork-image-viewer .swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #444;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.artwork-image-viewer .swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* object-fit: cover; */
+}
+
+
+.artwork-image-viewer {
+  height: 80%;
+  width: 100%;
+}
+
+.main-swiper {
+  height: 20%;
+  box-sizing: border-box;
+  padding: 10px 0;
+}
+
+.main-swiper .swiper-slide {
+  width: 25%;
+  height: 100%;
+  opacity: 0.4;
+}
+
+.main-swiper .swiper-slide-thumb-active {
+  opacity: 1;
+}
