@@ -9,7 +9,7 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 }
 
 const Image: React.FC<ImageProps> = ({ src, alt, className, ...props }) => {
-   const [loaded, setLoaded] = useState(false);
+   const [loaded, setLoaded] = useState(true);
 
    return (
       <div className={cn("relative w-full h-full", className)}>
@@ -20,7 +20,7 @@ const Image: React.FC<ImageProps> = ({ src, alt, className, ...props }) => {
             ref={props.ref as any}
             src={src}
             alt={alt}
-            onLoad={() => setLoaded(true)}
+            // onLoad={() => setLoaded(true)}
             className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
             {...props}
          />

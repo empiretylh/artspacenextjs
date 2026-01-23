@@ -10,6 +10,7 @@ import { Toaster } from "sonner";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import GlobalProvider from "@/components/providers/global-provider";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
+import { getQueryClient } from "@/lib/get-query-client";
 
 interface IProviderProps {
   children: React.ReactNode;
@@ -21,12 +22,7 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
    * This approach avoids creating a new QueryClient instance on every render,
    * which would be inefficient and could lead to unexpected behavior. 💁‍♂️
    */
-  const [queryClient] = React.useState(
-    () =>
-      new QueryClient({
-        defaultOptions: queryConfig,
-      })
-  );
+  const queryClient = getQueryClient();
 
   return (
     <React.Suspense

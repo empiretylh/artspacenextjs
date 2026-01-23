@@ -32,8 +32,8 @@ const LoginPage = () => {
          <Image
             src={'/assets/banner-desktop.png'}
             alt="Logo"
-            width={200}
-            height={200}
+            width={384}
+            height={144}
             title="showcase-banner"
             loading="eager"
             className="mx-auto rounded-lg overflow-hidden max-w-sm"

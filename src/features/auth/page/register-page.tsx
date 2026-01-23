@@ -22,8 +22,12 @@ const RegisterPage = () => {
             </Card>
          </div>
          <Image
-            src={"/assets/banner-desktop.png"}
+            src={'/assets/banner-desktop.png'}
             alt="Logo"
+            width={384}
+            height={144}
+            title="showcase-banner"
+            loading="eager"
             className="mx-auto rounded-lg overflow-hidden max-w-sm"
          />
       </div>
