@@ -467,3 +467,30 @@ export const router = createBrowserRouter([
 export default function AppRouter() {
   return <RouterProvider router={router} />;
 }
+
+
+const test = {
+  "id": "ord_1000",
+  "buyerId": 200,
+  "buyer": {
+    "id": 200,
+    "name": "User 1",
+    "email": "user1@example.com"
+  },
+  "total_price": 345.42,
+  "shipping_address": "100 Innovation Way, Tech City, 90210",
+  "stripe_session_id": null,
+  "status": "PENDING",
+  "paid_at": null,
+  "created_at": "2025-12-31T17:30:00.000Z",
+  "updated_at": "2026-01-01T17:30:00.000Z",
+  "items": [
+    {
+      "id": "item_0_1",
+      "orderId": "ord_1000",
+      "productId": 50,
+      "quantity": 2,
+      "price": 25
+    }
+  ]
+}

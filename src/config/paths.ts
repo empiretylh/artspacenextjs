@@ -144,8 +144,12 @@ export const paths = {
       },
    },
    order: {
-      path: "/order",
-      getHref: () => "/order",
+      path: "/orders",
+      getHref: () => "/orders",
+      detail: {
+         path: "/orders/:id",
+         getHref: (id: string) => `/orders/${id}`,
+      },
    },
    profile: {
       path: "/profile",

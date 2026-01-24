@@ -4,7 +4,7 @@ import { z } from "zod";
 import { api } from "@/lib/api-client";
 import type { MutationConfig } from "@/lib/react-query";
 import type { Order } from "@/types"; // You should have this defined
-import { getOrdersQueryOptions } from "./get-orders";
+import { getOrdersQueryOptions } from "@/features/orders/api/get-orders";
 
 // 🧠 Zod schema for validation
 export const createOrderInputSchema = z.object({

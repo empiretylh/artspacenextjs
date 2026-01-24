@@ -1,3 +1,4 @@
+'use client'
 import { useSidebar } from "../ui/sidebar";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";

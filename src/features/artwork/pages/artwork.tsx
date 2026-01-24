@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGetArtwork } from "@/features/service/artspace/get-artwork";
-import { useRef } from "react";
 import "viewerjs/dist/viewer.css";
 import { ArtistProfile } from "../components/artist-profile";
 import { ArtworkCharacteristicsCard } from "../components/artwork-characteristics-card";
@@ -15,7 +14,6 @@ import ArtworkDetailPageSkeleton from "./artwork-skeleton";
 const ArtworkDetailPage = ({ id }: { id: string }) => {
    const artworkQuery = useGetArtwork({ artworkId: id });
    const artwork = artworkQuery.data?.data;
-   const imageRef = useRef(null);
 
    if (artworkQuery.isLoading) {
       return <ArtworkDetailPageSkeleton />;
@@ -23,7 +21,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
 
    if (!artwork) {
       return (
-         <main className="container mx-auto flex-grow px-4 py-8 md:py-12 text-center text-muted-foreground">
+         <main className="container mx-auto grow px-4 py-8 md:py-12 text-center text-muted-foreground">
             Artwork not found
          </main>
       );
@@ -37,7 +35,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
             <div className="lg:col-span-2 space-y-6">
                {/* <ArtworkImageCarousel images={[artwork.image]} /> */}
 
-               <Card className="h-[400px] relative">
+               <Card className="h-100 relative">
                   <CardContent>
                      <ArtworkImage artwork={artwork} />
                      <div className="flex justify-center absolute top-2 right-2">

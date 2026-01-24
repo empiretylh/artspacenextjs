@@ -9,7 +9,7 @@ import { useAuth } from "@/features/auth/store";
 import { cn, getImage, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import FollowButton from "../follow-button";
 import { ProfileActions } from "./profile-actions";
 
@@ -136,7 +136,7 @@ const ProfileLayoutView = ({
          <div className="container my-6">
             {/* <Outlet context={{ user }} /> */}
             <ProfileUserProvider initialValue={user}>
-               {children}
+                  {children}
             </ProfileUserProvider>
          </div>
       </div>

@@ -1,14 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { useCartStore } from "../store/cart-store";
-import { sampleProduct } from "../data/product-data";
+'use client'
 import { CartItem } from "../components/cart-item";
 import { CartSummary } from "../components/cart-summary";
+import { useCartStore } from "../store/cart-store";
 
 export default function CartPage() {
    const { items } = useCartStore();
 
    return (
-      <div className="container mx-auto py-8">
+      <div>
          <h1 className="text-2xl font-bold mb-6">Your Cart</h1>
 
          {items.length === 0 ? (
