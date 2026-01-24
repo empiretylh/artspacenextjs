@@ -14,8 +14,8 @@ const ArtworkCreateModal = ({
    return (
       <div>
          <BaseDialog
-            title={`Logout`}
-            description="Do you want to log out from Dashboard?"
+            title={`Artwork Create Form`}
+            description="Fill out the form below to create a new artwork."
             isOpen={isArtworkCreateModalOpen}
             onClose={() => setIsArtworkCreateModalOpen(false)}
          >

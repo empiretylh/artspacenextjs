@@ -25,6 +25,7 @@ import {
 } from "../ui/dropdown-menu";
 import { SidebarTrigger } from "../ui/sidebar";
 import { IconBasket } from "@tabler/icons-react";
+import { InputWithLeftSelectSkeleton } from "../app/input-with-left-select-skeleton";
 
 export function SiteHeader() {
    const [isArtworkCreateModalOpen, setIsArtworkCreateModalOpen] =
@@ -49,7 +50,9 @@ export function SiteHeader() {
                   >
                      <ArrowLeft className="h-4 w-4" />
                   </Button>
-                  <InputWithLeftSelect className="flex-1" />
+                  <Suspense fallback={<InputWithLeftSelectSkeleton />}>
+                     <InputWithLeftSelect className="flex-1" />
+                  </Suspense>
                </div>
             ) : (
                <div className="flex w-full items-center justify-between gap-2">
@@ -65,7 +68,7 @@ export function SiteHeader() {
 
                   {/* Search Input on Desktop */}
                   <div className="hidden md:flex ml-[50vw-calc(var(--sidebar-width)+8px)] flex-1 justify-center">
-                     <Suspense fallback={<div>Loading...</div>}>
+                     <Suspense fallback={<InputWithLeftSelectSkeleton />}>
                         <InputWithLeftSelect />
                      </Suspense>
                   </div>

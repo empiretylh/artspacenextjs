@@ -20,16 +20,20 @@ const DashboardLayout = ({ children }: { children?: React.ReactNode }) => {
       // defaultOpen={}
       >
         <AppSidebar variant="inset" />
-        <SidebarInset className="!mb-0">
-          <div>
-            <SiteHeader />
-            <MainOutlet>
-              <Suspense fallback={<div>Loading...</div>}>
-                {children}
-              </Suspense>
-            </MainOutlet>
+        <SidebarInset className="mb-0!">
+          <div className="h-screen flex justify-between flex-col overflow-y-auto" style={{
+            scrollbarGutter: "stable"
+          }}>
+            <div>
+              <SiteHeader />
+              <MainOutlet>
+                <Suspense fallback={<div>Loading...</div>}>
+                  {children}
+                </Suspense>
+              </MainOutlet>
+            </div>
+            <Footer />
           </div>
-          <Footer />
         </SidebarInset>
       </SidebarProvider>
       <EventPopupSlider />

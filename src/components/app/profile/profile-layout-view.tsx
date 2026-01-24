@@ -34,7 +34,7 @@ const ProfileLayoutView = ({
    const router = useRouter();
 
    return (
-      <>
+      <div>
          <ScrollToTop />
          <div className="">
             {/* <div
@@ -141,7 +141,7 @@ const ProfileLayoutView = ({
                </ProfileUserProvider>
             </div>
          </div>
-      </>
+      </div>
    );
 };
 

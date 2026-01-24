@@ -12,6 +12,15 @@ import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { paths } from "@/config/paths";
 import { useRouter, useSearchParams } from "next/navigation";
+import { InputWithLeftSelectSkeleton } from "./input-with-left-select-skeleton";
+
+const routeMap: Record<string, string> = {
+   artists: paths.artists.path,
+   artworks: paths.artworks.path,
+   collectors: paths.collectors.path,
+   galleries: paths.galleries.path,
+   events: paths.events.path,
+};
 
 function InputWithLeftSelect({
    className,
@@ -24,14 +33,6 @@ function InputWithLeftSelect({
    const router = useRouter();
 
    const onSearchClick = () => {
-      const routeMap: Record<string, string> = {
-         artists: paths.artists.path,
-         artworks: paths.artworks.path,
-         collectors: paths.collectors.path,
-         galleries: paths.galleries.path,
-         events: paths.events.path,
-      };
-
       const basePath = routeMap[selectedOption];
       if (!basePath) return;
 
@@ -46,6 +47,19 @@ function InputWithLeftSelect({
       router.push(finalUrl);
    };
 
+   const [mounted, setMounted] = React.useState(false);
+
+   // This only runs on the client after the first render
+   React.useEffect(() => {
+      setMounted(true);
+   }, []);
+
+   // If not mounted yet, return a placeholder with the EXACT same height/width
+   // to reserve the space and prevent layout shift.
+   if (!mounted) {
+      return <InputWithLeftSelectSkeleton />;
+   }
+
    return (
       <div
          className={cn(
@@ -54,13 +68,14 @@ function InputWithLeftSelect({
          )}
       >
          <Select
+            defaultValue="artists"
             value={selectedOption}
             onValueChange={(value) => setSelectedOption(value)}
          >
-            <SelectTrigger className="w-18 md:w-auto md:max-w-28 rounded-full !bg-primary text-primary-foreground [&>svg]:stroke-primary-foreground">
+            <SelectTrigger className="w-18 md:w-auto md:max-w-28 rounded-full bg-primary! text-primary-foreground [&>svg]:stroke-primary-foreground">
                <SelectValue placeholder="Select" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl">
+            <SelectContent defaultValue={"artists"} className="rounded-2xl">
                <SelectItem className="rounded-2xl" value="artists">
                   Artists
                </SelectItem>

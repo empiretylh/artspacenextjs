@@ -148,3 +148,12 @@
   padding-inline: 10px;
   margin-inline: auto;
 }
+
+html, body {
+  height: 100%;
+  overflow: hidden; /* Prevents the 'double scrollbar' and outer layout shift */
+}
+
+body[data-scroll-locked] [data-slot="sidebar-inset"] {
+  margin-right: 4px !important;
+}
