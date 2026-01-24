@@ -10,7 +10,6 @@ import NotFound from "@/components/layout/not-found";
 import { paths } from "@/config/paths";
 import { useGetProfile } from "@/features/profile/api/get-profile";
 import { ClipboardPenLineIcon } from "lucide-react";
-import { Suspense } from "react";
 
 const ProfileDetailLayout = ({ children }: { children: React.ReactNode }) => {
   const profileQuery = useGetProfile();

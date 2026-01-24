@@ -34,7 +34,7 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
             enableSystem
             disableTransitionOnChange
           >
-            <ScrollToTop />
+            {/* <ScrollToTop /> */}
             {children}
           </ThemeProvider>
         </GlobalProvider>
