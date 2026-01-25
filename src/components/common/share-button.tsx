@@ -1,18 +1,18 @@
-import * as React from "react";
+'use client'
+import { Button } from "@/components/ui/button";
 import {
    Popover,
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import {
+   Check,
    Facebook,
-   Twitter,
    Linkedin,
    Link as LinkIcon,
-   Share2,
-   Check,
+   Twitter
 } from "lucide-react";
+import * as React from "react";
 import ShareIcon from "../icons/share-icon";
 
 type ShareButtonProps = {
@@ -22,14 +22,14 @@ type ShareButtonProps = {
    className?: string;
    size?: "sm" | "default" | "lg" | "icon" | null | undefined;
    variant?:
-      | "default"
-      | "link"
-      | "destructive"
-      | "outline"
-      | "secondary"
-      | "ghost"
-      | null
-      | undefined;
+   | "default"
+   | "link"
+   | "destructive"
+   | "outline"
+   | "secondary"
+   | "ghost"
+   | null
+   | undefined;
 };
 
 export function ShareButton({
