@@ -151,7 +151,7 @@
 
 html, body {
   height: 100%;
-  overflow: hidden; /* Prevents the 'double scrollbar' and outer layout shift */
+  /* overflow: hidden; */
 }
 
 body[data-scroll-locked] [data-slot="sidebar-inset"] {
