@@ -154,6 +154,6 @@ html, body {
   /* overflow: hidden; */
 }
 
-body[data-scroll-locked] [data-slot="sidebar-inset"] {
+/* body[data-scroll-locked] [data-slot="sidebar-inset"] {
   margin-right: 4px !important;
-}
+} */

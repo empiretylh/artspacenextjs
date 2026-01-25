@@ -54,7 +54,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                   styles={artwork.artwork_styles}
                   dimensions={artwork.dimensions || "N/A"}
                   medium={artwork.medium || "N/A"}
-                  category={String(artwork.category)}
+                  category={artwork.category}
                   categoryName={artwork.category_name}
                />
 

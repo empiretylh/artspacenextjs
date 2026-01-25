@@ -129,7 +129,6 @@ const ArtworksPageView = ({
                         <Button
                            size="xs"
                            className="rounded-full"
-                           variant="clean"
                            onClick={() => setFilters([])}
                         >
                            Clear All
@@ -146,7 +145,7 @@ const ArtworksPageView = ({
                   </div>
                )}
 
-               <div className="flex gap-2 justify-end">
+               <div className="flex gap-2 items-center justify-end">
                   {options.enableSorting && (
                      <div className="inline-flex gap-2 items-center justify-between">
                         <Label>

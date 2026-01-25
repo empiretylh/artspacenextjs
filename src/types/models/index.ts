@@ -77,7 +77,7 @@ export interface Artwork {
    id: string;
    artist_name: string;
    category_name: string;
-   category: number;
+   category: Category;
    image: string;
    genre: number;
    styles: number[];
