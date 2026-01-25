@@ -1,3 +1,4 @@
+import { queryKeys } from "@/config/query-keys";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import type {
@@ -7,15 +8,14 @@ import type {
    SortingState,
 } from "@/types";
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
 
-export const getHomeGenres = (
+export const getHomeGenres = async (
    filters = {},
    sorts = {},
    page = 1,
    limit = 10
-): Promise<AxiosResponse<ListApiResponse<{ id: number; genre: Genre }>>> => {
-   return api.get(`/homepage/genres/`, {
+): Promise<ListApiResponse<{ id: number; genre: Genre }>> => {
+   const response = await api.get(`/homepage/genres/`, {
       params: {
          // filters,
          // sorts,
@@ -23,6 +23,8 @@ export const getHomeGenres = (
          limit,
       },
    });
+
+   return response.data;
 };
 
 export const getHomeGenresQueryOptions = (
@@ -50,8 +52,8 @@ export const getHomeGenresQueryOptions = (
          formattedFilters["deletedAt"] =
             filter.value === "deleted"
                ? {
-                    not: null,
-                 }
+                  not: null,
+               }
                : null;
       } else {
          formattedFilters[filter.id] = filter.value;
@@ -59,10 +61,12 @@ export const getHomeGenresQueryOptions = (
    });
 
    return queryOptions({
-      queryKey:
-         filters || sorts || page || limit
-            ? ["genres", "home", formattedFilters, formattedSorts, page, limit]
-            : ["genres", "home"],
+      queryKey: queryKeys.genre.list({
+         filters,
+         sorts,
+         page,
+         limit,
+      }),
       queryFn: () =>
          getHomeGenres(formattedFilters, formattedSorts, page, limit),
    });

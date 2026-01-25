@@ -9,13 +9,13 @@ import type {
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 
-export const getHomeStyles = (
+export const getHomeStyles = async (
    filters = {},
    sorts = {},
    page = 1,
    limit = 10
-): Promise<AxiosResponse<ListApiResponse<{ id: number; style: Style }>>> => {
-   return api.get(`/homepage/artwork-styles/`, {
+): Promise<ListApiResponse<{ id: number; style: Style }>> => {
+   const response = await api.get(`/homepage/artwork-styles/`, {
       params: {
          // filters,
          // sorts,
@@ -23,6 +23,8 @@ export const getHomeStyles = (
          // limit,
       },
    });
+
+   return response.data
 };
 
 export const getHomeStylesQueryOptions = (
@@ -50,8 +52,8 @@ export const getHomeStylesQueryOptions = (
          formattedFilters["deletedAt"] =
             filter.value === "deleted"
                ? {
-                    not: null,
-                 }
+                  not: null,
+               }
                : null;
       } else {
          formattedFilters[filter.id] = filter.value;

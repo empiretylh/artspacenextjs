@@ -8,7 +8,7 @@ import { useGetHomeCategories } from "@/features/service/artspace/get-home-categ
 
 export const CategoriesList = () => {
    const categoriesQuery = useGetHomeCategories({ limit: 12 });
-   const categories = categoriesQuery.data?.data.results || [];
+   const categories = categoriesQuery.data?.results || [];
    const isLoading = categoriesQuery.isLoading;
 
    const skeletons = Array.from({ length: 12 });

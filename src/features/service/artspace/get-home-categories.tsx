@@ -1,23 +1,20 @@
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import type {
-   ColumnFiltersState,
    Category,
-   SortingState,
+   ColumnFiltersState,
    ListApiResponse,
+   SortingState,
 } from "@/types";
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
 
-export const getHomeCategories = (
+export const getHomeCategories = async (
    filters = {},
    sorts = {},
    page = 1,
    limit = 10
-): Promise<
-   AxiosResponse<ListApiResponse<{ id: number; category: Category }>>
-> => {
-   return api.get(`/homepage/categories/`, {
+): Promise<ListApiResponse<{ id: number; category: Category }>> => {
+   const response = await api.get(`/homepage/categories/`, {
       params: {
          // filters,
          // sorts,
@@ -25,6 +22,8 @@ export const getHomeCategories = (
          // limit,
       },
    });
+
+   return response.data
 };
 
 export const getHomeCategoriesQueryOptions = (
@@ -52,8 +51,8 @@ export const getHomeCategoriesQueryOptions = (
          formattedFilters["deletedAt"] =
             filter.value === "deleted"
                ? {
-                    not: null,
-                 }
+                  not: null,
+               }
                : null;
       } else {
          formattedFilters[filter.id] = filter.value;
@@ -64,13 +63,13 @@ export const getHomeCategoriesQueryOptions = (
       queryKey:
          filters || sorts || page || limit
             ? [
-                 "categories",
-                 "home",
-                 formattedFilters,
-                 formattedSorts,
-                 page,
-                 limit,
-              ]
+               "categories",
+               "home",
+               formattedFilters,
+               formattedSorts,
+               page,
+               limit,
+            ]
             : ["categories", "home"],
       queryFn: () =>
          getHomeCategories(formattedFilters, formattedSorts, page, limit),

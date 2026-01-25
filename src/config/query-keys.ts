@@ -31,6 +31,33 @@ const normalizeParams = (params?: QueryKeys) => {
 };
 
 export const queryKeys = {
+   genre: {
+      all: ["genres"] as const,
+
+      /* =======================
+       * LIST / BROWSE
+       * ======================= */
+      list: (params?: QueryKeys) =>
+         ["genres", "list", normalizeParams(params)] as const,
+   },
+   category: {
+      all: ["categories"] as const,
+
+      /* =======================
+       * LIST / BROWSE
+       * ======================= */
+      list: (params?: QueryKeys) =>
+         ["categories", "list", normalizeParams(params)] as const,
+   },
+   style: {
+      all: ["styles"] as const,
+
+      /* =======================
+       * LIST / BROWSE
+       * ======================= */
+      list: (params?: QueryKeys) =>
+         ["styles", "list", normalizeParams(params)] as const,
+   },
    user: {
       all: ["users"] as const,
       blocked: {

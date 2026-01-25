@@ -8,7 +8,7 @@ import { useGetHomeStyles } from "@/features/service/artspace/get-home-styles";
 
 export const StylesList = () => {
    const stylesQuery = useGetHomeStyles({ limit: 12 });
-   const styles = stylesQuery.data?.data.results || [];
+   const styles = stylesQuery.data?.results || [];
    const isLoading = stylesQuery.isLoading;
 
    const skeletons = Array.from({ length: 12 });

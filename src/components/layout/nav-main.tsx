@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import Link from "../common/link";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePathname, useRouter } from "next/navigation";
+import React from "react";
 
 export function NavMain({
    items,

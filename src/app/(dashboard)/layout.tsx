@@ -4,9 +4,21 @@ import MainOutlet from "@/components/layout/main-outlet";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import EventPopupSlider from "@/features/events/components/event-pop-up-slider";
+import { cookies, headers } from "next/headers";
+import { userAgent } from "next/server";
 import { Suspense } from "react";
 
-const DashboardLayout = ({ children }: { children?: React.ReactNode }) => {
+const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => {
+  const cookieStore = await cookies();
+  const headerStore = await headers();
+
+  // 1. Get Sidebar state from Shadcn's default cookie
+  const isSidebarOpen = (await cookieStore).get("sidebar_state")?.value === "true";
+
+  // 2. Get Mobile status from Headers
+  const { device } = userAgent({ headers: await headerStore });
+  const isMobile = device.type === 'mobile';
+
   return (
     <>
       <SidebarProvider
@@ -17,7 +29,7 @@ const DashboardLayout = ({ children }: { children?: React.ReactNode }) => {
             "--header-height": "calc(var(--spacing) * 12 + 9px)",
           } as React.CSSProperties
         }
-      // defaultOpen={}
+        defaultOpen={isSidebarOpen}
       >
         <AppSidebar variant="inset" />
         <SidebarInset className="mb-0!">
@@ -26,10 +38,8 @@ const DashboardLayout = ({ children }: { children?: React.ReactNode }) => {
           }}>
             <div>
               <SiteHeader />
-              <MainOutlet>
-                <Suspense fallback={<div>Loading...</div>}>
-                  {children}
-                </Suspense>
+              <MainOutlet isMobile={isMobile} isOpen={isSidebarOpen}>
+                {children}
               </MainOutlet>
             </div>
             <Footer />

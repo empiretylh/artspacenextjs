@@ -10,7 +10,7 @@ export const GenresList = () => {
       limit: 4,
    });
 
-   const genres = genresQuery.data?.data.results || [];
+   const genres = genresQuery.data?.results || [];
 
    if (genresQuery.isLoading) {
       return <GenresListSkeleton />;

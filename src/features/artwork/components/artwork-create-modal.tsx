@@ -1,6 +1,8 @@
+'use client'
 import { BaseDialog } from "@/components/common/dialogs/base-dialog";
 import { ArtworkCreateForm } from "./artwork-create-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEffect, useState } from "react";
 
 type ArtworkCreateProps = {
    isArtworkCreateModalOpen: boolean;
@@ -11,6 +13,16 @@ const ArtworkCreateModal = ({
    isArtworkCreateModalOpen,
    setIsArtworkCreateModalOpen,
 }: ArtworkCreateProps) => {
+   const [isMounted, setIsMounted] = useState(false)
+
+   useEffect(() => {
+      setIsMounted(true)
+   }, [])
+
+   if (!isMounted) {
+      return null
+   }
+
    return (
       <div>
          <BaseDialog
