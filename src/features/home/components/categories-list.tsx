@@ -4,10 +4,16 @@ import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
 import { getImage } from "@/lib/utils";
 import Image from "@/components/common/image"; // use your reusable Image component
-import { useGetHomeCategories } from "@/features/service/artspace/get-home-categories";
+import { getHomeCategories, useGetHomeCategories } from "@/features/service/artspace/get-home-categories";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/config/query-keys";
 
 export const CategoriesList = () => {
-   const categoriesQuery = useGetHomeCategories({ limit: 12 });
+   const categoriesQuery = useSuspenseQuery({
+      queryKey: queryKeys.category.home.list({ limit: 12 }),
+      queryFn: () => getHomeCategories({ limit: 12 }),
+   })
+
    const categories = categoriesQuery.data?.results || [];
    const isLoading = categoriesQuery.isLoading;
 

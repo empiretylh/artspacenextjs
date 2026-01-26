@@ -22,8 +22,6 @@ const UserListItem = ({
    const { setOpenMobile } = useSidebar();
    const { user: authUser } = useAuth();
 
-   console.log(user)
-
    return (
       <div
          className={cn(

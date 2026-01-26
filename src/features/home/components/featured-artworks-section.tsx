@@ -8,10 +8,16 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtworksSectionSkeleton } from "./featured-artworks-section-skeleton";
-import { useGetArtworks } from "@/features/service/artspace/get-artworks";
+import { getArtworks, useGetArtworks } from "@/features/service/artspace/get-artworks";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/config/query-keys";
 
 export const FeaturedArtworksSection = () => {
-   const artworksQuery = useGetArtworks({ limit: 10 });
+   const artworksQuery = useSuspenseQuery({
+      queryKey: queryKeys.artwork.list({ limit: 10 }),
+      queryFn: () => getArtworks({ limit: 10 }),
+   })
+
    const featuredArtworks = artworksQuery.data?.results ?? [];
 
    if (artworksQuery.isLoading) {

@@ -26,7 +26,6 @@ export default function ScrollTest() {
             container.scrollTop + container.clientHeight >=
             container.scrollHeight - 5
          ) {
-            console.log("Reached end of container!");
             loadMore();
          }
       };

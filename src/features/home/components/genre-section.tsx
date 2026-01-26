@@ -1,13 +1,14 @@
 import { SectionTitle } from "@/components/common";
 import { GenresList } from "./genres-list";
 import { queryKeys } from "@/config/query-keys";
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getHomeGenres } from "@/features/service/artspace/get-home-genres";
+import { getQueryClient } from "@/lib/get-query-client";
 
 export const GenreSection = async () => {
-   const queryClient = new QueryClient();
+   const queryClient = getQueryClient();
 
-   await queryClient.prefetchQuery({
+   queryClient.prefetchQuery({
       queryKey: queryKeys.genre.list({ limit: 4 }),
       queryFn: () => getHomeGenres({ limit: 4 }),
    });

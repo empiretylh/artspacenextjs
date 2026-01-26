@@ -1,13 +1,19 @@
 'use client'
-import { Skeleton } from "@/components/ui/skeleton";
-import Link from "@/components/common/link";
-import { paths } from "@/config/paths";
-import { getImage } from "@/lib/utils";
 import Image from "@/components/common/image";
-import { useGetHomeStyles } from "@/features/service/artspace/get-home-styles";
+import Link from "@/components/common/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import { paths } from "@/config/paths";
+import { queryKeys } from "@/config/query-keys";
+import { getHomeStyles } from "@/features/service/artspace/get-home-styles";
+import { getImage } from "@/lib/utils";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const StylesList = () => {
-   const stylesQuery = useGetHomeStyles({ limit: 12 });
+   const stylesQuery = useSuspenseQuery({
+      queryKey: queryKeys.style.home.list({ limit: 12 }),
+      queryFn: () => getHomeStyles({ limit: 12 }),
+   });
+
    const styles = stylesQuery.data?.results || [];
    const isLoading = stylesQuery.isLoading;
 

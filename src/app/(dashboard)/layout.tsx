@@ -12,17 +12,24 @@ import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { cookies, headers } from "next/headers";
 import { userAgent } from "next/server";
-import { Suspense } from "react";
 
 const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => {
   const cookieStore = await cookies();
   const headerStore = await headers();
 
   // 1. Get Sidebar state from Shadcn's default cookie
-  const isSidebarOpen = (await cookieStore).get("sidebar_state")?.value === "true";
+  if (cookieStore.get("sidebar_state")?.value === undefined) {
+    cookieStore.set("sidebar_state", "true", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    });
+  }
+
+  const isSidebarOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   // 2. Get Mobile status from Headers
-  const { device } = userAgent({ headers: await headerStore });
+  const { device } = userAgent({ headers: headerStore });
   const isMobile = device.type === 'mobile';
 
   const { user } = await getSession()

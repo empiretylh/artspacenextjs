@@ -7,13 +7,19 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtistsSectionSkeleton } from "./featured-artists-section-skeleton";
-import { useGetArtists } from "@/features/service/artspace/get-artists";
+import { getArtists, useGetArtists } from "@/features/service/artspace/get-artists";
 import UserSmallCard from "@/components/app/user-small-card";
 import ProfileCard from "@/components/app/profile/profile-card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/config/query-keys";
 
 export const FeaturedArtistsSlider = () => {
-   const artistsQuery = useGetArtists({ limit: 10 });
+   const artistsQuery = useSuspenseQuery({
+      queryKey: queryKeys.artist.list({ limit: 10 }),
+      queryFn: () => getArtists({ limit: 10 }),
+   });
+
    const featuredArtists = artistsQuery.data?.results ?? [];
 
    const isMobile = useIsMobile();

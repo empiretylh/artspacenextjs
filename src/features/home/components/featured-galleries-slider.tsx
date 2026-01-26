@@ -7,11 +7,17 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedGalleriesSectionSkeleton } from "./featured-galleries-section-skeleton";
-import { useGetGalleries } from "@/features/service/artspace/get-galleries";
+import { getGalleries, useGetGalleries } from "@/features/service/artspace/get-galleries";
 import UserSmallCard from "@/components/app/user-small-card";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/config/query-keys";
 
 export const FeaturedGalleriesSlider = () => {
-   const galleriesQuery = useGetGalleries({ limit: 10 });
+   const galleriesQuery = useSuspenseQuery({
+      queryKey: queryKeys.gallery.list({ limit: 10 }),
+      queryFn: () => getGalleries({ limit: 10 }),
+   })
+
    const featuredGalleries = galleriesQuery.data?.results ?? [];
 
    if (galleriesQuery.isLoading) {

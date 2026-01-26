@@ -17,12 +17,9 @@ import {
    SidebarTrigger
 } from "../ui/sidebar";
 import AppSidebarFooter from "./app-sidbar-footer";
-
-import { QueryClient } from "@tanstack/react-query";
 import { cookies } from "next/headers";
 
 export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-   const queryClient = new QueryClient();
    const cookieStore = await cookies();
    const isSidebarOpen = (await cookieStore).get("sidebar_state")?.value === "true";
 

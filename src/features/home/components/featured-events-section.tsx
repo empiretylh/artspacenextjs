@@ -1,17 +1,20 @@
 'use client'
 import { SectionTitle } from "@/components/common";
-import { Button } from "@/components/ui/button";
 import Link from "@/components/common/link";
+import { Button } from "@/components/ui/button";
 import { paths } from "@/config/paths";
+import { queryKeys } from "@/config/query-keys";
+import { EventWideCard } from "@/features/events/components/event-wide-card";
+import { getEvents } from "@/features/service/artspace/get-events";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { FeaturedCollectorsSectionSkeleton } from "./featured-collectors-section-skeleton";
-import { EventWideCard } from "@/features/events/components/event-wide-card";
-import { useGetEvents } from "@/features/service/artspace/get-events";
 
 export const FeaturedEventsSection = () => {
-   const eventsQuery = useGetEvents({
-      limit: 3,
-   });
+   const eventsQuery = useSuspenseQuery({
+      queryKey: queryKeys.event.list({ limit: 3 }),
+      queryFn: () => getEvents({ limit: 3 }),
+   })
 
    const featuredEvents = eventsQuery.data?.results ?? [];
 

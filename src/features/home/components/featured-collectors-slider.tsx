@@ -1,17 +1,23 @@
 'use client'
+import UserSmallCard from "@/components/app/user-small-card";
 import { SectionTitle } from "@/components/common";
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
 import { paths } from "@/config/paths";
+import { queryKeys } from "@/config/query-keys";
+import { getCollectors } from "@/features/service/artspace/get-collectors";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedCollectorsSectionSkeleton } from "./featured-collectors-section-skeleton";
-import { useGetCollectors } from "@/features/service/artspace/get-collectors";
-import UserSmallCard from "@/components/app/user-small-card";
 
 export const FeaturedCollectorsSlider = () => {
-   const collectorsQuery = useGetCollectors({ limit: 10 });
+   const collectorsQuery = useSuspenseQuery({
+      queryKey: queryKeys.collector.list({ limit: 10 }),
+      queryFn: () => getCollectors({ limit: 10 }),
+   });
+
    const featuredCollectors = collectorsQuery.data?.results ?? [];
 
    if (collectorsQuery.isLoading) {
