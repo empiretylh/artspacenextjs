@@ -13,7 +13,7 @@ import {
 import { paths } from "@/config/paths";
 import { useAuth } from "@/features/auth/store";
 import Link from "../common/link";
-import { useGetProfile } from "@/features/dashboard/api/get-profile";
+import { useGetProfile } from "@/features/profile/api/get-profile";
 import { getImage } from "@/lib/utils";
 
 export function ProfileDropdown() {
