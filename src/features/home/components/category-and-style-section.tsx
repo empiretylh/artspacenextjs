@@ -11,13 +11,13 @@ export const CategoryAndStyleSection = async () => {
    const queryClient = new QueryClient();
 
    await queryClient.prefetchQuery({
-      queryKey: queryKeys.category.list({ limit: 4 }),
-      queryFn: () => getHomeCategories({ limit: 4 }),
+      queryKey: queryKeys.category.home.list({ limit: 12 }),
+      queryFn: () => getHomeCategories({ limit: 12 }),
    });
 
    await queryClient.prefetchQuery({
-      queryKey: queryKeys.style.list({ limit: 4 }),
-      queryFn: () => getHomeStyles({ limit: 4 }),
+      queryKey: queryKeys.style.list({ limit: 12 }),
+      queryFn: () => getHomeStyles({ limit: 12 }),
    });
 
    return (

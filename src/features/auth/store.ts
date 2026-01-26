@@ -1,15 +1,7 @@
 import type { User } from "@/types";
 import { create } from "zustand";
-import {
-   login as apiLogin,
-   logout as apiLogout,
-   register as apiRegister,
-   getMe,
-   refresh as apiRefresh,
-} from "./api";
-import { api } from "@/lib/api-client";
-import { useNotifications } from "@/components/ui/notifications";
 import type { AxiosError } from "axios";
+import axios from "axios";
 
 interface RegisterForm {
    email: string;
@@ -17,12 +9,12 @@ interface RegisterForm {
    first_name?: string;
    last_name?: string;
    user_type?: "BUYER" | "COLLECTOR" | "ARTIST" | "GALLERY";
+   phone?: string;
 }
 
 export type State = {
    user: User | null;
    accessToken: string | null;
-   refreshToken: string | null;
    loading: boolean;
    isLoginDialogOpen: boolean;
    isRegisterDialogOpen: boolean;
@@ -36,45 +28,28 @@ export type State = {
       values: RegisterForm
    ) => Promise<boolean | AxiosError<{ message: string }>>;
    logout: () => Promise<void>;
-   init: () => Promise<void>;
+   init: (data: { user: User | null; accessToken: string | null }) => void;
    isBuyer: boolean;
    isArtist: boolean;
    isCollector: boolean;
 };
 
-// LocalStorage helpers
-const STORAGE_KEY = "auth_state";
-
-function saveToStorage(state: Partial<State>) {
-   localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-         accessToken: state.accessToken,
-         refreshToken: state.refreshToken,
-         user: state.user,
-      })
-   );
-}
-
-export function loadFromStorage(): Pick<
-   State,
-   "accessToken" | "user" | "refreshToken"
-> {
-   try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return { accessToken: null, user: null, refreshToken: null };
-      return JSON.parse(raw);
-   } catch {
-      return { accessToken: null, user: null, refreshToken: null };
-   }
-}
-
 export const useAuth = create<State>((set) => {
-   const stored = loadFromStorage();
+   const stored = {
+      user: {
+         id: 0,
+         user_type: "BUYER",
+         email: "", // add the missing properties
+         first_name: "",
+         last_name: "",
+         profile: null,
+      } as unknown as User | null,
+      accessToken: null,
+   };
+
    return {
-      user: stored.user,
+      user: null,
       accessToken: stored.accessToken,
-      refreshToken: stored.refreshToken,
       loading: true,
       isBuyer: stored?.user?.user_type === "BUYER",
       isArtist: stored?.user?.user_type === "ARTIST",
@@ -87,7 +62,10 @@ export const useAuth = create<State>((set) => {
 
       async login(email, password) {
          try {
-            const data = await apiLogin(email, password);
+            const { data } = await axios.post("/api/auth/login", {
+               email, password
+            })
+
             const newState = {
                accessToken: data.access,
                refreshToken: data.refresh,
@@ -95,9 +73,9 @@ export const useAuth = create<State>((set) => {
                isBuyer: data.user.user_type === "BUYER",
                isArtist: data.user.user_type === "ARTIST",
             };
-            saveToStorage(newState);
             set(newState);
-            return true;
+
+            return true
          } catch (error) {
             return error as AxiosError<{ message: string }>;
          } finally {
@@ -107,10 +85,17 @@ export const useAuth = create<State>((set) => {
 
       async register(values) {
          try {
-            const data = await apiRegister(values);
-            // const newState = { accessToken: data.accessToken, user: data.user };
-            // saveToStorage(newState);
-            // set(newState);
+            set({ loading: true });
+
+            const { data } = await axios.post("/api/auth/register", {
+               email: values.email,
+               password: values.password,
+               first_name: values.first_name,
+               last_name: values.last_name,
+               user_type: values.user_type,
+               phone_number: values.phone, // Map to backend key
+            });
+
             return true;
          } catch (error) {
             return error as AxiosError<{ message: string }>;
@@ -120,41 +105,17 @@ export const useAuth = create<State>((set) => {
       },
 
       async logout() {
-         // try {
-         //    await apiLogout();
-         // } catch {
-         //    // ignore
-         // }
-         saveToStorage({ accessToken: null, refreshToken: null, user: null });
-         set({ accessToken: null, refreshToken: null, user: null });
+         await fetch("/api/auth/logout", { method: "POST" });
+         set({ user: null, accessToken: null, loading: false });
       },
 
-      async init() {
-         if (useAuth.getState().refreshToken) {
-            try {
-               // Try silent refresh on app load
-               const r = await apiRefresh(useAuth.getState().refreshToken);
-               set({ accessToken: r.access });
-               const me = await getMe();
-               set({ user: me });
-               saveToStorage({
-                  accessToken: r.access,
-                  user: me,
-                  refreshToken: useAuth.getState().refreshToken,
-               });
-            } catch {
-               set({ user: null, accessToken: null, refreshToken: null });
-               saveToStorage({
-                  accessToken: null,
-                  refreshToken: null,
-                  user: null,
-               });
-            } finally {
-               set({ loading: false });
-            }
-         } else {
-            set({ loading: false });
-         }
+      init: (data: { user: User | null, accessToken: string | null }) => {
+         set({
+            ...data,
+            isBuyer: data.user?.user_type === "BUYER",
+            isArtist: data.user?.user_type === "ARTIST",
+            loading: false
+         });
       },
    };
 });

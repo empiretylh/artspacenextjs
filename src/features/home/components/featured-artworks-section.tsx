@@ -12,7 +12,7 @@ import { useGetArtworks } from "@/features/service/artspace/get-artworks";
 
 export const FeaturedArtworksSection = () => {
    const artworksQuery = useGetArtworks({ limit: 10 });
-   const featuredArtworks = artworksQuery.data?.data.results ?? [];
+   const featuredArtworks = artworksQuery.data?.results ?? [];
 
    if (artworksQuery.isLoading) {
       return <FeaturedArtworksSectionSkeleton />;

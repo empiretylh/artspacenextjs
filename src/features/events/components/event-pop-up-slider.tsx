@@ -22,7 +22,7 @@ import { BaseDialog } from "@/components/common/dialogs/base-dialog";
 export default function EventPopupSlider() {
    const [open, setOpen] = useState(false);
    const popUpEventsQuery = useGetPopUpEvents();
-   const events = popUpEventsQuery.data?.data || [];
+   const events = popUpEventsQuery.data || [];
    // const events = [];
    const [api, setApi] = React.useState<CarouselApi>();
    const [current, setCurrent] = React.useState(0);
@@ -51,12 +51,12 @@ export default function EventPopupSlider() {
 
    useEffect(() => {
       if (
-         popUpEventsQuery.data?.data &&
-         popUpEventsQuery.data.data.length > 0
+         popUpEventsQuery.data &&
+         popUpEventsQuery.data.length > 0
       ) {
          setOpen(true);
       }
-   }, [popUpEventsQuery.data?.data]);
+   }, [popUpEventsQuery.data]);
 
    return (
       <>

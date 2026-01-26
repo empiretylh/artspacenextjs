@@ -66,13 +66,12 @@ const ControlledArtworkCard: React.FC<ControlledArtworkCardProps> = ({
    );
 };
 
-const ArtworksPageContainer = () => {
+export const ProfileArtworksPage = () => {
    const searchParams = useSearchParams();
    const pathname = usePathname();
    const { replace } = useRouter();
    // State
-   const [oldData, setOldData] = useState<
-      AxiosResponse<ListApiResponse<Artwork>, any>[]
+   const [oldData, setOldData] = useState<ListApiResponse<Artwork>[]
    >([]);
    const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
    const [limit, setLimit] = useState(Number(searchParams.get("limit")) || 12);
@@ -238,11 +237,13 @@ const ArtworksPageContainer = () => {
       setSorts(newSorts);
    }, []);
 
+   const pagesToRender = isLoading ? oldData : data?.pages || [];
+
    return (
       <>
          <ArtworksPageView
             isLoading={isLoading}
-            pagesToRender={data?.pages || []}
+            pagesToRender={pagesToRender}
             filters={filters}
             setFilters={setFilters}
             sorts={sorts}
@@ -285,5 +286,3 @@ const ArtworksPageContainer = () => {
       </>
    );
 };
-
-export default ArtworksPageContainer;

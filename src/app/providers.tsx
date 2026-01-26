@@ -1,15 +1,14 @@
 'use client'
 
 import { ErrorFallback } from "@/components/error-fallback/error-fallback";
+import GlobalProvider from "@/components/providers/global-provider";
+import { ThemeProvider } from "@/components/theme-provider";
+import { getQueryClient } from "@/lib/get-query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
-import React, { Suspense } from "react";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Toaster } from "sonner";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import GlobalProvider from "@/components/providers/global-provider";
-import { ScrollToTop } from "@/components/common/scroll-to-top";
-import { getQueryClient } from "@/lib/get-query-client";
-import { ThemeProvider } from "@/components/theme-provider";
 
 interface IProviderProps {
   children: React.ReactNode;
@@ -34,7 +33,6 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
             enableSystem
             disableTransitionOnChange
           >
-            {/* <ScrollToTop /> */}
             {children}
           </ThemeProvider>
         </GlobalProvider>

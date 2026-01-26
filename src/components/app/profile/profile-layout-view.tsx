@@ -1,6 +1,5 @@
 'use client'
 import Link from "@/components/common/link";
-import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { ShareButton } from "@/components/common/share-button";
 import { ProfileUserProvider } from "@/components/providers/profile-user-provider";
 import { Button } from "@/components/ui/button";
@@ -35,7 +34,6 @@ const ProfileLayoutView = ({
 
    return (
       <div>
-         <ScrollToTop />
          <div className="">
             {/* <div
                className="relative max-w-full overflow-hidden h-[376px] aspect-[1/3] rounded w-full bg-cover bg-center"

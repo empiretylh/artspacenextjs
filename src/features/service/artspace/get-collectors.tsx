@@ -14,32 +14,17 @@ import type {
 import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
 
-export const getCollectorsQueryOptions = (
-   options: {
-      filters?: ColumnFiltersState;
-      sorts?: SortingState;
-      page?: number;
-      limit?: number;
-   } = {}
-) => {
-   const { filters, sorts, page, limit } = options;
-   return queryOptions({
-      queryKey: queryKeys.collector.list({ filters, sorts, page, limit }),
-      queryFn: () => getCollectors(filters, sorts, page, limit),
-   });
-};
+/* ============================================================
+ * API CALL
+ * ============================================================ */
 
-// ----------------------------------------------------------------------
-// 1. GET COLLECTORS (API CALL)
-// ----------------------------------------------------------------------
-
-export const getCollectors = (
-   filters: ColumnFiltersState = [],
-   sorts: SortingState = [],
-   page = 1,
+export const getCollectors = async ({
+   filters = [],
+   sorts = [],
+   page,
    limit = 10,
    search = ""
-): Promise<AxiosResponse<ListApiResponse<User>>> => {
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<User>> => {
    const params: Record<string, any> = { page, limit, search };
 
    filters?.forEach((filter) => {
@@ -64,17 +49,41 @@ export const getCollectors = (
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   return api.get(`/users/collector/`, { params });
+   const res = await api.get(`/users/collector/`, { params });
+
+   return res.data;
+   // return collector;
 };
 
-// ----------------------------------------------------------------------
-// 2. CUSTOM HOOK (INFINITE QUERY)
-// ----------------------------------------------------------------------
+/* ============================================================
+ * QUERY OPTIONS (NON-INFINITE)
+ * ============================================================ */
+
+export const getCollectorsQueryOptions = ({
+   filters,
+   sorts,
+   page,
+   limit,
+}: {
+   filters?: ColumnFiltersState;
+   sorts?: SortingState;
+   page?: number;
+   limit?: number;
+}) => {
+   return queryOptions({
+      queryKey: queryKeys.collector.list({ filters, sorts, page, limit }),
+      queryFn: () => getCollectors({ filters, sorts, page, limit }),
+   });
+};
+
+/* ============================================================
+ * INFINITE QUERY HOOK
+ * ============================================================ */
 
 type UseCollectorsOptions = {
+   filters?: ColumnFiltersState;
    sorts?: SortingState;
    search?: string;
-   filters?: ColumnFiltersState;
    page?: number;
    limit?: number;
    queryConfig?: QueryConfig<any>;
@@ -94,23 +103,26 @@ export const useGetCollectorsInfinite = ({
          limit,
       }),
       queryFn: ({ pageParam = 1 }) =>
-         getCollectors(filters, sorts, pageParam, limit, search),
+         getCollectors({ filters, sorts, page: pageParam, limit, search }),
+      initialPageParam: 1,
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.data.count;
+         const total = lastPage.count;
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },
-      // Add initialPageParam here
-      initialPageParam: 1,
    });
 };
+
+/* ============================================================
+ * STANDARD (NON-INFINITE) QUERY HOOK
+ * ============================================================ */
 
 export const useGetCollectors = ({
    queryConfig,
    filters,
    sorts,
-   page = 1,
-   limit = 10,
+   page,
+   limit,
 }: UseCollectorsOptions = {}) => {
    return useQuery({
       ...getCollectorsQueryOptions({ filters, sorts, page, limit }),

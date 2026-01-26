@@ -12,7 +12,7 @@ import {
    Search,
    ShoppingCart
 } from "lucide-react";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { InputWithLeftSelect } from "../app/input-with-left-seletct";
 import { ProfileDropdown } from "../app/profile-dropdown";
 import Link from "../common/link";
@@ -27,15 +27,19 @@ import { SidebarTrigger } from "../ui/sidebar";
 import { IconBasket } from "@tabler/icons-react";
 import { InputWithLeftSelectSkeleton } from "../app/input-with-left-select-skeleton";
 
-export function SiteHeader() {
+export function SiteHeader({ isLoggedIn: serverIsLoggedIn }: { isLoggedIn: boolean }) {
    const [isArtworkCreateModalOpen, setIsArtworkCreateModalOpen] =
       useState(false);
+   const [isLoggedIn, setIsLoggedIn] = useState(serverIsLoggedIn);
    const { items } = useCartStore();
-   const { user } = useAuth();
    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-
    const handleMobileSearchOpen = () => setMobileSearchOpen(true);
    const handleMobileSearchClose = () => setMobileSearchOpen(false);
+   const { user } = useAuth();
+
+   useEffect(() => {
+      setIsLoggedIn(!!user)
+   }, [user])
 
    return (
       <>
@@ -107,7 +111,7 @@ export function SiteHeader() {
                         </Button>
                      </Link>
 
-                     {user && (
+                     {isLoggedIn && (
                         <Button
                            onClick={() => setIsArtworkCreateModalOpen(true)}
                            className="hidden lg:inline-flex h-8"
@@ -129,7 +133,7 @@ export function SiteHeader() {
                   </Button> */}
 
                      {/* Auth Buttons / Profile */}
-                     {!user ? (
+                     {!isLoggedIn ? (
                         <>
                            <Link
                               to={paths.auth.login.path}
@@ -153,8 +157,8 @@ export function SiteHeader() {
                      <div
                         className={cn(
                            "flex items-center",
-                           user && "lg:hidden",
-                           !user && "xl:hidden"
+                           isLoggedIn && "lg:hidden",
+                           !isLoggedIn && "xl:hidden"
                         )}
                      >
                         <DropdownMenu>
@@ -162,7 +166,7 @@ export function SiteHeader() {
                               <MoreVerticalIcon />
                            </DropdownMenuTrigger>
                            <DropdownMenuContent>
-                              {user && (
+                              {isLoggedIn && (
                                  <Button
                                     onClick={() =>
                                        setIsArtworkCreateModalOpen(true)
@@ -172,7 +176,7 @@ export function SiteHeader() {
                                     Create
                                  </Button>
                               )}
-                              {!user && (
+                              {!isLoggedIn && (
                                  <>
                                     <DropdownMenuItem>
                                        <Link

@@ -12,7 +12,7 @@ import UserSmallCard from "@/components/app/user-small-card";
 
 export const FeaturedGalleriesSlider = () => {
    const galleriesQuery = useGetGalleries({ limit: 10 });
-   const featuredGalleries = galleriesQuery.data?.data.results ?? [];
+   const featuredGalleries = galleriesQuery.data?.results ?? [];
 
    if (galleriesQuery.isLoading) {
       return <FeaturedGalleriesSectionSkeleton />;

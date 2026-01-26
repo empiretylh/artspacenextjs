@@ -48,6 +48,15 @@ export const queryKeys = {
        * ======================= */
       list: (params?: QueryKeys) =>
          ["categories", "list", normalizeParams(params)] as const,
+      home: {
+         all: ["categories", "home"] as const,
+
+         /* =======================
+          * LIST / BROWSE
+          * ======================= */
+         list: (params?: QueryKeys) =>
+            ["categories", "home", "list", normalizeParams(params)] as const,
+      }
    },
    style: {
       all: ["styles"] as const,
@@ -57,6 +66,15 @@ export const queryKeys = {
        * ======================= */
       list: (params?: QueryKeys) =>
          ["styles", "list", normalizeParams(params)] as const,
+      home: {
+         all: ["styles", "home"] as const,
+
+         /* =======================
+          * LIST / BROWSE
+          * ======================= */
+         list: (params?: QueryKeys) =>
+            ["styles", "home", "list", normalizeParams(params)] as const,
+      }
    },
    user: {
       all: ["users"] as const,

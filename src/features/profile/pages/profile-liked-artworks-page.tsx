@@ -50,8 +50,7 @@ const ArtworksPageContainer = () => {
    const { replace } = useRouter();
    const { data: user } = useProfileUser();
    // State
-   const [oldData, setOldData] = useState<
-      AxiosResponse<ListApiResponse<Artwork>, any>[]
+   const [oldData, setOldData] = useState<ListApiResponse<Artwork>[]
    >([]);
    const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
    const [limit, setLimit] = useState(Number(searchParams.get("limit")) || 12);

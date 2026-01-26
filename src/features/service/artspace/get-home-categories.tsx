@@ -1,3 +1,4 @@
+import { queryKeys } from "@/config/query-keys";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import type {
@@ -9,10 +10,10 @@ import type {
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
 export const getHomeCategories = async (
-   filters = {},
-   sorts = {},
-   page = 1,
-   limit = 10
+   { filters = {},
+      sorts = {},
+      page = 1,
+      limit = 10 }
 ): Promise<ListApiResponse<{ id: number; category: Category }>> => {
    const response = await api.get(`/homepage/categories/`, {
       params: {
@@ -61,18 +62,14 @@ export const getHomeCategoriesQueryOptions = (
 
    return queryOptions({
       queryKey:
-         filters || sorts || page || limit
-            ? [
-               "categories",
-               "home",
-               formattedFilters,
-               formattedSorts,
-               page,
-               limit,
-            ]
-            : ["categories", "home"],
+         queryKeys.category.home.list({
+            filters,
+            sorts,
+            page,
+            limit,
+         }),
       queryFn: () =>
-         getHomeCategories(formattedFilters, formattedSorts, page, limit),
+         getHomeCategories({ filters: formattedFilters, sorts: formattedSorts, page, limit }),
    });
 };
 

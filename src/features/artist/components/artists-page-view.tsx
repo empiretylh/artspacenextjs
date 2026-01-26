@@ -134,8 +134,8 @@ const ArtistsPageView = ({
                                  )}
                               >
                                  {pagesToRender.map((page) => (
-                                    <Fragment key={page.data.next}>
-                                       {page.data.results.map((artist: any) => (
+                                    <Fragment key={page.next}>
+                                       {page.results.map((artist: any) => (
                                           <ProfileCard
                                              key={artist.id}
                                              user={artist}
@@ -155,8 +155,8 @@ const ArtistsPageView = ({
                                     {isFetchingNextPage
                                        ? "Loading more..."
                                        : hasNextPage
-                                         ? "Load More"
-                                         : "Nothing more to load"}
+                                          ? "Load More"
+                                          : "Nothing more to load"}
                                  </Button>
                               </div>
                            </>

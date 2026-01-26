@@ -8,7 +8,7 @@ const FeaturedArtists = () => {
       limit: 4,
    });
 
-   const artists = artistQuery.data?.data?.results ?? [];
+   const artists = artistQuery.data?.results ?? [];
 
    return (
       <div>

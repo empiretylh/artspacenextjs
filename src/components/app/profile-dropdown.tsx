@@ -17,8 +17,12 @@ import { useGetProfile } from "@/features/profile/api/get-profile";
 import { getImage } from "@/lib/utils";
 
 export function ProfileDropdown() {
-   const { logout } = useAuth();
-   const profileQuery = useGetProfile();
+   const { logout, accessToken } = useAuth();
+   const profileQuery = useGetProfile({
+      queryConfig: {
+         enabled: !!accessToken
+      }
+   });
    const user = profileQuery.data?.data;
    return (
       <DropdownMenu modal={false}>

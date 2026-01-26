@@ -13,7 +13,7 @@ export const FeaturedEventsSection = () => {
       limit: 3,
    });
 
-   const featuredEvents = eventsQuery.data?.data?.results ?? [];
+   const featuredEvents = eventsQuery.data?.results ?? [];
 
    if (eventsQuery.isLoading) {
       return <FeaturedCollectorsSectionSkeleton />;

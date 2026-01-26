@@ -14,7 +14,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 export const FeaturedArtistsSlider = () => {
    const artistsQuery = useGetArtists({ limit: 10 });
-   const featuredArtists = artistsQuery.data?.data.results ?? [];
+   const featuredArtists = artistsQuery.data?.results ?? [];
 
    const isMobile = useIsMobile();
 

@@ -19,13 +19,13 @@ import { artist } from "@/mocks/artists";
  * API CALL
  * ============================================================ */
 
-export const getArtists = (
-   filters: ColumnFiltersState = [],
-   sorts: SortingState = [],
-   page = 1,
+export const getArtists = async ({
+   filters = [],
+   sorts = [],
+   page,
    limit = 10,
    search = ""
-): Promise<AxiosResponse<ListApiResponse<User>>> => {
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<User>> => {
    const params: Record<string, any> = { page, limit, search };
 
    filters?.forEach((filter) => {
@@ -50,8 +50,9 @@ export const getArtists = (
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   return api.get(`/users/artist/`, { params });
+   const res = await api.get(`/users/artist/`, { params });
 
+   return res.data;
    // return artist;
 };
 
@@ -72,7 +73,7 @@ export const getArtistsQueryOptions = ({
 }) => {
    return queryOptions({
       queryKey: queryKeys.artist.list({ filters, sorts, page, limit }),
-      queryFn: () => getArtists(filters, sorts, page, limit),
+      queryFn: () => getArtists({ filters, sorts, page, limit }),
    });
 };
 
@@ -103,10 +104,10 @@ export const useGetArtistsInfinite = ({
          limit,
       }),
       queryFn: ({ pageParam = 1 }) =>
-         getArtists(filters, sorts, pageParam, limit, search),
+         getArtists({ filters, sorts, page: pageParam, limit, search }),
       initialPageParam: 1,
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.data.count;
+         const total = lastPage.count;
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },
@@ -121,8 +122,8 @@ export const useGetArtists = ({
    queryConfig,
    filters,
    sorts,
-   page = 1,
-   limit = 10,
+   page,
+   limit,
 }: UseArtistsOptions = {}) => {
    return useQuery({
       ...getArtistsQueryOptions({ filters, sorts, page, limit }),

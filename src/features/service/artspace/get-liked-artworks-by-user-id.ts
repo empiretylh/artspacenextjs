@@ -18,14 +18,14 @@ import { queryKeys } from "@/config/query-keys";
 // 1. GET ARTWORKS (API CALL)
 // ----------------------------------------------------------------------
 
-export const getLikedArtworksByUserId = (
-   userId: string,
-   filters: ColumnFiltersState = [],
-   sorts: SortingState = [],
-   page = 1,
-   limit = 10,
-   search = ""
-): Promise<AxiosResponse<ListApiResponse<Artwork>>> => {
+export const getLikedArtworksByUserId = async ({
+   userId,
+   filters,
+   sorts,
+   page,
+   limit,
+   search
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string, userId: string }): Promise<ListApiResponse<Artwork>> => {
    // Default query params
    const params: Record<string, any> = {
       page,
@@ -82,12 +82,13 @@ export const getLikedArtworksByUserId = (
    });
 
    // Map sorting state to backend params
-   if (sorts?.length > 0) {
-      params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
-      // assuming backend supports "-" prefix for descending
+   if (sorts && sorts?.length > 0) {
+      params.ordering = sorts?.[0].desc ? `-${sorts?.[0].id}` : sorts?.[0].id;
    }
 
-   return api.get(`/artworks/liked/user/${userId}/`, { params });
+   const res = await api.get(`/artworks/liked/user/${userId}/`, { params });
+
+   return res.data;
 };
 
 // ----------------------------------------------------------------------
@@ -113,7 +114,7 @@ export const getLikedArtworksByUserIdQueryOptions = (options: {
          search,
       ],
       queryFn: () =>
-         getLikedArtworksByUserId(userId, filters, sorts, page, limit, search),
+         getLikedArtworksByUserId({ userId, filters, sorts, page, limit, search }),
    });
 };
 
@@ -171,7 +172,7 @@ export const getLikedArtworksByUserIdQueryInfiniteOptions = (options: {
          limit,
       }),
       queryFn: () =>
-         getLikedArtworksByUserId(userId, filters, sorts, page, limit, search),
+         getLikedArtworksByUserId({ userId, filters, sorts, page, limit, search }),
    });
 };
 
@@ -191,15 +192,17 @@ export const useGetLikedArtworksByUserIdInfinite = ({
       }),
       queryFn: ({ pageParam = 1 }) =>
          getLikedArtworksByUserId(
-            userId,
-            filters,
-            sorts,
-            pageParam,
-            limit,
-            search
+            {
+               userId,
+               filters,
+               sorts,
+               page: pageParam,
+               limit,
+               search
+            }
          ),
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.data.count;
+         const total = lastPage.count;
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },

@@ -18,13 +18,13 @@ import { queryKeys } from "@/config/query-keys";
 // 1. GET ARTWORKS (API CALL)
 // ----------------------------------------------------------------------
 
-export const getArtworks = (
-   filters: ColumnFiltersState = [],
-   sorts: SortingState = [],
-   page?: number,
-   limit?: number,
+export const getArtworks = async ({
+   filters = [],
+   sorts = [],
+   page,
+   limit,
    search = ""
-): Promise<AxiosResponse<ListApiResponse<Artwork>>> => {
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<Artwork>> => {
    const params: Record<string, any> = {
       page,
       page_size: limit,
@@ -77,7 +77,9 @@ export const getArtworks = (
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   return api.get(`/artworks/artworks/`, { params });
+   const res = await api.get(`/artworks/artworks/`, { params });
+
+   return res.data
 };
 
 // ----------------------------------------------------------------------
@@ -103,7 +105,7 @@ export const getArtworksQueryOptions = (
          limit,
          search,
       }),
-      queryFn: () => getArtworks(filters, sorts, page, limit, search),
+      queryFn: () => getArtworks({ filters, sorts, page, limit, search }),
    });
 };
 
@@ -158,9 +160,9 @@ export const useGetArtworksInfinite = ({
          limit,
       }),
       queryFn: ({ pageParam = 1 }) =>
-         getArtworks(filters, sorts, pageParam, limit, search),
+         getArtworks({ filters, sorts, page: pageParam, limit, search }),
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.data.count;
+         const total = lastPage.count;
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },

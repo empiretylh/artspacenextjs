@@ -7,7 +7,7 @@ const CustomLink = ({ children, className, to, ...rest }: { children?: React.Rea
       <Link
          href={to}
          className={cn("cursor-pointer transition-colors", className)}
-         scroll={true}
+         // scroll={true}
          {...rest}
       >
          {children}

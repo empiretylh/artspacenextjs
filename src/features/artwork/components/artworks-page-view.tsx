@@ -197,7 +197,7 @@ const ArtworksPageView = ({
                </div>
 
                <div>
-                  {pagesToRender?.[0]?.data?.results?.length <= 0 &&
+                  {pagesToRender?.[0]?.results?.length <= 0 &&
                      !isLoading && (
                         <div className="flex items-center justify-center h-40">
                            <p className="text-sm text-muted-foreground">
@@ -215,8 +215,8 @@ const ArtworksPageView = ({
                      )}
                   >
                      {pagesToRender?.map((page) => (
-                        <Fragment key={page.data.next}>
-                           {page.data.results.map((artwork: Artwork) => (
+                        <Fragment key={page.next}>
+                           {page.results.map((artwork: Artwork) => (
                               <MasonryItem key={artwork.id} artwork={artwork}>
                                  {artworkCard ? (
                                     artworkCard(artwork)
@@ -268,7 +268,7 @@ const ArtworksPageView = ({
                      {!isFetchingNextPage && hasNextPage && "Load More"}
                      {!isFetchingNextPage &&
                         !hasNextPage &&
-                        pagesToRender?.[0]?.data?.results?.length > 0 &&
+                        pagesToRender?.[0]?.results?.length > 0 &&
                         "Nothing more to load"}
                   </div>
                </div>
