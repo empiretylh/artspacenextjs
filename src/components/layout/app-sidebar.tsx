@@ -1,3 +1,4 @@
+'use client'
 import { NavMain } from "@/components/layout/nav-main";
 import FeaturedArtists from "@/features/artist/components/featured-artists";
 import FeaturedGalleries from "@/features/gallery/components/featured-galleries";
@@ -14,14 +15,13 @@ import {
    SidebarMenuButton,
    SidebarMenuItem,
    SidebarSeparator,
-   SidebarTrigger
+   SidebarTrigger,
+   useSidebar
 } from "../ui/sidebar";
 import AppSidebarFooter from "./app-sidbar-footer";
-import { cookies } from "next/headers";
 
 export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-   const cookieStore = await cookies();
-   const isSidebarOpen = (await cookieStore).get("sidebar_state")?.value === "true";
+   const { open } = useSidebar()
 
    return (
       <Sidebar collapsible="icon" className="h-auto" {...props}>
@@ -48,22 +48,22 @@ export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sideb
             <ScrollArea className="h-full">
                <NavMain />
                <SidebarSeparator
-                  className={cn(isSidebarOpen ? "block" : "hidden", "my-3")}
+                  className={cn(open ? "block" : "hidden", "my-3")}
                />
-               <SidebarGroup className={cn(isSidebarOpen ? "block" : "hidden")}>
+               <SidebarGroup className={cn(open ? "block" : "hidden")}>
                   <SidebarContent className="pr-3">
                      <FeaturedArtists />
                   </SidebarContent>
                </SidebarGroup>
                <SidebarSeparator
-                  className={cn(isSidebarOpen ? "block" : "hidden", "my-3")}
+                  className={cn(open ? "block" : "hidden", "my-3")}
                />
-               <SidebarGroup className={cn(isSidebarOpen ? "block" : "hidden")}>
+               <SidebarGroup className={cn(open ? "block" : "hidden")}>
                   <SidebarContent className="pr-3">
                      <FeaturedGalleries />
                   </SidebarContent>
                </SidebarGroup>
-               <SidebarGroup className={cn(isSidebarOpen ? "block" : "hidden")}>
+               <SidebarGroup className={cn(open ? "block" : "hidden")}>
                   <SidebarContent>
                      <AppSidebarFooter />
                   </SidebarContent>

@@ -1,4 +1,3 @@
-import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import Footer from "@/components/layout/footer";
 import MainOutlet from "@/components/layout/main-outlet";
@@ -17,15 +16,6 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
   const cookieStore = await cookies();
   const headerStore = await headers();
 
-  // 1. Get Sidebar state from Shadcn's default cookie
-  if (cookieStore.get("sidebar_state")?.value === undefined) {
-    cookieStore.set("sidebar_state", "true", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-    });
-  }
-
   const isSidebarOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   // 2. Get Mobile status from Headers
@@ -36,7 +26,7 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
 
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery({
+  queryClient.prefetchQuery({
     queryKey: queryKeys.event.popUp.list(),
     queryFn: () => getPopUpEvents(),
   });
@@ -60,7 +50,7 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
           }}>
             <div>
               <SiteHeader isLoggedIn={!!user} />
-              <MainOutlet isMobile={isMobile} isOpen={isSidebarOpen}>
+              <MainOutlet isMobile={isMobile}>
                 {children}
               </MainOutlet>
             </div>

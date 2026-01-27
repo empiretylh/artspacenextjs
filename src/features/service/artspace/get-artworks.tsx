@@ -150,6 +150,7 @@ export const useGetArtworksInfinite = ({
    filters,
    sorts,
    search,
+   page,
    limit = 10,
 }: UseArtworksOptions = {}) => {
    return useInfiniteQuery({
@@ -157,6 +158,7 @@ export const useGetArtworksInfinite = ({
          filters,
          sorts,
          search,
+         page,
          limit,
       }),
       queryFn: ({ pageParam = 1 }) =>

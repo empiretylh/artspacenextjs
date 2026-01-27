@@ -71,7 +71,7 @@ const ArtworksPageView = ({
 
       setLoadingLock(true);
       fetchNextPage();
-      setTimeout(() => setLoadingLock(false), 500); // throttle 500ms
+      setTimeout(() => setLoadingLock(false), 1000); // throttle 500ms
    }, [inView, hasNextPage, isFetchingNextPage, loadingLock, fetchNextPage]);
 
    return (
@@ -234,9 +234,9 @@ const ArtworksPageView = ({
                   </div>
 
                   {/* Infinite scroll sentinel */}
-                  {/* {hasNextPage &&
+                  {hasNextPage &&
                      !isFetchingNextPage &&
-                     pagesToRender?.[0]?.data?.results?.length > 0 && (
+                     pagesToRender?.[0]?.results?.length > 0 && (
                         <div
                            ref={loadMoreRef}
                            className="flex justify-center my-2 text-sm text-muted-foreground"
@@ -258,9 +258,9 @@ const ArtworksPageView = ({
                         <div className="flex justify-center my-2 text-sm text-muted-foreground">
                            Nothing more to load
                         </div>
-                     )} */}
+                     )}
 
-                  <div
+                  {/* <div
                      ref={loadMoreRef}
                      className="flex justify-center my-2 text-sm text-muted-foreground min-h-[24px]"
                   >
@@ -270,7 +270,7 @@ const ArtworksPageView = ({
                         !hasNextPage &&
                         pagesToRender?.[0]?.results?.length > 0 &&
                         "Nothing more to load"}
-                  </div>
+                  </div> */}
                </div>
             </div>
          </div>

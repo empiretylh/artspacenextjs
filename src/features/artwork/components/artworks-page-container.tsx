@@ -1,18 +1,15 @@
 'use client'
-import { useEffect, useMemo, useRef, useState } from "react";
-import debounce from "lodash/debounce";
-import { keepPreviousData } from "@tanstack/react-query";
+import ArtworkCard from "@/components/app/artwork-card";
+import { useGetArtworksInfinite } from "@/features/service/artspace/get-artworks";
 import type {
    Artwork,
    ColumnFiltersState,
    ListApiResponse,
    SortingState,
 } from "@/types";
-import type { AxiosResponse } from "axios";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from "react";
 import ArtworksPageView from "./artworks-page-view";
-import { useGetArtworksInfinite } from "@/features/service/artspace/get-artworks";
-import ArtworkCard from "@/components/app/artwork-card";
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 const ArtworksPageContainer = () => {
    const searchParams = useSearchParams();
