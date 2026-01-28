@@ -14,6 +14,71 @@ import type {
 import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
 import { env } from "@/config/env";
+import { useAuth } from "@/features/auth/store";
+
+export const getArtworksOg = async ({
+   filters = [],
+   sorts = [],
+   page,
+   limit,
+   search = ""
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<Artwork>> => {
+   const params: Record<string, any> = {
+      page,
+      page_size: limit,
+   };
+
+   params.search = search;
+
+   filters?.forEach((filter) => {
+      if (
+         filter.value !== undefined &&
+         filter.value !== null &&
+         filter.value !== ""
+      ) {
+         switch (filter.id) {
+            case "price_min":
+            case "price_max":
+            case "year":
+            case "page":
+            case "page_size":
+               params[filter.id] = Number(filter.value);
+               break;
+
+            case "price_range": {
+               const [min, max] = filter.value
+                  .toString()
+                  .split("-")
+                  .map(Number);
+
+               params.price_min = min;
+               params.price_max = max;
+               break;
+            }
+
+            default:
+               if (params[filter.id]) {
+                  if (Array.isArray(params[filter.id])) {
+                     params[filter.id].push(filter.value);
+                  } else {
+                     params[filter.id] = [params[filter.id], filter.value];
+                  }
+               } else {
+                  params[filter.id] = filter.value;
+               }
+               break;
+         }
+      }
+   });
+
+   if (sorts?.length > 0) {
+      params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
+   }
+
+   const res = await api.get(`/artworks/artworks/`, { params });
+
+   return res.data
+};
 
 // ----------------------------------------------------------------------
 // 1. GET ARTWORKS (API CALL)
@@ -78,7 +143,7 @@ export const getArtworks = async ({
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   const res = await api.get(`/artworks/artworks/`, { params });
+   const res = await api.get(env.APP_URL + '/api/proxy' + `/artworks/artworks/`, { params });
 
    return res.data
 };
@@ -154,6 +219,7 @@ export const useGetArtworksInfinite = ({
    page,
    limit = 10,
 }: UseArtworksOptions = {}) => {
+
    return useInfiniteQuery({
       queryKey: queryKeys.artwork.infinite({
          filters,

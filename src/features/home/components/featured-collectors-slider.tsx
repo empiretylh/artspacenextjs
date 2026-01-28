@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button";
 import { paths } from "@/config/paths";
 import { queryKeys } from "@/config/query-keys";
 import { getCollectors } from "@/features/service/artspace/get-collectors";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedCollectorsSectionSkeleton } from "./featured-collectors-section-skeleton";
 
 export const FeaturedCollectorsSlider = () => {
-   const collectorsQuery = useSuspenseQuery({
+   const collectorsQuery = useQuery({
       queryKey: queryKeys.collector.list({ limit: 10 }),
       queryFn: () => getCollectors({ limit: 10 }),
    });

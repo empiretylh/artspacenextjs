@@ -1,21 +1,20 @@
 'use client'
+import ProfileCard from "@/components/app/profile/profile-card";
 import { SectionTitle } from "@/components/common";
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
 import { paths } from "@/config/paths";
+import { queryKeys } from "@/config/query-keys";
+import { getArtists, getArtistsOg } from "@/features/service/artspace/get-artists";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtistsSectionSkeleton } from "./featured-artists-section-skeleton";
-import { getArtists, useGetArtists } from "@/features/service/artspace/get-artists";
-import UserSmallCard from "@/components/app/user-small-card";
-import ProfileCard from "@/components/app/profile/profile-card";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { queryKeys } from "@/config/query-keys";
 
 export const FeaturedArtistsSlider = () => {
-   const artistsQuery = useSuspenseQuery({
+   const artistsQuery = useQuery({
       queryKey: queryKeys.artist.list({ limit: 10 }),
       queryFn: () => getArtists({ limit: 10 }),
    });

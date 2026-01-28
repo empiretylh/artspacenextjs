@@ -9,11 +9,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedGalleriesSectionSkeleton } from "./featured-galleries-section-skeleton";
 import { getGalleries, useGetGalleries } from "@/features/service/artspace/get-galleries";
 import UserSmallCard from "@/components/app/user-small-card";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/config/query-keys";
 
 export const FeaturedGalleriesSlider = () => {
-   const galleriesQuery = useSuspenseQuery({
+   const galleriesQuery = useQuery({
       queryKey: queryKeys.gallery.list({ limit: 10 }),
       queryFn: () => getGalleries({ limit: 10 }),
    })

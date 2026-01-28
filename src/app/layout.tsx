@@ -2,9 +2,9 @@ import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { AuthInitializer } from "@/features/auth/auth-initializer";
 import type { Metadata } from "next";
 import { Outfit, Space_Grotesk } from "next/font/google";
-import { cookies } from "next/headers";
 import "./globals.css";
 import AppProvider from "./providers";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const outfitSans = Outfit({
   variable: "--font-outfit-sans",
@@ -34,6 +34,7 @@ export default async function RootLayout({
       <body
         className={`${outfitSans.variable} ${spaceGrotesk.variable} antialiased`}
       >
+        {/* <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID as string} /> */}
         <AuthInitializer />
         <AppProvider>
           <ScrollToTop />

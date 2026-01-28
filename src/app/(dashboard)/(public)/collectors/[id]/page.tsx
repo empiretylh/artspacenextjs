@@ -1,11 +1,11 @@
 import CollectorOverviewPage from "@/features/collectors/pages/collector-overview-page";
 import { getCachedCollector } from "@/features/service/artspace/get-collector";
-import { getCollectors } from "@/features/service/artspace/get-collectors";
+import { getCollectorsOg } from "@/features/service/artspace/get-collectors";
 import { getImage } from "@/lib/utils";
 import { Metadata, ResolvingMetadata } from "next";
 
 export async function generateStaticParams() {
-  const collectors = await getCollectors({ limit: 10 })
+  const collectors = await getCollectorsOg({ limit: 10 })
 
   return collectors.results.map((collector) => ({
     id: String(collector.id),

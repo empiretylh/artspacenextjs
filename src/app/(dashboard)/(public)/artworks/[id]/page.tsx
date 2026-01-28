@@ -1,7 +1,7 @@
 import { queryKeys } from "@/config/query-keys";
 import ArtworkDetailPage from "@/features/artwork/pages/artwork";
 import { getArtwork } from "@/features/service/artspace/get-artwork";
-import { getArtworks } from "@/features/service/artspace/get-artworks";
+import { getArtworks, getArtworksOg } from "@/features/service/artspace/get-artworks";
 import { getQueryClient } from "@/lib/get-query-client";
 import { getImage } from "@/lib/utils";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -9,7 +9,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import { cache } from "react";
 
 export async function generateStaticParams() {
-  const artworks = await getArtworks({ limit: 10 })
+  const artworks = await getArtworksOg({ limit: 10 })
 
   return artworks.results.map((artwork) => ({
     id: artwork.id,

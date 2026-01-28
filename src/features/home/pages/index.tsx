@@ -17,45 +17,45 @@ import { getQueryClient } from "@/lib/get-query-client";
 
 // --- Main App Component ---
 export default async function HomePage() {
-   // const queryClient = getQueryClient();
+   const queryClient = getQueryClient();
 
-   // await queryClient.prefetchQuery({
-   //    queryKey: queryKeys.event.list({ limit: 3 }),
-   //    queryFn: () => getEvents({ limit: 3 }),
-   // });
+   await queryClient.prefetchQuery({
+      queryKey: queryKeys.event.list({ limit: 3 }),
+      queryFn: () => getEvents({ limit: 3 }),
+   });
 
-   // await queryClient.prefetchQuery({
-   //    queryKey: queryKeys.artwork.list({ limit: 10 }),
-   //    queryFn: () => getArtworks({ limit: 10 }),
-   // });
+   await queryClient.prefetchQuery({
+      queryKey: queryKeys.artwork.list({ limit: 10 }),
+      queryFn: () => getArtworks({ limit: 10 }),
+   });
 
-   // await queryClient.prefetchQuery({
-   //    queryKey: queryKeys.artist.list({ limit: 10 }),
-   //    queryFn: () => getArtists({ limit: 10 }),
-   // });
+   await queryClient.prefetchQuery({
+      queryKey: queryKeys.artist.list({ limit: 10 }),
+      queryFn: () => getArtists({ limit: 10 }),
+   });
 
-   // await queryClient.prefetchQuery({
-   //    queryKey: queryKeys.gallery.list({ limit: 10 }),
-   //    queryFn: () => getGalleries({ limit: 10 }),
-   // });
+   await queryClient.prefetchQuery({
+      queryKey: queryKeys.gallery.list({ limit: 10 }),
+      queryFn: () => getGalleries({ limit: 10 }),
+   });
 
-   // await queryClient.prefetchQuery({
-   //    queryKey: queryKeys.collector.list({ limit: 10 }),
-   //    queryFn: () => getCollectors({ limit: 10 }),
-   // });
+   await queryClient.prefetchQuery({
+      queryKey: queryKeys.collector.list({ limit: 10 }),
+      queryFn: () => getCollectors({ limit: 10 }),
+   });
 
    return (
       <div className="space-y-9">
          <HeroSection />
          <GenreSection />
          <CategoryAndStyleSection />
-         {/* <HydrationBoundary state={dehydrate(queryClient)}> */}
-         <FeaturedEventsSection />
-         <FeaturedArtworksSection />
-         <FeaturedArtistsSlider />
-         <FeaturedGalleriesSlider />
-         <FeaturedCollectorsSlider />
-         {/* </HydrationBoundary> */}
+         <HydrationBoundary state={dehydrate(queryClient)}>
+            <FeaturedEventsSection />
+            <FeaturedArtworksSection />
+            <FeaturedArtistsSlider />
+            <FeaturedGalleriesSlider />
+            <FeaturedCollectorsSlider />
+         </HydrationBoundary>
          {/* <FeaturedCollectorsSection /> */}
       </div>
    );

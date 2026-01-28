@@ -1,21 +1,55 @@
+import { env } from "@/config/env";
+import { queryKeys } from "@/config/query-keys";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
+import type {
+   ColumnFiltersState,
+   ListApiResponse,
+   SortingState,
+   User,
+} from "@/types";
 import {
    queryOptions,
    useInfiniteQuery,
    useQuery,
 } from "@tanstack/react-query";
-import type {
-   ColumnFiltersState,
-   SortingState,
-   ListApiResponse,
-   User,
-} from "@/types";
-import type { AxiosResponse } from "axios";
-import { queryKeys } from "@/config/query-keys";
-import { artist } from "@/mocks/artists";
-import { env } from "@/config/env";
-import { useAuth } from "@/features/auth/store";
+
+export const getArtistsOg = async ({
+   filters = [],
+   sorts = [],
+   page,
+   limit = 10,
+   search = ""
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<User>> => {
+   const params: Record<string, any> = { page, limit, search };
+
+   filters?.forEach((filter) => {
+      if (
+         filter.value !== undefined &&
+         filter.value !== null &&
+         filter.value !== ""
+      ) {
+         if (params[filter.id]) {
+            if (Array.isArray(params[filter.id])) {
+               params[filter.id].push(filter.value);
+            } else {
+               params[filter.id] = [params[filter.id], filter.value];
+            }
+         } else {
+            params[filter.id] = filter.value;
+         }
+      }
+   });
+
+   if (sorts?.length > 0) {
+      params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
+   }
+
+   const res = await api.get(`/users/artist/`, { params });
+
+   return res.data;
+   // return artist;
+};
 
 /* ============================================================
  * API CALL
@@ -52,7 +86,7 @@ export const getArtists = async ({
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   const res = await api.get(`/users/artist/`, { params });
+   const res = await api.get(env.APP_URL + '/api/proxy' + `/users/artist/`, { params });
 
    return res.data;
    // return artist;
@@ -98,7 +132,6 @@ export const useGetArtistsInfinite = ({
    search,
    limit = 10,
 }: UseArtistsOptions = {}) => {
-   const { accessToken } = useAuth.getState();
 
    return useInfiniteQuery({
       queryKey: queryKeys.artist.infinite({
@@ -115,7 +148,6 @@ export const useGetArtistsInfinite = ({
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },
-      enabled: (accessToken === null || !!accessToken),
    });
 };
 
@@ -130,10 +162,8 @@ export const useGetArtists = ({
    page,
    limit,
 }: UseArtistsOptions = {}) => {
-   const { accessToken } = useAuth.getState();
    return useQuery({
       ...getArtistsQueryOptions({ filters, sorts, page, limit }),
       ...queryConfig,
-      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
    });
 };

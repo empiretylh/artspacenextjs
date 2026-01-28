@@ -1,11 +1,11 @@
 import ArtistOverviewPage from "@/features/artist/pages/artist-overview-page";
 import { getCachedArtist } from "@/features/service/artspace/get-artist";
-import { getArtists } from "@/features/service/artspace/get-artists";
+import { getArtistsOg } from "@/features/service/artspace/get-artists";
 import { getImage } from "@/lib/utils";
 import { Metadata, ResolvingMetadata } from "next";
 
 export async function generateStaticParams() {
-  const artists = await getArtists({ limit: 10 })
+  const artists = await getArtistsOg({ limit: 10 })
 
   return artists.results.map((artist) => ({
     id: String(artist.id),

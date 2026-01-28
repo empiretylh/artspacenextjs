@@ -25,8 +25,6 @@ async function handleRequest(request: NextRequest, pathSegments: string[]) {
   const fullPath = pathSegments.join("/");
   const backendUrl = `${process.env.API_URL}/api/v1/${fullPath}${request.nextUrl.search}`;
 
-  console.log(request)
-
   // Forward the request to the real backend
   const response = await fetch(backendUrl, {
     method: request.method,

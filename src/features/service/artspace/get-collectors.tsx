@@ -15,6 +15,43 @@ import {
    useQuery,
 } from "@tanstack/react-query";
 
+export const getCollectorsOg = async ({
+   filters = [],
+   sorts = [],
+   page,
+   limit = 10,
+   search = ""
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<User>> => {
+   const params: Record<string, any> = { page, limit, search };
+
+   filters?.forEach((filter) => {
+      if (
+         filter.value !== undefined &&
+         filter.value !== null &&
+         filter.value !== ""
+      ) {
+         if (params[filter.id]) {
+            if (Array.isArray(params[filter.id])) {
+               params[filter.id].push(filter.value);
+            } else {
+               params[filter.id] = [params[filter.id], filter.value];
+            }
+         } else {
+            params[filter.id] = filter.value;
+         }
+      }
+   });
+
+   if (sorts?.length > 0) {
+      params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
+   }
+
+   const res = await api.get(`/users/collector/`, { params });
+
+   return res.data;
+   // return collector;
+};
+
 /* ============================================================
  * API CALL
  * ============================================================ */
@@ -50,7 +87,7 @@ export const getCollectors = async ({
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   const res = await api.get(`/users/collector/`, { params });
+   const res = await api.get(env.APP_URL + '/api/proxy' + `/users/collector/`, { params });
 
    return res.data;
    // return collector;
@@ -96,7 +133,6 @@ export const useGetCollectorsInfinite = ({
    search,
    limit = 10,
 }: UseCollectorsOptions = {}) => {
-   const { accessToken } = useAuth.getState();
 
    return useInfiniteQuery({
       queryKey: queryKeys.collector.infinite({
@@ -113,7 +149,6 @@ export const useGetCollectorsInfinite = ({
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },
-      enabled: (accessToken === null || !!accessToken),
    });
 };
 

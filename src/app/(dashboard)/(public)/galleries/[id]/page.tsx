@@ -1,11 +1,11 @@
 import GalleryOverviewPage from "@/features/gallery/pages/gallery-overview-page";
 import { getCachedGallery } from "@/features/service/artspace/get-gallery";
-import { getGalleries } from "@/features/service/artspace/get-galleries";
+import { getGalleries, getGalleriesOg } from "@/features/service/artspace/get-galleries";
 import { Metadata, ResolvingMetadata } from "next";
 import { getImage } from "@/lib/utils";
 
 export async function generateStaticParams() {
-  const galleries = await getGalleries({ limit: 10 })
+  const galleries = await getGalleriesOg({ limit: 10 })
 
   return galleries.results.map((gallery) => ({
     id: String(gallery.id),
