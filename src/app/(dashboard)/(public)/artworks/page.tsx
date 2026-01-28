@@ -9,30 +9,30 @@ const ArtWorksRoute = async () => {
 
   // 1. MUST use prefetchInfiniteQuery
   // 2. MUST await the call
-  await queryClient.prefetchInfiniteQuery({
-    queryKey: queryKeys.artwork.infinite({
-      // Ensure these match your hook's default props EXACTLY
-      page: 1,
-      limit: 10,
-      filters: [],
-      sorts: [],
-      search: ''
-    }),
-    queryFn: ({ pageParam = 1 }) =>
-      getArtworks({
-        page: pageParam as number,
-        limit: 10,
-        filters: [],
-        sorts: [],
-        search: ''
-      }),
-    initialPageParam: 1,
-  });
+  // await queryClient.prefetchInfiniteQuery({
+  //   queryKey: queryKeys.artwork.infinite({
+  //     // Ensure these match your hook's default props EXACTLY
+  //     page: 1,
+  //     limit: 10,
+  //     filters: [],
+  //     sorts: [],
+  //     search: ''
+  //   }),
+  //   queryFn: ({ pageParam = 1 }) =>
+  //     getArtworks({
+  //       page: pageParam as number,
+  //       limit: 10,
+  //       filters: [],
+  //       sorts: [],
+  //       search: ''
+  //     }),
+  //   initialPageParam: 1,
+  // });
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <ArtworksPage />
-    </HydrationBoundary>
+    // <HydrationBoundary state={dehydrate(queryClient)}>
+    <ArtworksPage />
+    // </HydrationBoundary>
   );
 };
 

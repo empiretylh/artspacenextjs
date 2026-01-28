@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ArtworkCard from "@/components/app/artwork-card";
 import { useInView } from "react-intersection-observer";
 import UpdatingLoader from "@/components/common/updating-loader";
+import LoadingPage from "@/components/page/loading-page";
 
 interface ArtworksPageViewOptions {
    enableFilters?: boolean;
@@ -77,7 +78,7 @@ const ArtworksPageView = ({
 
    return (
       <>
-         {isFetching && <UpdatingLoader />}
+         {/* {isFetching && <UpdatingLoader />} */}
          <div className="flex-grow transition-all duration-300">
             <div className="flex flex-col lg:flex-row transition-all duration-300">
                {/* Sidebar */}
@@ -209,6 +210,8 @@ const ArtworksPageView = ({
                            </div>
                         )}
                   </div>
+
+                  {isLoading && <LoadingPage />}
 
                   <div className="mb-4">
                      <div

@@ -10,7 +10,9 @@ function makeQueryClient() {
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60,
-        refetchOnMount: "always",
+        // refetchOnMount: "always",
+        // refetchOnWindowFocus: "always",
+        // refetchOnReconnect: "always",
       },
       // dehydrate: {
       //   // include pending queries in dehydration
