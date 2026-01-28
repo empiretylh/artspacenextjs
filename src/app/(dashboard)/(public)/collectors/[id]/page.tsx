@@ -1,6 +1,7 @@
 import CollectorOverviewPage from "@/features/collectors/pages/collector-overview-page";
 import { getCachedCollector } from "@/features/service/artspace/get-collector";
 import { getCollectors } from "@/features/service/artspace/get-collectors";
+import { getImage } from "@/lib/utils";
 import { Metadata, ResolvingMetadata } from "next";
 
 export async function generateStaticParams() {
@@ -29,7 +30,7 @@ export async function generateMetadata(
     title: (data.first_name || '') + (data.last_name || ''),
     description: data.profile.about,
     openGraph: {
-      images: [data.profile.profile_picture || '/assets/profile-default.png'],
+      images: [getImage(data.profile.profile_picture) || '/assets/profile-default.png'],
       title: (data.first_name || '') + (data.last_name || ''),
       description: data.profile.about,
     }

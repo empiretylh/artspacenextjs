@@ -2,6 +2,7 @@ import GalleryOverviewPage from "@/features/gallery/pages/gallery-overview-page"
 import { getCachedGallery } from "@/features/service/artspace/get-gallery";
 import { getGalleries } from "@/features/service/artspace/get-galleries";
 import { Metadata, ResolvingMetadata } from "next";
+import { getImage } from "@/lib/utils";
 
 export async function generateStaticParams() {
   const galleries = await getGalleries({ limit: 10 })
@@ -29,7 +30,7 @@ export async function generateMetadata(
     title: (data.first_name || '') + (data.last_name || ''),
     description: data.profile.about,
     openGraph: {
-      images: [data.profile.profile_picture || '/assets/profile-default.png'],
+      images: [getImage(data.profile.profile_picture) || '/assets/profile-default.png'],
       title: (data.first_name || '') + (data.last_name || ''),
       description: data.profile.about,
     }

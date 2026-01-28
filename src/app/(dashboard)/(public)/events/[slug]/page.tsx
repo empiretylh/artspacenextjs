@@ -1,7 +1,7 @@
 import { queryKeys } from "@/config/query-keys";
-import ArtworkDetailPage from "@/features/artwork/pages/artwork";
-import { getArtwork } from "@/features/service/artspace/get-artwork";
-import { getArtworks } from "@/features/service/artspace/get-artworks";
+import EventDetailPage from "@/features/events/pages/event-detail-page";
+import { getEvent } from "@/features/service/artspace/get-event";
+import { getEvents } from "@/features/service/artspace/get-events";
 import { getQueryClient } from "@/lib/get-query-client";
 import { getImage } from "@/lib/utils";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -9,17 +9,17 @@ import { Metadata, ResolvingMetadata } from "next";
 import { cache } from "react";
 
 export async function generateStaticParams() {
-  const artworks = await getArtworks({ limit: 10 })
+  const events = await getEvents({ limit: 10 })
 
-  return artworks.results.map((artwork) => ({
-    id: artwork.id,
+  return events.results.map((event) => ({
+    slug: event.slug,
   }))
 }
 
-const getCachedArtwork = cache((id: string) => getArtwork({ artworkId: id }))
+const getCachedEvent = cache((slug: string) => getEvent({ eventSlug: slug }))
 
 type Props = {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
@@ -27,40 +27,40 @@ export async function generateMetadata(
   { params, searchParams }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { id } = await params;
+  const { slug } = await params;
 
   // fetch post information
-  const data = await getCachedArtwork(id);
+  const data = await getCachedEvent(slug);
 
   return {
     title: data.title,
-    description: data.description,
+    description: data.about,
     openGraph: {
-      images: [getImage(data.image)],
+      images: [getImage(data.cover_photo)],
       title: data.title,
-      description: data.description,
+      description: data.about,
     }
   }
 }
 
-const ArtworkDetailRoute = async ({
+const EventDetailRoute = async ({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
 }) => {
-  const { id } = await params;
+  const { slug } = await params;
   // const queryClient = getQueryClient();
 
   // await queryClient.prefetchQuery({
-  //   queryKey: queryKeys.artwork.detail(id),
-  //   queryFn: () => getCachedArtwork(id),
+  //   queryKey: queryKeys.event.detail(id),
+  //   queryFn: () => getCachedEvent(id),
   // });
 
   return (
     // <HydrationBoundary state={dehydrate(queryClient)}>
-    <ArtworkDetailPage id={id} />
+    <EventDetailPage />
     // </HydrationBoundary>
   );
 };
 
-export default ArtworkDetailRoute;
+export default EventDetailRoute;

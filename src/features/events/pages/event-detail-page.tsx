@@ -14,6 +14,7 @@ import MasonryItem from "@/components/app/masonry-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import InterestEventButton from "@/components/app/interest-button";
 import { ShareButton } from "@/components/common/share-button";
+import { useAuth } from "@/features/auth/store";
 
 const typeColorMap: Record<string, string> = {
    Solo: "bg-indigo-100 text-indigo-700",
@@ -23,14 +24,15 @@ const typeColorMap: Record<string, string> = {
 
 export default function EventDetailPage() {
    const { slug } = useParams<{ slug: string }>();
+   const { accessToken } = useAuth();
 
    const eventQuery = useGetEvent({
       eventSlug: String(slug),
    });
 
-   const event = eventQuery.data?.data;
+   const event = eventQuery.data;
 
-   if (eventQuery.isLoading) {
+   if (eventQuery.isLoading || accessToken === undefined) {
       return <LoadingPage />;
    }
 

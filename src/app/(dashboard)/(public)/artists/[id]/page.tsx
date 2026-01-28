@@ -1,6 +1,7 @@
 import ArtistOverviewPage from "@/features/artist/pages/artist-overview-page";
 import { getCachedArtist } from "@/features/service/artspace/get-artist";
 import { getArtists } from "@/features/service/artspace/get-artists";
+import { getImage } from "@/lib/utils";
 import { Metadata, ResolvingMetadata } from "next";
 
 export async function generateStaticParams() {
@@ -29,7 +30,7 @@ export async function generateMetadata(
     title: (data.first_name || '') + (data.last_name || ''),
     description: data.profile.about,
     openGraph: {
-      images: [data.profile.profile_picture || '/assets/profile-default.png'],
+      images: [getImage(data.profile.profile_picture) || '/assets/profile-default.png'],
       title: (data.first_name || '') + (data.last_name || ''),
       description: data.profile.about,
     }

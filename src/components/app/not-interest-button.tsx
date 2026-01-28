@@ -30,7 +30,7 @@ const NotInterestEventButton = ({
 
    return (
       <DropdownMenu>
-         <DropdownMenuTrigger>
+         <DropdownMenuTrigger asChild>
             <Button
                variant="default"
                //  onClick={handleInterestEvent}
