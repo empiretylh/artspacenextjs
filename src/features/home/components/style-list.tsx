@@ -6,10 +6,10 @@ import { paths } from "@/config/paths";
 import { queryKeys } from "@/config/query-keys";
 import { getHomeStyles } from "@/features/service/artspace/get-home-styles";
 import { getImage } from "@/lib/utils";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 export const StylesList = () => {
-   const stylesQuery = useSuspenseQuery({
+   const stylesQuery = useQuery({
       queryKey: queryKeys.style.home.list({ limit: 12 }),
       queryFn: () => getHomeStyles({ limit: 12 }),
    });

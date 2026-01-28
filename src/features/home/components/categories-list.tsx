@@ -1,15 +1,15 @@
 'use client'
-import { Skeleton } from "@/components/ui/skeleton";
-import Link from "@/components/common/link";
-import { paths } from "@/config/paths";
-import { getImage } from "@/lib/utils";
 import Image from "@/components/common/image"; // use your reusable Image component
-import { getHomeCategories, useGetHomeCategories } from "@/features/service/artspace/get-home-categories";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import Link from "@/components/common/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import { paths } from "@/config/paths";
 import { queryKeys } from "@/config/query-keys";
+import { getHomeCategories } from "@/features/service/artspace/get-home-categories";
+import { getImage } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 
 export const CategoriesList = () => {
-   const categoriesQuery = useSuspenseQuery({
+   const categoriesQuery = useQuery({
       queryKey: queryKeys.category.home.list({ limit: 12 }),
       queryFn: () => getHomeCategories({ limit: 12 }),
    })
