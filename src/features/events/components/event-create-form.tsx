@@ -67,11 +67,9 @@ interface EventCreateFormProps {
 export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
    const { addNotification } = useNotifications();
 
-   const [artworksOldData, setArtworksOldData] = useState<
-      AxiosResponse<ListApiResponse<Artwork>, any>[]
+   const [artworksOldData, setArtworksOldData] = useState<ListApiResponse<Artwork>[]
    >([]);
-   const [artistsOldData, setArtistsOldData] = useState<
-      AxiosResponse<ListApiResponse<User>, any>[]
+   const [artistsOldData, setArtistsOldData] = useState<ListApiResponse<User>[]
    >([]);
    const [page, setPage] = useState(1);
    const [limit, setLimit] = useState(10);
@@ -96,7 +94,7 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
       : artworksInfiniteQuery.data?.pages || [];
 
    const artworks =
-      artworksPagesToRender.flatMap((page) => page.data.results) ?? [];
+      artworksPagesToRender.flatMap((page) => page.results) ?? [];
 
    const artistsInfiniteQuery = useGetArtistsInfinite({
       page,
@@ -115,7 +113,7 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
       : artistsInfiniteQuery.data?.pages || [];
 
    const artists =
-      artistsPagesToRender.flatMap((page) => page.data.results) ?? [];
+      artistsPagesToRender.flatMap((page) => page.results) ?? [];
 
    const imageUploadMutation = useImageUpload();
 

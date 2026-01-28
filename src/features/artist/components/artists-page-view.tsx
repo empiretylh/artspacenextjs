@@ -19,6 +19,7 @@ import { EmptyState } from "@/components/layout/empty-state";
 
 import type { ColumnFiltersState, SortingState } from "@/types";
 import ArtistsListLoading from "./artists-list-loading";
+import { useAuth } from "@/features/auth/store";
 
 interface Props {
    title?: string;
@@ -49,6 +50,10 @@ const ArtistsPageView = ({
    hasNextPage,
    isFetchingNextPage,
 }: Props) => {
+   let loading = isLoading;
+   const { accessToken } = useAuth();
+   if (isLoading || accessToken === undefined) loading = true;
+
    return (
       <div className="flex-grow transition-all duration-300">
          <div className="flex flex-col lg:flex-row transition-all duration-300">
@@ -91,8 +96,8 @@ const ArtistsPageView = ({
                      </>
                   )}
 
-               {isLoading && <ArtistsListLoading />}
-               {!isLoading && (
+               {loading && <ArtistsListLoading />}
+               {!loading && (
                   <>
                      {/* <div className="flex gap-2 justify-end">
                         <div className="inline-flex gap-2 items-center">
@@ -134,8 +139,8 @@ const ArtistsPageView = ({
                                  )}
                               >
                                  {pagesToRender.map((page) => (
-                                    <Fragment key={page.data.next}>
-                                       {page.data.results.map((artist: any) => (
+                                    <Fragment key={page.next}>
+                                       {page.results.map((artist: any) => (
                                           <ProfileCard
                                              key={artist.id}
                                              user={artist}
@@ -155,8 +160,8 @@ const ArtistsPageView = ({
                                     {isFetchingNextPage
                                        ? "Loading more..."
                                        : hasNextPage
-                                         ? "Load More"
-                                         : "Nothing more to load"}
+                                          ? "Load More"
+                                          : "Nothing more to load"}
                                  </Button>
                               </div>
                            </>

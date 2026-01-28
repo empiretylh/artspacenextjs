@@ -1,13 +1,17 @@
+'use client'
 import { useGetGalleries } from "@/features/service/artspace/get-galleries";
 import UserListItem from "../../../components/app/user-list-item";
 import UserListItemSkeleton from "../../../components/app/user-list-item-skeleton";
+import { useAuth } from "@/features/auth/store";
 
 const FeaturedGalleries = () => {
    const galleryQuery = useGetGalleries({
       limit: 4,
    });
 
-   const galleries = galleryQuery.data?.data?.results ?? [];
+   const { accessToken } = useAuth();
+
+   const galleries = galleryQuery.data?.results ?? [];
 
    if (galleries.length === 0) {
       return null;
@@ -20,17 +24,17 @@ const FeaturedGalleries = () => {
          </h2>
 
          <div className="flex flex-col gap-2">
-            {galleryQuery.isLoading
+            {galleryQuery.isLoading || accessToken === undefined
                ? Array.from({ length: 4 }).map((_, index) => (
-                    <UserListItemSkeleton key={index} />
-                 ))
+                  <UserListItemSkeleton key={index} />
+               ))
                : galleries.map((gallery, index) => (
-                    <UserListItem
-                       key={index}
-                       user={gallery}
-                       className="max-w-[calc(var(--sidebar-width)-28px)]  md:max-w-[calc(var(--sidebar-width)-48px)]"
-                    />
-                 ))}
+                  <UserListItem
+                     key={index}
+                     user={gallery}
+                     className="max-w-[calc(var(--sidebar-width)-28px)]  md:max-w-[calc(var(--sidebar-width)-48px)]"
+                  />
+               ))}
          </div>
       </div>
    );

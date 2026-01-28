@@ -3,14 +3,17 @@ import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
 import { getImage } from "@/lib/utils";
 import { GenresListSkeleton } from "./genres-list-skeleton";
-import { useGetHomeGenres } from "@/features/service/artspace/get-home-genres";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/config/query-keys";
+import { getHomeGenres } from "@/features/service/artspace/get-home-genres";
 
 export const GenresList = () => {
-   const genresQuery = useGetHomeGenres({
-      limit: 4,
+   const genresQuery = useSuspenseQuery({
+      queryKey: queryKeys.genre.home.list({ limit: 4 }),
+      queryFn: () => getHomeGenres({ limit: 4 }),
    });
 
-   const genres = genresQuery.data?.data.results || [];
+   const genres = genresQuery.data?.results || [];
 
    if (genresQuery.isLoading) {
       return <GenresListSkeleton />;

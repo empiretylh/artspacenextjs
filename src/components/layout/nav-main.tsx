@@ -12,17 +12,99 @@ import { cn } from "@/lib/utils";
 import Link from "../common/link";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePathname, useRouter } from "next/navigation";
+import React from "react";
+import { paths } from "@/config/paths";
+import SmileysIcon from "../icons/smileys-icon";
+import ArtworksIcon from "../icons/artworks-icon";
+import ArtistsIcon from "../icons/artists-icon";
+import GalleryExportIcon from "../icons/gallery-export-icon";
+import Messages2Icon from "../icons/messages-2-icon";
+import Layers2Icon from "../icons/layers-2-icon";
+import ShoppingCartIcon from "../icons/shopping-cart-icon";
+import Home from "../icons/home-icon";
+import { ClipboardPenLineIcon, HomeIcon } from "lucide-react";
 
-export function NavMain({
-   items,
-}: {
-   items: {
-      title: string;
-      url: string;
-      icon?: any;
-      disabled?: boolean;
-   }[];
-}) {
+
+const data = {
+   navMain: [
+      {
+         title: "home",
+         url: paths.root.path,
+         icon: HomeIcon,
+      },
+      {
+         title: "artwork",
+         url: paths.artworks.path,
+         icon: ArtworksIcon,
+      },
+      {
+         title: "artist",
+         url: paths.artists.path,
+         icon: ArtistsIcon,
+      },
+      {
+         title: "collectors",
+         url: paths.collectors.path,
+         icon: SmileysIcon,
+      },
+      {
+         title: "gallery",
+         url: paths.galleries.path,
+         icon: GalleryExportIcon,
+      },
+      {
+         title: "event",
+         url: paths.events.path,
+         icon: ClipboardPenLineIcon,
+      },
+      {
+         title: "messages",
+         url: paths.chats.path,
+         icon: Messages2Icon,
+         disabled: true,
+      },
+      {
+         title: "inventory",
+         url: paths.inventory.path,
+         icon: Layers2Icon,
+         disabled: true,
+      },
+      {
+         title: "order",
+         url: paths.order.path,
+         icon: ShoppingCartIcon,
+         disabled: true,
+      },
+      // {
+      //    title: "settings",
+      //    url: paths.settings.path,
+      //    icon: Settings2Icon,
+      //    disabled: true,
+      // },
+      // {
+      //    title: "Lifecycle",
+      //    url: "#",
+      //    icon: LayoutDashboard,
+      // },
+      // {
+      //    title: "Analytics",
+      //    url: "#",
+      //    icon: LayoutDashboard,
+      // },
+      // {
+      //    title: "Projects",
+      //    url: "#",
+      //    icon: LayoutDashboard,
+      // },
+      // {
+      //    title: "Team",
+      //    url: "#",
+      //    icon: LayoutDashboard,
+      // },
+   ],
+};
+
+export function NavMain() {
    const pathname = usePathname();
    const { setOpenMobile } = useSidebar();
    const router = useRouter();
@@ -35,7 +117,7 @@ export function NavMain({
       <SidebarGroup>
          <SidebarGroupContent>
             <SidebarMenu className="pr-3">
-               {items.map((item) => {
+               {data.navMain.map((item) => {
                   const active = isActive(item.url);
 
                   return (

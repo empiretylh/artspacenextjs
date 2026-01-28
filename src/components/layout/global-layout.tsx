@@ -6,8 +6,6 @@ import { Outlet } from "react-router";
 // import { ScrollToTop } from "../common/scroll-to-top";
 
 const GlobalLayout = () => {
-   const { init } = useAuth();
-
    useEffect(() => {
       if (!localStorage.getItem("theme")) {
          const prefersDarkMode = window.matchMedia(
@@ -16,7 +14,6 @@ const GlobalLayout = () => {
          localStorage.setItem("theme", prefersDarkMode ? "dark" : "light");
       }
 
-      init();
    }, []);
 
    return (

@@ -1,31 +1,26 @@
+import { env } from "@/config/env";
+import { queryKeys } from "@/config/query-keys";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
+import type {
+   ColumnFiltersState,
+   ListApiResponse,
+   SortingState,
+   User,
+} from "@/types";
 import {
    queryOptions,
    useInfiniteQuery,
    useQuery,
 } from "@tanstack/react-query";
-import type {
-   ColumnFiltersState,
-   SortingState,
-   ListApiResponse,
-   User,
-} from "@/types";
-import type { AxiosResponse } from "axios";
-import { queryKeys } from "@/config/query-keys";
-import { artist } from "@/mocks/artists";
 
-/* ============================================================
- * API CALL
- * ============================================================ */
-
-export const getArtists = (
-   filters: ColumnFiltersState = [],
-   sorts: SortingState = [],
-   page = 1,
+export const getArtistsOg = async ({
+   filters = [],
+   sorts = [],
+   page,
    limit = 10,
    search = ""
-): Promise<AxiosResponse<ListApiResponse<User>>> => {
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<User>> => {
    const params: Record<string, any> = { page, limit, search };
 
    filters?.forEach((filter) => {
@@ -50,8 +45,50 @@ export const getArtists = (
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   return api.get(`/users/artist/`, { params });
+   const res = await api.get(`/users/artist/`, { params });
 
+   return res.data;
+   // return artist;
+};
+
+/* ============================================================
+ * API CALL
+ * ============================================================ */
+
+export const getArtists = async ({
+   filters = [],
+   sorts = [],
+   page,
+   limit = 10,
+   search = ""
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<User>> => {
+   const params: Record<string, any> = { page, limit, search };
+
+   filters?.forEach((filter) => {
+      if (
+         filter.value !== undefined &&
+         filter.value !== null &&
+         filter.value !== ""
+      ) {
+         if (params[filter.id]) {
+            if (Array.isArray(params[filter.id])) {
+               params[filter.id].push(filter.value);
+            } else {
+               params[filter.id] = [params[filter.id], filter.value];
+            }
+         } else {
+            params[filter.id] = filter.value;
+         }
+      }
+   });
+
+   if (sorts?.length > 0) {
+      params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
+   }
+
+   const res = await api.get(`/users/artist/`, { params });
+
+   return res.data;
    // return artist;
 };
 
@@ -72,7 +109,7 @@ export const getArtistsQueryOptions = ({
 }) => {
    return queryOptions({
       queryKey: queryKeys.artist.list({ filters, sorts, page, limit }),
-      queryFn: () => getArtists(filters, sorts, page, limit),
+      queryFn: () => getArtists({ filters, sorts, page, limit }),
    });
 };
 
@@ -95,6 +132,7 @@ export const useGetArtistsInfinite = ({
    search,
    limit = 10,
 }: UseArtistsOptions = {}) => {
+
    return useInfiniteQuery({
       queryKey: queryKeys.artist.infinite({
          filters,
@@ -103,10 +141,10 @@ export const useGetArtistsInfinite = ({
          limit,
       }),
       queryFn: ({ pageParam = 1 }) =>
-         getArtists(filters, sorts, pageParam, limit, search),
+         getArtists({ filters, sorts, page: pageParam, limit, search }),
       initialPageParam: 1,
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.data.count;
+         const total = lastPage.count;
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },
@@ -121,8 +159,8 @@ export const useGetArtists = ({
    queryConfig,
    filters,
    sorts,
-   page = 1,
-   limit = 10,
+   page,
+   limit,
 }: UseArtistsOptions = {}) => {
    return useQuery({
       ...getArtistsQueryOptions({ filters, sorts, page, limit }),

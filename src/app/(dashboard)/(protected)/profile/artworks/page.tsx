@@ -1,7 +1,7 @@
-import ProfileArtworksPage from "@/features/profile/pages/profile-artworks-page";
+import { ProfileArtworksPage } from "@/features/profile/pages/profile-artworks-page";
 
 const ProfileArtworksRoute = () => {
-  return <ProfileArtworksPage />;
+  return <ProfileArtworksPage />
 };
 
 export default ProfileArtworksRoute;

@@ -52,7 +52,6 @@ const registerSchema = z
 
       phone: z
          .string()
-         .optional()
          .refine(
             (val) => !val || myanmarPhoneRegex.test(val),
             "Enter a valid Myanmar phone number"
@@ -101,7 +100,7 @@ export default function RegisterForm() {
          });
          // setRegisterDialogOpen(false);
          // setLoginDialogOpen(true);
-         router.push(paths.auth.login.path, { replace: true });
+         router.push(paths.auth.login.path);
       } else {
          handleFormError(response, form);
       }
@@ -199,7 +198,7 @@ export default function RegisterForm() {
                   render={({ field }) => (
                      <FormItem>
                         <FormControl>
-                           <Input placeholder="Phone" {...field} />
+                           <Input placeholder="Phone *" {...field} />
                         </FormControl>
                         <FormMessage />
                      </FormItem>
@@ -279,7 +278,7 @@ export default function RegisterForm() {
                </Button>
                <FieldDescription className="px-6 text-center">
                   Already have an account?{" "}
-                  <Link to={paths.auth.login.path} replace>
+                  <Link to={paths.auth.login.path}>
                      Sign in
                   </Link>
                </FieldDescription>

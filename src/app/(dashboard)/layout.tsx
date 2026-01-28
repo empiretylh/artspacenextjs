@@ -1,27 +1,21 @@
-'use client'
-
-import { useEffect, useState } from "react";
 import { AppSidebar } from "@/components/layout/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { SiteHeader } from "@/components/layout/site-header";
 import Footer from "@/components/layout/footer";
 import MainOutlet from "@/components/layout/main-outlet";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { queryKeys } from "@/config/query-keys";
 import EventPopupSlider from "@/features/events/components/event-pop-up-slider";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { getPopUpEvents } from "@/features/service/artspace/get-pop-up-events";
+import { getQueryClient } from "@/lib/get-query-client";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-const DashboardLayout = ({ children }: { children?: React.ReactNode }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => {
+  const queryClient = getQueryClient();
 
-  const isMobile = useIsMobile();
-
-  useEffect(() => {
-    localStorage.setItem("theme", localStorage.getItem('theme') ? "dark" : "light");
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDarkMode]);
+  // await queryClient.prefetchQuery({
+  //   queryKey: queryKeys.event.popUp.list(),
+  //   queryFn: () => getPopUpEvents(),
+  // });
 
   return (
     <>
@@ -33,21 +27,24 @@ const DashboardLayout = ({ children }: { children?: React.ReactNode }) => {
             "--header-height": "calc(var(--spacing) * 12 + 9px)",
           } as React.CSSProperties
         }
-        defaultOpen={!isMobile}
+        defaultOpen={true}
       >
         <AppSidebar variant="inset" />
-        <SidebarInset className="!mt-0 !mb-0">
-          <SiteHeader
-            isDarkMode={isDarkMode}
-            toggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-          />
-          <MainOutlet>
-            {children}
-          </MainOutlet>
-          <Footer />
+        <SidebarInset className="mb-0! h-screen overflow-hidden">
+          <div id="scroll-container" className="h-screen flex justify-between flex-col overflow-y-auto" style={{
+            scrollbarGutter: "stable"
+          }}>
+            <SiteHeader />
+            <MainOutlet>
+              {children}
+            </MainOutlet>
+            <Footer />
+          </div>
         </SidebarInset>
       </SidebarProvider>
-      {/* <EventPopupSlider /> */}
+      {/* <HydrationBoundary state={dehydrate(queryClient)}> */}
+      <EventPopupSlider />
+      {/* </HydrationBoundary> */}
     </>
   );
 };

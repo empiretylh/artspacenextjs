@@ -18,13 +18,13 @@ import { queryKeys } from "@/config/query-keys";
 // 1. GET EVENTS (API CALL)
 // ----------------------------------------------------------------------
 
-export const getEvents = (
-   filters: ColumnFiltersState = [],
-   sorts: SortingState = [],
-   page?: number,
-   limit?: number,
+export const getEvents = async ({
+   filters = [],
+   sorts = [],
+   page,
+   limit,
    search = ""
-): Promise<AxiosResponse<ListApiResponse<Event>>> => {
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<Event>> => {
    const params: Record<string, any> = {
       page,
       page_size: limit,
@@ -77,7 +77,9 @@ export const getEvents = (
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   return api.get(`/artworks/events/`, { params });
+   const res = await api.get(`/artworks/events/`, { params });
+
+   return res.data;
 };
 
 // ----------------------------------------------------------------------
@@ -103,7 +105,7 @@ export const getEventsQueryOptions = (
          limit,
          search,
       }),
-      queryFn: () => getEvents(filters, sorts, page, limit, search),
+      queryFn: () => getEvents({ filters, sorts, page, limit, search }),
    });
 };
 
@@ -158,9 +160,9 @@ export const useGetEventsInfinite = ({
          limit,
       }),
       queryFn: ({ pageParam = 1 }) =>
-         getEvents(filters, sorts, pageParam, limit, search),
+         getEvents({ filters, sorts, page: pageParam, limit, search }),
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.data.count;
+         const total = lastPage.count;
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },

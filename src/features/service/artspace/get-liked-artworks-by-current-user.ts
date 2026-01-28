@@ -18,13 +18,13 @@ import { queryKeys } from "@/config/query-keys";
 // 1. GET ARTWORKS (API CALL)
 // ----------------------------------------------------------------------
 
-export const getLikedArtworksByCurrentUser = (
-   filters: ColumnFiltersState = [],
-   sorts: SortingState = [],
-   page = 1,
-   limit = 10,
+export const getLikedArtworksByCurrentUser = async ({
+   filters = [],
+   sorts = [],
+   page,
+   limit,
    search = ""
-): Promise<AxiosResponse<ListApiResponse<Artwork>>> => {
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<Artwork>> => {
    // Default query params
    const params: Record<string, any> = {
       page,
@@ -86,7 +86,9 @@ export const getLikedArtworksByCurrentUser = (
       // assuming backend supports "-" prefix for descending
    }
 
-   return api.get(`/artworks/liked/`, { params });
+   const res = await api.get(`/artworks/liked/`, { params });
+
+   return res.data;
 };
 
 // ----------------------------------------------------------------------
@@ -112,7 +114,7 @@ export const getLikedArtworksByCurrentUserQueryOptions = (
          limit,
       }),
       queryFn: () =>
-         getLikedArtworksByCurrentUser(filters, sorts, page, limit, search),
+         getLikedArtworksByCurrentUser({ filters, sorts, page, limit, search }),
    });
 };
 
@@ -168,7 +170,7 @@ export const getLikedArtworksByCurrentUserQueryInfiniteOptions = (
          limit,
       }),
       queryFn: () =>
-         getLikedArtworksByCurrentUser(filters, sorts, page, limit, search),
+         getLikedArtworksByCurrentUser({ filters, sorts, page, limit, search }),
    });
 };
 
@@ -187,14 +189,16 @@ export const useGetLikedArtworksByCurrentUserInfinite = ({
       }),
       queryFn: ({ pageParam = 1 }) =>
          getLikedArtworksByCurrentUser(
-            filters,
-            sorts,
-            pageParam,
-            limit,
-            search
+            {
+               filters,
+               sorts,
+               page: pageParam,
+               limit,
+               search
+            }
          ),
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.data.count;
+         const total = lastPage.count;
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },

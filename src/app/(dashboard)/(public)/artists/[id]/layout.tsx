@@ -1,18 +1,15 @@
 'use client'
 import ProfileLayoutSkeleton from "@/components/app/profile/profile-layout-skeleton";
 import ProfileLayoutView from "@/components/app/profile/profile-layout-view";
-import ArtworksIcon from "@/components/icons/artworks-icon";
-import BookmarkIcon from "@/components/icons/bookmark-icon";
-import CollectionIcon from "@/components/icons/collection-icon";
-import HeartIcon from "@/components/icons/heart-icon";
-import OverviewIcon from "@/components/icons/overview-icon";
 import NotFound from "@/components/layout/not-found";
 import { paths } from "@/config/paths";
+import { useAuth } from "@/features/auth/store";
 import { useGetArtist } from "@/features/service/artspace/get-artist";
 import { useParams } from "next/navigation";
 
 const ArtistDetailLayout = ({ children }: { children: React.ReactNode }) => {
   const { id } = useParams();
+  const { accessToken } = useAuth()
 
   const userQuery = useGetArtist({
     artistId: String(id),
@@ -21,9 +18,9 @@ const ArtistDetailLayout = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
-  const user = userQuery.data?.data;
+  const user = userQuery.data;
 
-  if (userQuery.isLoading) {
+  if (userQuery.isLoading || accessToken === undefined) {
     return <ProfileLayoutSkeleton />;
   }
 
@@ -33,28 +30,28 @@ const ArtistDetailLayout = ({ children }: { children: React.ReactNode }) => {
     {
       title: "Overview",
       href: paths.artists.detail.getHref(String(user.id)),
-      icon: OverviewIcon,
+      icon: "overview",
     },
     {
       title: "Artworks",
       href: paths.artists.artworks.getHref(String(user.id)),
-      icon: ArtworksIcon,
+      icon: "artworks",
     },
     {
       title: "Collections",
       href: paths.artists.collections.getHref(String(user.id)),
-      icon: CollectionIcon,
+      icon: "collections",
       disabled: true,
     },
     {
       title: "Like Artworks",
       href: paths.artists.likedArtworks.getHref(String(user.id)),
-      icon: HeartIcon,
+      icon: "likes",
     },
     {
       title: "Save",
       href: paths.artists.save.getHref(String(user.id)),
-      icon: BookmarkIcon,
+      icon: "save",
       disabled: true,
     },
   ];

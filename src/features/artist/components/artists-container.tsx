@@ -22,9 +22,8 @@ const ArtistsPageContainer = () => {
    const searchParams = useSearchParams();
    const pathname = usePathname();
    const { replace } = useRouter();
-   const [oldData, setOldData] = useState<
-      AxiosResponse<ListApiResponse<User>, any>[]
-   >([]);
+   const [oldData, setOldData] = useState<ListApiResponse<User>[]>
+      ([]);
 
    const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
    const [limit, setLimit] = useState(Number(searchParams.get("limit")) || 12);
@@ -55,6 +54,7 @@ const ArtistsPageContainer = () => {
          limit,
          queryConfig: {
             placeholderData: keepPreviousData,
+
          },
       });
 
@@ -178,9 +178,10 @@ const ArtistsPageContainer = () => {
       setDebouncedSearch(newSearch);
       setFilters(newFilters);
       setSorts(newSorts);
+      // refetch();
    }, []);
 
-   const isDataEmpty = () => pagesToRender[0]?.data?.results?.length <= 0;
+   const isDataEmpty = () => pagesToRender[0]?.results?.length <= 0;
 
    // -----------------------------------------
    // Render

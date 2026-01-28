@@ -1,3 +1,4 @@
+'use client'
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "../store/cart-store";
 import { useRouter } from "next/navigation";

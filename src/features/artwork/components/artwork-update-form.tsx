@@ -93,9 +93,9 @@ export const ArtworkUpdateForm = ({
       resolver: zodResolver(updateArtInputSchema),
       defaultValues: {
          id: artwork.id,
-         category: artwork.category,
+         category: artwork.category.id,
          title: artwork.title,
-         genre: artwork.genre,
+         genre: artwork.genre.id,
          styles_artwork_ids: artwork.styles.map((styleId) => ({
             label: styles.find((s) => s.id === styleId)?.name || "Unknown",
             value: String(styleId),

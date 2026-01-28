@@ -15,14 +15,20 @@ import { cn, getDate, getImage } from "@/lib/utils";
 import { paths } from "@/config/paths";
 import Link from "@/components/common/link";
 import { useRouter } from "next/navigation";
-import { useGetPopUpEvents } from "@/features/service/artspace/get-pop-up-events";
+import { getPopUpEvents, useGetPopUpEvents } from "@/features/service/artspace/get-pop-up-events";
 import { Spinner } from "@/components/ui/spinner";
 import { BaseDialog } from "@/components/common/dialogs/base-dialog";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/config/query-keys";
 
 export default function EventPopupSlider() {
    const [open, setOpen] = useState(false);
-   const popUpEventsQuery = useGetPopUpEvents();
-   const events = popUpEventsQuery.data?.data || [];
+   const popUpEventsQuery = useSuspenseQuery({
+      queryKey: queryKeys.event.popUp.list(),
+      queryFn: () => getPopUpEvents(),
+   });
+
+   const events = popUpEventsQuery.data || [];
    // const events = [];
    const [api, setApi] = React.useState<CarouselApi>();
    const [current, setCurrent] = React.useState(0);
@@ -51,12 +57,20 @@ export default function EventPopupSlider() {
 
    useEffect(() => {
       if (
-         popUpEventsQuery.data?.data &&
-         popUpEventsQuery.data.data.length > 0
+         popUpEventsQuery.data &&
+         popUpEventsQuery.data.length > 0 &&
+         localStorage.getItem("artspace:firstLoadPopup")
       ) {
          setOpen(true);
+         localStorage.setItem("artspace:firstLoadPopup", "true");
       }
-   }, [popUpEventsQuery.data?.data]);
+   }, [popUpEventsQuery.data]);
+
+   useEffect(() => {
+      return () => {
+         localStorage.removeItem("artspace:firstLoadPopup");
+      }
+   }, [])
 
    return (
       <>

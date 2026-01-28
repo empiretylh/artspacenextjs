@@ -132,10 +132,10 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
    });
 
    const artists =
-      artistsQuery.data?.pages.flatMap((p) => p.data.results) ?? [];
+      artistsQuery.data?.pages.flatMap((p) => p.results) ?? [];
 
    const artworks =
-      artworksQuery.data?.pages.flatMap((p) => p.data.results) ?? [];
+      artworksQuery.data?.pages.flatMap((p) => p.results) ?? [];
 
    /* ------------------------------
       Slug auto-generation

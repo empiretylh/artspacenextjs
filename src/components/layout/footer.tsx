@@ -22,7 +22,7 @@ const navlinks: Record<
 > = {
    Explore: [
       { title: "About Us", link: "/about-us.html" },
-      { title: "Collections", href: paths.collections.path },
+      { title: "Arcade", href: paths.collections.path },
       { title: "Press", href: "#" },
    ],
    Help: [

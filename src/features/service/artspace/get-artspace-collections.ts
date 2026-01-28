@@ -19,15 +19,13 @@ import { dummyArtworks } from "@/features/collections/data/dummy-artworks";
 // 1. GET ARTWORKS (API CALL)
 // ----------------------------------------------------------------------
 
-export const getArtspaceCollections = (
-   filters: ColumnFiltersState = [],
-   sorts: SortingState = [],
-   page?: number,
-   limit?: number,
+export const getArtspaceCollections = async ({
+   filters = [],
+   sorts = [],
+   page,
+   limit,
    search = ""
-): Promise<
-   AxiosResponse<ListApiResponse<{ id: number; artwork: Artwork }>>
-> => {
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<{ id: number; artwork: Artwork }>> => {
    const params: Record<string, any> = {
       page,
       page_size: limit,
@@ -35,8 +33,9 @@ export const getArtspaceCollections = (
 
    params.search = search;
 
-   return api.get(`/artworks/mmartspace-collected-artworks/`, { params });
+   const res = await api.get(`/artworks/mmartspace-collected-artworks/`, { params });
 
+   return res.data;
    // return dummyArtworks;
 };
 
@@ -64,7 +63,7 @@ export const getArtspaceCollectionsQueryOptions = (
          search,
       }),
       queryFn: () =>
-         getArtspaceCollections(filters, sorts, page, limit, search),
+         getArtspaceCollections({ filters, sorts, page, limit, search }),
    });
 };
 
@@ -119,9 +118,9 @@ export const useGetArtspaceCollectionsInfinite = ({
          limit,
       }),
       queryFn: ({ pageParam = 1 }) =>
-         getArtspaceCollections(filters, sorts, pageParam, limit, search),
+         getArtspaceCollections({ filters, sorts, page: pageParam, limit, search }),
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.data.count;
+         const total = lastPage.count;
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },

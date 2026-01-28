@@ -1,20 +1,25 @@
 'use client'
+import ProfileCard from "@/components/app/profile/profile-card";
 import { SectionTitle } from "@/components/common";
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
 import { paths } from "@/config/paths";
+import { queryKeys } from "@/config/query-keys";
+import { getArtists, getArtistsOg } from "@/features/service/artspace/get-artists";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtistsSectionSkeleton } from "./featured-artists-section-skeleton";
-import { useGetArtists } from "@/features/service/artspace/get-artists";
-import UserSmallCard from "@/components/app/user-small-card";
-import ProfileCard from "@/components/app/profile/profile-card";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export const FeaturedArtistsSlider = () => {
-   const artistsQuery = useGetArtists({ limit: 10 });
-   const featuredArtists = artistsQuery.data?.data.results ?? [];
+   const artistsQuery = useQuery({
+      queryKey: queryKeys.artist.list({ limit: 10 }),
+      queryFn: () => getArtists({ limit: 10 }),
+   });
+
+   const featuredArtists = artistsQuery.data?.results ?? [];
 
    const isMobile = useIsMobile();
 

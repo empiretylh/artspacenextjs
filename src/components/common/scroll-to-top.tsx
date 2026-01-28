@@ -4,9 +4,13 @@ import { useEffect } from "react";
 
 export const ScrollToTop = () => {
    const pathname = usePathname();
-
    useEffect(() => {
-      window.scrollTo(0, 0);
+      const scrollContainer = document.querySelector('#scroll-container');
+      if (scrollContainer) {
+         scrollContainer.scrollTo({
+            top: 0,
+         });
+      }
    }, [pathname]);
 
    return null;

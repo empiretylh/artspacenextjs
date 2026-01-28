@@ -63,11 +63,8 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
             defaultOpen={!isMobile}
          >
             <AppSidebar variant="inset" />
-            <SidebarInset className="!mt-0 !mb-0">
-               <SiteHeader
-                  isDarkMode={isDarkMode}
-                  toggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-               />
+            <SidebarInset className="!mt-0">
+               <SiteHeader />
                <MainOutlet />
                <Footer />
             </SidebarInset>

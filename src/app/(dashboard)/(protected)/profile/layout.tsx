@@ -26,33 +26,33 @@ const ProfileDetailLayout = ({ children }: { children: React.ReactNode }) => {
     {
       title: "Overview",
       href: paths.profile.path,
-      icon: OverviewIcon,
+      icon: "overview",
     },
     {
       title: "Artworks",
       href: paths.profile.artworks.path,
-      icon: ArtworksIcon,
+      icon: "artworks",
     },
     {
       title: "Events",
       href: paths.profile.events.path,
-      icon: ClipboardPenLineIcon,
+      icon: "events",
     },
     {
       title: "Collections",
       href: paths.profile.collections.path,
-      icon: CollectionIcon,
+      icon: "collections",
       disabled: true,
     },
     {
       title: "Like artworks",
       href: paths.profile.likedArtworks.path,
-      icon: HeartIcon,
+      icon: "likes",
     },
     {
       title: "Save",
       href: paths.profile.save.path,
-      icon: BookmarkIcon,
+      icon: "save",
       disabled: true,
     },
   ];

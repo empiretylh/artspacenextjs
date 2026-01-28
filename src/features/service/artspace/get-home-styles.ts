@@ -1,21 +1,21 @@
+import { queryKeys } from "@/config/query-keys";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import type {
+   Style,
    ColumnFiltersState,
    ListApiResponse,
-   Style,
    SortingState,
 } from "@/types";
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
 
-export const getHomeStyles = (
-   filters = {},
-   sorts = {},
-   page = 1,
-   limit = 10
-): Promise<AxiosResponse<ListApiResponse<{ id: number; style: Style }>>> => {
-   return api.get(`/homepage/artwork-styles/`, {
+export const getHomeStyles = async (
+   { filters = {},
+      sorts = {},
+      page = 1,
+      limit = 10 }
+): Promise<ListApiResponse<{ id: number; style: Style }>> => {
+   const response = await api.get(`/homepage/artwork-styles/`, {
       params: {
          // filters,
          // sorts,
@@ -23,6 +23,8 @@ export const getHomeStyles = (
          // limit,
       },
    });
+
+   return response.data
 };
 
 export const getHomeStylesQueryOptions = (
@@ -50,8 +52,8 @@ export const getHomeStylesQueryOptions = (
          formattedFilters["deletedAt"] =
             filter.value === "deleted"
                ? {
-                    not: null,
-                 }
+                  not: null,
+               }
                : null;
       } else {
          formattedFilters[filter.id] = filter.value;
@@ -60,11 +62,14 @@ export const getHomeStylesQueryOptions = (
 
    return queryOptions({
       queryKey:
-         filters || sorts || page || limit
-            ? ["styles", formattedFilters, formattedSorts, page, limit]
-            : ["styles"],
+         queryKeys.style.home.list({
+            filters,
+            sorts,
+            page,
+            limit,
+         }),
       queryFn: () =>
-         getHomeStyles(formattedFilters, formattedSorts, page, limit),
+         getHomeStyles({ filters: formattedFilters, sorts: formattedSorts, page, limit }),
    });
 };
 

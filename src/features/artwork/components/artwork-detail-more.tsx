@@ -12,7 +12,7 @@ import { MoreVertical } from "lucide-react";
 const ArtworkDetailMore = ({ artwork }: { artwork: Artwork }) => {
    return (
       <Popover>
-         <PopoverTrigger>
+         <PopoverTrigger asChild>
             <Button variant="ghost" size="icon">
                <MoreVertical />
             </Button>
@@ -22,10 +22,10 @@ const ArtworkDetailMore = ({ artwork }: { artwork: Artwork }) => {
                className="w-full justify-start rounded-b-none"
                itemId={artwork.id}
                reportType="artwork"
-               variant="ghost"
+               variant="outline"
             />
             <ShareButton
-               variant="ghost"
+               variant="outline"
                size="sm"
                className="w-full justify-start rounded-t-none"
                textButton

@@ -18,13 +18,13 @@ import { queryKeys } from "@/config/query-keys";
 // 1. GET EVENTS (API CALL)
 // ----------------------------------------------------------------------
 
-export const getUploadedEvents = (
-   filters: ColumnFiltersState = [],
-   sorts: SortingState = [],
-   page = 1,
-   limit = 10,
+export const getUploadedEvents = async ({
+   filters = [],
+   sorts = [],
+   page,
+   limit,
    search = ""
-): Promise<AxiosResponse<ListApiResponse<Event>>> => {
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string }): Promise<ListApiResponse<Event>> => {
    // Default query params
    const params: Record<string, any> = {
       page,
@@ -68,7 +68,9 @@ export const getUploadedEvents = (
       // assuming backend supports "-" prefix for descending
    }
 
-   return api.get(`/artworks/events/mine/`, { params });
+   const res = await api.get(`/artworks/events/mine/`, { params });
+
+   return res.data
 };
 
 // ----------------------------------------------------------------------
@@ -93,7 +95,7 @@ export const getUploadedEventsQueryOptions = (
          page,
          limit,
       }),
-      queryFn: () => getUploadedEvents(filters, sorts, page, limit, search),
+      queryFn: () => getUploadedEvents({ filters, sorts, page, limit, search }),
    });
 };
 
@@ -148,7 +150,7 @@ export const getUploadedEventsQueryInfiniteOptions = (
          page,
          limit,
       }),
-      queryFn: () => getUploadedEvents(filters, sorts, page, limit, search),
+      queryFn: () => getUploadedEvents({ filters, sorts, page, limit, search }),
    });
 };
 
@@ -166,9 +168,9 @@ export const useGetUploadedEventsInfinite = ({
          limit,
       }),
       queryFn: ({ pageParam = 1 }) =>
-         getUploadedEvents(filters, sorts, pageParam, limit, search),
+         getUploadedEvents({ filters, sorts, page: pageParam, limit, search }),
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.data.count;
+         const total = lastPage.count;
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },

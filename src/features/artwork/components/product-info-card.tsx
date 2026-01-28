@@ -7,11 +7,14 @@ import VerifyIcon from "@/components/icons/verify-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { paths } from "@/config/paths";
+import { useCartStore } from "@/features/cart/store/cart-store";
 import { getImage, timeAgo } from "@/lib/utils";
 import type { Artwork } from "@/types";
 import { User, ShieldCheck, Truck, UserIcon } from "lucide-react";
 
 export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
+   const { addToCart } = useCartStore();
+
    return (
       <Card>
          <CardContent>
@@ -67,7 +70,8 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
             {/* Buttons */}
             <div className="space-y-3 mb-6">
                <Button
-                  disabled
+                  onClick={() => addToCart(artwork)}
+                  // disabled
                   className="w-full text-base rounded-md font-medium font-display bg-primary text-primary-foreground"
                >
                   Add to Cart

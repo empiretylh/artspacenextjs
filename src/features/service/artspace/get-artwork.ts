@@ -2,15 +2,17 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import type { ApiResponse, Artwork } from "@/types";
-import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
+import { useAuth } from "@/features/auth/store";
 
-export const getArtwork = ({
+export const getArtwork = async ({
    artworkId,
 }: {
    artworkId: string;
-}): Promise<AxiosResponse<ApiResponse<Artwork>>> => {
-   return api.get(`/artworks/artworks/${artworkId}`);
+}): Promise<ApiResponse<Artwork>> => {
+   const res = await api.get(`/artworks/artworks/${artworkId}`);
+
+   return res.data;
 };
 
 export const getArtworkQueryOptions = (artworkId: string) => {
@@ -29,8 +31,11 @@ export const useGetArtwork = ({
    artworkId,
    queryConfig,
 }: UseArtworkOptions) => {
+   const { accessToken } = useAuth.getState();
+
    return useQuery({
       ...getArtworkQueryOptions(artworkId),
       ...queryConfig,
+      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
    });
 };

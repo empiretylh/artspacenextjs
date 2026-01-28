@@ -18,14 +18,16 @@ import { queryKeys } from "@/config/query-keys";
 // 1. GET EVENTS (API CALL)
 // ----------------------------------------------------------------------
 
-export const getPopUpEvents = (
-   filters: ColumnFiltersState = [],
-   sorts: SortingState = [],
-   page?: number,
-   limit?: number,
-   search = ""
-): Promise<AxiosResponse<Event[]>> => {
-   return api.get(`/artworks/events/popup`);
+export const getPopUpEvents = async ({
+   filters,
+   sorts,
+   page,
+   limit,
+   search
+}: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string } = {}): Promise<Event[]> => {
+   const res = await api.get(`/artworks/events/popup`);
+
+   return res.data
 };
 
 // ----------------------------------------------------------------------
@@ -51,7 +53,7 @@ export const getPopUpEventsQueryOptions = (
          limit,
          search,
       }),
-      queryFn: () => getPopUpEvents(filters, sorts, page, limit, search),
+      queryFn: () => getPopUpEvents({ filters, sorts, page, limit, search }),
    });
 };
 

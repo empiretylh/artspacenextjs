@@ -136,8 +136,8 @@ const EventsPageView = ({
                                  )}
                               >
                                  {pagesToRender.map((page) => (
-                                    <Fragment key={page.data.next}>
-                                       {page.data.results.map((event: any) => {
+                                    <Fragment key={page.next}>
+                                       {page.results.map((event: any) => {
                                           if (renderEventCard) {
                                              return (
                                                 <div key={"event-" + event.id}>

@@ -64,7 +64,7 @@ const ArtspaceCollectionsView = ({
                {isLoading && <Skeleton className="h-7 w-48 rounded-md" />}
 
                <div>
-                  {pagesToRender?.[0]?.data?.results?.length <= 0 &&
+                  {pagesToRender?.[0]?.results?.length <= 0 &&
                      !isLoading && <EmptyState />}
                </div>
 
@@ -76,8 +76,8 @@ const ArtspaceCollectionsView = ({
                      )}
                   >
                      {pagesToRender?.map((page) => (
-                        <Fragment key={page.data.next}>
-                           {page.data.results.map(
+                        <Fragment key={page.next}>
+                           {page.results.map(
                               (artwork: { id: number; artwork: Artwork }) => (
                                  <MasonryItem
                                     key={artwork.id}
@@ -102,7 +102,7 @@ const ArtspaceCollectionsView = ({
                   {/* Infinite scroll sentinel */}
                   {hasNextPage &&
                      !isFetchingNextPage &&
-                     pagesToRender?.[0]?.data?.results?.length > 0 && (
+                     pagesToRender?.[0]?.results?.length > 0 && (
                         <div ref={loadMoreRef} className="h-1" />
                      )}
 
@@ -114,7 +114,7 @@ const ArtspaceCollectionsView = ({
 
                   {!hasNextPage &&
                      !isFetchingNextPage &&
-                     pagesToRender?.[0]?.data?.results?.length > 0 && (
+                     pagesToRender?.[0]?.results?.length > 0 && (
                         <div className="flex justify-center my-2 text-sm text-muted-foreground">
                            Nothing more to load
                         </div>

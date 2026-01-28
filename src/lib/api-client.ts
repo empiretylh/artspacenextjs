@@ -1,18 +1,12 @@
 import Axios, { type InternalAxiosRequestConfig } from "axios";
-
-import { useNotifications } from "@/components/ui/notifications";
 import { env } from "@/config/env";
-import { State, useAuth } from "@/features/auth/store";
-import {
-   login as apiLogin,
-   logout as apiLogout,
-   register as apiRegister,
-   getMe,
-   refresh as apiRefresh,
-} from "@/features/auth/api";
+import { useAuth } from "@/features/auth/store";
+import { useNotifications } from "@/components/ui/notifications";
+import Cookies from "js-cookie";
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
-   const token = useAuth.getState().accessToken;
+   const cookie = JSON.parse(Cookies.get('artspace_auth_session') || "{}");
+   const token = useAuth.getState().accessToken || cookie.accessToken;
    if (config.headers) {
       config.headers.Accept = "application/json";
    }
@@ -54,102 +48,52 @@ api.interceptors.request.use(authRequestInterceptor);
 //    }
 // );
 
-// LocalStorage helpers
-const STORAGE_KEY = "auth_state";
-
-function saveToStorage(state: Partial<State>) {
-   localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-         accessToken: state.accessToken,
-         refreshToken: state.refreshToken,
-         user: state.user,
-      })
-   );
-}
-
 let refreshing: Promise<string | null> | null = null;
 
-if (api) {
-   api.interceptors.response.use(
-      (resp) => resp, // normal response
-      async (error) => {
-         const original = error.config;
+api.interceptors.response.use(
+   (resp) => resp,
+   async (error) => {
+      const original = error.config;
 
-         if (
-            error.response?.status === 401 &&
-            !original._retry &&
-            !original.url?.includes("/sign-in") &&
-            !original.url?.includes("/refresh")
-         ) {
-            original._retry = true;
+      if (error.response?.status === 401 && !original._retry) {
+         original._retry = true;
 
-            refreshing ??= (async () => {
-               try {
-                  const { access: accessToken } = await apiRefresh(
-                     useAuth.getState().refreshToken
-                  );
-                  useAuth.setState({ accessToken });
-                  const data = useAuth.getState();
-                  saveToStorage({
-                     accessToken,
-                     refreshToken: data.refreshToken,
-                     user: data.user,
-                  });
-                  return accessToken;
-               } catch {
-                  useAuth.setState({
-                     accessToken: null,
-                     user: null,
-                     refreshToken: null,
-                  });
-                  saveToStorage({
-                     accessToken: null,
-                     refreshToken: null,
-                     user: null,
-                  });
-                  return null;
-               } finally {
-                  refreshing = null;
-               }
-            })();
+         // We call our OWN Next.js API, which has access to the HttpOnly cookie
+         refreshing ??= (async () => {
+            try {
+               const res = await fetch("/api/auth/refresh", { method: "POST" });
+               const data = await res.json();
 
-            const token = await refreshing;
+               if (!res.ok) throw new Error();
 
-            if (token) {
-               const retryConfig = {
-                  ...original,
-                  headers: {
-                     ...original.headers,
-                     Authorization: `Bearer ${token}`,
-                  },
-               };
-               // ✅ Return the retried request, don’t reject yet
-               return api(retryConfig);
+               // Update Zustand with the new short-lived access token
+               useAuth.setState({ accessToken: data.access });
+               return data.access;
+            } catch {
+               // Global logout on failure
+               useAuth.getState().logout();
+               return null;
+            } finally {
+               refreshing = null;
             }
-         } else {
-            let message = error.response?.data?.message || error.message;
-            let title = "Error";
-            if (error.response.data.detail) message = error.response.data.detail;
+         })();
 
-            if (error.code === "ERR_NETWORK") {
-               title = "Network Error";
-               message =
-                  "It looks like your browser or a browser extension may be blocking updates. " +
-                  "Try disabling extensions or using a private/incognito window to continue.";
-            }
-
-            if (error.response.status !== 404) {
-               useNotifications.getState().addNotification({
-                  type: "error",
-                  title,
-                  message,
-               });
-            }
+         const token = await refreshing;
+         if (token) {
+            original.headers.Authorization = `Bearer ${token}`;
+            return api(original);
          }
-
-         // Only reject if refresh failed or it’s another error
-         return Promise.reject(error);
       }
-   );
-}
+
+      console.log(error)
+
+      const message = error.response?.data?.detail || error.message;
+      useNotifications.getState().addNotification({
+         type: "error",
+         title: "Error",
+         message,
+      });
+
+      return Promise.reject(error);
+   }
+);

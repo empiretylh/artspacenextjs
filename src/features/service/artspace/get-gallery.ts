@@ -2,15 +2,20 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import type { ApiResponse, User } from "@/types";
-import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
+import { cache } from "react";
+import { useAuth } from "@/features/auth/store";
 
-export const getGallery = ({
+export const getCachedGallery = cache((id: string) => getGallery({ galleryId: id }))
+
+export const getGallery = async ({
    galleryId,
 }: {
    galleryId: string;
-}): Promise<AxiosResponse<ApiResponse<User>>> => {
-   return api.get(`/users/gallery/${galleryId}`);
+}): Promise<ApiResponse<User>> => {
+   const res = await api.get(`/users/gallery/${galleryId}`);
+
+   return res.data;
 };
 
 export const getGalleryQueryOptions = (galleryId: string) => {
@@ -25,12 +30,12 @@ type UseGalleryOptions = {
    queryConfig?: QueryConfig<typeof getGalleryQueryOptions>;
 };
 
-export const useGetGallery = ({
-   galleryId,
-   queryConfig,
-}: UseGalleryOptions) => {
+export const useGetGallery = ({ galleryId, queryConfig }: UseGalleryOptions) => {
+   const { accessToken } = useAuth.getState();
+
    return useQuery({
       ...getGalleryQueryOptions(galleryId),
       ...queryConfig,
+      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
    });
 };

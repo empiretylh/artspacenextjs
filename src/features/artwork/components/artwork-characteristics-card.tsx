@@ -1,10 +1,6 @@
 import Link from "@/components/common/link";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { paths } from "@/config/paths";
-import type { Artwork } from "@/types";
-import { useRouter } from "next/navigation";
+import type { Artwork, Category } from "@/types";
 
 interface ArtworkCharacteristicsProps {
    title: string;
@@ -16,7 +12,7 @@ interface ArtworkCharacteristicsProps {
    genre?: string;
    materials?: string;
    packaging?: string;
-   category?: string;
+   category?: Category;
    categoryName?: string;
 }
 
@@ -58,7 +54,7 @@ export function ArtworkCharacteristicsCard({
                <dt className="w-1/2">Category</dt>
                <dd className="font-medium">
                   <Link
-                     to={paths.artworks.path + `?category=${category}`}
+                     to={paths.artworks.path + `?category=${category?.slug}`}
                      className="cursor-pointer underline text-primary"
                   >
                      {categoryName}
@@ -72,7 +68,7 @@ export function ArtworkCharacteristicsCard({
                   <dd className="font-medium">
                      {styles?.map((style, index) => (
                         <Link
-                           to={paths.artworks.path + `?art-style=${style.id}`}
+                           to={paths.artworks.path + `?art-style=${style.slug}`}
                            key={style.id}
                            className="cursor-pointer underline mr-1 text-primary"
                         >

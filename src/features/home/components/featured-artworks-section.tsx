@@ -4,15 +4,21 @@ import { SectionTitle } from "@/components/common";
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
 import { paths } from "@/config/paths";
+import { queryKeys } from "@/config/query-keys";
+import { getArtworks } from "@/features/service/artspace/get-artworks";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtworksSectionSkeleton } from "./featured-artworks-section-skeleton";
-import { useGetArtworks } from "@/features/service/artspace/get-artworks";
 
 export const FeaturedArtworksSection = () => {
-   const artworksQuery = useGetArtworks({ limit: 10 });
-   const featuredArtworks = artworksQuery.data?.data.results ?? [];
+   const artworksQuery = useQuery({
+      queryKey: queryKeys.artwork.list({ limit: 10 }),
+      queryFn: () => getArtworks({ limit: 10 }),
+   })
+
+   const featuredArtworks = artworksQuery.data?.results ?? [];
 
    if (artworksQuery.isLoading) {
       return <FeaturedArtworksSectionSkeleton />;

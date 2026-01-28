@@ -2,15 +2,17 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import type { ApiResponse, Event } from "@/types";
-import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
+import { useAuth } from "@/features/auth/store";
 
-export const getEvent = ({
+export const getEvent = async ({
    eventSlug,
 }: {
    eventSlug: string;
-}): Promise<AxiosResponse<ApiResponse<Event>>> => {
-   return api.get(`/artworks/events/${eventSlug}`);
+}): Promise<ApiResponse<Event>> => {
+   const res = await api.get(`/artworks/events/${eventSlug}`);
+
+   return res.data;
 };
 
 export const getEventQueryOptions = (eventSlug: string) => {
@@ -26,8 +28,10 @@ type UseEventOptions = {
 };
 
 export const useGetEvent = ({ eventSlug, queryConfig }: UseEventOptions) => {
+   const { accessToken } = useAuth.getState();
    return useQuery({
       ...getEventQueryOptions(eventSlug),
       ...queryConfig,
+      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
    });
 };

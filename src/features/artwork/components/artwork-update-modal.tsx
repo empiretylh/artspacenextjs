@@ -1,11 +1,12 @@
 import { BaseDialog } from "@/components/common/dialogs/base-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArtworkUpdateForm } from "./artwork-update-form";
+import { Artwork } from "@/types";
 
 type ArtworkUpdateProps = {
    isArtworkUpdateModalOpen: boolean;
    setIsArtworkUpdateModalOpen: (_isOpen: boolean) => void;
-   artwork: any; // Replace with your Artwork type
+   artwork: Artwork; // Replace with your Artwork type
 };
 
 const ArtworkUpdateModal = ({

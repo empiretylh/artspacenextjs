@@ -34,7 +34,7 @@ export function SectionCards() {
          </Card>
          <Card className="@container/card">
             <CardHeader>
-               <CardDescription>Active Accounts</CardDescription>
+               <CardDescription>Artworks Sold</CardDescription>
                <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
                   45,678
                </CardTitle>
@@ -45,9 +45,9 @@ export function SectionCards() {
          </Card>
          <Card className="@container/card">
             <CardHeader>
-               <CardDescription>Growth Rate</CardDescription>
+               <CardDescription>Average Sale Price</CardDescription>
                <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                  4.5%
+                  $1,25
                </CardTitle>
                <CardAction className="col-span-2 my-auto">
                   <IconTrendingUp />

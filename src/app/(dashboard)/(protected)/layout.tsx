@@ -1,16 +1,14 @@
-'use client'
-
 import { useAuth } from "@/features/auth/store";
 import LoadingPage from "@/components/page/loading-page";
 import { paths } from "@/config/paths";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth";
 
-const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useAuth();
-  const router = useRouter();
+const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
+  const { user } = await getSession();
 
   if (!user) {
-    router.push(paths.auth.login.path);
+    redirect(paths.auth.login.path);
   }
 
   if (user) {

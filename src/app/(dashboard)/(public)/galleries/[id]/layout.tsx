@@ -1,29 +1,27 @@
 'use client'
 import ProfileLayoutSkeleton from "@/components/app/profile/profile-layout-skeleton";
 import ProfileLayoutView from "@/components/app/profile/profile-layout-view";
-import ArtworksIcon from "@/components/icons/artworks-icon";
-import BookmarkIcon from "@/components/icons/bookmark-icon";
-import CollectionIcon from "@/components/icons/collection-icon";
-import HeartIcon from "@/components/icons/heart-icon";
-import OverviewIcon from "@/components/icons/overview-icon";
 import NotFound from "@/components/layout/not-found";
 import { paths } from "@/config/paths";
+import { useAuth } from "@/features/auth/store";
 import { useGetGallery } from "@/features/service/artspace/get-gallery";
 import { useParams } from "next/navigation";
 
 const GalleryDetailLayout = ({ children }: { children: React.ReactNode }) => {
   const { id } = useParams();
+  const { accessToken } = useAuth()
 
   const userQuery = useGetGallery({
     galleryId: String(id),
     queryConfig: {
       enabled: id !== undefined,
+      refetchOnMount: "always",
     },
   });
 
-  const user = userQuery.data?.data;
+  const user = userQuery.data;
 
-  if (userQuery.isLoading) {
+  if (userQuery.isLoading || accessToken === undefined) {
     return <ProfileLayoutSkeleton />;
   }
 
@@ -33,28 +31,28 @@ const GalleryDetailLayout = ({ children }: { children: React.ReactNode }) => {
     {
       title: "Overview",
       href: paths.galleries.detail.getHref(String(user.id)),
-      icon: OverviewIcon,
+      icon: "overview",
     },
     {
       title: "Artworks",
       href: paths.galleries.artworks.getHref(String(user.id)),
-      icon: ArtworksIcon,
+      icon: "artworks",
     },
     {
       title: "Collections",
       href: paths.galleries.collections.getHref(String(user.id)),
-      icon: CollectionIcon,
+      icon: "collections",
       disabled: true,
     },
     {
       title: "Like Artworks",
       href: paths.galleries.likedArtworks.getHref(String(user.id)),
-      icon: HeartIcon,
+      icon: "likes",
     },
     {
       title: "Save",
       href: paths.galleries.save.getHref(String(user.id)),
-      icon: BookmarkIcon,
+      icon: "save",
       disabled: true,
     },
   ];

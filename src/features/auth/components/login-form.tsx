@@ -75,7 +75,7 @@ export default function LoginForm() {
 
    useEffect(() => {
       if (user) {
-         router.push(paths.root.path, { replace: true });
+         router.push(paths.root.path);
       }
    }, [user]);
 
@@ -161,7 +161,7 @@ export default function LoginForm() {
                   </Button>
                   <FieldDescription className="text-center">
                      Don&apos;t have an account?{" "}
-                     <Link to={paths.auth.register.path} replace>
+                     <Link to={paths.auth.register.path}>
                         Sign up
                      </Link>
                   </FieldDescription>
