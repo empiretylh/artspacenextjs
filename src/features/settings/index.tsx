@@ -114,6 +114,14 @@ const SettingsPage = () => {
                            Blocked User List
                         </Link>
                      </li>
+                     <li className="text-sm p-2">
+                        <Link
+                           to={"https://api.myanmarartspace.net/api/v1/users/delete-account/"}
+                           className="underline hover:text-primary"
+                        >
+                           Delete Account
+                        </Link>
+                     </li>
                   </ul>
                </CardContent>
             </Card>

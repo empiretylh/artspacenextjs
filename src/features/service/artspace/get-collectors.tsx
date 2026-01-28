@@ -1,18 +1,19 @@
+import { env } from "@/config/env";
+import { queryKeys } from "@/config/query-keys";
+import { useAuth } from "@/features/auth/store";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
+import type {
+   ColumnFiltersState,
+   ListApiResponse,
+   SortingState,
+   User,
+} from "@/types";
 import {
    queryOptions,
    useInfiniteQuery,
    useQuery,
 } from "@tanstack/react-query";
-import type {
-   ColumnFiltersState,
-   SortingState,
-   ListApiResponse,
-   User,
-} from "@/types";
-import type { AxiosResponse } from "axios";
-import { queryKeys } from "@/config/query-keys";
 
 /* ============================================================
  * API CALL
@@ -95,6 +96,8 @@ export const useGetCollectorsInfinite = ({
    search,
    limit = 10,
 }: UseCollectorsOptions = {}) => {
+   const { accessToken } = useAuth.getState();
+
    return useInfiniteQuery({
       queryKey: queryKeys.collector.infinite({
          filters,
@@ -110,6 +113,7 @@ export const useGetCollectorsInfinite = ({
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },
+      enabled: (accessToken === null || !!accessToken),
    });
 };
 

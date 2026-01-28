@@ -15,7 +15,7 @@ export const getHomeStyles = async (
       page = 1,
       limit = 10 }
 ): Promise<ListApiResponse<{ id: number; style: Style }>> => {
-   const response = await api.get(`/homepage/styles/`, {
+   const response = await api.get(`/homepage/artwork-styles/`, {
       params: {
          // filters,
          // sorts,

@@ -36,14 +36,14 @@ export interface Profile {
 }
 
 export interface Category {
-   id: string;
+   id: number;
    name: string;
    image: string;
    slug: string;
 }
 
 export interface Genre {
-   id: string;
+   id: number;
    image: string;
    name: string;
    slug: string;
@@ -79,7 +79,7 @@ export interface Artwork {
    category_name: string;
    category: Category;
    image: string;
-   genre: number;
+   genre: Genre;
    styles: number[];
    title: string;
    description: string;

@@ -2,11 +2,14 @@
 import { useGetArtists } from "@/features/service/artspace/get-artists";
 import UserListItem from "../../../components/app/user-list-item";
 import UserListItemSkeleton from "../../../components/app/user-list-item-skeleton";
+import { useAuth } from "@/features/auth/store";
 
 const FeaturedArtists = () => {
    const artistQuery = useGetArtists({
       limit: 4,
    });
+
+   const { accessToken } = useAuth()
 
    const artists = artistQuery.data?.results ?? [];
 
@@ -17,7 +20,7 @@ const FeaturedArtists = () => {
          </h2>
 
          <div className="grid grid-cols-1 gap-2">
-            {artistQuery.isLoading
+            {artistQuery.isLoading || accessToken === undefined
                ? Array.from({ length: 4 }).map((_, index) => (
                   <UserListItemSkeleton key={index} />
                ))

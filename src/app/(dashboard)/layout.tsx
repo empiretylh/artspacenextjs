@@ -6,27 +6,13 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { queryKeys } from "@/config/query-keys";
 import EventPopupSlider from "@/features/events/components/event-pop-up-slider";
 import { getPopUpEvents } from "@/features/service/artspace/get-pop-up-events";
-import { getSession } from "@/lib/auth";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { cookies, headers } from "next/headers";
-import { userAgent } from "next/server";
 
 const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => {
-  const cookieStore = await cookies();
-  const headerStore = await headers();
-
-  const isSidebarOpen = cookieStore.get("sidebar_state")?.value === "true";
-
-  // 2. Get Mobile status from Headers
-  const { device } = userAgent({ headers: headerStore });
-  const isMobile = device.type === 'mobile';
-
-  const { user } = await getSession()
-
   const queryClient = getQueryClient();
 
-  queryClient.prefetchQuery({
+  await queryClient.prefetchQuery({
     queryKey: queryKeys.event.popUp.list(),
     queryFn: () => getPopUpEvents(),
   });
@@ -41,7 +27,7 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
             "--header-height": "calc(var(--spacing) * 12 + 9px)",
           } as React.CSSProperties
         }
-        defaultOpen={isSidebarOpen}
+        defaultOpen={true}
       >
         <AppSidebar variant="inset" />
         <SidebarInset className="mb-0!">
@@ -49,8 +35,8 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
             scrollbarGutter: "stable"
           }}>
             <div>
-              <SiteHeader isLoggedIn={!!user} />
-              <MainOutlet isMobile={isMobile}>
+              <SiteHeader />
+              <MainOutlet>
                 {children}
               </MainOutlet>
             </div>

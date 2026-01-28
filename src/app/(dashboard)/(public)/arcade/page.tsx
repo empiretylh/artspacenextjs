@@ -1,28 +1,25 @@
 import { queryKeys } from "@/config/query-keys";
-import EventPage from "@/features/events/pages/events-page";
-import { getEvents } from "@/features/service/artspace/get-events";
+import CollectionsPage from "@/features/collections/pages/collections-page";
+import { getArtspaceCollections } from "@/features/service/artspace/get-artspace-collections";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-const EventsRoute = async () => {
-  const queryClient = getQueryClient();
+const CollectionsRoute = async () => {
+
+  // const queryClient = getQueryClient();
 
   // 1. MUST use prefetchInfiniteQuery
   // 2. MUST await the call
   // await queryClient.prefetchInfiniteQuery({
-  //   queryKey: queryKeys.event.infinite({
+  //   queryKey: queryKeys.artwork.collection.infinite({
   //     // Ensure these match your hook's default props EXACTLY
-  //     limit: 12,
-  //     filters: [],
-  //     sorts: [],
+  //     limit: 10,
   //     search: ''
   //   }),
   //   queryFn: ({ pageParam = 1 }) =>
-  //     getEvents({
-  //       page: pageParam,
-  //       limit: 12,
-  //       filters: [],
-  //       sorts: [],
+  //     getArtspaceCollections({
+  //       page: pageParam as number,
+  //       limit: 10,
   //       search: ''
   //     }),
   //   initialPageParam: 1,
@@ -30,9 +27,9 @@ const EventsRoute = async () => {
 
   return (
     // <HydrationBoundary state={dehydrate(queryClient)}>
-    <EventPage />
+    <CollectionsPage />
     // </HydrationBoundary>
-  );
+  )
 };
 
-export default EventsRoute;
+export default CollectionsRoute;

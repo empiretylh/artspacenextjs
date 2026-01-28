@@ -9,7 +9,7 @@ import { getHomeGenres } from "@/features/service/artspace/get-home-genres";
 
 export const GenresList = () => {
    const genresQuery = useSuspenseQuery({
-      queryKey: queryKeys.genre.list({ limit: 4 }),
+      queryKey: queryKeys.genre.home.list({ limit: 4 }),
       queryFn: () => getHomeGenres({ limit: 4 }),
    });
 

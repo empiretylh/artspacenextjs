@@ -14,9 +14,7 @@ const ArtspaceCollectionsContainer = () => {
    const { replace } = useRouter();
 
    // State
-   const [oldData, setOldData] = useState<
-      AxiosResponse<ListApiResponse<{ id: number; artwork: Artwork }>, any>[]
-   >([]);
+   const [oldData, setOldData] = useState<ListApiResponse<{ id: number; artwork: Artwork }>[]>([]);
    const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
    const [limit, setLimit] = useState(Number(searchParams.get("limit")) || 10);
 

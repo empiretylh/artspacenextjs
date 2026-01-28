@@ -12,7 +12,8 @@ import {
    Search,
    ShoppingCart
 } from "lucide-react";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
+import { InputWithLeftSelectSkeleton } from "../app/input-with-left-select-skeleton";
 import { InputWithLeftSelect } from "../app/input-with-left-seletct";
 import { ProfileDropdown } from "../app/profile-dropdown";
 import Link from "../common/link";
@@ -24,22 +25,16 @@ import {
    DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { SidebarTrigger } from "../ui/sidebar";
-import { IconBasket } from "@tabler/icons-react";
-import { InputWithLeftSelectSkeleton } from "../app/input-with-left-select-skeleton";
 
-export function SiteHeader({ isLoggedIn: serverIsLoggedIn }: { isLoggedIn: boolean }) {
+export function SiteHeader() {
    const [isArtworkCreateModalOpen, setIsArtworkCreateModalOpen] =
       useState(false);
-   const [isLoggedIn, setIsLoggedIn] = useState(serverIsLoggedIn);
    const { items } = useCartStore();
    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
    const handleMobileSearchOpen = () => setMobileSearchOpen(true);
    const handleMobileSearchClose = () => setMobileSearchOpen(false);
    const { user } = useAuth();
-
-   useEffect(() => {
-      setIsLoggedIn(!!user)
-   }, [user])
+   const isLoggedIn = !!user;
 
    return (
       <>
@@ -71,14 +66,16 @@ export function SiteHeader({ isLoggedIn: serverIsLoggedIn }: { isLoggedIn: boole
                   </div>
 
                   {/* Search Input on Desktop */}
-                  <div className="hidden md:flex ml-[50vw-calc(var(--sidebar-width)+8px)] flex-1 justify-center">
+                  <div className={cn(
+                     "hidden md:flex fixed left-(--sidebar-width) lg:left-1/2 lg:-translate-x-1/2",
+                  )}>
                      <Suspense fallback={<InputWithLeftSelectSkeleton />}>
                         <InputWithLeftSelect />
                      </Suspense>
                   </div>
 
                   {/* Right Section */}
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-end gap-2 ml-auto">
                      {/* Mobile Search Icon */}
                      <Button
                         onClick={handleMobileSearchOpen}

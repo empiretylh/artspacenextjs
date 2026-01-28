@@ -1,23 +1,26 @@
 import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { AuthInitializer } from "@/features/auth/auth-initializer";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Outfit, Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";
 import "./globals.css";
 import AppProvider from "./providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const outfitSans = Outfit({
+  variable: "--font-outfit-sans",
   subsets: ["latin"],
-});
+})
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
-});
+})
 
 export const metadata: Metadata = {
-  title: "Myanmar Art Space",
+  title: {
+    default: "Myanmar Art Space",
+    template: "%s | Myanmar Art Space",
+  },
   description: "Social Media and E-commerce Platform.",
 };
 
@@ -26,17 +29,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  // Get the user data you stored in the cookie during login
-  const authSession = cookieStore.get("artspace_auth_session")?.value;
-  const initialData = authSession ? JSON.parse(authSession) : { user: null, accessToken: null };
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${outfitSans.variable} ${spaceGrotesk.variable} antialiased`}
       >
-        <AuthInitializer data={initialData} />
+        <AuthInitializer />
         <AppProvider>
           <ScrollToTop />
           {children}

@@ -10,12 +10,14 @@ import ArtworkImage from "../components/artwork-image";
 import { ProductInfoCard } from "../components/product-info-card";
 import RelatedArtworkListContainer from "../components/related-artwork-list-container";
 import ArtworkDetailPageSkeleton from "./artwork-skeleton";
+import { useAuth } from "@/features/auth/store";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
    const artworkQuery = useGetArtwork({ artworkId: id });
-   const artwork = artworkQuery.data?.data;
+   const artwork = artworkQuery.data;
+   const { accessToken } = useAuth();
 
-   if (artworkQuery.isLoading) {
+   if (artworkQuery.isLoading || accessToken === undefined) {
       return <ArtworkDetailPageSkeleton />;
    }
 

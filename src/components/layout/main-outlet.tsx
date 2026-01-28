@@ -1,15 +1,16 @@
 'use client'
 import { cn } from "@/lib/utils";
 import { useSidebar } from "../ui/sidebar";
+import { Suspense } from "react";
+import LoadingPage from "../page/loading-page";
 
 interface MainOutletProps {
    children?: React.ReactNode;
-   isMobile: boolean;
 }
 
-const MainOutlet = ({ children, isMobile }: MainOutletProps) => {
+const MainOutlet = ({ children }: MainOutletProps) => {
    // Logic remains the same, but values come from props instead of hooks
-   const { open } = useSidebar();
+   const { open, isMobile } = useSidebar();
 
    const getClasses = () => {
       if (isMobile) return "max-w-full";
@@ -25,7 +26,9 @@ const MainOutlet = ({ children, isMobile }: MainOutletProps) => {
             getClasses()
          )}
       >
-         {children}
+         <Suspense fallback={<LoadingPage />}>
+            {children}
+         </Suspense>
       </div>
    );
 };

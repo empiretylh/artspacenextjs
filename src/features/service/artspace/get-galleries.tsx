@@ -1,18 +1,18 @@
+import { queryKeys } from "@/config/query-keys";
+import { useAuth } from "@/features/auth/store";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
+import type {
+   ColumnFiltersState,
+   ListApiResponse,
+   SortingState,
+   User,
+} from "@/types";
 import {
    queryOptions,
    useInfiniteQuery,
    useQuery,
 } from "@tanstack/react-query";
-import type {
-   ColumnFiltersState,
-   SortingState,
-   ListApiResponse,
-   User,
-} from "@/types";
-import type { AxiosResponse } from "axios";
-import { queryKeys } from "@/config/query-keys";
 
 /* ============================================================
  * API CALL
@@ -95,6 +95,8 @@ export const useGetGalleriesInfinite = ({
    search,
    limit = 10,
 }: UseGalleriesOptions = {}) => {
+   const { accessToken } = useAuth.getState();
+
    return useInfiniteQuery({
       queryKey: queryKeys.gallery.infinite({
          filters,
@@ -110,6 +112,7 @@ export const useGetGalleriesInfinite = ({
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },
+      enabled: (accessToken === null || !!accessToken),
    });
 };
 
@@ -124,8 +127,11 @@ export const useGetGalleries = ({
    page,
    limit,
 }: UseGalleriesOptions = {}) => {
+   const { accessToken } = useAuth.getState();
+
    return useQuery({
       ...getGalleriesQueryOptions({ filters, sorts, page, limit }),
       ...queryConfig,
+      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
    });
 };

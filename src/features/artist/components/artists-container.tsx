@@ -54,6 +54,7 @@ const ArtistsPageContainer = () => {
          limit,
          queryConfig: {
             placeholderData: keepPreviousData,
+
          },
       });
 
@@ -177,6 +178,7 @@ const ArtistsPageContainer = () => {
       setDebouncedSearch(newSearch);
       setFilters(newFilters);
       setSorts(newSorts);
+      // refetch();
    }, []);
 
    const isDataEmpty = () => pagesToRender[0]?.results?.length <= 0;

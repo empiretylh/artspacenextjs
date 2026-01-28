@@ -72,7 +72,7 @@ function InputWithLeftSelect({
             value={selectedOption}
             onValueChange={(value) => setSelectedOption(value)}
          >
-            <SelectTrigger className="w-18 md:w-auto md:max-w-28 rounded-full bg-primary! text-primary-foreground [&>svg]:stroke-primary-foreground">
+            <SelectTrigger className="w-18 md:w-20 lg:w-auto lg:max-w-28 rounded-full bg-primary! text-primary-foreground [&>svg]:stroke-primary-foreground">
                <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent defaultValue={"artists"} className="rounded-2xl">

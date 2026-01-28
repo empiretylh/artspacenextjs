@@ -4,7 +4,7 @@ export const paths = {
       getHref: () => "/",
    },
    collections: {
-      path: "/collections",
+      path: "/arcade",
       getHref: () => "/",
    },
    cart: {

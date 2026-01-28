@@ -13,9 +13,9 @@ interface QueryKeys {
  * equivalent objects as different cache keys.
  */
 const normalizeParams = (params?: QueryKeys) => {
-   if (!params) return undefined;
+   if (!params) return JSON.stringify({});
 
-   return {
+   return JSON.stringify({
       filters: params.filters?.map((f) => ({
          id: f.id,
          value: f.value,
@@ -27,76 +27,86 @@ const normalizeParams = (params?: QueryKeys) => {
       search: params.search,
       page: params.page,
       limit: params.limit,
-   };
+   });
 };
 
 export const queryKeys = {
    genre: {
-      all: ["genres"] as const,
+      all: ["genres"],
 
       /* =======================
        * LIST / BROWSE
        * ======================= */
       list: (params?: QueryKeys) =>
-         ["genres", "list", normalizeParams(params)] as const,
-   },
-   category: {
-      all: ["categories"] as const,
-
-      /* =======================
-       * LIST / BROWSE
-       * ======================= */
-      list: (params?: QueryKeys) =>
-         ["categories", "list", normalizeParams(params)] as const,
+         ["genres", "list", normalizeParams(params)],
       home: {
-         all: ["categories", "home"] as const,
+         all: ["genres", "home"],
 
          /* =======================
           * LIST / BROWSE
           * ======================= */
          list: (params?: QueryKeys) =>
-            ["categories", "home", "list", normalizeParams(params)] as const,
+            ["genres", "home", "list", normalizeParams(params)],
+      }
+   },
+   category: {
+      all: ["categories"],
+
+      /* =======================
+       * LIST / BROWSE
+       * ======================= */
+      list: (params?: QueryKeys) =>
+         ["categories", "list", normalizeParams(params)],
+      home: {
+         all: ["categories", "home"],
+
+         /* =======================
+          * LIST / BROWSE
+          * ======================= */
+         list: (params?: QueryKeys) =>
+            ["categories", "home", "list", normalizeParams(params)],
       }
    },
    style: {
-      all: ["styles"] as const,
+      all: ["styles"],
 
       /* =======================
        * LIST / BROWSE
        * ======================= */
       list: (params?: QueryKeys) =>
-         ["styles", "list", normalizeParams(params)] as const,
+         ["styles", "list", normalizeParams(params)],
       home: {
-         all: ["styles", "home"] as const,
+         all: ["styles", "home"],
 
          /* =======================
           * LIST / BROWSE
           * ======================= */
          list: (params?: QueryKeys) =>
-            ["styles", "home", "list", normalizeParams(params)] as const,
+            ["styles", "home", "list", normalizeParams(params)],
       }
    },
    user: {
-      all: ["users"] as const,
+      all: ["users"],
       blocked: {
-         all: ["users", "blocked"] as const,
+         all: ["users", "blocked"],
          list: (params?: QueryKeys) =>
-            ["users", "blocked", normalizeParams(params)] as const,
+            ["users", "blocked", normalizeParams(params)],
          infinite: (params?: QueryKeys) =>
-            ["users", "blocked", normalizeParams(params)] as const,
+            ["users", "blocked", normalizeParams(params)],
       },
+      me: () => ["users", "me"],
    },
    artwork: {
-      all: ["artworks"] as const,
+      all: ["artworks"],
 
       /* =======================
        * LIST / BROWSE
        * ======================= */
       list: (params?: QueryKeys) =>
-         ["artworks", "list", normalizeParams(params)] as const,
+         ["artworks", "list", normalizeParams(params)],
 
       infinite: (params?: QueryKeys) =>
-         ["artworks", "infinite", normalizeParams(params)] as const,
+         ["artworks", "infinite", normalizeParams(params)],
 
       collection: {
          list: (params?: QueryKeys) =>
@@ -105,7 +115,7 @@ export const queryKeys = {
                "collections",
                "list",
                normalizeParams(params),
-            ] as const,
+            ],
 
          infinite: (params?: QueryKeys) =>
             [
@@ -113,29 +123,29 @@ export const queryKeys = {
                "collections",
                "infinite",
                normalizeParams(params),
-            ] as const,
+            ],
       },
 
       /* =======================
        * SINGLE ARTWORK
        * ======================= */
-      detail: (id: string) => ["artworks", "detail", id] as const,
+      detail: (id: string) => ["artworks", "detail", id],
 
-      create: () => ["artworks", "create"] as const,
+      create: () => ["artworks", "create"],
 
-      update: (id: string) => ["artworks", "update", id] as const,
+      update: (id: string) => ["artworks", "update", id],
 
       /* =======================
        * LIKED ARTWORKS
        * ======================= */
       liked: {
-         all: ["artworks", "liked"] as const,
+         all: ["artworks", "liked"],
 
          me: (params?: QueryKeys) =>
-            ["artworks", "liked", "me", normalizeParams(params)] as const,
+            ["artworks", "liked", "me", normalizeParams(params)],
 
          byUser: (userId: string, params?: QueryKeys) =>
-            ["artworks", "liked", userId, normalizeParams(params)] as const,
+            ["artworks", "liked", userId, normalizeParams(params)],
       },
 
       byArtwork: {
@@ -145,7 +155,7 @@ export const queryKeys = {
                "by-artwork",
                artworkId,
                normalizeParams(params),
-            ] as const,
+            ],
 
          infinite: (artworkId: string, params?: QueryKeys) =>
             [
@@ -154,7 +164,7 @@ export const queryKeys = {
                artworkId,
                "infinite",
                normalizeParams(params),
-            ] as const,
+            ],
       },
 
       /* =======================
@@ -162,12 +172,12 @@ export const queryKeys = {
        * ======================= */
       byUser: {
          me: (params?: QueryKeys) =>
-            ["artworks", "by-user", "me", normalizeParams(params)] as const,
+            ["artworks", "by-user", "me", normalizeParams(params)],
 
-         all: ["artworks", "by-user"] as const,
+         all: ["artworks", "by-user"],
 
          list: (userId: string, params?: QueryKeys) =>
-            ["artworks", "by-user", userId, normalizeParams(params)] as const,
+            ["artworks", "by-user", userId, normalizeParams(params)],
 
          infinite: (userId: string, params?: QueryKeys) =>
             [
@@ -176,7 +186,7 @@ export const queryKeys = {
                userId,
                "infinite",
                normalizeParams(params),
-            ] as const,
+            ],
       },
    },
 
@@ -184,24 +194,24 @@ export const queryKeys = {
     * EVENTS
     * ======================= */
    event: {
-      all: ["events"] as const,
+      all: ["events"],
 
       list: (params?: QueryKeys) =>
-         ["events", "list", normalizeParams(params)] as const,
+         ["events", "list", normalizeParams(params)],
 
       infinite: (params?: QueryKeys) =>
-         ["events", "infinite", normalizeParams(params)] as const,
+         ["events", "infinite", normalizeParams(params)],
 
-      detail: (id: string) => ["events", "detail", id] as const,
+      detail: (id: string) => ["events", "detail", id],
 
       byUser: {
          me: (params?: QueryKeys) =>
-            ["events", "by-user", "me", normalizeParams(params)] as const,
+            ["events", "by-user", "me", normalizeParams(params)],
 
-         all: ["events", "by-user"] as const,
+         all: ["events", "by-user"],
 
          list: (userId: string, params?: QueryKeys) =>
-            ["events", "by-user", userId, normalizeParams(params)] as const,
+            ["events", "by-user", userId, normalizeParams(params)],
 
          infinite: (userId: string, params?: QueryKeys) =>
             [
@@ -210,14 +220,14 @@ export const queryKeys = {
                userId,
                "infinite",
                normalizeParams(params),
-            ] as const,
+            ],
       },
 
       popUp: {
-         all: ["events", "pop-up"] as const,
+         all: ["events", "pop-up"],
 
          list: (params?: QueryKeys) =>
-            ["events", "pop-up", "list", normalizeParams(params)] as const,
+            ["events", "pop-up", "list", normalizeParams(params)],
       },
    },
 
@@ -225,44 +235,44 @@ export const queryKeys = {
     * ARTISTS
     * ======================= */
    artist: {
-      all: ["artists"] as const,
+      all: ["artists"],
 
       list: (params?: QueryKeys) =>
-         ["artists", "list", normalizeParams(params)] as const,
+         ["artists", "list", normalizeParams(params)],
 
       infinite: (params?: QueryKeys) =>
-         ["artists", "infinite", normalizeParams(params)] as const,
+         ["artists", "infinite", normalizeParams(params)],
 
-      detail: (id: string) => ["artists", "detail", id] as const,
+      detail: (id: string) => ["artists", "detail", id],
    },
 
    /* =======================
     * COLLECTORS
     * ======================= */
    collector: {
-      all: ["collectors"] as const,
+      all: ["collectors"],
 
       list: (params?: QueryKeys) =>
-         ["collectors", "list", normalizeParams(params)] as const,
+         ["collectors", "list", normalizeParams(params)],
 
       infinite: (params?: QueryKeys) =>
-         ["collectors", "infinite", normalizeParams(params)] as const,
+         ["collectors", "infinite", normalizeParams(params)],
 
-      detail: (id: string) => ["collectors", "detail", id] as const,
+      detail: (id: string) => ["collectors", "detail", id],
    },
 
    /* =======================
     * GALLERIES
     * ======================= */
    gallery: {
-      all: ["galleries"] as const,
+      all: ["galleries"],
 
       list: (params?: QueryKeys) =>
-         ["galleries", "list", normalizeParams(params)] as const,
+         ["galleries", "list", normalizeParams(params)],
 
       infinite: (params?: QueryKeys) =>
-         ["galleries", "infinite", normalizeParams(params)] as const,
+         ["galleries", "infinite", normalizeParams(params)],
 
-      detail: (id: string) => ["galleries", "detail", id] as const,
+      detail: (id: string) => ["galleries", "detail", id],
    },
 };

@@ -2,11 +2,14 @@
 import { useGetGalleries } from "@/features/service/artspace/get-galleries";
 import UserListItem from "../../../components/app/user-list-item";
 import UserListItemSkeleton from "../../../components/app/user-list-item-skeleton";
+import { useAuth } from "@/features/auth/store";
 
 const FeaturedGalleries = () => {
    const galleryQuery = useGetGalleries({
       limit: 4,
    });
+
+   const { accessToken } = useAuth();
 
    const galleries = galleryQuery.data?.results ?? [];
 
@@ -21,7 +24,7 @@ const FeaturedGalleries = () => {
          </h2>
 
          <div className="flex flex-col gap-2">
-            {galleryQuery.isLoading
+            {galleryQuery.isLoading || accessToken === undefined
                ? Array.from({ length: 4 }).map((_, index) => (
                   <UserListItemSkeleton key={index} />
                ))

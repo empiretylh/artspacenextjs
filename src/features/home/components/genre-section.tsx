@@ -8,8 +8,8 @@ import { getQueryClient } from "@/lib/get-query-client";
 export const GenreSection = async () => {
    const queryClient = getQueryClient();
 
-   queryClient.prefetchQuery({
-      queryKey: queryKeys.genre.list({ limit: 4 }),
+   await queryClient.prefetchQuery({
+      queryKey: queryKeys.genre.home.list({ limit: 4 }),
       queryFn: () => getHomeGenres({ limit: 4 }),
    });
 

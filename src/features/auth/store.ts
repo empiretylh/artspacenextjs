@@ -14,7 +14,7 @@ interface RegisterForm {
 
 export type State = {
    user: User | null;
-   accessToken: string | null;
+   accessToken: string | null | undefined;
    loading: boolean;
    isLoginDialogOpen: boolean;
    isRegisterDialogOpen: boolean;
@@ -44,7 +44,7 @@ export const useAuth = create<State>((set) => {
          last_name: "",
          profile: null,
       } as unknown as User | null,
-      accessToken: null,
+      accessToken: undefined,
    };
 
    return {

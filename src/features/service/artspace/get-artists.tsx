@@ -14,6 +14,8 @@ import type {
 import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
 import { artist } from "@/mocks/artists";
+import { env } from "@/config/env";
+import { useAuth } from "@/features/auth/store";
 
 /* ============================================================
  * API CALL
@@ -96,6 +98,8 @@ export const useGetArtistsInfinite = ({
    search,
    limit = 10,
 }: UseArtistsOptions = {}) => {
+   const { accessToken } = useAuth.getState();
+
    return useInfiniteQuery({
       queryKey: queryKeys.artist.infinite({
          filters,
@@ -111,6 +115,7 @@ export const useGetArtistsInfinite = ({
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },
+      enabled: (accessToken === null || !!accessToken),
    });
 };
 
@@ -125,8 +130,10 @@ export const useGetArtists = ({
    page,
    limit,
 }: UseArtistsOptions = {}) => {
+   const { accessToken } = useAuth.getState();
    return useQuery({
       ...getArtistsQueryOptions({ filters, sorts, page, limit }),
       ...queryConfig,
+      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
    });
 };

@@ -1,12 +1,23 @@
 "use client";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "./store";
+import { env } from "@/config/env";
 
-export function AuthInitializer({ data }: { data: any }) {
+export function AuthInitializer() {
   const initialized = useRef(false);
-  if (!initialized.current) {
-    useAuth.getState().init(data);
-    initialized.current = true;
-  }
+
+  useEffect(() => {
+    const sync = async () => {
+      const res = await fetch(env.APP_URL + '/api/auth/session');
+      const data = await res.json();
+      useAuth.getState().init({ user: data.user, accessToken: data.accessToken });
+    }
+
+    if (!initialized.current) {
+      sync();
+      initialized.current = true;
+    }
+  }, []);
+
   return null;
 }

@@ -1,5 +1,4 @@
 import Axios, { type InternalAxiosRequestConfig } from "axios";
-
 import { env } from "@/config/env";
 import { useAuth } from "@/features/auth/store";
 

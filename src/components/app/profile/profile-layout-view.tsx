@@ -7,9 +7,35 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useAuth } from "@/features/auth/store";
 import { cn, getImage, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import FollowButton from "../follow-button";
 import { ProfileActions } from "./profile-actions";
+import ArtworksIcon from "@/components/icons/artworks-icon";
+import BookmarkIcon from "@/components/icons/bookmark-icon";
+import CollectionIcon from "@/components/icons/collection-icon";
+import HeartIcon from "@/components/icons/heart-icon";
+import OverviewIcon from "@/components/icons/overview-icon";
+import { ScrollToTop } from "@/components/common/scroll-to-top";
+import { ClipboardPenLineIcon } from "lucide-react";
+
+const getIcon = (key: string) => {
+   if (key === "artworks") {
+      return <ArtworksIcon />
+   }
+   if (key === "collections") {
+      return <CollectionIcon />
+   }
+   if (key === "likes") {
+      return <HeartIcon />
+   }
+   if (key === "save") {
+      return <BookmarkIcon />
+   }
+   if (key === "events") {
+      return <ClipboardPenLineIcon />
+   }
+   return <OverviewIcon />
+}
 
 const ProfileLayoutView = ({
    user,
@@ -18,11 +44,11 @@ const ProfileLayoutView = ({
    children,
 }: {
    user: User;
-   variant?: string;
+   variant?: "profile";
    navLinks: Array<{
       title: string;
       href: string;
-      icon: any;
+      icon: string;
       disabled?: boolean;
    }>;
    children?: React.ReactNode;
@@ -30,10 +56,10 @@ const ProfileLayoutView = ({
    const pathname = usePathname()
    const isActive = (href: string) => pathname === href;
    const { user: authUser } = useAuth();
-   const router = useRouter();
 
    return (
       <div>
+         <ScrollToTop />
          <div className="">
             {/* <div
                className="relative max-w-full overflow-hidden h-[376px] aspect-[1/3] rounded w-full bg-cover bg-center"
@@ -122,7 +148,7 @@ const ProfileLayoutView = ({
                                  link.disabled && "pointer-events-none opacity-50"
                               )}
                            >
-                              <link.icon />
+                              {getIcon(link.icon)}
                               <span>{link.title}</span>
                            </Link>
                         ))}
