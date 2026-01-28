@@ -8,7 +8,7 @@ export function AuthInitializer() {
 
   useEffect(() => {
     const sync = async () => {
-      const res = await fetch(env.APP_URL + '/api/auth/session');
+      const res = await fetch('/api/auth/session');
       const data = await res.json();
       useAuth.getState().init({ user: data.user, accessToken: data.accessToken });
     }

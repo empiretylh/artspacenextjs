@@ -143,7 +143,7 @@ export const getArtworks = async ({
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   const res = await api.get(env.APP_URL + '/api/proxy' + `/artworks/artworks/`, { params });
+   const res = await api.get(`/artworks/artworks/`, { params });
 
    return res.data
 };

@@ -63,7 +63,7 @@ export const useAuth = create<State>((set) => {
 
       async login(email, password) {
          try {
-            const { data } = await axios.post(env.APP_URL + "/api/auth/login", {
+            const { data } = await axios.post("/api/auth/login", {
                email, password
             })
 
@@ -88,7 +88,7 @@ export const useAuth = create<State>((set) => {
          try {
             set({ loading: true });
 
-            const { data } = await axios.post(env.APP_URL + "/api/auth/register", {
+            const { data } = await axios.post("/api/auth/register", {
                email: values.email,
                password: values.password,
                first_name: values.first_name,
@@ -106,7 +106,7 @@ export const useAuth = create<State>((set) => {
       },
 
       async logout() {
-         await fetch(env.APP_URL + "/api/auth/logout", { method: "POST" });
+         await fetch("/api/auth/logout", { method: "POST" });
          set({ user: null, accessToken: null, loading: false });
       },
 

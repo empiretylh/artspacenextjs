@@ -87,7 +87,7 @@ export const getCollectors = async ({
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   const res = await api.get(env.APP_URL + '/api/proxy' + `/users/collector/`, { params });
+   const res = await api.get(`/users/collector/`, { params });
 
    return res.data;
    // return collector;

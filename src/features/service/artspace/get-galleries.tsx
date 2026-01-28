@@ -87,7 +87,7 @@ export const getGalleries = async ({
       params.ordering = sorts[0].desc ? `-${sorts[0].id}` : sorts[0].id;
    }
 
-   const res = await api.get(env.APP_URL + '/api/proxy' + `/users/gallery/`, { params });
+   const res = await api.get(`/users/gallery/`, { params });
 
    return res.data;
    // return gallery;

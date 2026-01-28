@@ -58,11 +58,19 @@ export default function EventPopupSlider() {
    useEffect(() => {
       if (
          popUpEventsQuery.data &&
-         popUpEventsQuery.data.length > 0
+         popUpEventsQuery.data.length > 0 &&
+         localStorage.getItem("artspace:firstLoadPopup")
       ) {
          setOpen(true);
+         localStorage.setItem("artspace:firstLoadPopup", "true");
       }
    }, [popUpEventsQuery.data]);
+
+   useEffect(() => {
+      return () => {
+         localStorage.removeItem("artspace:firstLoadPopup");
+      }
+   }, [])
 
    return (
       <>

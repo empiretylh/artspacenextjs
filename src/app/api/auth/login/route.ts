@@ -26,10 +26,10 @@ export async function POST(request: Request) {
   });
 
   cookieStore.set("artspace_auth_session", JSON.stringify({ accessToken: data.access, user: data.user }), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
+    httpOnly: false,
+    // secure: process.env.NODE_ENV === "production",
+    // sameSite: "lax",
+    // path: "/",
   });
 
   // 3. Return the ACCESS TOKEN and USER to the frontend store

@@ -12,10 +12,10 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => {
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: queryKeys.event.popUp.list(),
-    queryFn: () => getPopUpEvents(),
-  });
+  // await queryClient.prefetchQuery({
+  //   queryKey: queryKeys.event.popUp.list(),
+  //   queryFn: () => getPopUpEvents(),
+  // });
 
   return (
     <>
@@ -42,9 +42,9 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
           </div>
         </SidebarInset>
       </SidebarProvider>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <EventPopupSlider />
-      </HydrationBoundary>
+      {/* <HydrationBoundary state={dehydrate(queryClient)}> */}
+      <EventPopupSlider />
+      {/* </HydrationBoundary> */}
     </>
   );
 };

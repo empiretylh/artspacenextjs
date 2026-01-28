@@ -1,9 +1,12 @@
 import Axios, { type InternalAxiosRequestConfig } from "axios";
 import { env } from "@/config/env";
 import { useAuth } from "@/features/auth/store";
+import { useNotifications } from "@/components/ui/notifications";
+import Cookies from "js-cookie";
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
-   const token = useAuth.getState().accessToken;
+   const cookie = JSON.parse(Cookies.get('artspace_auth_session') || "{}");
+   const token = useAuth.getState().accessToken || cookie.accessToken;
    if (config.headers) {
       config.headers.Accept = "application/json";
    }
@@ -81,6 +84,16 @@ api.interceptors.response.use(
             return api(original);
          }
       }
+
+      console.log(error)
+
+      const message = error.response?.data?.detail || error.message;
+      useNotifications.getState().addNotification({
+         type: "error",
+         title: "Error",
+         message,
+      });
+
       return Promise.reject(error);
    }
 );
