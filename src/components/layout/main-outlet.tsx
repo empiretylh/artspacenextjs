@@ -20,11 +20,12 @@ const MainOutlet = ({ children }: MainOutletProps) => {
 
    return (
       <div
-         data-slot="sidebar-inset"
-         className={cn(
-            "mx-auto w-full px-4 pt-4 pb-4 transition-all duration-300",
-            getClasses()
-         )}
+         // data-slot="sidebar-inset"
+         // className={cn(
+         //    "mx-auto w-full px-4 pt-4 pb-4 transition-all duration-300",
+         //    getClasses()
+         // )}
+         className="px-4 pt-4 pb-4"
       >
          <Suspense fallback={<LoadingPage />}>
             {children}

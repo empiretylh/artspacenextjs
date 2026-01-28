@@ -38,7 +38,7 @@ export function SiteHeader() {
 
    return (
       <>
-         <header className="bg-background overflow-hidden sticky top-0 py-1 z-20 flex h-[var(--header-height)] items-center px-2 lg:px-4">
+         <header className="bg-background sticky top-0 py-4 z-20 flex h-[var(--header-height)] items-center px-2 lg:px-4">
             {/* Mobile Search Mode */}
             {mobileSearchOpen ? (
                <div className="flex w-full items-center gap-2">

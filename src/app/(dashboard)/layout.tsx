@@ -30,16 +30,14 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
         defaultOpen={true}
       >
         <AppSidebar variant="inset" />
-        <SidebarInset className="mb-0!">
+        <SidebarInset className="mb-0! h-screen overflow-hidden">
           <div id="scroll-container" className="h-screen flex justify-between flex-col overflow-y-auto" style={{
             scrollbarGutter: "stable"
           }}>
-            <div>
-              <SiteHeader />
-              <MainOutlet>
-                {children}
-              </MainOutlet>
-            </div>
+            <SiteHeader />
+            <MainOutlet>
+              {children}
+            </MainOutlet>
             <Footer />
           </div>
         </SidebarInset>
