@@ -20,7 +20,7 @@ const ArtistDetailLayout = ({ children }: { children: React.ReactNode }) => {
 
   const user = userQuery.data;
 
-  if (userQuery.isLoading || accessToken === undefined) {
+  if (userQuery.isLoading) {
     return <ProfileLayoutSkeleton />;
   }
 

@@ -88,11 +88,13 @@ api.interceptors.response.use(
       console.log(error)
 
       const message = error.response?.data?.detail || error.message;
-      useNotifications.getState().addNotification({
-         type: "error",
-         title: "Error",
-         message,
-      });
+      if (error.response?.status !== 404) {
+         useNotifications.getState().addNotification({
+            type: "error",
+            title: "Error",
+            message,
+         });
+      }
 
       return Promise.reject(error);
    }

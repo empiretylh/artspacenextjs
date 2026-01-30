@@ -11,22 +11,20 @@ import { ProductInfoCard } from "../components/product-info-card";
 import RelatedArtworkListContainer from "../components/related-artwork-list-container";
 import ArtworkDetailPageSkeleton from "./artwork-skeleton";
 import { useAuth } from "@/features/auth/store";
+import { Suspense } from "react";
+import LoadingPage from "@/components/page/loading-page";
+import { notFound } from "next/navigation";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
    const artworkQuery = useGetArtwork({ artworkId: id });
    const artwork = artworkQuery.data;
-   const { accessToken } = useAuth();
 
-   if (artworkQuery.isLoading || accessToken === undefined) {
+   if (artworkQuery.isLoading) {
       return <ArtworkDetailPageSkeleton />;
    }
 
    if (!artwork) {
-      return (
-         <main className="container mx-auto grow px-4 py-8 md:py-12 text-center text-muted-foreground">
-            Artwork not found
-         </main>
-      );
+      return notFound();
    }
 
    return (
@@ -94,7 +92,9 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
          </div>
 
          {/* Related Artworks */}
-         <RelatedArtworkListContainer artwork={artwork} />
+         <Suspense fallback={<LoadingPage />}>
+            <RelatedArtworkListContainer artwork={artwork} />
+         </Suspense>
       </div>
    );
 };

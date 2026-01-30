@@ -1,8 +1,10 @@
+import LoadingPage from "@/components/page/loading-page";
 import { queryKeys } from "@/config/query-keys";
 import ArtworksPage from "@/features/artwork/pages/artworks-page";
 import { getArtworks } from "@/features/service/artspace/get-artworks";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 const ArtWorksRoute = async () => {
   const queryClient = getQueryClient();
@@ -31,7 +33,9 @@ const ArtWorksRoute = async () => {
 
   return (
     // <HydrationBoundary state={dehydrate(queryClient)}>
-    <ArtworksPage />
+    <Suspense fallback={<LoadingPage />}>
+      <ArtworksPage />
+    </Suspense>
     // </HydrationBoundary>
   );
 };

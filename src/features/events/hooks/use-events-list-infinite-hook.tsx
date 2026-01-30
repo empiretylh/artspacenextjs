@@ -20,8 +20,7 @@ export const useEventsListInfinite = () => {
    // -----------------------------------------
    // State
    // -----------------------------------------
-   const [oldData, setOldData] = useState<
-      AxiosResponse<ListApiResponse<Event>, any>[]
+   const [oldData, setOldData] = useState<ListApiResponse<Event>[]
    >([]);
 
    const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
@@ -182,7 +181,7 @@ export const useEventsListInfinite = () => {
       setSorts(newSorts);
    }, []);
 
-   const isDataEmpty = () => pagesToRender[0]?.data?.results?.length <= 0;
+   const isDataEmpty = () => pagesToRender[0]?.results?.length <= 0;
 
    // -----------------------------------------
    // Public API

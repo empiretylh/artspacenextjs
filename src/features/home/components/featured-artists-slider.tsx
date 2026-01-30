@@ -7,11 +7,12 @@ import { paths } from "@/config/paths";
 import { queryKeys } from "@/config/query-keys";
 import { getArtists, getArtistsOg } from "@/features/service/artspace/get-artists";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtistsSectionSkeleton } from "./featured-artists-section-skeleton";
+import { useEffect, useState } from "react";
 
 export const FeaturedArtistsSlider = () => {
    const artistsQuery = useQuery({
@@ -21,7 +22,13 @@ export const FeaturedArtistsSlider = () => {
 
    const featuredArtists = artistsQuery.data?.results ?? [];
 
-   const isMobile = useIsMobile();
+   const [mounted, setMounted] = useState(false);
+
+   useEffect(() => {
+      setMounted(true);
+   }, []);
+
+   if (!mounted) return <FeaturedArtistsSectionSkeleton />;
 
    if (artistsQuery.isLoading) {
       return <FeaturedArtistsSectionSkeleton />;

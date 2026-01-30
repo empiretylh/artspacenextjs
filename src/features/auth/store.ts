@@ -3,6 +3,7 @@ import { create } from "zustand";
 import type { AxiosError } from "axios";
 import axios from "axios";
 import { env } from "@/config/env";
+import { getQueryClient } from "@/lib/get-query-client";
 
 interface RegisterForm {
    email: string;
@@ -62,6 +63,7 @@ export const useAuth = create<State>((set) => {
       setRegisterDialogOpen: (isOpen) => set({ isRegisterDialogOpen: isOpen }),
 
       async login(email, password) {
+         const queryClient = getQueryClient()
          try {
             const { data } = await axios.post("/api/auth/login", {
                email, password
@@ -75,6 +77,8 @@ export const useAuth = create<State>((set) => {
                isArtist: data.user.user_type === "ARTIST",
             };
             set(newState);
+
+            queryClient.invalidateQueries();
 
             return true
          } catch (error) {
@@ -106,8 +110,10 @@ export const useAuth = create<State>((set) => {
       },
 
       async logout() {
+         const queryClient = getQueryClient()
          await fetch("/api/auth/logout", { method: "POST" });
          set({ user: null, accessToken: null, loading: false });
+         queryClient.invalidateQueries();
       },
 
       init: (data: { user: User | null, accessToken: string | null }) => {

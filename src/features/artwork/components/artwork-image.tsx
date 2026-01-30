@@ -1,11 +1,10 @@
-import { useRef, useEffect } from "react";
-import { FreeMode, Navigation, Thumbs } from "swiper/modules";
+import { useEffect, useRef } from "react";
 
 import Viewer from "viewerjs";
 
+import Image from "@/components/common/image";
 import { getImage } from "@/lib/utils";
 import type { Artwork } from "@/types";
-import Image from "@/components/common/image";
 
 export default function ArtworkImage({ artwork }: { artwork: Artwork }) {
    const mainImage = useRef(null); // ref for viewer
@@ -38,10 +37,10 @@ export default function ArtworkImage({ artwork }: { artwork: Artwork }) {
          <div ref={mainImage} className="w-full">
             <Image
                ref={mainImage as unknown as React.RefObject<HTMLImageElement>}
-               className="select-none flex justify-center mb-4 [&_img]:hover:cursor-zoom-in w-full h-[300px] [&_img]:object-contain [&_img]:h-[300px] [&_img]:w-auto"
+               className="select-none flex justify-center mb-4 [&_img]:hover:cursor-zoom-in w-full h-75 [&_img]:object-contain [&_img]:h-75 [&_img]:w-auto"
                src={getImage(artwork.image)}
                alt={artwork.title}
-               // src={`https://swiperjs.com/demos/images/nature-${i + 1}.jpg`}
+            // src={`https://swiperjs.com/demos/images/nature-${i + 1}.jpg`}
             />
          </div>
       </>

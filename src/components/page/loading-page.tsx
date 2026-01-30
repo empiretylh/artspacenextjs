@@ -1,17 +1,13 @@
-import { cn } from "@/lib/utils";
-import { Spinner } from "../ui/spinner";
+import { cn } from "@/lib/utils"
+import { Loader2 } from "lucide-react"
 
-const LoadingPage = ({ className }: { className?: string }) => {
+export default function LoadingPage({ className }: { className?: string }) {
    return (
-      <div
-         className={cn(
-            "w-full h-[80vh] flex items-center justify-center",
-            className
-         )}
-      >
-         <Spinner className="w-10 h-10" />
+      <div className={cn("flex h-screen w-full flex-col items-center justify-center space-y-4 bg-background", className)}>
+         <Loader2 className="h-10 w-10 animate-spin text-primary" />
+         <p className="text-sm font-medium text-muted-foreground animate-pulse">
+            Loading...
+         </p>
       </div>
-   );
-};
-
-export default LoadingPage;
+   )
+}

@@ -1,8 +1,10 @@
+import LoadingPage from "@/components/page/loading-page";
 import { queryKeys } from "@/config/query-keys";
 import CollectionsPage from "@/features/collections/pages/collections-page";
 import { getArtspaceCollections } from "@/features/service/artspace/get-artspace-collections";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 const CollectionsRoute = async () => {
 
@@ -27,7 +29,9 @@ const CollectionsRoute = async () => {
 
   return (
     // <HydrationBoundary state={dehydrate(queryClient)}>
-    <CollectionsPage />
+    <Suspense fallback={<LoadingPage />}>
+      <CollectionsPage />
+    </Suspense>
     // </HydrationBoundary>
   )
 };

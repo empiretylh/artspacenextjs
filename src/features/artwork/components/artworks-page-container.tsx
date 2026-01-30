@@ -104,6 +104,7 @@ const ArtworksPageContainer = () => {
 
    // Update URL when state changes
    useEffect(() => {
+      console.log("Updating URL");
       if (isHydrated.current) {
          const params = buildParams();
          replace(`${pathname}?${Object.entries(params)

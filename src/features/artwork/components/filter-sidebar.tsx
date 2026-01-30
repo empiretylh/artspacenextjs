@@ -27,7 +27,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
    filters,
    setFilters,
    isSidebarOpen = false,
-   setIsSidebarOpen = () => {},
+   setIsSidebarOpen = () => { },
 }) => {
    const [openSections, setOpenSections] = useState({
       price: true,
@@ -52,6 +52,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       value: string | number,
       checked: boolean
    ) => {
+      console.log('this is working')
       setFilters((prev) => {
          if (checked) {
             const without = prev.filter((f) => {
@@ -71,10 +72,12 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       value: string | number,
       checked: boolean
    ) => {
+      console.log('this is working 2')
       setFilters((prev) => {
          if (checked) {
             const without = prev.filter((f) => {
                if (f.id === id) return false;
+               return true;
             });
             return [...without, { id, value }];
          } else {
@@ -167,24 +170,24 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                            onToggle={() => toggleSection("category")}
                         >
                            {categories.map((category) => (
-                              <div className="flex gap-3" key={category.id}>
+                              <div className="flex gap-3" key={category.slug}>
                                  <Checkbox
-                                    id={`category-${category.id}`}
+                                    id={`category-${category.slug}`}
                                     checked={filters.some(
                                        (f) =>
                                           f.id === "category" &&
                                           String(f.value) ===
-                                             String(category.id)
+                                          String(category.slug)
                                     )}
                                     onCheckedChange={(value) =>
                                        handleFilterChange(
                                           "category",
-                                          category.id,
+                                          category.slug,
                                           !!value
                                        )
                                     }
                                  />
-                                 <Label htmlFor={`category-${category.id}`}>
+                                 <Label htmlFor={`category-${category.slug}`}>
                                     {category.name}
                                  </Label>
                               </div>

@@ -3,6 +3,7 @@ import CollectorsPageContainer from "@/features/collectors/pages";
 import { getCollectors } from "@/features/service/artspace/get-collectors";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 const CollectorsRoute = async () => {
   const queryClient = getQueryClient();
@@ -30,7 +31,9 @@ const CollectorsRoute = async () => {
 
   return (
     // <HydrationBoundary state={dehydrate(queryClient)}>
-    <CollectorsPageContainer />
+    <Suspense fallback={<div>Loading...</div>}>
+      <CollectorsPageContainer />
+    </Suspense>
     // </HydrationBoundary>
   );
 };
