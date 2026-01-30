@@ -18,6 +18,7 @@ import type { User } from "@/types";
 import { useAuth } from "@/features/auth/store";
 import { useRouter } from "next/navigation";
 import { paths } from "@/config/paths";
+import { getUserRouteType } from "@/lib/utils";
 
 interface BlockButtonProps {
    label?: string;
@@ -48,7 +49,7 @@ export const BlockButton: React.FC<BlockButtonProps> = ({
 
       blockUserMutation.mutate({
          userId: entityId,
-         userType: entityType,
+         userType: getUserRouteType(entityType),
       });
    };
 

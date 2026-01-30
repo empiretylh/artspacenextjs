@@ -2,11 +2,12 @@ import { BaseDialog } from "@/components/common/dialogs/base-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArtworkUpdateForm } from "./artwork-update-form";
 import { Artwork } from "@/types";
+import LoadingPage from "@/components/page/loading-page";
 
 type ArtworkUpdateProps = {
    isArtworkUpdateModalOpen: boolean;
    setIsArtworkUpdateModalOpen: (_isOpen: boolean) => void;
-   artwork: Artwork; // Replace with your Artwork type
+   artwork: Artwork | null; // Replace with your Artwork type
 };
 
 const ArtworkUpdateModal = ({
@@ -23,10 +24,13 @@ const ArtworkUpdateModal = ({
             onClose={() => setIsArtworkUpdateModalOpen(false)}
          >
             <ScrollArea className="h-[600px]">
-               <ArtworkUpdateForm
-                  artwork={artwork}
-                  onUpdateSuccess={() => setIsArtworkUpdateModalOpen(false)}
-               />
+               {
+                  artwork ? (<ArtworkUpdateForm
+                     artwork={artwork}
+                     onUpdateSuccess={() => setIsArtworkUpdateModalOpen(false)}
+                  />) : (<LoadingPage className="h-full" />
+                  )
+               }
             </ScrollArea>
          </BaseDialog>
       </div>

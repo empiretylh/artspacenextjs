@@ -5,6 +5,7 @@ import { useAuth } from "@/features/auth/store";
 import { paths } from "@/config/paths";
 import { useFollowUser } from "@/features/service/artspace/follow-user";
 import debounce from "lodash/debounce";
+import { getUserRouteType } from "@/lib/utils";
 
 export function useFollow({
    userId,
@@ -37,23 +38,21 @@ export function useFollow({
    // Create debounce once
    const debouncedFollowRef = useRef<ReturnType<typeof debounce> | null>(null);
 
-   if (!debouncedFollowRef.current) {
-      debouncedFollowRef.current = debounce((newValue) => {
-         if (!userRef.current) {
-            routerRef.current.push(paths.auth.login.path);
-            return;
-         }
+   debouncedFollowRef.current ??= debounce((newValue) => {
+      if (!userRef.current) {
+         routerRef.current.push(paths.auth.login.path);
+         return;
+      }
 
-         mutateRef.current(
-            { userId, userType, following: newValue },
-            {
-               onError: () => {
-                  setIsFollowing((prev) => !prev);
-               },
-            }
-         );
-      }, 1000);
-   }
+      mutateRef.current(
+         { userId, userType: getUserRouteType(userType), following: newValue },
+         {
+            onError: () => {
+               setIsFollowing((prev) => !prev);
+            },
+         }
+      );
+   }, 1000);
 
    // Cleanup debounce on unmount
    useEffect(() => {

@@ -1,11 +1,12 @@
 'use client'
-import { useGetArtists } from "@/features/service/artspace/get-artists";
+import { useAuth } from "@/features/auth/store";
+import { useGetUsers } from "@/features/service/artspace/get-users";
 import UserListItem from "../../../components/app/user-list-item";
 import UserListItemSkeleton from "../../../components/app/user-list-item-skeleton";
-import { useAuth } from "@/features/auth/store";
 
 const FeaturedArtists = () => {
-   const artistQuery = useGetArtists({
+   const artistQuery = useGetUsers({
+      userType: "artists",
       limit: 4,
    });
 

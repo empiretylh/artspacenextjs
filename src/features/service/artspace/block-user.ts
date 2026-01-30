@@ -4,13 +4,14 @@ import { api } from "@/lib/api-client";
 import type { Artwork } from "@/types";
 import type { MutationConfig } from "@/lib/react-query";
 import { queryKeys } from "@/config/query-keys";
+import { UserRouteType } from "./get-users";
 
 export const blockUser = ({
    userId,
    userType,
 }: {
    userId: string;
-   userType: string;
+   userType: UserRouteType;
 }): Promise<Artwork> => {
    return api.post(`/reports/users/${userId}/block/`);
 };
@@ -34,46 +35,53 @@ export const useBlockUser = ({ mutationConfig }: UseBlockUserOptions = {}) => {
             queryKey: queryKeys.user.blocked.all,
          });
 
-         switch (variables.userType) {
-            case "ARTIST": {
-               // detail page
-               queryClient.invalidateQueries({
-                  queryKey: queryKeys.artist.detail(variables.userId),
-               });
+         // switch (variables.userType) {
+         //    case "ARTIST": {
+         //       // detail page
+         //       queryClient.invalidateQueries({
+         //          queryKey: queryKeys.artist.detail(variables.userId),
+         //       });
 
-               // all artist lists (list + infinite)
-               queryClient.invalidateQueries({
-                  queryKey: queryKeys.artist.all,
-               });
+         //       // all artist lists (list + infinite)
+         //       queryClient.invalidateQueries({
+         //          queryKey: queryKeys.artist.all,
+         //       });
 
-               break;
-            }
+         //       break;
+         //    }
 
-            case "COLLECTOR":
-            case "BUYER": {
-               queryClient.invalidateQueries({
-                  queryKey: queryKeys.collector.detail(variables.userId),
-               });
+         //    case "COLLECTOR":
+         //    case "BUYER": {
+         //       queryClient.invalidateQueries({
+         //          queryKey: queryKeys.collector.detail(variables.userId),
+         //       });
 
-               queryClient.invalidateQueries({
-                  queryKey: queryKeys.collector.all,
-               });
+         //       queryClient.invalidateQueries({
+         //          queryKey: queryKeys.collector.all,
+         //       });
 
-               break;
-            }
+         //       break;
+         //    }
 
-            case "GALLERY": {
-               queryClient.invalidateQueries({
-                  queryKey: queryKeys.gallery.detail(variables.userId),
-               });
+         //    case "GALLERY": {
+         //       queryClient.invalidateQueries({
+         //          queryKey: queryKeys.gallery.detail(variables.userId),
+         //       });
 
-               queryClient.invalidateQueries({
-                  queryKey: queryKeys.gallery.all,
-               });
+         //       queryClient.invalidateQueries({
+         //          queryKey: queryKeys.gallery.all,
+         //       });
 
-               break;
-            }
-         }
+         //       break;
+         //    }
+         // }
+         queryClient.invalidateQueries({
+            queryKey: queryKeys.user.detail(variables.userType, variables.userId),
+         });
+
+         queryClient.invalidateQueries({
+            queryKey: queryKeys.user.blocked.status(variables.userId, variables.userType),
+         });
 
          onSuccess?.(...args);
       },

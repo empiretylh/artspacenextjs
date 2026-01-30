@@ -9,7 +9,7 @@ import { MoreVertical } from "lucide-react";
 import type { User } from "@/types";
 import { BlockButton } from "../block-button";
 
-export function ProfileActions({ user }: { user: User }) {
+export function ProfileActions({ user, blocked }: { user: User, blocked: boolean | undefined }) {
    return (
       <DropdownMenu>
          <DropdownMenuTrigger asChild>
@@ -19,7 +19,7 @@ export function ProfileActions({ user }: { user: User }) {
          </DropdownMenuTrigger>
 
          <DropdownMenuContent align="end">
-            {user.profile && !user.profile.isBlocked && (
+            {!blocked && (
                <DropdownMenuItem asChild>
                   <BlockButton
                      entityType={user.user_type}

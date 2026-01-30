@@ -88,7 +88,7 @@ api.interceptors.response.use(
       console.log(error)
 
       const message = error.response?.data?.detail || error.message;
-      if (error.response?.status !== 404) {
+      if (error.response?.status !== 404 && document) {
          useNotifications.getState().addNotification({
             type: "error",
             title: "Error",

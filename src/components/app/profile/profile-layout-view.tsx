@@ -17,6 +17,9 @@ import HeartIcon from "@/components/icons/heart-icon";
 import OverviewIcon from "@/components/icons/overview-icon";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { ClipboardPenLineIcon } from "lucide-react";
+import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
+import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
+import { UserRouteType } from "@/features/service/artspace/get-users";
 
 const getIcon = (key: string) => {
    if (key === "artworks") {
@@ -42,8 +45,10 @@ const ProfileLayoutView = ({
    variant,
    navLinks,
    children,
+   userType
 }: {
    user: User;
+   userType: UserRouteType
    variant?: "profile";
    navLinks: Array<{
       title: string;
@@ -56,6 +61,16 @@ const ProfileLayoutView = ({
    const pathname = usePathname()
    const isActive = (href: string) => pathname === href;
    const { user: authUser } = useAuth();
+
+   const followStatusQuery = useGetUserFollowStatus({
+      userId: String(user?.id),
+      userType: userType,
+   });
+
+   const blockStatusQuery = useGetUserBlockStatus({
+      userId: String(user?.id),
+      userType: userType,
+   });
 
    return (
       <div>
@@ -113,9 +128,10 @@ const ProfileLayoutView = ({
                               {user && (
                                  <FollowButton
                                     size="default"
+                                    loading={followStatusQuery.isLoading}
                                     userId={String(user.id)}
                                     userType={user.user_type}
-                                    following={user.profile.is_following}
+                                    following={followStatusQuery.data || false}
                                  />
                               )}
                               <Button disabled variant="outline">
@@ -124,7 +140,7 @@ const ProfileLayoutView = ({
                            </>
                         )}
                         {user && String(user.id) !== String(authUser?.id) && (
-                           <ProfileActions user={user} />
+                           <ProfileActions user={user} blocked={blockStatusQuery.data} />
                         )}
                         {/* <div className="flex items-center gap-2"></div> */}
                      </div>

@@ -2,6 +2,7 @@
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { useFollow } from "@/hooks/app/use-follow";
+import { Skeleton } from "../ui/skeleton";
 
 const FollowButton = ({
    userId,
@@ -9,10 +10,12 @@ const FollowButton = ({
    following,
    size = "sm",
    className,
+   loading,
 }: {
    userId: string;
    userType: string;
    following: boolean;
+   loading?: boolean;
    size?: "sm" | "default" | "lg" | "icon" | null | undefined;
    className?: string;
 }) => {
@@ -21,6 +24,14 @@ const FollowButton = ({
       userType,
       following,
    });
+
+   if (loading) {
+      return (
+         <Button variant="outline" size={size} disabled>
+            Loading ...
+         </Button >
+      )
+   }
 
    return (
       <Button

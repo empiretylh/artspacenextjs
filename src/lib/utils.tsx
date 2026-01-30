@@ -10,6 +10,7 @@ import type { Path, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
 import { paths } from "@/config/paths";
+import { UserRouteType } from "@/features/service/artspace/get-users";
 
 export function cn(...inputs: ClassValue[]) {
    return twMerge(clsx(inputs));
@@ -255,4 +256,25 @@ export const getUserLink = (user: User, authUser: User) => {
       default:
          return paths.artists.detail.getHref(String(user.id));
    }
+};
+
+export const getUserRouteType = (entityType: string) => {
+   switch (entityType) {
+      case "ARTIST":
+         return "artists";
+      case "COLLECTOR":
+         return "collectors";
+      case "GALLERY":
+         return "galleries";
+      default:
+         return "artists";
+   }
+};
+
+export const getUserPath = (userRouteType: UserRouteType) => {
+   let newUserType = userRouteType.substring(0, userRouteType.length - 1);
+   if (newUserType === 'gallerie') {
+      newUserType = 'gallery';
+   }
+   return newUserType
 };

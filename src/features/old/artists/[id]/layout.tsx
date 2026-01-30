@@ -1,28 +1,12 @@
-'use client'
-import ProfileLayoutSkeleton from "@/components/app/profile/profile-layout-skeleton";
 import ProfileLayoutView from "@/components/app/profile/profile-layout-view";
 import NotFound from "@/components/layout/not-found";
 import { paths } from "@/config/paths";
-import { useAuth } from "@/features/auth/store";
-import { useGetArtist } from "@/features/service/artspace/get-artist";
-import { useParams } from "next/navigation";
+import { getCachedArtist } from "@/features/service/artspace/get-artist";
 
-const ArtistDetailLayout = ({ children }: { children: React.ReactNode }) => {
-  const { id } = useParams();
-  const { accessToken } = useAuth()
+const ArtistDetailLayout = async ({ params, children }: { params: Promise<{ id: string }>, children: React.ReactNode }) => {
+  const { id } = await params;
 
-  const userQuery = useGetArtist({
-    artistId: String(id),
-    queryConfig: {
-      enabled: id !== undefined,
-    },
-  });
-
-  const user = userQuery.data;
-
-  if (userQuery.isLoading) {
-    return <ProfileLayoutSkeleton />;
-  }
+  const user = await getCachedArtist(String(id));
 
   if (id === undefined || user === undefined) return <NotFound />;
 
