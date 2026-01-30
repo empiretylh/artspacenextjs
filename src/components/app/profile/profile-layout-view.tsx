@@ -68,7 +68,7 @@ const ProfileLayoutView = ({
                }}
             ></div> */}
             <div
-               className="relative w-full aspect-[8/3] rounded-lg bg-cover bg-center mb-2"
+               className="relative w-full aspect-8/3 rounded-lg bg-cover bg-center mb-2"
                style={{
                   backgroundImage: `url(${user?.profile.cover_photo
                      ? getImage(user.profile.cover_photo)

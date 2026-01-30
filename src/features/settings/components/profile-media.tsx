@@ -1,10 +1,15 @@
-import React, { useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useEffect, useRef, useState } from "react";
+import ReactCrop, {
+   centerCrop,
+   makeAspectCrop,
+   type Crop,
+   type PixelCrop,
+} from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserCircle2, Globe, User, Pencil } from "lucide-react";
+import { UserCircle2, User, Pencil, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { paths } from "@/config/paths";
 import { useGetProfile } from "../api/get-profile";
 import LoadingPage from "@/components/page/loading-page";
 import { useChangeProfilePicture } from "../api/change-profile-picture";
@@ -12,131 +17,301 @@ import { getImage } from "@/lib/utils";
 import { useChangeProfileCover } from "../api/change-profile-cover";
 import Image from "@/components/common/image";
 
+type CropType = "avatar" | "banner";
+
 export const ProfileMedia: React.FC = () => {
    const getProfile = useGetProfile();
    const changeProfilePictureMutation = useChangeProfilePicture();
    const changeProfileCoverMutation = useChangeProfileCover();
-   const user = getProfile?.data?.data;
+
    const profileInput = useRef<HTMLInputElement>(null);
    const bannerInput = useRef<HTMLInputElement>(null);
+   const imgRef = useRef<HTMLImageElement>(null);
 
-   if (getProfile.isLoading) {
-      return <LoadingPage />;
-   }
+   const [imageSrc, setImageSrc] = useState<string | null>(null);
+   const [cropType, setCropType] = useState<CropType | null>(null);
+   const [crop, setCrop] = useState<Crop>();
+   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
 
-   if (!user) {
-      return <div>Profile not found</div>;
-   }
+   if (getProfile.isLoading) return <LoadingPage />;
+   if (!getProfile.data?.data) return <div>Profile not found</div>;
 
-   const onProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-         changeProfilePictureMutation.mutate({
-            data: {
-               profile_picture: file,
-            },
-         });
-      }
-   };
-
-   const onBannerInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-         changeProfileCoverMutation.mutate({
-            data: {
-               cover_photo: file,
-            },
-         });
-      }
-   };
-
-   const {
-      email,
-      first_name,
-      last_name,
-      user_type,
-      profile: { bio, profile_picture, website, cover_photo },
-   } = user;
+   const user = getProfile.data.data;
+   const { email, first_name, last_name, user_type, profile } = user;
+   const { profile_picture, cover_photo } = profile;
 
    const fullName =
       `${first_name || ""} ${last_name || ""}`.trim() || "Unnamed User";
 
+   const onSelectFile = (
+      e: React.ChangeEvent<HTMLInputElement>,
+      type: CropType
+   ) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+         setImageSrc(reader.result as string);
+         setCropType(type);
+      };
+      reader.readAsDataURL(file);
+   };
+
+   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+      const { width, height } = e.currentTarget;
+
+      const aspect = cropType === "avatar" ? 1 : 3 / 1;
+
+      const crop = centerCrop(
+         makeAspectCrop(
+            {
+               unit: "%",
+               width: 90,
+            },
+            aspect,
+            width,
+            height
+         ),
+         width,
+         height
+      );
+
+      setCrop(crop);
+   };
+
+   function getHighQualityCroppedBlob(
+      image: HTMLImageElement,
+      crop: PixelCrop,
+      type: string = "image/jpeg",
+      quality = 0.95
+   ): Promise<Blob> {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) throw new Error("No 2D context");
+
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+      const pixelRatio = window.devicePixelRatio || 1;
+
+      canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
+      canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
+
+      ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      ctx.imageSmoothingQuality = "medium";
+
+      ctx.drawImage(
+         image,
+         crop.x * scaleX,
+         crop.y * scaleY,
+         crop.width * scaleX,
+         crop.height * scaleY,
+         0,
+         0,
+         crop.width * scaleX,
+         crop.height * scaleY
+      );
+
+      return new Promise((resolve) => {
+         canvas.toBlob(
+            (blob) => resolve(blob!),
+            type,
+            quality
+         );
+      });
+   }
+
+   const handleSave = async () => {
+      if (!completedCrop || !imgRef.current || !cropType) return;
+
+      const blob = await getHighQualityCroppedBlob(
+         imgRef.current,
+         completedCrop,
+         "image/jpeg",
+         0.95
+      );
+
+      const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+
+      if (cropType === "avatar") {
+         changeProfilePictureMutation.mutate({
+            data: { profile_picture: file },
+         });
+      } else {
+         changeProfileCoverMutation.mutate({
+            data: { cover_photo: file },
+         });
+      }
+
+      cleanup();
+   };
+
+
+
+   const getCroppedImage = async () => {
+      if (!completedCrop || !imgRef.current) return;
+
+      const canvas = document.createElement("canvas");
+      const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
+      const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
+
+      canvas.width = completedCrop.width;
+      canvas.height = completedCrop.height;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      ctx.drawImage(
+         imgRef.current,
+         completedCrop.x * scaleX,
+         completedCrop.y * scaleY,
+         completedCrop.width * scaleX,
+         completedCrop.height * scaleY,
+         0,
+         0,
+         completedCrop.width,
+         completedCrop.height
+      );
+
+      canvas.toBlob((blob) => {
+         if (!blob || !cropType) return;
+
+         const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+
+         if (cropType === "avatar") {
+            changeProfilePictureMutation.mutate({
+               data: { profile_picture: file },
+            });
+         } else {
+            changeProfileCoverMutation.mutate({
+               data: { cover_photo: file },
+            });
+         }
+
+         cleanup();
+      }, "image/jpeg");
+   };
+
+   const cleanup = () => {
+      setImageSrc(null);
+      setCrop(undefined);
+      setCompletedCrop(null);
+      setCropType(null);
+      if (profileInput.current) profileInput.current.value = "";
+      if (bannerInput.current) bannerInput.current.value = "";
+   };
+
    return (
-      <div className="space-y-4">
-         <div className="flex gap-6">
-            <div className="relative inline-block border rounded-full">
+      <div className="space-y-6">
+         {/* Crop Modal */}
+         {imageSrc && cropType && (
+            <div className="fixed inset-0 z-[100] h-screen bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+               <div className="bg-background max-w-3xl w-full rounded-xl overflow-hidden">
+                  <div className="flex justify-between items-center p-4 border-b">
+                     <h3 className="font-semibold text-lg">
+                        Crop {cropType === "avatar" ? "Profile Picture" : "Cover Photo"}
+                     </h3>
+                     <Button variant="ghost" size="icon" onClick={cleanup}>
+                        <X className="w-5 h-5" />
+                     </Button>
+                  </div>
+
+                  <div className="p-6 relative bg-muted/30 h-[450px] flex justify-between overflow-auto">
+                     <ReactCrop
+                        crop={crop}
+                        onChange={(c) => setCrop(c)}
+                        onComplete={(c) => setCompletedCrop(c)}
+                        aspect={cropType === "avatar" ? 1 : 8 / 3}
+                        className="mx-auto"
+                        // locked
+                        circularCrop={cropType === "avatar"}
+                     >
+                        <img
+                           ref={imgRef}
+                           src={imageSrc}
+                           onLoad={onImageLoad}
+                           alt="Crop"
+                           className="h-auto max-h-100! mx-auto"
+                        />
+                     </ReactCrop>
+                  </div>
+
+                  <div className="flex justify-end gap-3 p-4 border-t">
+                     <Button variant="outline" onClick={cleanup}>
+                        Cancel
+                     </Button>
+                     <Button onClick={getCroppedImage} disabled={!completedCrop}>
+                        <Check className="w-4 h-4 mr-2" />
+                        Save
+                     </Button>
+                  </div>
+               </div>
+            </div>
+         )}
+
+         {/* Avatar */}
+         <div className="flex gap-6 items-center">
+            <div className="relative">
                <Avatar className="w-24 h-24">
                   {profile_picture ? (
-                     <AvatarImage
-                        src={getImage(profile_picture)}
-                        alt={fullName}
-                     />
+                     <AvatarImage src={getImage(profile_picture)} alt={fullName} />
                   ) : (
-                     <AvatarFallback className="bg-primary/10 text-primary text-2xl">
+                     <AvatarFallback className="text-2xl">
                         {first_name?.[0]?.toUpperCase() || <User />}
                      </AvatarFallback>
                   )}
-                  <input
-                     ref={profileInput}
-                     type="file"
-                     className="hidden"
-                     onChange={onProfilePictureChange}
-                  />
                </Avatar>
+
+               <input
+                  ref={profileInput}
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={(e) => onSelectFile(e, "avatar")}
+               />
+
                <Button
-                  variant="default"
                   size="icon"
-                  className="absolute rounded-full bottom-1 -right-2 border-white border text-muted-foreground hover:text-primary"
-                  // onClick={() => router.push(paths.dashboard.profileEdit.path)}
-                  title="Edit Profile"
-                  disabled={changeProfilePictureMutation.isPending}
-                  loading={changeProfilePictureMutation.isPending}
+                  className="absolute -bottom-1 -right-1 rounded-full"
                   onClick={() => profileInput.current?.click()}
                >
-                  {changeProfilePictureMutation.isPending ? (
-                     <></>
-                  ) : (
-                     <Pencil className="w-4 text-white h-4" />
-                  )}
+                  <Pencil className="w-4 h-4" />
                </Button>
             </div>
 
-            <div className="space-y-1">
+            <div>
                <h1 className="text-2xl font-semibold">{fullName}</h1>
                <p className="text-sm text-muted-foreground">{email}</p>
-               <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-muted text-sm mt-2">
+               <div className="inline-flex items-center gap-1 mt-2 px-3 py-1 rounded-full bg-muted text-sm">
                   <UserCircle2 className="w-4 h-4" />
-                  <span>{user_type}</span>
+                  {user_type}
                </div>
             </div>
          </div>
+
+         {/* Banner */}
          <div className="relative">
             <Image
                src={cover_photo ? getImage(cover_photo) : ""}
-               className="aspect-[3/1] w-full rounded-2xl"
-               alt=""
+               alt="Cover"
+               className="w-full aspect-8/3 rounded-2xl overflow-hidden object-cover"
             />
+
             <input
                ref={bannerInput}
                type="file"
-               className="hidden"
-               onChange={onBannerInputChange}
+               hidden
+               accept="image/*"
+               onChange={(e) => onSelectFile(e, "banner")}
             />
+
             <Button
-               variant="default"
                size="icon"
-               className="absolute rounded-full bottom-4 right-4 border-white border text-muted-foreground hover:text-primary"
-               // onClick={() => router.push(paths.dashboard.profileEdit.path)}
-               title="Edit Profile"
-               disabled={changeProfileCoverMutation.isPending}
-               loading={changeProfileCoverMutation.isPending}
+               className="absolute bottom-4 right-4 rounded-full"
                onClick={() => bannerInput.current?.click()}
             >
-               {changeProfileCoverMutation.isPending ? (
-                  <></>
-               ) : (
-                  <Pencil className="w-4 text-white h-4" />
-               )}
+               <Pencil className="w-4 h-4" />
             </Button>
          </div>
       </div>
