@@ -23,13 +23,11 @@ export interface Style {
 }
 
 export interface Profile {
-   id: number;
    bio: string;
    about: string;
    profile_picture: string | null;
    cover_photo: string | null;
    website: string;
-   user: number;
    features_photos: FeaturedPhoto[];
    is_following: boolean;
    isBlocked: boolean;

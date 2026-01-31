@@ -3,7 +3,7 @@ export const revalidate = 60;
 import UserOverviewPage from "@/features/user/pages/user-overview-page";
 import { getCachedUser } from "@/features/service/artspace/get-user";
 import { getUsersOg, UserRouteType } from "@/features/service/artspace/get-users";
-import { getImage } from "@/lib/utils";
+import { getImage, getUserRouteType } from "@/lib/utils";
 import { Metadata, ResolvingMetadata } from "next";
 import { User } from "@/types";
 
@@ -16,6 +16,7 @@ export async function generateStaticParams() {
   const allUsers = [...artists.results, ...galleries.results, ...collectors.results];
 
   return allUsers.map((user) => ({
+    userType: getUserRouteType(user.user_type),
     id: String(user.id),
   }))
 }
@@ -36,11 +37,11 @@ export async function generateMetadata(
 
   return {
     title: (data.first_name || '') + (data.last_name || ''),
-    description: data.profile.about,
+    description: data.profile.bio,
     openGraph: {
       images: [getImage(data.profile.profile_picture) || '/assets/profile-default.png'],
       title: (data.first_name || '') + (data.last_name || ''),
-      description: data.profile.about,
+      description: data.profile.bio,
     }
   }
 }

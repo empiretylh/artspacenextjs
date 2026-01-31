@@ -89,6 +89,7 @@ export const handleFormError = <T extends Record<string, unknown>>(
                message,
             });
          }
+         form.setFocus(key as Path<T>);
       });
    }
 };
@@ -266,6 +267,8 @@ export const getUserRouteType = (entityType: string) => {
          return "collectors";
       case "GALLERY":
          return "galleries";
+      case "USER":
+         return "users";
       default:
          return "artists";
    }

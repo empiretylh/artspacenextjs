@@ -9,6 +9,7 @@ import OverviewIcon from "@/components/icons/overview-icon";
 import NotFound from "@/components/layout/not-found";
 import { paths } from "@/config/paths";
 import { useGetProfile } from "@/features/profile/api/get-profile";
+import { getUserRouteType } from "@/lib/utils";
 import { ClipboardPenLineIcon } from "lucide-react";
 
 const ProfileDetailLayout = ({ children }: { children: React.ReactNode }) => {
@@ -58,7 +59,7 @@ const ProfileDetailLayout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <ProfileLayoutView variant="profile" user={profile} navLinks={navLinks} >
+    <ProfileLayoutView userType={getUserRouteType(profile.user_type)} variant="profile" user={profile} navLinks={navLinks} >
       {children}
     </ProfileLayoutView>
   );

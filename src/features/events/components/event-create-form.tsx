@@ -57,6 +57,7 @@ import type { AxiosResponse } from "axios";
 import { keepPreviousData } from "@tanstack/react-query";
 import { debounce } from "lodash";
 import AsyncMultipleSelector from "@/components/common/async-multi-select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type FormData = z.infer<typeof eventCreateInputSchema>;
 
@@ -278,9 +279,12 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                         name="cover_photo"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Cover Photo</FormLabel>
+                              <FormLabel htmlFor={field.name}>Cover Photo</FormLabel>
                               <FormControl>
                                  <ImageDnd
+                                    ref={field.ref}
+                                    id={field.name}
+                                    name={field.name}
                                     value={
                                        field?.value?.map((url) => url) || []
                                     }
@@ -332,9 +336,12 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                         name="event_logo"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Event Logo</FormLabel>
+                              <FormLabel htmlFor={field.name}>Event Logo</FormLabel>
                               <FormControl>
                                  <ImageDnd
+                                    ref={field.ref}
+                                    id={field.name}
+                                    name={field.name}
                                     value={
                                        field?.value?.map((url) => url) || []
                                     }
@@ -456,9 +463,12 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                         name="images"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Images</FormLabel>
+                              <FormLabel htmlFor={field.name}>Images</FormLabel>
                               <FormControl>
                                  <ImageDnd
+                                    ref={field.ref}
+                                    id={field.name}
+                                    name={field.name}
                                     value={
                                        field?.value?.map((url: string) =>
                                           getImage(url)
@@ -512,9 +522,12 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                         name="start_date"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Start Date</FormLabel>
+                              <FormLabel htmlFor={field.name}>Start Date</FormLabel>
                               <FormControl>
                                  <DatePicker
+                                    id={field.name}
+                                    name={field.name}
+                                    ref={field.ref}
                                     value={field.value}
                                     onChange={field.onChange}
                                  />
@@ -530,9 +543,12 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                         name="end_date"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>End Date</FormLabel>
+                              <FormLabel htmlFor={field.name}>End Date</FormLabel>
                               <FormControl>
                                  <DatePicker
+                                    id={field.name}
+                                    name={field.name}
+                                    ref={field.ref}
                                     value={field.value}
                                     onChange={field.onChange}
                                  />
@@ -550,15 +566,13 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                            <FormItem>
                               <FormControl>
                                  <div className="flex items-center gap-3">
-                                    <input
-                                       type="checkbox"
+                                    <Checkbox
+                                       id={field.name}
+                                       name={field.name}
+                                       onCheckedChange={field.onChange}
                                        checked={field.value}
-                                       onChange={(e) =>
-                                          field.onChange(e.target.checked)
-                                       }
-                                       id="show_popup"
                                     />
-                                    <FormLabel htmlFor="show_popup">
+                                    <FormLabel htmlFor={field.name}>
                                        Show Popup?
                                     </FormLabel>
                                  </div>
@@ -576,9 +590,12 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                               name="popup_start"
                               render={({ field }) => (
                                  <FormItem>
-                                    <FormLabel>Popup Start Date</FormLabel>
+                                    <FormLabel htmlFor={field.name}>Popup Start Date</FormLabel>
                                     <FormControl>
                                        <DatePicker
+                                          id={field.name}
+                                          name={field.name}
+                                          ref={field.ref}
                                           value={field.value}
                                           onChange={field.onChange}
                                        />
@@ -592,9 +609,12 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                               name="popup_end"
                               render={({ field }) => (
                                  <FormItem>
-                                    <FormLabel>Popup End Date</FormLabel>
+                                    <FormLabel htmlFor={field.name}>Popup End Date</FormLabel>
                                     <FormControl>
                                        <DatePicker
+                                          id={field.name}
+                                          name={field.name}
+                                          ref={field.ref}
                                           value={field.value}
                                           onChange={field.onChange}
                                        />
@@ -614,15 +634,13 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                            <FormItem>
                               <FormControl>
                                  <div className="flex items-center gap-3">
-                                    <input
-                                       type="checkbox"
+                                    <Checkbox
+                                       id={field.name}
+                                       name={field.name}
+                                       onCheckedChange={field.onChange}
                                        checked={field.value}
-                                       onChange={(e) =>
-                                          field.onChange(e.target.checked)
-                                       }
-                                       id="is_published"
                                     />
-                                    <FormLabel htmlFor="is_published">
+                                    <FormLabel htmlFor={field.name}>
                                        Published?
                                     </FormLabel>
                                  </div>

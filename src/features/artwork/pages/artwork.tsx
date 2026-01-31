@@ -56,6 +56,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                   medium={artwork.medium || "N/A"}
                   category={artwork.category}
                   categoryName={artwork.category_name}
+                  currentOwner={artwork.current_owner_name ? artwork.current_owner_name : artwork.current_owner_display.first_name + " " + artwork.current_owner_display.last_name}
                />
 
                {artwork.search_keywords &&

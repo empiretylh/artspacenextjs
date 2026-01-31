@@ -49,6 +49,7 @@ import { TagInput } from "@/components/common/tag-input";
 import ImageDnd from "@/components/common/dnd-image-upload";
 import { useImageUpload } from "@/features/service/artspace/image-upload";
 import RequiredAsterisk from "@/components/common/required-asterisk";
+import { Spinner } from "@/components/ui/spinner";
 
 // import your update API hook & schema
 
@@ -91,7 +92,7 @@ export const ArtworkUpdateForm = ({
 
    const form = useForm<FormData>({
       resolver: zodResolver(updateArtInputSchema),
-      defaultValues: {
+      values: {
          id: artwork.id,
          category: artwork.category.id,
          title: artwork.title,
@@ -135,20 +136,7 @@ export const ArtworkUpdateForm = ({
       <div className="mx-auto">
          <Form {...form}>
             <form
-               onSubmit={form.handleSubmit(onSubmit, (errors) => {
-                  // We'll scroll to the first error here
-                  const firstErrorField = Object.keys(errors)[0];
-                  const el = document.querySelector(
-                     `[name="${firstErrorField}"]`
-                  );
-                  console.log(el);
-                  if (el) {
-                     // Scroll into view smoothly
-                     el.scrollIntoView({ behavior: "smooth", block: "center" });
-                     // Optionally, focus the field
-                     (el as HTMLElement).focus();
-                  }
-               })}
+               onSubmit={form.handleSubmit(onSubmit)}
                className="space-y-5"
             >
                <Card className="border border-border shadow-sm">
@@ -160,7 +148,43 @@ export const ArtworkUpdateForm = ({
                   </CardHeader>
 
                   <CardContent className="space-y-8">
-                     {/* two-column layout */}
+                     {/* Title */}
+                     <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>
+                                 Title <RequiredAsterisk />
+                              </FormLabel>
+                              <FormControl>
+                                 <Input
+                                    placeholder="Artwork title"
+                                    {...field}
+                                 />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     {/* Dimensions */}
+                     <FormField
+                        control={form.control}
+                        name="dimensions"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>
+                                 Dimensions <RequiredAsterisk />
+                              </FormLabel>
+                              <FormControl>
+                                 <Input placeholder="44 x 56 cm" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
                      {/* Category */}
                      <FormField
                         control={form.control}
@@ -180,7 +204,9 @@ export const ArtworkUpdateForm = ({
                                     value={field.value?.toString() ?? ""}
                                  >
                                     <SelectTrigger
+                                       ref={field.ref}
                                        id={field.name}
+                                       name={field.name}
                                        className="w-full"
                                     >
                                        <SelectValue placeholder="Select category" />
@@ -214,9 +240,11 @@ export const ArtworkUpdateForm = ({
                         name="search_keywords"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Search Keywords</FormLabel>
+                              <FormLabel htmlFor={field.name}>Search Keywords</FormLabel>
                               <FormControl>
                                  <TagInput
+                                    id={field.name}
+                                    name={field.name}
                                     value={field.value ?? []}
                                     onChange={(arr) => field.onChange(arr)}
                                     placeholder="Add keywords and press Enter"
@@ -233,34 +261,44 @@ export const ArtworkUpdateForm = ({
                      />
 
                      {/* Styles */}
-                     <FormField
-                        control={form.control}
-                        name="styles_artwork_ids"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel aria-hidden>
-                                 Styles <RequiredAsterisk />
-                              </FormLabel>
-                              <FormControl>
-                                 <MultipleSelector
-                                    label="Styles"
-                                    options={styles.map((p) => ({
-                                       label: p.name,
-                                       value: String(p.id),
-                                    }))}
-                                    name={field.name}
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    placeholder="Select styles"
-                                 />
-                              </FormControl>
-                              <FormDescription>
-                                 Assign one or more styles to this role.
-                              </FormDescription>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
+                     {
+                        isLoadingStyles || styles.length === 0 ? (
+                           <div className="flex items-center justify-center">
+                              <Spinner />
+                           </div>
+                        ) : (
+                           <FormField
+                              control={form.control}
+                              name="styles_artwork_ids"
+                              render={({ field }) => (
+                                 <FormItem>
+                                    <FormLabel aria-hidden htmlFor={field.name}>
+                                       Styles <RequiredAsterisk />
+                                    </FormLabel>
+                                    <FormControl>
+                                       <MultipleSelector
+                                          ref={field.ref}
+                                          id={field.name}
+                                          name={field.name}
+                                          label="Styles"
+                                          options={styles.map((p) => ({
+                                             label: p.name,
+                                             value: String(p.id),
+                                          }))}
+                                          value={field.value}
+                                          onChange={field.onChange}
+                                          placeholder="Select styles"
+                                       />
+                                    </FormControl>
+                                    <FormDescription>
+                                       Assign one or more styles to this role.
+                                    </FormDescription>
+                                    <FormMessage />
+                                 </FormItem>
+                              )}
+                           />
+                        )
+                     }
 
                      {/* Genre */}
                      <FormField
@@ -280,6 +318,7 @@ export const ArtworkUpdateForm = ({
                                     value={field.value?.toString() ?? ""}
                                  >
                                     <SelectTrigger
+                                       name={field.name}
                                        id={field.name}
                                        className="w-full"
                                     >
@@ -308,43 +347,6 @@ export const ArtworkUpdateForm = ({
                                        )}
                                     </SelectContent>
                                  </Select>
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-
-                     {/* Title */}
-                     <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>
-                                 Title <RequiredAsterisk />
-                              </FormLabel>
-                              <FormControl>
-                                 <Input
-                                    placeholder="Artwork title"
-                                    {...field}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-
-                     {/* Dimensions */}
-                     <FormField
-                        control={form.control}
-                        name="dimensions"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>
-                                 Dimensions <RequiredAsterisk />
-                              </FormLabel>
-                              <FormControl>
-                                 <Input placeholder="44 x 56 cm" {...field} />
                               </FormControl>
                               <FormMessage />
                            </FormItem>
@@ -494,11 +496,13 @@ export const ArtworkUpdateForm = ({
                         name="image"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>
+                              <FormLabel htmlFor={field.name}>
                                  Artwork Image <RequiredAsterisk />
                               </FormLabel>
                               <FormControl>
                                  <ImageDnd
+                                    ref={field.ref}
+                                    id={field.name}
                                     value={
                                        field?.value?.map((url) => url) || []
                                     }
@@ -663,6 +667,6 @@ export const ArtworkUpdateForm = ({
                </Card>
             </form>
          </Form>
-      </div>
+      </div >
    );
 };

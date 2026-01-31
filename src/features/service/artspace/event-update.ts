@@ -11,19 +11,19 @@ import { queryKeys } from "@/config/query-keys";
  * All fields optional EXCEPT id
  */
 export const eventUpdateInputSchema = z.object({
-   title: z.string().min(2).optional(),
-   slug: z.string().min(2).optional(),
+   title: z.string().min(2, "Title must be at least 2 characters.").optional(),
+   slug: z.string().min(2, "Slug must be at least 2 characters.").optional(),
    event_type: z.enum(["SOLO", "GROUP", "COLLECTOR"]).optional(),
-   about: z.string().min(10).optional(),
+   about: z.string().min(10, "About must be at least 10 characters.").optional(),
 
    cover_photo: z
-      .array(z.string())
-      .min(1, "At least one cover photo is required")
+      .array(z.string(), "Cover photo is required")
+      .min(1, "Cover photo is required")
       .optional(),
 
    event_logo: z
-      .array(z.string())
-      .min(1, "At least one event logo is required")
+      .array(z.string(), "Event logo is required")
+      .min(1, "Event logo is required")
       .optional(),
 
    artists_ids: z
@@ -32,9 +32,7 @@ export const eventUpdateInputSchema = z.object({
             label: z.string(),
             value: z.string(),
          })
-      )
-      .min(1, "Select at least one artist")
-      .optional(),
+      ).optional(),
 
    artworks_ids: z
       .array(
@@ -43,13 +41,12 @@ export const eventUpdateInputSchema = z.object({
             value: z.string(),
          })
       )
-      .min(1, "Select at least one artwork")
       .optional(),
 
    images: z.any().optional(),
 
-   start_date: z.date().optional(),
-   end_date: z.date().optional(),
+   start_date: z.date('Start Date must be a valid date').optional(),
+   end_date: z.date('End Date must be a valid date').optional(),
 
    show_popup: z.boolean().optional(),
 
@@ -57,6 +54,12 @@ export const eventUpdateInputSchema = z.object({
    popup_end: z.date().optional(),
 
    is_published: z.boolean().optional(),
+}).refine((data) => !(data.show_popup === true && !data.popup_start), {
+   message: "Popup Start Date is required when Show Popup is enabled",
+   path: ["popup_start"], // attach the error to this field
+}).refine((data) => !(data.show_popup === true && !data.popup_end), {
+   message: "Popup End Date is required when Show Popup is enabled",
+   path: ["popup_end"], // attach the error to this field
 });
 
 export type EventUpdateInput = z.infer<typeof eventUpdateInputSchema>;

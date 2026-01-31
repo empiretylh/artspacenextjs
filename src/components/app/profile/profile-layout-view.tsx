@@ -20,6 +20,7 @@ import { ClipboardPenLineIcon } from "lucide-react";
 import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
 import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
 import { UserRouteType } from "@/features/service/artspace/get-users";
+import { paths } from "@/config/paths";
 
 const getIcon = (key: string) => {
    if (key === "artworks") {
@@ -65,11 +66,17 @@ const ProfileLayoutView = ({
    const followStatusQuery = useGetUserFollowStatus({
       userId: String(user?.id),
       userType: userType,
+      queryConfig: {
+         enabled: variant !== "profile",
+      },
    });
 
    const blockStatusQuery = useGetUserBlockStatus({
       userId: String(user?.id),
       userType: userType,
+      queryConfig: {
+         enabled: variant !== "profile",
+      },
    });
 
    return (
@@ -121,7 +128,9 @@ const ProfileLayoutView = ({
                         {/* <Button variant="ghost" aria-label="Share profile">
                         <ShareIcon className="!w-6 !h-6" />
                         </Button> */}
-                        <ShareButton />
+                        {
+                           typeof window !== "undefined" ? (<ShareButton url={window.location.host + paths[userType].detail.getHref(String(user?.id))} />) : <ShareButton />
+                        }
 
                         {variant !== "profile" && (
                            <>

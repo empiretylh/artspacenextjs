@@ -31,6 +31,34 @@ export const paths = {
          getHref: (slug: string) => `/events/${slug}`,
       },
    },
+   users: {
+      path: "/users",
+      getHref: () => "/users",
+      detail: {
+         path: "/users/:id",
+         getHref: (id: string) => `/users/${id}`,
+      },
+      artworks: {
+         path: "/users/:id/artworks",
+         getHref: (id: string) => `/users/${id}/artworks`,
+      },
+      events: {
+         path: "/users/:id/events",
+         getHref: (id: string) => `/users/${id}/events`,
+      },
+      collections: {
+         path: "/users/:id/collections",
+         getHref: (id: string) => `/users/${id}/collections`,
+      },
+      save: {
+         path: "/users/:id/save",
+         getHref: (id: string) => `/users/${id}/save`,
+      },
+      likedArtworks: {
+         path: "/users/:id/liked-artworks",
+         getHref: (id: string) => `/users/${id}/liked-artworks`,
+      },
+   },
    artists: {
       path: "/artists",
       getHref: () => "/artists",

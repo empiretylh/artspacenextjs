@@ -1,33 +1,42 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
 
-const ProfileCardSkeleton = () => {
+export default function ProfileCardSkeleton() {
    return (
-      <div className="flex flex-col items-center border rounded-2xl overflow-hidden bg-background">
-         {/* Cover Image Skeleton */}
-         <Skeleton className="h-[110px] w-full" />
+      <div className="flex w-full justify-center border rounded-2xl overflow-hidden bg-background">
+         <div className="w-full flex flex-col items-center">
+            {/* Cover */}
+            <div className="hidden md:block relative w-full h-[110px]">
+               <Skeleton className="absolute inset-0 w-full h-full rounded-none" />
+               <div className="absolute inset-0 bg-gradient-to-b from-transparent from-30% to-background" />
+            </div>
 
-         {/* Avatar Skeleton */}
-         <div className="mt-[-32px] flex flex-col items-center pb-4">
-            <Skeleton className="w-12 h-12 rounded-full border-4" />
+            <div className="mt-3 md:mt-[-32px] flex flex-col items-center pb-4 w-full">
+               {/* Avatar */}
+               <div className="relative mb-2 w-16 h-16">
+                  <Skeleton className="w-full h-full rounded-full border-2 border-background" />
+               </div>
 
-            {/* Name Skeleton */}
-            <Skeleton className="mt-4 h-4 w-3/4 rounded" />
+               {/* User Info */}
+               <div className="text-center mb-3 w-full flex flex-col items-center">
+                  {/* Name */}
+                  <div className="mb-2 min-h-[24px] flex items-center justify-center">
+                     <Skeleton className="h-4 sm:h-5 w-[120px]" />
+                  </div>
 
-            {/* Username Skeleton */}
-            <Skeleton className="mt-2 h-3 w-1/2 rounded" />
+                  {/* Username */}
+                  <Skeleton className="h-4 w-[100px] mb-1" />
 
-            {/* Bio Skeleton */}
-            <Skeleton className="mt-1 h-3 w-5/6 rounded" />
+                  {/* Bio */}
+                  <Skeleton className="hidden sm:block h-4 w-[150px]" />
+               </div>
 
-            {/* Buttons Skeleton */}
-            <div className="flex gap-2 mt-3">
-               <Skeleton className="h-8 w-20 rounded" />
-               <Skeleton className="h-8 w-20 rounded" />
+               {/* Actions */}
+               <div className="flex gap-1 w-full justify-center flex-wrap min-h-[36px]">
+                  <Skeleton className="h-8 w-[40px] sm:w-[90px] rounded-md" />
+                  <Skeleton className="hidden sm:block h-8 w-[90px] rounded-md" />
+               </div>
             </div>
          </div>
       </div>
    );
-};
-
-export default ProfileCardSkeleton;
+}
