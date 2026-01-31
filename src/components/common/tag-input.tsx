@@ -8,6 +8,8 @@ type TagInputProps = {
    onChange?: (v: string[]) => void;
    placeholder?: string;
    maxTags?: number;
+   id?: string;
+   name?: string;
 };
 
 export function TagInput({
@@ -15,6 +17,8 @@ export function TagInput({
    onChange,
    placeholder = "Add keyword and press Enter",
    maxTags,
+   id,
+   name,
 }: TagInputProps) {
    const [input, setInput] = useState("");
    const [tags, setTags] = useState<string[]>(value);
@@ -118,6 +122,8 @@ export function TagInput({
             <Input
                ref={inputRef}
                value={input}
+               id={id}
+               name={name}
                onChange={(e) => setInput(e.target.value)}
                onKeyDown={handleKeyDown}
                onPaste={handlePaste}

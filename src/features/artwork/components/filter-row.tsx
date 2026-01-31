@@ -54,7 +54,6 @@ export const FilterRow: React.FC<FilterRowProps> = ({
       const filter = filters.filter((f) => {
          return f.id === id;
       });
-      console.log("filter", filter);
       if (!filter) return false;
       return filter.some((f) => String(f.value) === String(value));
    }

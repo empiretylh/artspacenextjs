@@ -233,6 +233,10 @@ export const queryKeys = {
 
       detail: (id: string) => ["events", "detail", id],
 
+      interested: {
+         status: (eventSlug: string) => ["events", "interest-status", eventSlug],
+      },
+
       byUser: {
          me: (params?: QueryKeys) =>
             ["events", "by-user", "me", normalizeParams(params)],

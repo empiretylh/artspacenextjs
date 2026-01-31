@@ -11,11 +11,13 @@ const InterestEventButton = ({
    interested,
    size = "sm",
    className,
+   loading = false,
 }: {
    eventId: string;
    interested: boolean;
    size?: "sm" | "default" | "lg" | "icon" | null | undefined;
    className?: string;
+   loading?: boolean;
 }) => {
    const interestEventMutation = useInterestEvent();
    const { user } = useAuth();
@@ -28,6 +30,16 @@ const InterestEventButton = ({
       }
       interestEventMutation.mutate({ eventId, interested: !interested });
    };
+
+   if (loading) {
+      return (
+         <Button variant="outline" size={size} disabled>
+            <span className={cn("truncate", size === "sm" && "text-xs")}>
+               Loading ...
+            </span>
+         </Button>
+      );
+   }
 
    return (
       <>
