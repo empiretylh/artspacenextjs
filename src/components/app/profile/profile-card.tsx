@@ -46,7 +46,7 @@ export default function ProfileCard({ user }: { user: User }) {
                </div>
 
                {/* Info */}
-               <div className="text-center mb-2 w-full">
+               <div className="text-center px-2 mb-2 w-full">
                   <div className="flex items-center justify-center gap-1 mb-2 min-h-[20px]">
                      <Link to={getUserLink(user, authUser!)}>
                         <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-[150px]">
@@ -66,7 +66,7 @@ export default function ProfileCard({ user }: { user: User }) {
                </div>
 
                {/* Actions */}
-               <div className="flex gap-1 w-full justify-center flex-wrap min-h-[36px]">
+               <div className="flex gap-1 px-2 w-full justify-center flex-wrap min-h-[36px]">
                   <FollowButton
                      userId={String(user.id)}
                      userType={user.user_type}
