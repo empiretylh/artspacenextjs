@@ -30,7 +30,7 @@ export const updateArtInputSchema = z
       status: z
          .enum(["AVAILABLE", "SOLD", "NOT_FOR_SALE", "SOLD_OUT"])
          .optional(),
-      current_owner: z.number().optional(),
+      current_owner: z.any().optional(),
       are_u_owner: z.boolean().optional(),
       current_owner_name: z.string().optional(),
       visibility: z.enum(["PRIVATE", "PUBLIC"]).optional(),

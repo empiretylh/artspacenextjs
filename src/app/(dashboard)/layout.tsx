@@ -34,10 +34,12 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
           <div id="scroll-container" className="h-screen flex justify-between flex-col overflow-y-auto" style={{
             scrollbarGutter: "stable"
           }}>
-            <SiteHeader />
-            <MainOutlet>
-              {children}
-            </MainOutlet>
+            <div>
+              <SiteHeader />
+              <MainOutlet>
+                {children}
+              </MainOutlet>
+            </div>
             <Footer />
           </div>
         </SidebarInset>

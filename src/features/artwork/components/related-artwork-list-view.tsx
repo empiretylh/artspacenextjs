@@ -62,7 +62,7 @@ const RelatedArtworksListView = ({
          <div className="flex flex-col lg:flex-row transition-all duration-300">
             {/* Artworks Grid */}
             <div className="transition-all duration-300 w-full space-y-3">
-               {isLoading && <Skeleton className="h-7 w-48 rounded-md" />}
+               {/* {isLoading && <Skeleton className="h-7 w-48 rounded-md" />} */}
 
                <div>
                   {pagesToRender?.[0]?.data?.results?.length <= 0 &&

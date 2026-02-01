@@ -1,16 +1,18 @@
+import LoadingPage from "@/components/page/loading-page";
 import { queryKeys } from "@/config/query-keys";
-import CollectorsPageContainer from "@/features/collectors/pages";
-import { getCollectors } from "@/features/service/artspace/get-collectors";
+import GalleriesPageContainer from "@/features/gallery/pages";
+import { getGalleries } from "@/features/service/artspace/get-galleries";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 
-const CollectorsRoute = async () => {
+const GalleriesRoute = async () => {
   const queryClient = getQueryClient();
 
   // 1. MUST use prefetchInfiniteQuery
   // 2. MUST await the call
   // await queryClient.prefetchInfiniteQuery({
-  //   queryKey: queryKeys.collector.infinite({
+  //   queryKey: queryKeys.gallery.infinite({
   //     // Ensure these match your hook's default props EXACTLY
   //     limit: 12,
   //     filters: [],
@@ -18,7 +20,7 @@ const CollectorsRoute = async () => {
   //     search: ''
   //   }),
   //   queryFn: ({ pageParam = 1 }) =>
-  //     getCollectors({
+  //     getGalleries({
   //       page: pageParam,
   //       limit: 12,
   //       filters: [],
@@ -30,9 +32,11 @@ const CollectorsRoute = async () => {
 
   return (
     // <HydrationBoundary state={dehydrate(queryClient)}>
-    <CollectorsPageContainer />
+    <Suspense fallback={<LoadingPage />}>
+      <GalleriesPageContainer />
+    </Suspense>
     // </HydrationBoundary>
   );
 };
 
-export default CollectorsRoute;
+export default GalleriesRoute;

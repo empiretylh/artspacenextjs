@@ -34,7 +34,7 @@ import DatePicker from "@/components/ui/date-picker";
 import ImageDnd from "@/components/common/dnd-image-upload";
 import AsyncMultipleSelector from "@/components/common/async-multi-select";
 
-import { getDirtyValues, getImage, slugify } from "@/lib/utils";
+import { getDirtyValues, getImage, handleFormError, slugify } from "@/lib/utils";
 import { useNotifications } from "@/components/ui/notifications";
 
 import { keepPreviousData } from "@tanstack/react-query";
@@ -48,6 +48,7 @@ import { useGetArtistsInfinite } from "@/features/service/artspace/get-artists";
 import { useGetArtworksInfinite } from "@/features/service/artspace/get-artworks";
 import type { Event } from "@/types";
 import { useImageUpload } from "@/features/service/artspace/image-upload";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface EventUpdateFormProps {
    event: Event;
@@ -88,6 +89,7 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
 
    const updateMutation = useEventUpdate({
       mutationConfig: {
+         onError: (error) => handleFormError(error, form),
          onSuccess: () => {
             addNotification({
                type: "success",
@@ -141,7 +143,7 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
       Slug auto-generation
    -------------------------------- */
    const titleValue = form.watch("title");
-   const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(true);
+   const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
 
    useEffect(() => {
       if (!titleValue || isSlugManuallyEdited) return;
@@ -246,9 +248,12 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                      name="cover_photo"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Cover Photo</FormLabel>
+                           <FormLabel htmlFor={field.name}>Cover Photo</FormLabel>
                            <FormControl>
                               <ImageDnd
+                                 ref={field.ref}
+                                 id={field.name}
+                                 name={field.name}
                                  value={field?.value?.map((url) => url) || []}
                                  onRemoveImage={(newValue) => {
                                     field.onChange(newValue);
@@ -298,9 +303,12 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                      name="event_logo"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Event Logo</FormLabel>
+                           <FormLabel htmlFor={field.name}>Event Logo</FormLabel>
                            <FormControl>
                               <ImageDnd
+                                 ref={field.ref}
+                                 id={field.name}
+                                 name={field.name}
                                  value={field?.value?.map((url) => url) || []}
                                  onRemoveImage={(newValue) => {
                                     field.onChange(newValue);
@@ -395,9 +403,12 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                      name="images"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Images</FormLabel>
+                           <FormLabel htmlFor={field.name}>Images</FormLabel>
                            <FormControl>
                               <ImageDnd
+                                 ref={field.ref}
+                                 id={field.name}
+                                 name={field.name}
                                  value={
                                     field?.value?.map((url: string) => url) ||
                                     []
@@ -453,9 +464,12 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                      name="start_date"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Start Date</FormLabel>
+                           <FormLabel htmlFor={field.name}>Start Date</FormLabel>
                            <FormControl>
                               <DatePicker
+                                 ref={field.ref}
+                                 id={field.name}
+                                 name={field.name}
                                  value={field.value}
                                  onChange={field.onChange}
                               />
@@ -470,9 +484,12 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                      name="end_date"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>End Date</FormLabel>
+                           <FormLabel htmlFor={field.name}>End Date</FormLabel>
                            <FormControl>
                               <DatePicker
+                                 ref={field.ref}
+                                 id={field.name}
+                                 name={field.name}
                                  value={field.value}
                                  onChange={field.onChange}
                               />
@@ -490,15 +507,13 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                         <FormItem>
                            <FormControl>
                               <div className="flex items-center gap-3">
-                                 <input
-                                    type="checkbox"
+                                 <Checkbox
+                                    id={field.name}
+                                    name={field.name}
+                                    onCheckedChange={field.onChange}
                                     checked={field.value}
-                                    onChange={(e) =>
-                                       field.onChange(e.target.checked)
-                                    }
-                                    id="show_popup"
                                  />
-                                 <FormLabel htmlFor="show_popup">
+                                 <FormLabel htmlFor={field.name}>
                                     Show Popup?
                                  </FormLabel>
                               </div>
@@ -516,9 +531,12 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                            name="popup_start"
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Popup Start Date</FormLabel>
+                                 <FormLabel htmlFor={field.name}>Popup Start Date</FormLabel>
                                  <FormControl>
                                     <DatePicker
+                                       id={field.name}
+                                       name={field.name}
+                                       ref={field.ref}
                                        value={field.value}
                                        onChange={field.onChange}
                                     />
@@ -532,9 +550,12 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                            name="popup_end"
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Popup End Date</FormLabel>
+                                 <FormLabel htmlFor={field.name}>Popup End Date</FormLabel>
                                  <FormControl>
                                     <DatePicker
+                                       id={field.name}
+                                       name={field.name}
+                                       ref={field.ref}
                                        value={field.value}
                                        onChange={field.onChange}
                                     />
@@ -554,15 +575,13 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                         <FormItem>
                            <FormControl>
                               <div className="flex items-center gap-3">
-                                 <input
-                                    type="checkbox"
+                                 <Checkbox
+                                    id={field.name}
+                                    name={field.name}
+                                    onCheckedChange={field.onChange}
                                     checked={field.value}
-                                    onChange={(e) =>
-                                       field.onChange(e.target.checked)
-                                    }
-                                    id="is_published"
                                  />
-                                 <FormLabel htmlFor="is_published">
+                                 <FormLabel htmlFor={field.name}>
                                     Published?
                                  </FormLabel>
                               </div>

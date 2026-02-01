@@ -55,22 +55,29 @@ export default function EventPopupSlider() {
    //    }
    // }, []);
 
-   useEffect(() => {
-      if (
-         popUpEventsQuery.data &&
-         popUpEventsQuery.data.length > 0 &&
-         localStorage.getItem("artspace:firstLoadPopup")
-      ) {
-         setOpen(true);
-         localStorage.setItem("artspace:firstLoadPopup", "true");
-      }
-   }, [popUpEventsQuery.data]);
+   // useEffect(() => {
+   //    if (
+   //       popUpEventsQuery.data &&
+   //       popUpEventsQuery.data.length > 0 &&
+   //       sessionStorage.getItem("artspace:firstLoadPopup") === null
+   //    ) {
+   //       setOpen(true);
+   //       sessionStorage.setItem("artspace:firstLoadPopup", "true");
+   //    }
+   // }, [popUpEventsQuery.data]);
 
    useEffect(() => {
-      return () => {
-         localStorage.removeItem("artspace:firstLoadPopup");
+      const hasSeen = sessionStorage.getItem("artspace:firstLoadPopup");
+
+      if (popUpEventsQuery.data && popUpEventsQuery.data.length > 0 && !hasSeen) {
+         const timer = setTimeout(() => {
+            setOpen(true);
+            sessionStorage.setItem("artspace:firstLoadPopup", "true");
+         }, 2000); // 2-second delay for better UX
+
+         return () => clearTimeout(timer);
       }
-   }, [])
+   }, [popUpEventsQuery.data]);
 
    return (
       <>

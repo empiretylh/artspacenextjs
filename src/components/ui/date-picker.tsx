@@ -12,6 +12,7 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
+import { RefCallBack } from "react-hook-form";
 
 interface DatePickerProps {
    value?: Date;
@@ -20,9 +21,15 @@ interface DatePickerProps {
    className?: string;
    minDate?: Date;
    maxDate?: Date;
+   id?: string;
+   name?: string;
+   ref?: RefCallBack;
 }
 
 const DatePicker = ({
+   id,
+   name,
+   ref,
    value,
    onChange,
    placeholder = "Pick a date",
@@ -37,6 +44,9 @@ const DatePicker = ({
          <PopoverTrigger asChild>
             <Button
                variant="outline"
+               id={id}
+               name={name}
+               ref={ref}
                data-empty={!value}
                className={cn(
                   "w-full justify-start text-left font-normal",

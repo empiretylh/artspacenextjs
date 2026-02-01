@@ -28,9 +28,9 @@ export async function POST() {
       const authSession = JSON.parse(cookieStore.get("artspace_auth_session")?.value || "{}");
 
       cookieStore.set("artspace_auth_session", JSON.stringify({ ...authSession, accessToken: data.access }), {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
+        httpOnly: false,
+        // secure: true,
+        // sameSite: "lax",
       });
     }
 

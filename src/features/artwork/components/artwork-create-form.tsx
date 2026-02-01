@@ -81,8 +81,8 @@ export const ArtworkCreateForm = ({
                title: "Success",
                message: "Artwork created successfully",
             });
+            form.reset();
             onCreateSuccess?.();
-            // form.reset();
          },
       },
    });
@@ -134,155 +134,6 @@ export const ArtworkCreateForm = ({
                   </CardHeader>
 
                   <CardContent className="space-y-8">
-                     {/* Category */}
-                     <FormField
-                        control={form.control}
-                        name="category"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel htmlFor={field.name}>
-                                 Category <RequiredAsterisk />
-                              </FormLabel>
-                              <FormControl>
-                                 <Select
-                                    onValueChange={(value) =>
-                                       field.onChange(Number(value))
-                                    }
-                                    value={field.value?.toString() ?? ""}
-                                 >
-                                    <SelectTrigger
-                                       id={field.name}
-                                       className="w-full"
-                                    >
-                                       <SelectValue placeholder="Select category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                       {categories.length > 0 ? (
-                                          categories.map((cat) => (
-                                             <SelectItem
-                                                key={cat.id}
-                                                value={cat.id.toString()}
-                                             >
-                                                {cat.name}
-                                             </SelectItem>
-                                          ))
-                                       ) : (
-                                          <SelectItem disabled value="no-cat">
-                                             No categories found
-                                          </SelectItem>
-                                       )}
-                                    </SelectContent>
-                                 </Select>
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-
-                     <FormField
-                        control={form.control}
-                        name="search_keywords"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>Search Keywords</FormLabel>
-                              <FormControl>
-                                 <TagInput
-                                    value={field.value ?? []}
-                                    onChange={(arr) => field.onChange(arr)}
-                                    placeholder="Add keywords and press Enter"
-                                    maxTags={20}
-                                 />
-                              </FormControl>
-                              <FormDescription>
-                                 Add tags/keywords to improve search visibility
-                                 — press Enter or comma to add.
-                              </FormDescription>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-
-                     {/* Styles */}
-                     <FormField
-                        control={form.control}
-                        name="styles_artwork_ids"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel aria-hidden>
-                                 Styles <RequiredAsterisk />
-                              </FormLabel>
-                              <FormControl>
-                                 <MultipleSelector
-                                    label="Styles"
-                                    options={styles.map((p) => ({
-                                       label: p.name,
-                                       value: String(p.id),
-                                    }))}
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    placeholder="Select styles"
-                                 />
-                              </FormControl>
-                              <FormDescription>
-                                 Assign one or more styles to this role.
-                              </FormDescription>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-
-                     {/* Genre */}
-                     <FormField
-                        control={form.control}
-                        name="genre"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel htmlFor={field.name}>
-                                 Genre <RequiredAsterisk />
-                              </FormLabel>
-                              <FormControl>
-                                 <Select
-                                    disabled={isLoadingGenres}
-                                    onValueChange={(value) =>
-                                       field.onChange(Number(value))
-                                    }
-                                    value={field.value?.toString() ?? ""}
-                                 >
-                                    <SelectTrigger
-                                       id={field.name}
-                                       className="w-full"
-                                    >
-                                       <SelectValue
-                                          placeholder={
-                                             isLoadingGenres
-                                                ? "Loading..."
-                                                : "Select genre"
-                                          }
-                                       />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                       {genres.length > 0 ? (
-                                          genres.map((cat) => (
-                                             <SelectItem
-                                                key={cat.id}
-                                                value={cat.id.toString()}
-                                             >
-                                                {cat.name}
-                                             </SelectItem>
-                                          ))
-                                       ) : (
-                                          <SelectItem disabled value="no-cat">
-                                             No genres found
-                                          </SelectItem>
-                                       )}
-                                    </SelectContent>
-                                 </Select>
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-
                      {/* Title */}
                      <FormField
                         control={form.control}
@@ -322,6 +173,221 @@ export const ArtworkCreateForm = ({
                            </FormItem>
                         )}
                      />
+
+                     {/* Category */}
+                     <FormField
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel htmlFor={field.name}>
+                                 Category <RequiredAsterisk />
+                              </FormLabel>
+                              <FormControl>
+                                 <Select
+                                    onValueChange={(value) =>
+                                       field.onChange(Number(value))
+                                    }
+                                    value={field.value?.toString() ?? ""}
+                                 >
+                                    <SelectTrigger
+                                       ref={field.ref}
+                                       id={field.name}
+                                       name={field.name}
+                                       className="w-full"
+                                    >
+                                       <SelectValue placeholder="Select category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                       {categories.length > 0 ? (
+                                          categories.map((cat) => (
+                                             <SelectItem
+                                                key={cat.id}
+                                                value={cat.id.toString()}
+                                             >
+                                                {cat.name}
+                                             </SelectItem>
+                                          ))
+                                       ) : (
+                                          <SelectItem disabled value="no-cat">
+                                             No categories found
+                                          </SelectItem>
+                                       )}
+                                    </SelectContent>
+                                 </Select>
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     <FormField
+                        control={form.control}
+                        name="search_keywords"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel htmlFor={field.name}>Search Keywords</FormLabel>
+                              <FormControl>
+                                 <TagInput
+                                    id={field.name}
+                                    name={field.name}
+                                    value={field.value ?? []}
+                                    onChange={(arr) => field.onChange(arr)}
+                                    placeholder="Add keywords and press Enter"
+                                    maxTags={20}
+                                 />
+                              </FormControl>
+                              <FormDescription>
+                                 Add tags/keywords to improve search visibility
+                                 — press Enter or comma to add.
+                              </FormDescription>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     {/* Styles */}
+                     <FormField
+                        control={form.control}
+                        name="styles_artwork_ids"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel aria-hidden htmlFor={field.name}>
+                                 Styles <RequiredAsterisk />
+                              </FormLabel>
+                              <FormControl>
+                                 <MultipleSelector
+                                    ref={field.ref}
+                                    id={field.name}
+                                    name={field.name}
+                                    label="Styles"
+                                    options={styles.map((p) => ({
+                                       label: p.name,
+                                       value: String(p.id),
+                                    }))}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    placeholder="Select styles"
+                                 />
+                              </FormControl>
+                              <FormDescription>
+                                 Assign one or more styles to this role.
+                              </FormDescription>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     {/* Genre */}
+                     <FormField
+                        control={form.control}
+                        name="genre"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel htmlFor={field.name}>
+                                 Genre <RequiredAsterisk />
+                              </FormLabel>
+                              <FormControl>
+                                 <Select
+                                    disabled={isLoadingGenres}
+                                    onValueChange={(value) =>
+                                       field.onChange(Number(value))
+                                    }
+                                    value={field.value?.toString() ?? ""}
+                                 >
+                                    <SelectTrigger
+                                       ref={field.ref}
+                                       id={field.name}
+                                       className="w-full"
+                                    >
+                                       <SelectValue
+                                          placeholder={
+                                             isLoadingGenres
+                                                ? "Loading..."
+                                                : "Select genre"
+                                          }
+                                       />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                       {genres.length > 0 ? (
+                                          genres.map((cat) => (
+                                             <SelectItem
+                                                key={cat.id}
+                                                value={cat.id.toString()}
+                                             >
+                                                {cat.name}
+                                             </SelectItem>
+                                          ))
+                                       ) : (
+                                          <SelectItem disabled value="no-cat">
+                                             No genres found
+                                          </SelectItem>
+                                       )}
+                                    </SelectContent>
+                                 </Select>
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     <FormField
+                        control={form.control}
+                        name="image"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel htmlFor={field.name}>
+                                 Image <RequiredAsterisk />
+                              </FormLabel>
+                              <FormControl>
+                                 <ImageDnd
+                                    ref={field.ref}
+                                    id={field.name}
+                                    value={
+                                       field?.value?.map((url) => url) || []
+                                    }
+                                    onRemoveImage={(newValue) => {
+                                       field.onChange(newValue);
+                                    }}
+                                    maxFiles={1}
+                                    loading={imageUploadMutation.isPending}
+                                    onChange={(value) => {
+                                       if (value) {
+                                          imageUploadMutation.mutate(
+                                             { data: { image: value } },
+                                             {
+                                                onSuccess: (response) => {
+                                                   const newUrls =
+                                                      response.data.map(
+                                                         (item) => item.url
+                                                      );
+                                                   let newValues = undefined;
+                                                   if (field.value) {
+                                                      newValues = [
+                                                         ...field.value,
+                                                         ...newUrls,
+                                                      ];
+                                                   } else {
+                                                      newValues = [...newUrls];
+                                                   }
+                                                   field.onChange(newValues);
+                                                },
+                                             }
+                                          );
+                                          // field.onChange(value);
+                                       }
+                                    }}
+                                 />
+                              </FormControl>
+                              {/* <FormDescription>
+                                 Upload a Image (max 5MB)
+                              </FormDescription> */}
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+
 
                      {/* Hide Price */}
                      <FormField
@@ -485,60 +551,7 @@ export const ArtworkCreateForm = ({
                         )}
                      /> */}
 
-                     <FormField
-                        control={form.control}
-                        name="image"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel htmlFor={field.name}>
-                                 Image <RequiredAsterisk />
-                              </FormLabel>
-                              <FormControl>
-                                 <ImageDnd
-                                    id={field.name}
-                                    value={
-                                       field?.value?.map((url) => url) || []
-                                    }
-                                    onRemoveImage={(newValue) => {
-                                       field.onChange(newValue);
-                                    }}
-                                    maxFiles={1}
-                                    loading={imageUploadMutation.isPending}
-                                    onChange={(value) => {
-                                       if (value) {
-                                          imageUploadMutation.mutate(
-                                             { data: { image: value } },
-                                             {
-                                                onSuccess: (response) => {
-                                                   const newUrls =
-                                                      response.data.map(
-                                                         (item) => item.url
-                                                      );
-                                                   let newValues = undefined;
-                                                   if (field.value) {
-                                                      newValues = [
-                                                         ...field.value,
-                                                         ...newUrls,
-                                                      ];
-                                                   } else {
-                                                      newValues = [...newUrls];
-                                                   }
-                                                   field.onChange(newValues);
-                                                },
-                                             }
-                                          );
-                                          // field.onChange(value);
-                                       }
-                                    }}
-                                 />
-                              </FormControl>
-                              {/* <FormDescription>
-                                 Upload a Image (max 5MB)
-                              </FormDescription> */}
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
+
 
                      {/* Visibility */}
                      <FormField

@@ -15,6 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import InterestEventButton from "@/components/app/interest-button";
 import { ShareButton } from "@/components/common/share-button";
 import { useAuth } from "@/features/auth/store";
+import { useGetEventInterestStatus } from "@/features/service/artspace/get-event-intereset-status";
 
 const typeColorMap: Record<string, string> = {
    Solo: "bg-indigo-100 text-indigo-700",
@@ -24,17 +25,16 @@ const typeColorMap: Record<string, string> = {
 
 export default function EventDetailPage() {
    const { slug } = useParams<{ slug: string }>();
-   const { accessToken } = useAuth();
 
    const eventQuery = useGetEvent({
       eventSlug: String(slug),
    });
 
-   const event = eventQuery.data;
+   const eventInterestStatus = useGetEventInterestStatus({
+      eventSlug: String(slug),
+   })
 
-   if (eventQuery.isLoading || accessToken === undefined) {
-      return <LoadingPage />;
-   }
+   const event = eventQuery.data;
 
    if (!event) {
       return (
@@ -105,8 +105,9 @@ export default function EventDetailPage() {
                   </div>
                   <InterestEventButton
                      size="lg"
+                     loading={eventInterestStatus.isLoading}
                      eventId={String(event.id)}
-                     interested={event.is_interested}
+                     interested={eventInterestStatus.data || false}
                   />
                </div>
             </div>

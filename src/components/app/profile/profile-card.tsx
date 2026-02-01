@@ -10,63 +10,63 @@ import { useAuth } from "@/features/auth/store";
 export default function ProfileCard({ user }: { user: User }) {
    const { user: authUser } = useAuth();
 
+   const coverSrc =
+      user.profile?.cover_photo
+         ? getImage(user.profile.cover_photo)
+         : "/assets/profile-cover-default.png";
+
+   const avatarSrc =
+      user.profile?.profile_picture
+         ? getImage(user.profile.profile_picture)
+         : "/assets/profile-default.png";
+
+   const fullName = `${user.first_name} ${user.last_name}`;
+
    return (
-      <div className="flex items-center w-full justify-center border rounded-2xl overflow-hidden bg-background">
+      <div className="flex w-full justify-center border rounded-2xl overflow-hidden bg-background">
          <div className="w-full flex flex-col items-center">
-            <div className="hidden md:block relative w-full">
+            {/* Cover */}
+            <div className="hidden md:block relative w-full h-[110px]">
                <img
-                  src={
-                     user?.profile?.cover_photo
-                        ? getImage(user?.profile?.cover_photo)
-                        : "/assets/profile-cover-default.png"
-                  }
-                  className="h-[110px] shrink-0 w-full bg-cover"
-                  alt={user.first_name + " " + user.last_name + " cover"}
+                  src={coverSrc}
+                  alt={`${fullName} cover`}
+                  className="absolute inset-0 w-full h-full object-cover"
                />
-               <div className="absolute inset-0 bg-gradient-to-b from-transparent from-30% to-background"></div>
+               <div className="absolute inset-0 bg-gradient-to-b from-transparent from-30% to-background" />
             </div>
-            <div className="mt-3 md:mt-[-32px] flex flex-col items-center pb-4">
-               {/* Avatar Circle */}
-               <div className="relative mb-2">
+
+            <div className="mt-3 md:mt-[-32px] flex flex-col items-center pb-4 w-full">
+               {/* Avatar */}
+               <div className="relative mb-2 w-16 h-16">
                   <img
-                     src={
-                        user?.profile?.profile_picture
-                           ? getImage(user?.profile?.profile_picture)
-                           : "/assets/profile-default.png"
-                     }
-                     alt={user.first_name + " " + user.last_name}
-                     className="w-16 h-16 bg-white rounded-full border-2 border-background object-cover"
+                     src={avatarSrc}
+                     alt={fullName}
+                     className="w-full h-full rounded-full border-2 border-background object-cover bg-white"
                   />
-                  {/* <div className="w-16 h-16 rounded-full bg-card border-4 border-background flex items-center justify-center">
-                        <UserIcon className="w-8 h-8 text-muted-foreground" />
-                     </div> */}
                </div>
 
-               {/* User Info */}
+               {/* Info */}
                <div className="text-center mb-2 w-full">
-                  {/* Name with Verified Badge */}
-                  <div className="flex items-center justify-center gap-1 mb-2">
+                  <div className="flex items-center justify-center gap-1 mb-2 min-h-[20px]">
                      <Link to={getUserLink(user, authUser!)}>
-                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline text-foreground truncate max-w-[80px] xs:max-w-[100px] sm:max-w-[150px]">
-                           {user.first_name + " " + user?.last_name}
+                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-[150px]">
+                           {fullName}
                            {getUserIcon(user.user_type)}
                         </h2>
                      </Link>
                   </div>
 
-                  {/* Username */}
-                  <p className="text-xs text-muted-foreground mb-1 truncate max-w-[80px] xs:max-w-[100px] sm:max-w-[150px] mx-auto">
-                     {user?.email || "@johndoe"}
+                  <p className="text-xs text-muted-foreground mb-1 truncate max-w-[150px] mx-auto min-h-[16px]">
+                     {user.email}
                   </p>
 
-                  {/* Bio */}
-                  <p className="hidden sm:inline text-xs text-muted-foreground truncate max-w-[150px] mx-auto">
-                     {user?.profile?.bio || "Digital user and illustrator."}
+                  <p className="hidden sm:block text-xs text-muted-foreground truncate max-w-[150px] mx-auto min-h-[16px]">
+                     {user.profile?.bio}
                   </p>
                </div>
 
-               {/* Action Buttons */}
-               <div className="flex gap-1 w-full items-center justify-center flex-wrap">
+               {/* Actions */}
+               <div className="flex gap-1 w-full justify-center flex-wrap min-h-[36px]">
                   <FollowButton
                      userId={String(user.id)}
                      userType={user.user_type}
@@ -77,7 +77,7 @@ export default function ProfileCard({ user }: { user: User }) {
                      disabled
                      size="sm"
                      variant="outline"
-                     className="text-xs hidden sm:block px-1 py-2"
+                     className="hidden sm:block text-xs px-1 py-2"
                   >
                      Send Message
                   </Button>

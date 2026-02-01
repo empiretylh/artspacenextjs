@@ -17,6 +17,10 @@ import HeartIcon from "@/components/icons/heart-icon";
 import OverviewIcon from "@/components/icons/overview-icon";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { ClipboardPenLineIcon } from "lucide-react";
+import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
+import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
+import { UserRouteType } from "@/features/service/artspace/get-users";
+import { paths } from "@/config/paths";
 
 const getIcon = (key: string) => {
    if (key === "artworks") {
@@ -42,8 +46,10 @@ const ProfileLayoutView = ({
    variant,
    navLinks,
    children,
+   userType
 }: {
    user: User;
+   userType: UserRouteType
    variant?: "profile";
    navLinks: Array<{
       title: string;
@@ -57,6 +63,22 @@ const ProfileLayoutView = ({
    const isActive = (href: string) => pathname === href;
    const { user: authUser } = useAuth();
 
+   const followStatusQuery = useGetUserFollowStatus({
+      userId: String(user?.id),
+      userType: userType,
+      queryConfig: {
+         enabled: variant !== "profile",
+      },
+   });
+
+   const blockStatusQuery = useGetUserBlockStatus({
+      userId: String(user?.id),
+      userType: userType,
+      queryConfig: {
+         enabled: variant !== "profile",
+      },
+   });
+
    return (
       <div>
          <ScrollToTop />
@@ -68,7 +90,7 @@ const ProfileLayoutView = ({
                }}
             ></div> */}
             <div
-               className="relative w-full aspect-[8/3] rounded-lg bg-cover bg-center mb-2"
+               className="relative w-full aspect-8/3 rounded-lg bg-cover bg-center mb-2"
                style={{
                   backgroundImage: `url(${user?.profile.cover_photo
                      ? getImage(user.profile.cover_photo)
@@ -106,16 +128,19 @@ const ProfileLayoutView = ({
                         {/* <Button variant="ghost" aria-label="Share profile">
                         <ShareIcon className="!w-6 !h-6" />
                         </Button> */}
-                        <ShareButton />
+                        {
+                           typeof window !== "undefined" ? (<ShareButton url={window.location.host + paths[userType].detail.getHref(String(user?.id))} />) : <ShareButton />
+                        }
 
                         {variant !== "profile" && (
                            <>
                               {user && (
                                  <FollowButton
                                     size="default"
+                                    loading={followStatusQuery.isLoading}
                                     userId={String(user.id)}
                                     userType={user.user_type}
-                                    following={user.profile.is_following}
+                                    following={followStatusQuery.data || false}
                                  />
                               )}
                               <Button disabled variant="outline">
@@ -124,7 +149,7 @@ const ProfileLayoutView = ({
                            </>
                         )}
                         {user && String(user.id) !== String(authUser?.id) && (
-                           <ProfileActions user={user} />
+                           <ProfileActions user={user} blocked={blockStatusQuery.data} />
                         )}
                         {/* <div className="flex items-center gap-2"></div> */}
                      </div>

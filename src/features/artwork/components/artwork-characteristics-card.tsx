@@ -14,6 +14,7 @@ interface ArtworkCharacteristicsProps {
    packaging?: string;
    category?: Category;
    categoryName?: string;
+   currentOwner?: string | null;
 }
 
 export function ArtworkCharacteristicsCard({
@@ -28,6 +29,7 @@ export function ArtworkCharacteristicsCard({
    packaging,
    categoryName,
    category,
+   currentOwner = "N/A",
 }: ArtworkCharacteristicsProps) {
    return (
       <div>
@@ -48,6 +50,11 @@ export function ArtworkCharacteristicsCard({
             <div className="flex border-b border-border gap-2 py-2">
                <dt className="w-1/2">Medium</dt>
                <dd className="font-medium">{medium}</dd>
+            </div>
+
+            <div className="flex border-b border-border gap-2 py-2">
+               <dt className="w-1/2">Current owner</dt>
+               <dd className="font-medium">{currentOwner ?? "N/A"}</dd>
             </div>
 
             <div className="flex border-b gap-2 py-2">

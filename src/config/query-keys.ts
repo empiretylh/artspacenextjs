@@ -87,14 +87,43 @@ export const queryKeys = {
    },
    user: {
       all: ["users"],
+
+      type: {
+         all(userType: string) {
+            return ["users", userType];
+         },
+         infinite(userType: string) {
+            return ["users", userType, "infinite"];
+         },
+         list(userType: string) {
+            return ["users", userType, "list"];
+         }
+      },
+
+      list: (userType: string, params?: QueryKeys) =>
+         ["users", userType, "list", normalizeParams(params)],
+
+      infinite: (userType: string, params?: QueryKeys) =>
+         ["users", userType, "infinite", normalizeParams(params)],
+
+      detail: (userType: string, id: string) => ["users", userType, "detail", id],
       blocked: {
          all: ["users", "blocked"],
          list: (params?: QueryKeys) =>
             ["users", "blocked", normalizeParams(params)],
          infinite: (params?: QueryKeys) =>
             ["users", "blocked", normalizeParams(params)],
+         status: (userId: string, type: string) => ["users", "blocked", userId, type],
       },
       me: () => ["users", "me"],
+      followed: {
+         all: ["users", "followed"],
+         list: (params?: QueryKeys) =>
+            ["users", "followed", "list", normalizeParams(params)],
+         infinite: (params?: QueryKeys) =>
+            ["users", "followed", "infinite", normalizeParams(params)],
+         status: (userId: string, type: string) => ["users", "followed", userId, type],
+      }
    },
    artwork: {
       all: ["artworks"],
@@ -204,6 +233,10 @@ export const queryKeys = {
 
       detail: (id: string) => ["events", "detail", id],
 
+      interested: {
+         status: (eventSlug: string) => ["events", "interest-status", eventSlug],
+      },
+
       byUser: {
          me: (params?: QueryKeys) =>
             ["events", "by-user", "me", normalizeParams(params)],
@@ -245,6 +278,8 @@ export const queryKeys = {
 
       detail: (id: string) => ["artists", "detail", id],
    },
+
+
 
    /* =======================
     * COLLECTORS

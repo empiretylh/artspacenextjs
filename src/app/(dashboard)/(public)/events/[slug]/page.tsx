@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { queryKeys } from "@/config/query-keys";
 import EventDetailPage from "@/features/events/pages/event-detail-page";
 import { getEvent } from "@/features/service/artspace/get-event";
@@ -49,17 +51,17 @@ const EventDetailRoute = async ({
   params: Promise<{ slug: string }>
 }) => {
   const { slug } = await params;
-  // const queryClient = getQueryClient();
+  const queryClient = getQueryClient();
 
-  // await queryClient.prefetchQuery({
-  //   queryKey: queryKeys.event.detail(id),
-  //   queryFn: () => getCachedEvent(id),
-  // });
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.event.detail(slug),
+    queryFn: () => getCachedEvent(slug),
+  });
 
   return (
-    // <HydrationBoundary state={dehydrate(queryClient)}>
-    <EventDetailPage />
-    // </HydrationBoundary>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <EventDetailPage />
+    </HydrationBoundary>
   );
 };
 

@@ -1,3 +1,5 @@
+export const revalidate = 60
+
 import HeroSection from "../components/hero-section";
 import { FeaturedArtworksSection } from "../components/featured-artworks-section";
 import { GenreSection } from "../components/genre-section";
@@ -17,7 +19,7 @@ import { getQueryClient } from "@/lib/get-query-client";
 
 // --- Main App Component ---
 export default async function HomePage() {
-   const queryClient = getQueryClient();
+   // const queryClient = getQueryClient();
 
    // await queryClient.prefetchQuery({
    //    queryKey: queryKeys.event.list({ limit: 3 }),
@@ -49,12 +51,12 @@ export default async function HomePage() {
          <HeroSection />
          <GenreSection />
          <CategoryAndStyleSection />
-         {/* <HydrationBoundary state={dehydrate(queryClient)}> */}
+         <FeaturedArtistsSlider />
          <FeaturedEventsSection />
          <FeaturedArtworksSection />
-         <FeaturedArtistsSlider />
          <FeaturedGalleriesSlider />
          <FeaturedCollectorsSlider />
+         {/* <HydrationBoundary state={dehydrate(queryClient)}> */}
          {/* </HydrationBoundary> */}
          {/* <FeaturedCollectorsSection /> */}
       </div>

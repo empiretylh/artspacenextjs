@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/command";
 import { ScrollArea } from "../ui/scroll-area";
 import ScrollTest from "../app/profile/test";
+import { RefCallBack } from "react-hook-form";
 
 export interface Option {
    value: string;
@@ -29,6 +30,8 @@ interface GroupOption {
 }
 
 export interface MultipleSelectorProps {
+   id?: string;
+   ref: RefCallBack;
    label?: string;
    onLabelClick?: () => void;
    name?: string;
@@ -177,6 +180,8 @@ const CommandEmpty = ({
 CommandEmpty.displayName = "CommandEmpty";
 
 const MultipleSelector = ({
+   ref,
+   id,
    label,
    name,
    value,
@@ -520,11 +525,16 @@ const MultipleSelector = ({
                      //    }
                      //    inputProps?.onBlur?.(event);
                      // }}
-                     onBlur={(event) => {
-                        setOpen(false);
-                        const next = event.relatedTarget as HTMLElement | null;
-                        next?.focus();
+                     onKeyDown={(e) => {
+                        if (e.key === "Tab") {
+                           setOpen(false);
+                        }
                      }}
+                     // onBlur={(event) => {
+                     //    setOpen(false);
+                     //    const next = event.relatedTarget as HTMLElement | null;
+                     //    next?.focus();
+                     // }}
                      onFocus={(event) => {
                         setOpen(true);
                         if (triggerSearchOnFocus) {
@@ -541,7 +551,11 @@ const MultipleSelector = ({
                            ? ""
                            : placeholder
                      }
-                     ref={inputRef}
+                     ref={(node) => {
+                        ref(node);
+                        inputRef.current = node;
+                     }}
+                     id={id}
                      name={name}
                      value={inputValue}
                   />
@@ -553,8 +567,8 @@ const MultipleSelector = ({
                            disabled ||
                            selected.length < 1 ||
                            selected.filter((s) => s.fixed).length ===
-                              selected.length) &&
-                           "hidden"
+                           selected.length) &&
+                        "hidden"
                      )}
                      onClick={() => {
                         setSelected(selected.filter((s) => s.fixed));
@@ -584,9 +598,9 @@ const MultipleSelector = ({
                         onMouseLeave={() => {
                            setOnScrollbar(false);
                         }}
-                        // onMouseUp={() => {
-                        //    inputRef?.current?.focus();
-                        // }}
+                     // onMouseUp={() => {
+                     //    inputRef?.current?.focus();
+                     // }}
                      >
                         {isLoading ? (
                            loadingIndicator
@@ -632,7 +646,7 @@ const MultipleSelector = ({
                                                 className={cn(
                                                    "cursor-pointer",
                                                    option.disable &&
-                                                      "pointer-events-none cursor-not-allowed opacity-50"
+                                                   "pointer-events-none cursor-not-allowed opacity-50"
                                                 )}
                                                 disabled={option.disable}
                                                 key={option.value}

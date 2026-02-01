@@ -55,7 +55,10 @@ api.interceptors.response.use(
    async (error) => {
       const original = error.config;
 
-      if (error.response?.status === 401 && !original._retry) {
+      if (error.response?.status === 401 &&
+         !original._retry &&
+         !original.url?.includes("/sign-in") &&
+         !original.url?.includes("/refresh")) {
          original._retry = true;
 
          // We call our OWN Next.js API, which has access to the HttpOnly cookie
@@ -88,11 +91,13 @@ api.interceptors.response.use(
       console.log(error)
 
       const message = error.response?.data?.detail || error.message;
-      useNotifications.getState().addNotification({
-         type: "error",
-         title: "Error",
-         message,
-      });
+      if (error.response?.status !== 404 && document) {
+         useNotifications.getState().addNotification({
+            type: "error",
+            title: "Error",
+            message,
+         });
+      }
 
       return Promise.reject(error);
    }

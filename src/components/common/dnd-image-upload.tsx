@@ -4,9 +4,12 @@ import { useEffect } from "react";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import { cn, getImage } from "@/lib/utils";
 import Image from "./image";
+import { RefCallBack } from "react-hook-form";
 
 interface ImageDndProps {
    id?: string;
+   name?: string;
+   ref: RefCallBack;
    value?: string[];
    onChange?: (files: File[]) => void;
    onRemoveImage?: (nextValue: string[]) => void;
@@ -17,6 +20,8 @@ interface ImageDndProps {
 
 export default function ImageDnd({
    id,
+   name,
+   ref,
    value = [],
    onChange,
    onRemoveImage,
@@ -72,6 +77,7 @@ export default function ImageDnd({
       <div className="flex flex-col gap-2">
          {!isAtLimit && (
             <div
+               ref={ref}
                role="button"
                tabIndex={loading ? -1 : 0}
                onClick={openFileDialog}
@@ -85,7 +91,7 @@ export default function ImageDnd({
                   loading && "cursor-not-allowed opacity-70"
                )}
             >
-               <input {...getInputProps()} id={id} className="sr-only" />
+               <input {...getInputProps()} id={id} name={name} className="sr-only" />
 
                {loading ? (
                   <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">

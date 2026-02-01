@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import { EmptyState } from "@/components/layout/empty-state";
 import type { ColumnFiltersState, SortingState } from "@/types";
 import ArtistsListLoading from "./artists-list-loading";
 import { useAuth } from "@/features/auth/store";
+import { useInView } from "react-intersection-observer";
 
 interface Props {
    title?: string;
@@ -50,9 +51,18 @@ const ArtistsPageView = ({
    hasNextPage,
    isFetchingNextPage,
 }: Props) => {
-   let loading = isLoading;
-   const { accessToken } = useAuth();
-   if (isLoading || accessToken === undefined) loading = true;
+   const { ref: loadMoreRef, inView } = useInView({
+      threshold: 0,
+   });
+   const [loadingLock, setLoadingLock] = useState(false);
+
+   useEffect(() => {
+      if (!inView || !hasNextPage || isFetchingNextPage || loadingLock) return;
+
+      setLoadingLock(true);
+      fetchNextPage();
+      setTimeout(() => setLoadingLock(false), 1000); // throttle 500ms
+   }, [inView, hasNextPage, isFetchingNextPage, loadingLock, fetchNextPage]);
 
    return (
       <div className="flex-grow transition-all duration-300">
@@ -96,8 +106,8 @@ const ArtistsPageView = ({
                      </>
                   )}
 
-               {loading && <ArtistsListLoading />}
-               {!loading && (
+               {isLoading && <ArtistsListLoading />}
+               {!isLoading && (
                   <>
                      {/* <div className="flex gap-2 justify-end">
                         <div className="inline-flex gap-2 items-center">
@@ -150,7 +160,33 @@ const ArtistsPageView = ({
                                  ))}
                               </div>
 
-                              <div className="flex justify-center my-2">
+                              {hasNextPage &&
+                                 !isFetchingNextPage &&
+                                 pagesToRender?.[0]?.results?.length > 0 && (
+                                    <div
+                                       ref={loadMoreRef}
+                                       className="flex justify-center my-2 text-sm text-muted-foreground"
+                                    >
+                                       {" "}
+                                       LoadMore
+                                    </div>
+                                 )}
+
+                              {isFetchingNextPage && (
+                                 <div className="flex justify-center my-2 text-sm text-muted-foreground">
+                                    Loading more...
+                                 </div>
+                              )}
+
+                              {!hasNextPage &&
+                                 !isFetchingNextPage &&
+                                 pagesToRender?.[0]?.data?.results?.length > 0 && (
+                                    <div className="flex justify-center my-2 text-sm text-muted-foreground">
+                                       Nothing more to load
+                                    </div>
+                                 )}
+
+                              {/* <div className="flex justify-center my-2">
                                  <Button
                                     onClick={fetchNextPage}
                                     disabled={
@@ -163,7 +199,7 @@ const ArtistsPageView = ({
                                           ? "Load More"
                                           : "Nothing more to load"}
                                  </Button>
-                              </div>
+                              </div> */}
                            </>
                         )}
                      </div>

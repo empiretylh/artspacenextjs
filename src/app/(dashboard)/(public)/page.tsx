@@ -1,3 +1,5 @@
+// export const revalidate = 60
+
 import HomePage from "@/features/home/pages";
 
 const HomePageRoute = () => {

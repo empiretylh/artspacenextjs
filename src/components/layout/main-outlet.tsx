@@ -27,9 +27,9 @@ const MainOutlet = ({ children }: MainOutletProps) => {
          // )}
          className="px-4 pt-4 pb-4"
       >
-         <Suspense fallback={<LoadingPage />}>
-            {children}
-         </Suspense>
+         {/* <Suspense fallback={<LoadingPage />}> */}
+         {children}
+         {/* </Suspense> */}
       </div>
    );
 };

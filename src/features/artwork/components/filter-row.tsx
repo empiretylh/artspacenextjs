@@ -15,6 +15,7 @@ import { FilterRowSkeleton } from "@/components/app/filter-row-skeleton";
 import { useGetCategories } from "@/features/service/artspace/get-categories";
 import { useGetGenres } from "@/features/service/artspace/get-genres";
 import { useGetStyles } from "@/features/service/artspace/get-styles";
+import { cn } from "@/lib/utils";
 
 interface FilterRowProps {
    filters: ColumnFiltersState;
@@ -49,8 +50,13 @@ export const FilterRow: React.FC<FilterRowProps> = ({
       });
    };
 
-   const getSelected = (id: string) =>
-      filters.find((f) => f.id === id)?.value as string | undefined;
+   const getSelected = (id: string, value: string) => {
+      const filter = filters.filter((f) => {
+         return f.id === id;
+      });
+      if (!filter) return false;
+      return filter.some((f) => String(f.value) === String(value));
+   }
 
    if (categoryQuery.isLoading || genreQuery.isLoading || styleQuery.isLoading)
       return <FilterRowSkeleton />;
@@ -69,13 +75,14 @@ export const FilterRow: React.FC<FilterRowProps> = ({
                   </SelectTrigger>
 
                   <SelectContent className="rounded-xl max-h-[300px]">
-                     <SelectGroup>
+                     <SelectGroup className="space-y-1">
                         <SelectLabel>Categories</SelectLabel>
 
                         {categories.map((category) => (
                            <SelectItem
                               key={category.id}
                               value={String(category.slug)}
+                              className={cn(getSelected("category", category.slug) && "bg-primary! text-primary-foreground!")}
                            >
                               {category.name}
                            </SelectItem>
@@ -102,6 +109,7 @@ export const FilterRow: React.FC<FilterRowProps> = ({
                            <SelectItem
                               key={genre.id}
                               value={String(genre.slug)}
+                              className={cn(getSelected("genre", genre.slug) && "bg-primary! text-primary-foreground!")}
                            >
                               {genre.name}
                            </SelectItem>

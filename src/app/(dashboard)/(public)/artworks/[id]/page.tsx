@@ -1,7 +1,9 @@
+export const revalidate = 60;
+
 import { queryKeys } from "@/config/query-keys";
 import ArtworkDetailPage from "@/features/artwork/pages/artwork";
 import { getArtwork } from "@/features/service/artspace/get-artwork";
-import { getArtworks, getArtworksOg } from "@/features/service/artspace/get-artworks";
+import { getArtworksOg } from "@/features/service/artspace/get-artworks";
 import { getQueryClient } from "@/lib/get-query-client";
 import { getImage } from "@/lib/utils";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -49,17 +51,17 @@ const ArtworkDetailRoute = async ({
   params: Promise<{ id: string }>
 }) => {
   const { id } = await params;
-  // const queryClient = getQueryClient();
+  const queryClient = getQueryClient();
 
-  // await queryClient.prefetchQuery({
-  //   queryKey: queryKeys.artwork.detail(id),
-  //   queryFn: () => getCachedArtwork(id),
-  // });
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.artwork.detail(id),
+    queryFn: () => getCachedArtwork(id),
+  });
 
   return (
-    // <HydrationBoundary state={dehydrate(queryClient)}>
-    <ArtworkDetailPage id={id} />
-    // </HydrationBoundary>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ArtworkDetailPage id={id} />
+    </HydrationBoundary>
   );
 };
 

@@ -1,5 +1,5 @@
 'use client'
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/layout/empty-state";
 import type { ColumnFiltersState, Event, SortingState } from "@/types";
 import { EventSmallCard } from "./event-small-card";
 import EventsListLoading from "./events-list-loading";
+import { useInView } from "react-intersection-observer";
 
 interface Props {
    isLoading: boolean;
@@ -43,6 +44,19 @@ const EventsPageView = ({
    layoutClasses,
    titleOff = false,
 }: Props) => {
+   const { ref: loadMoreRef, inView } = useInView({
+      threshold: 0,
+   });
+   const [loadingLock, setLoadingLock] = useState(false);
+
+   useEffect(() => {
+      if (!inView || !hasNextPage || isFetchingNextPage || loadingLock) return;
+
+      setLoadingLock(true);
+      fetchNextPage();
+      setTimeout(() => setLoadingLock(false), 1000); // throttle 500ms
+   }, [inView, hasNextPage, isFetchingNextPage, loadingLock, fetchNextPage]);
+
    return (
       <div className="flex-grow transition-all duration-300">
          <div className="flex flex-col lg:flex-row transition-all duration-300">
@@ -157,7 +171,34 @@ const EventsPageView = ({
                                  ))}
                               </div>
 
-                              <div className="flex justify-center my-2">
+                              {/* Infinite scroll sentinel */}
+                              {hasNextPage &&
+                                 !isFetchingNextPage &&
+                                 pagesToRender?.[0]?.results?.length > 0 && (
+                                    <div
+                                       ref={loadMoreRef}
+                                       className="flex justify-center my-2 text-sm text-muted-foreground"
+                                    >
+                                       {" "}
+                                       LoadMore
+                                    </div>
+                                 )}
+
+                              {isFetchingNextPage && (
+                                 <div className="flex justify-center my-2 text-sm text-muted-foreground">
+                                    Loading more...
+                                 </div>
+                              )}
+
+                              {!hasNextPage &&
+                                 !isFetchingNextPage &&
+                                 pagesToRender?.[0]?.data?.results?.length > 0 && (
+                                    <div className="flex justify-center my-2 text-sm text-muted-foreground">
+                                       Nothing more to load
+                                    </div>
+                                 )}
+
+                              {/* <div className="flex justify-center my-2">
                                  <Button
                                     onClick={fetchNextPage}
                                     disabled={
@@ -170,7 +211,7 @@ const EventsPageView = ({
                                           ? "Load More"
                                           : "Nothing more to load"}
                                  </Button>
-                              </div>
+                              </div> */}
                            </>
                         )}
                      </div>

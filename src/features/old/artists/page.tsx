@@ -1,16 +1,17 @@
 import { queryKeys } from "@/config/query-keys";
-import GalleriesPageContainer from "@/features/gallery/pages";
-import { getGalleries } from "@/features/service/artspace/get-galleries";
+import ArtistsPage from "@/features/artist/pages/artists-page";
+import { getArtists } from "@/features/service/artspace/get-artists";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 
-const GalleriesRoute = async () => {
+const ArtistsRoute = async () => {
   const queryClient = getQueryClient();
 
   // 1. MUST use prefetchInfiniteQuery
   // 2. MUST await the call
   // await queryClient.prefetchInfiniteQuery({
-  //   queryKey: queryKeys.gallery.infinite({
+  //   queryKey: queryKeys.artist.infinite({
   //     // Ensure these match your hook's default props EXACTLY
   //     limit: 12,
   //     filters: [],
@@ -18,7 +19,7 @@ const GalleriesRoute = async () => {
   //     search: ''
   //   }),
   //   queryFn: ({ pageParam = 1 }) =>
-  //     getGalleries({
+  //     getArtists({
   //       page: pageParam,
   //       limit: 12,
   //       filters: [],
@@ -30,9 +31,11 @@ const GalleriesRoute = async () => {
 
   return (
     // <HydrationBoundary state={dehydrate(queryClient)}>
-    <GalleriesPageContainer />
+    <Suspense fallback={<div>Loading...</div>}>
+      <ArtistsPage />
+    </Suspense>
     // </HydrationBoundary>
   );
 };
 
-export default GalleriesRoute;
+export default ArtistsRoute;

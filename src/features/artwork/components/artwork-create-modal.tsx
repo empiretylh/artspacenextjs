@@ -33,7 +33,7 @@ const ArtworkCreateModal = ({
          >
             <div>
                <ScrollArea className="h-[600px]">
-                  <ArtworkCreateForm />
+                  <ArtworkCreateForm onCreateSuccess={() => setIsArtworkCreateModalOpen(false)} />
                </ScrollArea>
             </div>
          </BaseDialog>

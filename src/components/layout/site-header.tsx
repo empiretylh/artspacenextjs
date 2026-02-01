@@ -96,7 +96,7 @@ export function SiteHeader() {
                         <Bell className="h-4 w-4" />
                      </Button>
 
-                     <Link to={paths.cart.path}>
+                     {/* <Link to={paths.cart.path}>
                         <Button
                            variant="ghost"
                            className="h-8 w-8 p-0 relative hidden lg:flex"
@@ -106,7 +106,7 @@ export function SiteHeader() {
                            </span>
                            <ShoppingCart className="h-4 w-4" />
                         </Button>
-                     </Link>
+                     </Link> */}
 
                      {isLoggedIn && (
                         <Button
@@ -193,20 +193,22 @@ export function SiteHeader() {
                                     </DropdownMenuItem>
                                  </>
                               )}
-                              <DropdownMenuItem className="lg:hidden">
+                              <DropdownMenuItem className="lg:hidden focus:text-primary-foreground">
                                  <div className="flex justify-between w-full items-center">
                                     <Bell className="h-4 w-4" />
-                                    <span className="text-xs text-primary-foreground p-1 w-5 h-5 flex items-center justify-center bg-primary rounded-full">
+                                    <span className="text-xs text-primary-foreground! p-1 w-5 h-5 flex items-center justify-center bg-primary rounded-full">
                                        0
                                     </span>
                                  </div>
                               </DropdownMenuItem>
-                              {/* <ThemeSwitcher /> */}
+                              <ThemeSwitcher className="w-full" />
                            </DropdownMenuContent>
                         </DropdownMenu>
                      </div>
 
-                     <ThemeSwitcher />
+                     <div className="hidden lg:block">
+                        <ThemeSwitcher />
+                     </div>
                   </div>
                </div>
             )}
