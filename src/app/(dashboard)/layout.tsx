@@ -18,7 +18,7 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
   // });
 
   return (
-    <>
+    <div className="relative min-h-screen 3xl:container">
       <SidebarProvider
         className=""
         style={
@@ -47,7 +47,7 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
       {/* <HydrationBoundary state={dehydrate(queryClient)}> */}
       <EventPopupSlider />
       {/* </HydrationBoundary> */}
-    </>
+    </div>
   );
 };
 

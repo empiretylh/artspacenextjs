@@ -19,7 +19,7 @@ const ArtworkDetailMore = ({ artwork }: { artwork: Artwork }) => {
          </PopoverTrigger>
          <PopoverContent align="end" className="p-0 max-w-30">
             <ReportButton
-               className="w-full justify-start rounded-b-none"
+               className="w-full justify-start rounded-b-none border-0"
                itemId={artwork.id}
                reportType="artwork"
                variant="outline"
@@ -27,7 +27,7 @@ const ArtworkDetailMore = ({ artwork }: { artwork: Artwork }) => {
             <ShareButton
                variant="outline"
                size="sm"
-               className="w-full justify-start rounded-t-none"
+               className="w-full justify-start rounded-t-none border-0"
                textButton
             />
          </PopoverContent>

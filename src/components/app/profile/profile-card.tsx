@@ -1,11 +1,10 @@
+import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
-import { paths } from "@/config/paths";
+import { useAuth } from "@/features/auth/store";
 import { getImage, getUserIcon, getUserLink } from "@/lib/utils";
 import type { User } from "@/types";
-import { UserIcon } from "lucide-react";
 import FollowButton from "../follow-button";
-import { useAuth } from "@/features/auth/store";
 
 export default function ProfileCard({ user }: { user: User }) {
    const { user: authUser } = useAuth();
@@ -27,10 +26,19 @@ export default function ProfileCard({ user }: { user: User }) {
          <div className="w-full flex flex-col items-center">
             {/* Cover */}
             <div className="hidden md:block relative w-full h-[110px]">
-               <img
+               {/* <img
                   src={coverSrc}
                   alt={`${fullName} cover`}
                   className="absolute inset-0 w-full h-full object-cover"
+               /> */}
+               <AppImage
+                  src={coverSrc}
+                  alt={`${fullName} cover`}
+                  fill
+                  // On desktop, cards are usually in a grid. 
+                  // Adjust 350px to match your actual card's max-width.
+                  sizes="(max-width: 768px) 100vw, 350px"
+                  className="object-cover"
                />
                <div className="absolute inset-0 bg-gradient-to-b from-transparent from-30% to-background" />
             </div>
@@ -38,10 +46,17 @@ export default function ProfileCard({ user }: { user: User }) {
             <div className="mt-3 md:mt-[-32px] flex flex-col items-center pb-4 w-full">
                {/* Avatar */}
                <div className="relative mb-2 w-16 h-16">
-                  <img
+                  {/* <img
                      src={avatarSrc}
                      alt={fullName}
                      className="w-full h-full rounded-full border-2 border-background object-cover bg-white"
+                  /> */}
+                  <AppImage
+                     src={avatarSrc}
+                     alt={fullName}
+                     width={64} // 16 * 4 = 64px
+                     height={64}
+                     className="rounded-full border-2 border-background object-cover bg-white"
                   />
                </div>
 
@@ -68,6 +83,7 @@ export default function ProfileCard({ user }: { user: User }) {
                {/* Actions */}
                <div className="flex gap-1 px-2 w-full justify-center flex-wrap min-h-[36px]">
                   <FollowButton
+                     size={"sm"}
                      userId={String(user.id)}
                      userType={user.user_type}
                      following={user.profile.is_following}

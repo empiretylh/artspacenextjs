@@ -33,6 +33,7 @@ const ControlledArtworkCard: React.FC<ControlledArtworkCardProps> = ({
 }) => {
    return (
       <div className="relative group inline-block break-inside-avoid mb-4 max-w-sm w-full">
+         <div className="lg:hidden absolute z-10 inset-0 bg-gradient-to-b rounded-md from-black/40 via-transparent to-transparent" />
          {/* Hover Buttons */}
          <ArtworkCard
             publicCard={false}

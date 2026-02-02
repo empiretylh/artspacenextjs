@@ -1,21 +1,19 @@
 'use client'
-import { useParams } from "next/navigation";
-import { format } from "date-fns";
+import ArtworkCard from "@/components/app/artwork-card";
+import InterestEventButton from "@/components/app/interest-button";
+import MasonryItem from "@/components/app/masonry-item";
+import AppImage from "@/components/common/app-image";
+import Link from "@/components/common/link";
+import { ShareButton } from "@/components/common/share-button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import Image from "@/components/common/image";
-import { cn, getDate, getImage } from "@/lib/utils";
-import { useGetEvent } from "@/features/service/artspace/get-event";
-import LoadingPage from "@/components/page/loading-page";
-import Link from "@/components/common/link";
-import { paths } from "@/config/paths";
-import ArtworkCard from "@/components/app/artwork-card";
-import MasonryItem from "@/components/app/masonry-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import InterestEventButton from "@/components/app/interest-button";
-import { ShareButton } from "@/components/common/share-button";
-import { useAuth } from "@/features/auth/store";
+import { paths } from "@/config/paths";
+import { useGetEvent } from "@/features/service/artspace/get-event";
 import { useGetEventInterestStatus } from "@/features/service/artspace/get-event-intereset-status";
+import { cn, getDate, getImage } from "@/lib/utils";
+import { format } from "date-fns";
+import { notFound, useParams } from "next/navigation";
 
 const typeColorMap: Record<string, string> = {
    Solo: "bg-indigo-100 text-indigo-700",
@@ -38,12 +36,7 @@ export default function EventDetailPage() {
 
    if (!event) {
       return (
-         <div className="container mx-auto py-20 text-center">
-            <h1 className="text-2xl font-semibold">Event not found</h1>
-            <p className="mt-2 text-muted-foreground">
-               The event you are looking for does not exist.
-            </p>
-         </div>
+         notFound()
       );
    }
 
@@ -59,10 +52,12 @@ export default function EventDetailPage() {
       <div className="pb-24 sm:pb-16">
          {/* Hero */}
          <div className="relative min-h-[280px] sm:min-h-[360px] md:min-h-[420px] w-full">
-            <Image
+            <AppImage
                src={getImage(event.cover_photo)}
                alt={event.title}
-               className="absolute h-full w-full object-cover"
+               fill
+               priority
+               className="object-cover"
             />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
@@ -70,10 +65,12 @@ export default function EventDetailPage() {
             <div className="absolute bottom-4 sm:bottom-8 left-1/2 w-full -translate-x-1/2 px-4 sm:px-6">
                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                     <Image
+                     <AppImage
                         src={getImage(event.event_logo)}
                         alt="Event Logo"
-                        className="w-16 h-16 rounded-sm aspect-video overflow-hidden border border-background object-cover"
+                        width={64}
+                        height={64}
+                        className="rounded-sm border border-background object-cover"
                      />
 
                      <div className="flex flex-col gap-1">
@@ -114,7 +111,7 @@ export default function EventDetailPage() {
          </div>
 
          {/* Content */}
-         <div className="mx-auto mt-8 sm:mt-10 grid gap-8 lg:gap-10 px-4 lg:grid-cols-3">
+         <div className="mx-auto mt-8 sm:mt-10 grid gap-8 lg:gap-10 lg:px-2 lg:grid-cols-2">
             {/* Left column */}
             <div className="lg:col-span-2 space-y-8">
                <Card>
@@ -182,6 +179,7 @@ export default function EventDetailPage() {
                                        artwork={artwork}
                                        pure
                                     />
+
                                  </MasonryItem>
                               ))}
                            </div>
@@ -207,10 +205,12 @@ export default function EventDetailPage() {
                                  key={img.id}
                                  className="group relative aspect-square overflow-hidden rounded-md border bg-muted"
                               >
-                                 <Image
+                                 <AppImage
                                     src={getImage(img.url)}
-                                    alt={img.caption}
-                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    alt={img.caption ?? "Event image"}
+                                    fill
+                                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                                  />
                               </div>
                            ))}
@@ -225,7 +225,7 @@ export default function EventDetailPage() {
             </div>
 
             {/* Right column */}
-            <aside className="space-y-6 lg:sticky lg:top-24">
+            {/* <aside className="space-y-6 lg:sticky lg:top-24">
                <Card>
                   <CardContent>
                      <h3 className="text-sm font-medium text-muted-foreground">
@@ -249,7 +249,7 @@ export default function EventDetailPage() {
                      </CardContent>
                   </Card>
                )}
-            </aside>
+            </aside> */}
          </div>
 
          {/* Fixed Interested Button (Mobile Only) */}

@@ -1,11 +1,12 @@
 'use client'
+import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
-import { getImage } from "@/lib/utils";
-import { GenresListSkeleton } from "./genres-list-skeleton";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/config/query-keys";
 import { getHomeGenres } from "@/features/service/artspace/get-home-genres";
+import { getImage } from "@/lib/utils";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { GenresListSkeleton } from "./genres-list-skeleton";
 
 export const GenresList = () => {
    const genresQuery = useSuspenseQuery({
@@ -31,10 +32,12 @@ export const GenresList = () => {
             >
                <div className="relative w-full max-w-2xl h-[170px] overflow-hidden rounded-2xl">
                   {/* Background Image */}
-                  <img
+                  <AppImage
                      src={getImage(cat.genre.image)}
-                     alt="Landscape painting with mountains and river"
-                     className="h-96 w-full object-cover"
+                     alt={cat.genre.name}
+                     fill
+                     sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 300px" // [2]
+                     className="object-cover h-[170px] w-full rounded-2xl transform transition-transform duration-300 hover:scale-105"
                   />
 
                   {/* Overlay Content */}

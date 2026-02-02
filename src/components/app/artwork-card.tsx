@@ -14,6 +14,7 @@ import type { Artwork } from "@/types";
 import Image from "../common/image";
 import Link from "../common/link";
 import { useLike } from "@/hooks/app/use-like";
+import AppImage from "../common/app-image";
 
 interface ArtworkCardProps {
    artwork: Artwork;
@@ -59,6 +60,9 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
       setCollections((prev) => [...prev, { id: Date.now(), name, items: [] }]);
    };
 
+   const masonrySizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1536px) 20vw, 300px";
+   const defaultSizes = "(max-width: 768px) 100vw, 400px"; // Adjust based on your fixed-height row layout
+
    return (
       <div style={style} className={cn("relative w-full", className)}>
          {/* Image + Hover Buttons */}
@@ -69,17 +73,18 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   title={artwork.title}
                   className="w-full h-full z-10 group-hover:bg-black/40 absolute transition-colors duration-200"
                ></div>
-               <Image
+               <AppImage
                   src={getImage(artwork.image)}
                   alt={artwork.title}
                   title={artwork.title}
-                  style={{
+                  containerStyle={{
                      aspectRatio: `auto ${artwork.original_width} / ${artwork.original_height}`,
                   }}
-                  className={cn(
+                  containerClassName={cn(
                      "w-full object-cover h-auto cursor-pointer select-none border rounded-md overflow-hidden",
                      variant === "default" && "h-[240px] min-w-[115px]"
                   )}
+                  sizes={variant === "masonry" ? masonrySizes : defaultSizes}
                   onClick={() =>
                      router.push(paths.artworks.detail.getHref(artwork.id))
                   }

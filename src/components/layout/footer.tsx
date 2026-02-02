@@ -74,7 +74,7 @@ const Footer = () => {
 
    return (
       <footer className="border-t border-border bg-background">
-         <div className="mx-auto py-12 px-4 max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+         <div className="mx-auto py-12 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
             {/* Navigation sections */}
             {Object.keys(navlinks).map((section) => (
                <div key={section} className="space-y-3">

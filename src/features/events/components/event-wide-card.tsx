@@ -1,16 +1,17 @@
-import { format } from "date-fns";
-import Image from "@/components/common/image";
+import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import { Badge } from "@/components/ui/badge";
 import { paths } from "@/config/paths";
 import { getImage } from "@/lib/utils";
 import type { Event } from "@/types";
+import { format } from "date-fns";
 
 interface EventWideCardProps {
    event: Event;
+   sizes?: string;
 }
 
-export const EventWideCard: React.FC<EventWideCardProps> = ({ event }) => {
+export const EventWideCard: React.FC<EventWideCardProps> = ({ event, sizes }) => {
    const startDate = event.start_date
       ? format(new Date(event.start_date), "MMM dd")
       : null;
@@ -23,10 +24,13 @@ export const EventWideCard: React.FC<EventWideCardProps> = ({ event }) => {
          {/* Cover */}
          <Link to={paths.events.detail.getHref(event.slug)}>
             <div className="relative h-48 w-full">
-               <Image
+               <AppImage
                   src={getImage(event.cover_photo)}
                   alt={event.title}
-                  className="h-full w-full object-cover"
+                  fill // Required for absolute positioning in the h-48 container
+                  // If mobile: full width. If desktop: likely part of a 2 or 3 column grid.
+                  sizes={sizes || "100vw"}
+                  className="object-cover"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                {startDate && endDate && (

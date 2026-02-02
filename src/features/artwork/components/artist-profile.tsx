@@ -1,19 +1,17 @@
 import FollowButton from "@/components/app/follow-button";
-import Image from "@/components/common/image";
+import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
-import Home from "@/components/icons/home-icon";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { paths } from "@/config/paths";
 import { getImage, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
 import {
+   CheckCircle2,
    Hand,
    Medal,
-   CheckCircle2,
    Package,
-   Sparkles,
-   UserIcon,
+   Sparkles
 } from "lucide-react";
 
 export function ArtistProfile({ artist }: { artist: User }) {
@@ -26,9 +24,11 @@ export function ArtistProfile({ artist }: { artist: User }) {
          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-3">
             {/* Avatar + Name */}
             <div className="flex items-center space-x-4">
-               <Image
+               <AppImage
                   src={getImage(artist?.profile?.profile_picture)}
-                  alt="Profile Picture"
+                  alt={artist.first_name + " " + artist.last_name}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded-full overflow-hidden border-4 border-background object-cover"
                />
 
@@ -68,50 +68,52 @@ export function ArtistProfile({ artist }: { artist: User }) {
 
          {/* Summary */}
 
-         <div className="p-3 rounded-md bg-muted">
-            <h2 className="font-bold text-lg mb-2">Summary</h2>
-            <ul className="space-y-4 sm:space-y-5">
-               {/* Fine Art Type */}
-               <li className="flex items-center space-x-3 sm:space-x-4">
-                  <Hand className="w-4 h-4" />
-                  <p className="text-xs text-foreground">
-                     Kind of Fine Art{" "}
-                     <span className="text-muted-foreground">
-                        Digital Impressionism
+         <Card className="p-3 rounded-md">
+            <CardHeader className="p-0"><h2 className="font-bold text-lg">Summary</h2></CardHeader>
+            <CardContent className="p-0">
+               <ul className="space-y-4 sm:space-y-5">
+                  {/* Fine Art Type */}
+                  <li className="flex items-center space-x-3 sm:space-x-4">
+                     <Hand className="w-4 h-4" />
+                     <p className="text-xs text-foreground">
+                        Kind of Fine Art{" "}
+                        <span className="text-muted-foreground">
+                           Digital Impressionism
+                        </span>
+                     </p>
+                  </li>
+
+                  {/* Community Member */}
+                  <li className="flex items-center flex-wrap gap-3 sm:gap-4">
+                     <Medal className="w-4 h-4" />
+                     <p className="text-xs text-foreground">Community Member </p>
+                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary">
+                        <CheckCircle2 className="w-4 h-4 mr-1" /> Verified
                      </span>
-                  </p>
-               </li>
+                  </li>
 
-               {/* Community Member */}
-               <li className="flex items-center flex-wrap gap-3 sm:gap-4">
-                  <Medal className="w-4 h-4" />
-                  <p className="text-xs text-foreground">Community Member </p>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary">
-                     <CheckCircle2 className="w-4 h-4 mr-1" /> Verified
-                  </span>
-               </li>
+                  {/* Custom Orders */}
+                  <li className="flex items-center flex-wrap gap-3 sm:gap-4">
+                     <Sparkles className="w-4 h-4" />
+                     <p className="text-xs text-foreground">Custom Orders </p>
+                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary">
+                        <CheckCircle2 className="w-4 h-4 mr-1" /> Verified
+                     </span>
+                  </li>
 
-               {/* Custom Orders */}
-               <li className="flex items-center flex-wrap gap-3 sm:gap-4">
-                  <Sparkles className="w-4 h-4" />
-                  <p className="text-xs text-foreground">Custom Orders </p>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary">
-                     <CheckCircle2 className="w-4 h-4 mr-1" /> Verified
-                  </span>
-               </li>
-
-               {/* Collaborations */}
-               <li className="flex items-center flex-wrap gap-3 sm:gap-4">
-                  <Package className="w-4 h-4" />
-                  <p className="text-xs text-foreground">
-                     Collaboration with Curators{" "}
-                  </p>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary">
-                     <CheckCircle2 className="w-4 h-4 mr-1" /> Available
-                  </span>
-               </li>
-            </ul>
-         </div>
+                  {/* Collaborations */}
+                  <li className="flex items-center flex-wrap gap-3 sm:gap-4">
+                     <Package className="w-4 h-4" />
+                     <p className="text-xs text-foreground">
+                        Collaboration with Curators{" "}
+                     </p>
+                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary">
+                        <CheckCircle2 className="w-4 h-4 mr-1" /> Available
+                     </span>
+                  </li>
+               </ul>
+            </CardContent>
+         </Card>
       </div>
    );
 }

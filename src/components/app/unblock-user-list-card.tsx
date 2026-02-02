@@ -1,7 +1,7 @@
 import { useAuth } from "@/features/auth/store";
 import { cn, getImage, getUserLink } from "@/lib/utils";
 import type { User } from "@/types";
-import Image from "../common/image";
+import AppImage from "../common/app-image";
 import Link from "../common/link";
 import { Button } from "../ui/button";
 import { useSidebar } from "../ui/sidebar";
@@ -29,14 +29,17 @@ const UnblockUserListCard = ({
          )}
       >
          <div className="flex items-center shrink gap-2 min-w-0">
-            <Image
+            <AppImage
                src={
                   user.profile.profile_picture
                      ? getImage(user.profile.profile_picture)
                      : "/assets/profile-default.png"
                }
+               width={40}
+               height={40}
+               containerClassName="shrink-0"
                className="w-10 h-10 shrink-0 aspect-square overflow-hidden rounded-full"
-               alt=""
+               alt={user.first_name + " " + user.last_name}
             />
 
             {/* Name + email block */}

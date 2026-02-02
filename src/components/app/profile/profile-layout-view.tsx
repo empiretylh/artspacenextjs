@@ -7,7 +7,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useAuth } from "@/features/auth/store";
 import { cn, getImage, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import FollowButton from "../follow-button";
 import { ProfileActions } from "./profile-actions";
 import ArtworksIcon from "@/components/icons/artworks-icon";
@@ -62,6 +62,10 @@ const ProfileLayoutView = ({
    const pathname = usePathname()
    const isActive = (href: string) => pathname === href;
    const { user: authUser } = useAuth();
+
+   if (user.id === authUser?.id && variant !== "profile") {
+      return redirect(paths.profile.path);
+   }
 
    const followStatusQuery = useGetUserFollowStatus({
       userId: String(user?.id),
@@ -183,7 +187,7 @@ const ProfileLayoutView = ({
                </ScrollArea>
             </div>
 
-            <div className="container my-6">
+            <div className="my-6">
                {/* <Outlet context={{ user }} /> */}
                <ProfileUserProvider initialValue={user}>
                   {children}

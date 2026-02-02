@@ -1,7 +1,7 @@
+import AppImage from "@/components/common/app-image";
+import Link from "@/components/common/link";
 import { Card, CardContent } from "@/components/ui/card";
 import LoginForm from "../components/login-form";
-import Image from "@/components/common/image";
-import Link from "@/components/common/link";
 
 const LoginPage = () => {
    return (
@@ -12,7 +12,7 @@ const LoginPage = () => {
          className="bg-[#faf7ef] flex min-h-svh w-full flex-col gap-3 items-center justify-center p-6 md:p-10"
       >
          <Link to="/">
-            <Image
+            <AppImage
                title="logo"
                loading="eager"
                width={80}
@@ -29,7 +29,7 @@ const LoginPage = () => {
                </CardContent>
             </Card>
          </div>
-         <Image
+         <AppImage
             src={'/assets/banner-desktop.png'}
             alt="Logo"
             width={384}
