@@ -64,18 +64,18 @@ export default function ProfileCard({ user }: { user: User }) {
                <div className="text-center px-2 mb-2 w-full">
                   <div className="flex items-center justify-center gap-1 mb-2 min-h-[20px]">
                      <Link to={getUserLink(user, authUser!)}>
-                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-[150px]">
+                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-[90px] lg:max-w-[150px]">
                            {fullName}
                            {getUserIcon(user.user_type)}
                         </h2>
                      </Link>
                   </div>
 
-                  <p className="text-xs text-muted-foreground mb-1 truncate max-w-[150px] mx-auto min-h-[16px]">
+                  <p className="text-xs text-muted-foreground mb-1 truncate max-w-[90px] lg:max-w-[150px] mx-auto min-h-[16px]">
                      {user.email}
                   </p>
 
-                  <p className="hidden sm:block text-xs text-muted-foreground truncate max-w-[150px] mx-auto min-h-[16px]">
+                  <p className="hidden sm:block text-xs text-muted-foreground truncate max-w-[90px] lg:max-w-[150px] mx-auto min-h-[16px]">
                      {user.profile?.bio}
                   </p>
                </div>

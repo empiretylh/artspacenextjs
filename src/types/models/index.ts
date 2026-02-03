@@ -157,3 +157,18 @@ export interface Event {
    is_interested: boolean;
    interest_count: number;
 }
+
+export interface Banner {
+   id: number;
+   image: string;
+   image_mobile: string;
+   image_desktop: string;
+   title: string;
+   link: string;
+   is_active: boolean;
+   order: number;
+   start_at: string;
+   end_at: string;
+   created_at: string;
+   updated_at: string;
+}

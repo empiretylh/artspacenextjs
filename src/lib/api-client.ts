@@ -91,7 +91,7 @@ api.interceptors.response.use(
       console.log(error)
 
       const message = error.response?.data?.detail || error.message;
-      if (error.response?.status !== 404 && document) {
+      if (error.response?.status !== 404 && typeof document !== "undefined") {
          useNotifications.getState().addNotification({
             type: "error",
             title: "Error",

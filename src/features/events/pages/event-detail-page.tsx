@@ -51,13 +51,14 @@ export default function EventDetailPage() {
    return (
       <div className="pb-24 sm:pb-16">
          {/* Hero */}
-         <div className="relative min-h-[280px] sm:min-h-[360px] md:min-h-[420px] w-full">
+         <div className="relative">
             <AppImage
                src={getImage(event.cover_photo)}
                alt={event.title}
                fill
-               priority
-               className="object-cover"
+               preload
+               containerClassName="aspect-8/3"
+               className="object-contain"
             />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />

@@ -34,7 +34,7 @@ export default async function RootLayout({
       <body
         className={`${outfitSans.variable} ${spaceGrotesk.variable} antialiased`}
       >
-        {/* <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID as string} /> */}
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID as string} />
         <AuthInitializer />
         <AppProvider>
           <ScrollToTop />
