@@ -11,33 +11,37 @@ const LoginPage = () => {
          //         bg-cover bg-center bg-no-repeat"
          className="bg-[#faf7ef] flex min-h-svh w-full flex-col gap-3 items-center justify-center p-6 md:p-10"
       >
-         <Link to="/">
+         <div className="max-w-sm flex gap-3 flex-col items-center w-full">
+            <Link to="/">
+               <AppImage
+                  title="logo"
+                  loading="eager"
+                  width={80}
+                  height={80}
+                  src={"/assets/logo.png"}
+                  alt="Logo"
+                  className="mx-auto w-20 h-20"
+               />
+            </Link>
+            <div className="w-full max-w-sm">
+               <Card>
+                  <CardContent>
+                     <LoginForm />
+                  </CardContent>
+               </Card>
+            </div>
             <AppImage
-               title="logo"
-               loading="eager"
-               width={80}
-               height={80}
-               src={"/assets/logo.png"}
+               src={'/assets/banner-desktop.png'}
                alt="Logo"
-               className="mx-auto w-20 h-20"
+               // width={384}
+               // height={144}
+               fill
+               title="showcase-banner"
+               loading="eager"
+               containerClassName="h-[144px] w-full"
+               className="mx-auto rounded-lg overflow-hidden max-w-sm"
             />
-         </Link>
-         <div className="w-full max-w-sm">
-            <Card>
-               <CardContent>
-                  <LoginForm />
-               </CardContent>
-            </Card>
          </div>
-         <AppImage
-            src={'/assets/banner-desktop.png'}
-            alt="Logo"
-            width={384}
-            height={144}
-            title="showcase-banner"
-            loading="eager"
-            className="mx-auto rounded-lg overflow-hidden max-w-sm"
-         />
       </div>
    );
 };

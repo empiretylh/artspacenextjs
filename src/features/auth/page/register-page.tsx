@@ -32,10 +32,12 @@ const RegisterPage = () => {
          <AppImage
             src={'/assets/banner-desktop.png'}
             alt="Logo"
-            width={384}
-            height={144}
+            // width={384}
+            // height={144}
+            fill
             title="showcase-banner"
             loading="eager"
+            containerClassName="h-[144px] w-full"
             className="mx-auto rounded-lg overflow-hidden max-w-sm"
          />
       </div>
