@@ -1,3 +1,4 @@
+import { env } from "@/config/env";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -10,7 +11,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: process.env.IMAGE_HOSTNAME || 'artspaceapi-stagging.illuminati.com.mm',
+        hostname: env.IMAGE_HOSTNAME,
         // port: '',
         // pathname: '/images/**',
       },

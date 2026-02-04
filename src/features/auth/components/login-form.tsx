@@ -1,29 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { useAuth } from "../store";
-import { paths } from "@/config/paths";
 import { useNotifications } from "@/components/ui/notifications";
+import { paths } from "@/config/paths";
 import { handleFormError } from "@/lib/utils";
+import { useAuth } from "../store";
 
+import Link from "@/components/common/link";
+import { Button } from "@/components/ui/button";
+import { Field, FieldDescription } from "@/components/ui/field";
 import {
    Form,
+   FormControl,
    FormField,
    FormItem,
-   FormControl,
    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldDescription } from "@/components/ui/field";
-import Link from "@/components/common/link";
+import { authAnalytics } from "@/lib/analytics";
 
 // 🧠 Validation schema
 const loginSchema = z.object({
@@ -60,6 +60,8 @@ export default function LoginForm() {
                message: "You’ve successfully signed in.",
                type: "success",
             });
+            // sendGTMEvent({ event: gtmEvents.auth.signUpComplete, method: 'email' });
+            authAnalytics.login({ method: 'email' });
             setLoginDialogOpen(false);
          } else {
             handleFormError(response, form);

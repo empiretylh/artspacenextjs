@@ -1,22 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "@/components/common/link";
+import { Button } from "@/components/ui/button";
+import { FieldDescription } from "@/components/ui/field";
 import {
    Form,
+   FormControl,
    FormField,
    FormItem,
-   FormControl,
    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "../store";
 import { useNotifications } from "@/components/ui/notifications";
-import { handleFormError } from "@/lib/utils";
 import {
    Select,
    SelectContent,
@@ -24,11 +19,16 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import { FieldDescription } from "@/components/ui/field";
-import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
+import { handleFormError } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Image from "@/components/common/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useAuth } from "../store";
+import { authAnalytics } from "@/lib/analytics";
 
 const myanmarPhoneRegex = /^(?:\+?95|0)9(?:2|3|4|5|6|7|8|9)\d{7,9}$/;
 
@@ -98,6 +98,7 @@ export default function RegisterForm() {
             message: "Account created successfully. You can now sign in.",
             type: "success",
          });
+         authAnalytics.signUp({ method: 'email' });
          // setRegisterDialogOpen(false);
          // setLoginDialogOpen(true);
          router.push(paths.auth.login.path);

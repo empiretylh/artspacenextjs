@@ -1,3 +1,4 @@
+import { env } from "@/config/env";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -23,7 +24,7 @@ async function handleRequest(request: NextRequest, pathSegments: string[]) {
 
   // Build the target URL (pointing to your actual backend)
   const fullPath = pathSegments.join("/");
-  const backendUrl = `${process.env.API_URL}/api/v1/${fullPath}${request.nextUrl.search}`;
+  const backendUrl = `${env.API_URL}/api/v1/${fullPath}${request.nextUrl.search}`;
 
   // Forward the request to the real backend
   const response = await fetch(backendUrl, {
