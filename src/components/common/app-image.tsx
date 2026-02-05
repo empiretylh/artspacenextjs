@@ -4,9 +4,12 @@ import Image, { ImageProps } from 'next/image';
 interface AppImageProps extends ImageProps {
   containerClassName?: string;
   containerStyle?: React.CSSProperties;
+  withoutContainer?: boolean;
 }
 
-const AppImage = ({ src, alt, containerStyle, containerClassName, className, ...props }: AppImageProps) => {
+const AppImage = ({ src, alt, containerStyle, containerClassName, withoutContainer = false, className, ...props }: AppImageProps) => {
+  if (withoutContainer) return <Image src={src} alt={alt} {...props} />;
+
   return (
     <div style={containerStyle} className={cn("w-full h-full", !props.width && ("relative"), containerClassName)}>
       <Image

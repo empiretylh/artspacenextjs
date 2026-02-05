@@ -148,7 +148,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                      size="icon"
                      variant="ghost"
                      onClick={handleLike}
-                     disabled={isMutating}
+                  // disabled={isMutating}
                   // asChild
                   >
                      <Heart

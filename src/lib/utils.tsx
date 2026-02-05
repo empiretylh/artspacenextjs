@@ -153,7 +153,7 @@ export const slugify = (text: string) => {
 };
 
 export const getUserIcon = (type: string) => {
-   return <AppImage width={16} height={16} src={'/assets/logo.png'} alt="logo" containerClassName="inline-block flex items-center w-4 h-4" />;
+   return <AppImage withoutContainer width={16} height={16} src={'/assets/logo.png'} className="inline-block" alt="logo" />;
    // if (type === "ARTIST") {
    //    return (
    //       <span className="inline-block border-2 border-primary p-1 rounded-full">
