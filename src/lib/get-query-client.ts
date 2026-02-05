@@ -10,9 +10,9 @@ function makeQueryClient() {
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60,
-        // refetchOnMount: "always",
-        // refetchOnWindowFocus: "always",
-        // refetchOnReconnect: "always",
+        retry: false,               // <- stop automatic retries on failure
+        refetchOnWindowFocus: false, // <- prevent auto refetch when user focuses window
+        refetchOnReconnect: false,   // <- prevent auto refetch on network reconnect
       },
       dehydrate: {
         // include pending queries in dehydration
