@@ -22,12 +22,12 @@ export const EventSmallCard: React.FC<EventSmallCardProps> = ({ event, sizes }) 
    return (
       <div className="overflow-hidden w-full border h-full rounded-md">
          <Link to={paths.events.detail.getHref(event.slug)}>
-            <div className="relative h-40 w-full">
+            <div className="relative aspect-video w-full">
                <AppImage
                   src={getImage(event.cover_photo)}
                   alt={event.title}
-                  fill // Required for absolute positioning in the h-48 container
-                  // If mobile: full width. If desktop: likely part of a 2 or 3 column grid.
+                  width={1600}
+                  height={900}
                   sizes={sizes || "100vw"}
                   className="h-full w-full object-cover"
                />

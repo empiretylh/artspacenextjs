@@ -33,9 +33,9 @@ export function ArtworkCharacteristicsCard({
 }: ArtworkCharacteristicsProps) {
    return (
       <div>
-         <h1 className="font-bold text-lg mb-2">
+         <h2 className="font-bold text-lg mb-2">
             Characteristics of the Painting "{title}"{" "}
-         </h1>
+         </h2>
          <dl className="space-y-2 text-sm">
             <div className="flex border-b border-border gap-2 py-2">
                <dt className="w-1/2">Year of Creation</dt>

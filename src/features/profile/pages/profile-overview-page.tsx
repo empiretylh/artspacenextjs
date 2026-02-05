@@ -94,20 +94,22 @@ const ProfileOverviewPage = () => {
    };
 
    return (
-      <div className="w-full">
+      <section className="w-full" aria-labelledby="profile-overview-title">
          <div className="space-y-6 col-span-3 md:col-span-2">
             <div>
-               <h1 className="text-lg font-semibold mb-3">About the profile</h1>
+               <h2 id="profile-overview-title" className="text-lg font-semibold mb-3">
+                  About the profile
+               </h2>
                <p className="text-base">
                   {userProfile.profile.about || "No about available."}
                </p>
             </div>
 
             <div>
-               <h1 className="text-lg font-semibold mb-3">Summary</h1>
+               <h3 className="text-lg font-semibold mb-3">Summary</h3>
 
-               <div className="grid grid-cols-1 gap-4 text-sm font-normal">
-                  <div className="flex gap-2 items-center">
+               <div className="grid grid-cols-1 gap-4 text-sm font-normal" role="list">
+                  <div className="flex gap-2 items-center" role="listitem">
                      <ArtistsIcon />
                      <span>Kind of Fine Art</span>
                      <span className="text-muted-foreground">
@@ -115,7 +117,7 @@ const ProfileOverviewPage = () => {
                      </span>
                   </div>
 
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-center" role="listitem">
                      <AwardIcon />
                      <span>Kind of Fine Art</span>
                      <div className="flex items-center bg-success/10 p-1.5 text-xs gap-1 rounded-xl text-success">
@@ -123,7 +125,7 @@ const ProfileOverviewPage = () => {
                      </div>
                   </div>
 
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-center" role="listitem">
                      <Layers2Icon />
                      <span>Kind of Fine Art</span>
                      <div className="flex items-center bg-success/10 p-1.5 text-xs gap-1 rounded-xl text-success">
@@ -131,7 +133,7 @@ const ProfileOverviewPage = () => {
                      </div>
                   </div>
 
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-center" role="listitem">
                      <SquareStackIcon />
                      <span>Kind of Fine Art</span>
                      <div className="flex items-center bg-success/10 p-1.5 text-xs gap-1 rounded-xl text-success">
@@ -161,10 +163,10 @@ const ProfileOverviewPage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                {featuredPhotos?.map((image) => (
-                  <div key={image.id} className="relative">
+                  <figure key={image.id} className="relative">
                      <img
                         src={getImage(image.image)}
-                        alt={image.description}
+                        alt={image.description || "Featured photo"}
                         className="w-full aspect-[4/5] object-cover rounded-2xl border"
                      />
 
@@ -207,11 +209,11 @@ const ProfileOverviewPage = () => {
                            )}
                         </Button>
                      </div>
-                  </div>
+                  </figure>
                ))}
             </div>
          </div>
-      </div>
+      </section>
    );
 };
 

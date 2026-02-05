@@ -25,7 +25,7 @@ export default function ProfileCard({ user }: { user: User }) {
       <div className="flex w-full justify-center border rounded-2xl overflow-hidden bg-background">
          <div className="w-full flex flex-col items-center">
             {/* Cover */}
-            <div className="hidden md:block relative w-full h-[110px]">
+            <div className="hidden md:block relative aspect-8/3 overflow-hidden w-full">
                {/* <img
                   src={coverSrc}
                   alt={`${fullName} cover`}
@@ -34,7 +34,8 @@ export default function ProfileCard({ user }: { user: User }) {
                <AppImage
                   src={coverSrc}
                   alt={`${fullName} cover`}
-                  fill
+                  width={800}
+                  height={300}
                   // On desktop, cards are usually in a grid. 
                   // Adjust 350px to match your actual card's max-width.
                   sizes="(max-width: 768px) 100vw, 350px"
@@ -64,18 +65,18 @@ export default function ProfileCard({ user }: { user: User }) {
                <div className="text-center px-2 mb-2 w-full">
                   <div className="flex items-center justify-center gap-1 mb-2 min-h-[20px]">
                      <Link to={getUserLink(user, authUser!)}>
-                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-[90px] lg:max-w-[150px]">
+                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-[100px] lg:max-w-[150px]">
                            {fullName}
-                           {getUserIcon(user.user_type)}
                         </h2>
                      </Link>
+                     {getUserIcon(user.user_type)}
                   </div>
 
-                  <p className="text-xs text-muted-foreground mb-1 truncate max-w-[90px] lg:max-w-[150px] mx-auto min-h-[16px]">
+                  <p className="text-xs text-muted-foreground mb-1 truncate max-w-[100px] lg:max-w-[150px] mx-auto min-h-[16px]">
                      {user.email}
                   </p>
 
-                  <p className="hidden sm:block text-xs text-muted-foreground truncate max-w-[90px] lg:max-w-[150px] mx-auto min-h-[16px]">
+                  <p className="hidden sm:block text-xs text-muted-foreground truncate max-w-[100px] lg:max-w-[150px] mx-auto min-h-[16px]">
                      {user.profile?.bio}
                   </p>
                </div>

@@ -24,8 +24,9 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   )}
                   width={48}
                   height={48}
-                  alt="Profile Picture"
-                  className="w-14 h-14 rounded-full overflow-hidden border-4 border-background object-cover"
+                  alt={`${artwork.current_owner_display.first_name} ${artwork.current_owner_display.last_name} profile picture`}
+                  containerClassName="w-12 h-12 rounded-full overflow-hidden"
+                  className="object-cover"
                />
 
                <div className="space-y-1">
@@ -54,9 +55,9 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
 
             {/* Price */}
             <div className="mb-6 space-y-2">
-               <h1 className="text-2xl md:text-3xl font-display text-foreground">
+               <p className="text-2xl md:text-3xl font-display text-foreground">
                   {!artwork.hide_price && `$${artwork.price}`}
-               </h1>
+               </p>
                {artwork.hide_price && (
                   <Button
                      disabled

@@ -1,5 +1,6 @@
 export const revalidate = 60;
 
+import { env } from "@/config/env";
 import { queryKeys } from "@/config/query-keys";
 import ArtworkDetailPage from "@/features/artwork/pages/artwork";
 import { getArtwork } from "@/features/service/artspace/get-artwork";
@@ -33,14 +34,47 @@ export async function generateMetadata(
 
   // fetch post information
   const data = await getCachedArtwork(id);
+  const canonical = `${env.APP_URL}/artworks/${id}`;
+  const ogImage = getImage(data.image);
 
   return {
     title: data.title,
     description: data.description,
+    metadataBase: new URL(env.APP_URL),
+    alternates: {
+      canonical,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
     openGraph: {
-      images: [getImage(data.image)],
+      type: "website",
+      url: canonical,
       title: data.title,
       description: data.description,
+      siteName: "Myanmar Art Space",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `${data.title} - Myanmar Art Space`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.title,
+      description: data.description,
+      images: [ogImage],
     }
   }
 }

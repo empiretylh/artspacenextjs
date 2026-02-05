@@ -51,17 +51,16 @@ export default function EventDetailPage() {
    return (
       <div className="pb-24 sm:pb-16">
          {/* Hero */}
-         <div className="relative">
+         <div className="relative h-[400px] w-full sm:aspect-8/3">
             <AppImage
                src={getImage(event.cover_photo)}
                alt={event.title}
                fill
                preload
-               containerClassName="aspect-8/3"
-               className="object-contain"
+               className="object-cover"
             />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
             <div className="absolute bottom-4 sm:bottom-8 left-1/2 w-full -translate-x-1/2 px-4 sm:px-6">
                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -71,15 +70,15 @@ export default function EventDetailPage() {
                         alt="Event Logo"
                         width={64}
                         height={64}
+                        containerClassName="w-16 h-16 sm:w-20 sm:h-20"
                         className="rounded-sm border border-background object-cover"
                      />
-
                      <div className="flex flex-col gap-1">
                         <div className="flex gap-2 items-end mb-2">
                            <h1 className="text-2xl sm:text-3xl font-semibold text-white leading-tight">
                               {event.title}
                            </h1>
-                           <ShareButton />
+                           <ShareButton className="text-white" />
                         </div>
 
                         <div className="flex items-center gap-3 mb-2">

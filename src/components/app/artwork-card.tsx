@@ -63,6 +63,8 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    const masonrySizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1536px) 20vw, 300px";
    const defaultSizes = "(max-width: 768px) 100vw, 400px"; // Adjust based on your fixed-height row layout
 
+   if (!artwork.original_width || !artwork.original_height) return null
+
    return (
       <div style={style} className={cn("relative w-full", className)}>
          {/* Image + Hover Buttons */}
@@ -80,6 +82,8 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   containerStyle={{
                      aspectRatio: `auto ${artwork.original_width} / ${artwork.original_height}`,
                   }}
+                  width={artwork.original_width}
+                  height={artwork.original_height}
                   containerClassName={cn(
                      "w-full object-cover h-auto cursor-pointer select-none border rounded-md overflow-hidden",
                      variant === "default" && "h-[240px] min-w-[115px]"

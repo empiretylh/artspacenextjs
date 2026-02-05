@@ -78,9 +78,9 @@ const Footer = () => {
             {/* Navigation sections */}
             {Object.keys(navlinks).map((section) => (
                <div key={section} className="space-y-3">
-                  <h4 className="text-base font-semibold text-foreground">
+                  <h3 className="text-base font-semibold text-foreground">
                      {section}
-                  </h4>
+                  </h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                      {navlinks[section].map((item) => {
                         if (item.href) {

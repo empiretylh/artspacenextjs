@@ -29,7 +29,8 @@ export function ArtistProfile({ artist }: { artist: User }) {
                   alt={artist.first_name + " " + artist.last_name}
                   width={48}
                   height={48}
-                  className="w-12 h-12 rounded-full overflow-hidden border-4 border-background object-cover"
+                  containerClassName="w-12 h-12 rounded-full overflow-hidden"
+                  className="object-cover"
                />
 
                <div>
@@ -69,9 +70,11 @@ export function ArtistProfile({ artist }: { artist: User }) {
          {/* Summary */}
 
          <Card className="p-3 rounded-md">
-            <CardHeader className="p-0"><h2 className="font-bold text-lg">Summary</h2></CardHeader>
+            <CardHeader className="p-0">
+               <h3 className="font-bold text-lg">Summary</h3>
+            </CardHeader>
             <CardContent className="p-0">
-               <ul className="space-y-4 sm:space-y-5">
+               <ul className="space-y-4 sm:space-y-5" aria-label="Artist summary">
                   {/* Fine Art Type */}
                   <li className="flex items-center space-x-3 sm:space-x-4">
                      <Hand className="w-4 h-4" />

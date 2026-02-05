@@ -21,6 +21,7 @@ import type { ColumnFiltersState, SortingState } from "@/types";
 import ArtistsListLoading from "./artists-list-loading";
 import { useAuth } from "@/features/auth/store";
 import { useInView } from "react-intersection-observer";
+import ProfileCardSkeleton from "@/components/app/profile/profile-card-skeleton";
 
 interface Props {
    title?: string;

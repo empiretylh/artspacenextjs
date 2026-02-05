@@ -28,11 +28,13 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
    }
 
    return (
-      <div>
-         <h1 className="text-2xl font-medium mb-2">{artwork.title}</h1>
+      <section aria-labelledby="artwork-title">
+         <h1 id="artwork-title" className="text-2xl font-medium mb-2">
+            {artwork.title}
+         </h1>
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
             {/* Main Image + Characteristics */}
-            <div className="lg:col-span-2 space-y-6">
+            <section className="lg:col-span-2 space-y-6" aria-label="Artwork details">
                {/* <ArtworkImageCarousel images={[artwork.image]} /> */}
 
                <Card className="h-100 relative">
@@ -62,8 +64,8 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                {artwork.search_keywords &&
                   artwork.search_keywords.length > 0 && (
                      <>
-                        <h1 className="font-bold text-lg mb-2">Keywords</h1>
-                        <div className="space-x-2 space-y-2">
+                        <h2 className="font-bold text-lg mb-2">Keywords</h2>
+                        <div className="space-x-2 space-y-2" aria-label="Artwork keywords">
                            {artwork.search_keywords.map((kw) => (
                               <Button
                                  key={kw}
@@ -78,25 +80,34 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                   )}
 
                {/* Mobile Description */}
-               <h1 className="font-bold text-lg mb-2">Description</h1>
-               <p className="text-base text-foreground/80">
-                  {artwork.description}
-               </p>
+               <section aria-labelledby="artwork-description">
+                  <h2 id="artwork-description" className="font-bold text-lg mb-2">
+                     Description
+                  </h2>
+                  <p className="text-base text-foreground/80">
+                     {artwork.description}
+                  </p>
+               </section>
 
                <ArtistProfile artist={artwork.artist_profile} />
-            </div>
+            </section>
 
             {/* Purchase Info + Artist */}
-            <div className="lg:col-span-1 space-y-6 sticky top-16 self-start">
+            <aside
+               className="lg:col-span-1 space-y-6 sticky top-16 self-start"
+               aria-label="Purchase details"
+            >
                <ProductInfoCard artwork={artwork} />
-            </div>
+            </aside>
          </div>
 
          {/* Related Artworks */}
-         <Suspense fallback={<LoadingPage />}>
-            <RelatedArtworkListContainer artwork={artwork} />
-         </Suspense>
-      </div>
+         <section aria-label="Related artworks">
+            <Suspense fallback={<LoadingPage />}>
+               <RelatedArtworkListContainer artwork={artwork} />
+            </Suspense>
+         </section>
+      </section>
    );
 };
 

@@ -6,15 +6,15 @@ interface AppImageProps extends ImageProps {
   containerStyle?: React.CSSProperties;
 }
 
-const AppImage = ({ src, alt, containerStyle, containerClassName, ...props }: AppImageProps) => {
+const AppImage = ({ src, alt, containerStyle, containerClassName, className, ...props }: AppImageProps) => {
   return (
-    <div style={containerStyle} className={cn(!props.width && ("relative w-full h-full"), containerClassName)}>
+    <div style={containerStyle} className={cn("w-full h-full", !props.width && ("relative"), containerClassName)}>
       <Image
         src={src}
         alt={alt}
         fill={props.width === undefined && props.height === undefined}
         // className="object-cover"
-        className={"w-full h-full object-cover transition-opacity duration-500"}
+        className={cn("w-full h-full object-cover duration-500", className)}
         {...props}
       />
     </div>
