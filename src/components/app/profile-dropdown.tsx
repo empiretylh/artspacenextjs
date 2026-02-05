@@ -15,6 +15,8 @@ import { useAuth } from "@/features/auth/store";
 import Link from "../common/link";
 import { useGetProfile } from "@/features/profile/api/get-profile";
 import { getImage } from "@/lib/utils";
+import { getQueryClient } from "@/lib/get-query-client";
+import { useRouter } from "next/navigation";
 
 export function ProfileDropdown() {
    const { logout, accessToken } = useAuth();
@@ -23,7 +25,20 @@ export function ProfileDropdown() {
          enabled: !!accessToken
       }
    });
+   const router = useRouter();
    const user = profileQuery.data?.data;
+
+   async function handleLogout() {
+      const queryClient = getQueryClient();
+      await useAuth.getState().logout();
+
+      queryClient.cancelQueries();
+      queryClient.clear();
+
+      router.replace(paths.auth.login.path);
+      router.refresh();
+   }
+
    return (
       <DropdownMenu modal={false}>
          <DropdownMenuTrigger asChild>
@@ -86,9 +101,7 @@ export function ProfileDropdown() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-               onClick={() => {
-                  logout();
-               }}
+               onClick={handleLogout}
             >
                Log out
                {/* <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut> */}
