@@ -36,7 +36,8 @@ export async function POST() {
 
     return NextResponse.json({ access: data.access });
   } catch (error) {
-    cookieStore.delete("refresh_token");
+    cookieStore.delete("artspace_refresh_token");
+    cookieStore.delete("artspace_auth_session");
     return NextResponse.json({ message: "Session expired" }, { status: 401 });
   }
 }

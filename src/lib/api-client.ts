@@ -85,7 +85,9 @@ api.interceptors.response.use(
             } catch {
                // Global logout on failure
                // if (typeof window !== "undefined") {
+
                useAuth.setState({ accessToken: null, user: null });
+               window.location.replace("/sign-in?reason=session_expired&return=" + window.location.pathname);
                // }
             } finally {
                refreshing = null;
@@ -105,8 +107,6 @@ api.interceptors.response.use(
             return api(retryConfig);
          }
       }
-
-      console.log(error)
 
       const message = error.response?.data?.detail || error.message;
       if (error.response?.status !== 404 && error.response?.status !== 401 && typeof document !== "undefined") {

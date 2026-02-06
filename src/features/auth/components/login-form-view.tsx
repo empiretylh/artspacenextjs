@@ -21,7 +21,7 @@ type Props = {
   form: UseFormReturn<LoginFormValues>;
   onSubmit: (values: LoginFormValues) => Promise<void>;
   loading: boolean;
-
+  reason?: "session_expired" | undefined;
   showPassword: boolean;
   setShowPassword: (v: boolean | ((prev: boolean) => boolean)) => void;
 };
@@ -32,6 +32,7 @@ export default function LoginFormView({
   loading,
   showPassword,
   setShowPassword,
+  reason,
 }: Props) {
   return (
     <div>
@@ -42,6 +43,14 @@ export default function LoginFormView({
         Please sign in to your account
       </p>
 
+      {/* Session expired message (shown after redirect) */}
+      {reason === "session_expired" && !form.formState.errors.root && (
+        <div className="p-3 text-center border flex items-center justify-center mb-3 rounded text-sm border-info/50 text-info/70">
+          Your session expired. Please sign in again to continue.
+        </div>
+      )}
+
+      {/* Server / form errors */}
       {form.formState.errors.root && (
         <div className="text-destructive p-3 text-center border flex items-center justify-center mb-3 rounded border-destructive text-sm">
           {form.formState.errors.root.message}

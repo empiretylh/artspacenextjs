@@ -22,7 +22,7 @@ export const loginSchema = z.object({
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
-export function useLoginForm() {
+export function useLoginForm({ returnTo }: { returnTo?: string } = {}) {
   const { login, user, loading, setLoginDialogOpen } = useAuth();
   const router = useRouter();
   const { addNotification } = useNotifications();
@@ -50,7 +50,11 @@ export function useLoginForm() {
 
         authAnalytics.login({ method: "email" });
 
-        setLoginDialogOpen(false);
+        if (returnTo) {
+          router.push(returnTo);
+        } else {
+          router.push(paths.root.path);
+        }
       } else {
         handleFormError(response, form);
       }
@@ -62,12 +66,6 @@ export function useLoginForm() {
       });
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      router.push(paths.root.path);
-    }
-  }, [user]);
 
   return {
     form,

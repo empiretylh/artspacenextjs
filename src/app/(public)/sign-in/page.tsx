@@ -1,6 +1,7 @@
 import { env } from "@/config/env";
 import LoginPage from "@/features/auth/page/login-page";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 const title = "Sign In";
 const description =
@@ -66,7 +67,9 @@ export const metadata: Metadata = {
 
 const LoginRoute = () => {
   return (
-    <LoginPage />
+    <Suspense>
+      <LoginPage />
+    </Suspense>
   );
 };
 
