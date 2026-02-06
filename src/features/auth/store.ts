@@ -1,11 +1,8 @@
+import { getQueryClient } from "@/lib/get-query-client";
 import type { User } from "@/types";
-import { create } from "zustand";
 import type { AxiosError } from "axios";
 import axios from "axios";
-import { env } from "@/config/env";
-import { getQueryClient } from "@/lib/get-query-client";
-import { redirect } from "next/navigation";
-import { paths } from "@/config/paths";
+import { create } from "zustand";
 
 interface RegisterForm {
    email: string;
@@ -73,10 +70,10 @@ export const useAuth = create<State>((set) => {
 
             const newState = {
                accessToken: data.access,
-               refreshToken: data.refresh,
                user: data.user,
                isBuyer: data.user.user_type === "BUYER",
                isArtist: data.user.user_type === "ARTIST",
+               isCollector: data.user.user_type === "COLLECTOR",
             };
             set(newState);
 
@@ -135,6 +132,7 @@ export const useAuth = create<State>((set) => {
             ...data,
             isBuyer: data.user?.user_type === "BUYER",
             isArtist: data.user?.user_type === "ARTIST",
+            isCollector: data.user?.user_type === "COLLECTOR",
             loading: false
          });
       },

@@ -44,7 +44,7 @@ export default function BannerSlider({ banners }: Props) {
           "--swiper-pagination-bullet-inactive-color": "#999999",
         } as SwiperStyle}
         loop
-        className="aspect-8/3 rounded-md"
+        className="rounded-lg shadow-xl md:shadow-none aspect-2/1 md:aspect-8/3"
       >
         {activeBanners.map((banner) => (
           <SwiperSlide key={banner.id}>
