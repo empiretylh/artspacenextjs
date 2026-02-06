@@ -70,6 +70,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
          {/* Image + Hover Buttons */}
 
          <div className="relative group rounded-md overflow-hidden cursor-pointer">
+            <div className="lg:hidden absolute z-10 inset-0 bg-gradient-to-b rounded-md from-black/40 via-transparent to-transparent" />
             <Link to={paths.artworks.detail.getHref(artwork.id)}>
                <div
                   title={artwork.title}

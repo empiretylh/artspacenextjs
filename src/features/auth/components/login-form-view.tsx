@@ -33,10 +33,6 @@ export default function LoginFormView({
   showPassword,
   setShowPassword,
 }: Props) {
-  if (loading) {
-    return <p className="text-center mt-8 text-gray-600">Loading...</p>;
-  }
-
   return (
     <div>
       <p className="text-center text-lg font-semibold text-foreground mb-2">

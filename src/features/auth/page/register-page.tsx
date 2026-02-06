@@ -19,6 +19,7 @@ const RegisterPage = () => {
                height={80}
                src={"/assets/logo.png"}
                alt="Logo"
+               preload
                className="mx-auto w-20 h-20"
             />
          </Link>
@@ -32,6 +33,7 @@ const RegisterPage = () => {
          <AppImage
             src={'/assets/banner-desktop.png'}
             alt="Logo"
+            preload
             // width={384}
             // height={144}
             fill
