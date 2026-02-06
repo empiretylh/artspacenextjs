@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { paths } from "@/config/paths";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { InputWithLeftSelectSkeleton } from "./input-with-left-select-skeleton";
 
 const routeMap: Record<string, string> = {
@@ -31,6 +31,7 @@ function InputWithLeftSelect({
    const [search, setSearch] = React.useState("");
    const searchParams = useSearchParams();
    const router = useRouter();
+   const pathname = usePathname();
 
    const onSearchClick = () => {
       const basePath = routeMap[selectedOption];
@@ -42,7 +43,16 @@ function InputWithLeftSelect({
       if (search) params.set("search", search);
 
       const queryString = params.toString();
-      const finalUrl = `${basePath}${queryString ? `?${queryString}` : ""}`;
+      let finalUrl = `${basePath}${queryString ? `?${queryString}` : ""}`;
+
+      console.log(pathname)
+
+      if (pathname === basePath) {
+         finalUrl = `${basePath}${queryString ? `?${queryString}` : ""}`
+      } else {
+         finalUrl = `${basePath}?search=${params.get('search')}`
+      }
+
 
       router.push(finalUrl);
    };
