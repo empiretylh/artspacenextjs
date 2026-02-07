@@ -1,3 +1,4 @@
+import { authAnalytics } from "@/lib/analytics";
 import { getQueryClient } from "@/lib/get-query-client";
 import type { User } from "@/types";
 import type { AxiosError } from "axios";
@@ -24,7 +25,7 @@ export type State = {
    login: (
       email: string,
       password: string
-   ) => Promise<boolean | AxiosError<{ message: string }>>;
+   ) => Promise<User | AxiosError<{ message: string }>>;
    register: (
       values: RegisterForm
    ) => Promise<boolean | AxiosError<{ message: string }>>;
@@ -79,7 +80,7 @@ export const useAuth = create<State>((set) => {
 
             queryClient.invalidateQueries();
 
-            return true
+            return data.user as User
          } catch (error) {
             return error as AxiosError<{ message: string }>;
          } finally {
@@ -114,6 +115,7 @@ export const useAuth = create<State>((set) => {
                method: "POST",
                credentials: "include",
             });
+            authAnalytics.logout('profile_menu')
          } catch (e) {
             // optional logging
          }

@@ -82,6 +82,7 @@ export const ArtworkCreateForm = ({
                message: "Artwork created successfully",
             });
             form.reset();
+            
             onCreateSuccess?.();
          },
       },

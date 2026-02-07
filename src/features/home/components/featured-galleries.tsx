@@ -7,6 +7,8 @@ import { ArrowRight } from "lucide-react";
 import { FeaturedGalleriesSectionSkeleton } from "./featured-galleries-section-skeleton";
 import { useGetGalleries } from "@/features/service/artspace/get-galleries";
 import UserSmallCard from "@/components/app/user-small-card";
+import { SourceProvider } from "@/lib/analytics-source";
+import { FollowSource } from "@/lib/analytics";
 
 export const FeaturedGalleriesSection = () => {
    const galleriesQuery = useGetGalleries();
@@ -34,11 +36,13 @@ export const FeaturedGalleriesSection = () => {
             </Link>
          </div>
          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-2">
-            {featuredGalleries.map((gallery) => (
-               <div key={gallery.id}>
-                  <UserSmallCard user={gallery} />
-               </div>
-            ))}
+            <SourceProvider<FollowSource> value={{ source: "home_feed" }}>
+               {featuredGalleries.map((gallery) => (
+                  <div key={gallery.id}>
+                     <UserSmallCard user={gallery} />
+                  </div>
+               ))}
+            </SourceProvider>
          </div>
       </section>
    );

@@ -25,7 +25,7 @@ export function BaseDialog({
    onClose,
    children,
    className,
-   headerOff = false,
+   headerOff = true,
    showCloseButton = true
 }: Readonly<BaseDialogProps>) {
    return (

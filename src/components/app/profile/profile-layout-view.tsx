@@ -24,8 +24,9 @@ import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-st
 import { UserRouteType } from "@/features/service/artspace/get-users";
 import { paths } from "@/config/paths";
 import AppImage from "@/components/common/app-image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BaseDialog } from "@/components/common/dialogs/base-dialog";
+import { profileAnalytics } from "@/lib/analytics";
 
 const getIcon = (key: string) => {
    if (key === "artworks") return <ArtworksIcon />;
@@ -62,6 +63,15 @@ const ProfileLayoutView = ({
    const [isCoverOpen, setIsCoverOpen] = useState(false); // ✅ NEW
    const avatarButtonRef = useRef<HTMLButtonElement>(null);
    const coverButtonRef = useRef<HTMLButtonElement>(null);
+
+   useEffect(() => {
+      if (user.id) {
+         profileAnalytics.view(String(user.id), {
+            isOwnProfile: String(user.id) === String(authUser?.id),
+            source: 'profile_page',
+         })
+      }
+   }, [])
 
 
    if (user.id === authUser?.id && variant !== "profile") {
