@@ -49,7 +49,7 @@ export default function BannerSlider({ banners }: Props) {
         {activeBanners.map((banner) => (
           <SwiperSlide key={banner.id}>
             <Link href={banner.link} target="_blank">
-              <div className="relative h-full w-full">
+              <div className="relative h-full w-full aspect-2/1 md:aspect-8/3">
                 {/* Desktop Image */}
                 <div className="hidden md:block h-full w-full">
                   <AppImage
@@ -57,19 +57,19 @@ export default function BannerSlider({ banners }: Props) {
                     alt={banner.title}
                     fill
                     preload
-                    containerClassName="h-full w-full"
+                    sizes="100vw"
                     className="object-cover"
                   />
                 </div>
 
                 {/* Mobile Image */}
-                <div className="block md:hidden">
+                <div className="block md:hidden h-full w-full">
                   <AppImage
                     src={getImage(banner.image_mobile) || getImage(banner.image)}
                     alt={banner.title}
                     fill
                     preload
-                    containerClassName="aspect-8/3"
+                    sizes="100vw"
                     className="object-cover"
                   />
                 </div>
