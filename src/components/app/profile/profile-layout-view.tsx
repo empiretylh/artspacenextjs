@@ -181,7 +181,7 @@ const ProfileLayoutView = ({
 
          <div className="container pt-[180px] sm:pt-[200px]">
             <ScrollArea className="w-full">
-               <div className="flex justify-center">
+               <div className="flex justify-center my-2">
                   <div className="inline-flex gap-4 text-sm md:text-base border-b whitespace-nowrap">
                      {navLinks.map((link) => (
                         <Link

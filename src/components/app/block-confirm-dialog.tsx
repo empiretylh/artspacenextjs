@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { RefObject, useState } from "react";
 import {
    AlertDialog,
    AlertDialogAction,
@@ -20,22 +20,26 @@ import { useRouter } from "next/navigation";
 import { paths } from "@/config/paths";
 import { getUserRouteType } from "@/lib/utils";
 
-interface BlockButtonProps {
+interface BlockConfirmDialogProps {
    label?: string;
    entityType: User["user_type"];
    entityName?: string; // Optional display name
+   openConfirmDialog?: boolean;
+   onOpenConfirmDialogChange?: (open: boolean) => void;
    entityId: string;
    onSuccess?: () => void;
-   renderButton?: () => React.ReactNode;
+   reFocusRef: RefObject<HTMLDivElement | null>;
 }
 
-export const BlockButton: React.FC<BlockButtonProps> = ({
+export const BlockConfirmDialog: React.FC<BlockConfirmDialogProps> = ({
    label = "Block",
    entityType,
    entityName,
    entityId,
+   openConfirmDialog = false,
+   onOpenConfirmDialogChange,
+   reFocusRef,
    onSuccess,
-   renderButton,
 }) => {
    const blockUserMutation = useBlockUser();
    const { user } = useAuth();
@@ -54,18 +58,10 @@ export const BlockButton: React.FC<BlockButtonProps> = ({
    };
 
    return (
-      <AlertDialog>
-         <AlertDialogTrigger asChild>
-            {renderButton ? (
-               renderButton()
-            ) : (
-               <Button variant="outline" size="sm">
-                  {label}
-               </Button>
-            )}
-         </AlertDialogTrigger>
-
-         <AlertDialogContent>
+      <AlertDialog open={openConfirmDialog} onOpenChange={onOpenConfirmDialogChange}>
+         <AlertDialogContent onCloseAutoFocus={(e) => {
+            requestAnimationFrame(() => reFocusRef.current?.focus());
+         }}>
             <AlertDialogHeader>
                <AlertDialogTitle>Confirm Block</AlertDialogTitle>
                <AlertDialogDescription>
@@ -88,6 +84,6 @@ export const BlockButton: React.FC<BlockButtonProps> = ({
                </AlertDialogAction>
             </AlertDialogFooter>
          </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog >
    );
 };

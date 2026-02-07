@@ -268,8 +268,6 @@ export const getUserRouteType = (entityType: string) => {
          return "collectors";
       case "GALLERY":
          return "galleries";
-      case "USER":
-         return "users";
       default:
          return "artists";
    }
