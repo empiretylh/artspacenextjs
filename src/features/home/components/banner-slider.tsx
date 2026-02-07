@@ -34,7 +34,7 @@ export default function BannerSlider({ banners }: Props) {
   if (!activeBanners.length) return null
 
   return (
-    <section className="relative w-full">
+    <section className="rounded-lg relative shadow-xl md:shadow-none aspect-2/1 md:aspect-8/3">
       <Swiper
         modules={[Autoplay, Pagination]}
         autoplay={{ delay: 15000, disableOnInteraction: false }}
@@ -44,7 +44,7 @@ export default function BannerSlider({ banners }: Props) {
           "--swiper-pagination-bullet-inactive-color": "#999999",
         } as SwiperStyle}
         loop
-        className="rounded-lg shadow-xl md:shadow-none aspect-2/1 md:aspect-8/3"
+        className="w-full h-full"
       >
         {activeBanners.map((banner) => (
           <SwiperSlide key={banner.id}>

@@ -106,7 +106,7 @@ export const FeaturedArtworksSection = () => {
             </div>
          </Carousel> */}
 
-         <div className="overflow-hidden">
+         <div className="ml-[50%] md:ml-auto translate-x-[-50%] md:translate-x-0 w-screen md:w-full overflow-hidden pl-4">
             <Swiper
                modules={[Navigation]}
                slidesPerView="auto"

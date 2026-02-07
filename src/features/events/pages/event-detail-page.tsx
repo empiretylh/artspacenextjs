@@ -51,7 +51,7 @@ export default function EventDetailPage() {
    return (
       <div className="pb-24 sm:pb-16">
          {/* Hero */}
-         <div className="relative h-[400px] w-full sm:aspect-8/3">
+         <div className="relative h-[400px] w-screen md:w-full ml-[50%] translate-x-[-50%] md:aspect-8/3">
             <AppImage
                src={getImage(event.cover_photo)}
                alt={event.title}
