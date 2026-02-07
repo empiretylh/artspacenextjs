@@ -1,42 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Myanmar Art Space (Frontend)
 
-## Note
-### Google analytic 
+Myanmar Art Space is a social media and e-commerce platform focused on showcasing Myanmar artists, galleries, collectors, and curated collections. This repository contains the Next.js frontend application, including public discovery pages and authenticated dashboards for commerce, orders, and user management.
 
-page view measurement is done by google “Enhanced Measurement” which is on next js doc https://nextjs.org/docs/app/guides/third-party-libraries#tracking-pageviews so we don't need to add page view manually
+## Highlights
+- Public discovery pages for artists, galleries, collections, artworks, and events.
+- Authenticated experiences for cart, checkout, orders, profile, and settings.
+- Responsive UI built with Tailwind CSS and Radix UI components.
+- Client state handled with TanStack Query, React Hook Form, and Zustand.
+- SEO-friendly metadata, sitemap, robots, and Open Graph assets.
 
+## Tech Stack
+- Next.js 16 (App Router) + React 19
+- TypeScript + ESLint
+- Tailwind CSS 4 + Radix UI
+- TanStack Query, React Hook Form, Zod
+- Zustand, DnD Kit, Framer Motion
 
 ## Getting Started
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Create your environment file:
+   ```bash
+   cp .env.example .env
+   ```
+3. Update values in `.env`.
+4. Start the dev server:
+   ```bash
+   npm run dev
+   ```
+5. Visit `http://localhost:3000`.
 
-First, run the development server:
+## Environment Variables
+These are validated in `src/config/env.ts`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+| Variable | Required | Description |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_URL` | Yes | Base URL for the backend API. |
+| `NEXT_PUBLIC_APP_URL` | Yes | Public site URL, used for canonical URLs/SEO. |
+| `NEXT_PUBLIC_ENABLE_ANALYTICS` | No | Set to `true` to enable Google Analytics. |
+| `NEXT_PUBLIC_GA_ID` | Conditionally | Required when analytics are enabled. |
+| `NEXT_PUBLIC_ENABLE_API_MOCKING` | No | Enable mock API support when available. |
+| `NEXT_PUBLIC_MOCK_API_PORT` | No | Port for mock API (defaults to `8080`). |
+| `NODE_ENV` | No | `development` or `production` (defaults to `development`). |
+| `IMAGE_HOSTNAME` | No | Allowed hostname for Next.js image optimization. |
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
+- `src/app` - App Router routes, layouts, metadata, and API handlers.
+- `src/features` - Feature-specific UI and logic (auth, artwork, events, cart, orders).
+- `src/components` - Shared UI components and layout primitives.
+- `src/lib` - Shared utilities, API clients, and helpers.
+- `src/hooks` - Custom React hooks.
+- `src/config` - Environment, route paths, and query keys.
+- `src/mocks` - Local mock data for development.
+- `public` - Static assets (icons, screenshots, PWA assets).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
+- `npm run dev` - Start the local dev server.
+- `npm run build` - Create a production build.
+- `npm run start` - Serve the production build.
+- `npm run lint` - Run ESLint.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Analytics
+Google Analytics is wired via `@next/third-parties` in `src/app/layout.tsx`. Set `NEXT_PUBLIC_ENABLE_ANALYTICS=true` and provide `NEXT_PUBLIC_GA_ID` to enable tracking. Enhanced Measurement handles page views automatically.
 
-## Learn More
+## Deployment
+1. Set all required environment variables in your hosting platform.
+2. Run `npm run build`.
+3. Serve the app with `npm run start` (or your platform's Next.js runtime).
 
-To learn more about Next.js, take a look at the following resources:
+## Contributing
+1. Create a feature branch from `main`.
+2. Keep changes scoped and formatted.
+3. Run `npm run lint` before opening a PR.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Support
+If you run into issues, capture the exact error message, Node.js version, and steps to reproduce.
