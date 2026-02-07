@@ -7,6 +7,7 @@ import FollowButton from "./follow-button";
 import { useSidebar } from "../ui/sidebar";
 import { useAuth } from "@/features/auth/store";
 import { UnblockButton } from "./unblock-button";
+import AppImage from "../common/app-image";
 
 const UserListItem = ({
    user,
@@ -31,14 +32,17 @@ const UserListItem = ({
          )}
       >
          <div className="flex items-center shrink gap-2 min-w-0">
-            <Image
+            <AppImage
                src={
                   user.profile.profile_picture
                      ? getImage(user.profile.profile_picture)
                      : "/assets/profile-default.png"
                }
-               className="w-10 h-10 shrink-0 aspect-square overflow-hidden rounded-full"
-               alt=""
+               width={40}
+               height={40}
+               containerClassName="shrink-0 w-10 h-10"
+               className="shrink-0 w-10 h-10 aspect-square overflow-hidden rounded-full"
+               alt={user.first_name + " " + user.last_name}
             />
 
             {/* Name + email block */}

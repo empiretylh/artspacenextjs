@@ -58,10 +58,8 @@ export function SiteHeader() {
                   {/* Left Section (Logo + Sidebar Trigger) */}
                   <div className="flex gap-2 items-center md:hidden">
                      <SidebarTrigger className="-ml-1" />
-                     <Link to={"/"}>
-                        <h1 className="uppercase font-display font-bold text-sm">
-                           Myanmar Art Space
-                        </h1>
+                     <Link to={"/"} className="uppercase font-display font-bold text-sm">
+                        Myanmar Art Space
                      </Link>
                   </div>
 

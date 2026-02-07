@@ -1,5 +1,5 @@
 'use client'
-import Image from "@/components/common/image";
+import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { paths } from "@/config/paths";
@@ -42,10 +42,12 @@ export const StylesList = () => {
                   }}
                >
                   <div className="relative w-full aspect-square max-w-2xl overflow-hidden rounded-2xl">
-                     <Image
+                     <AppImage
                         src={getImage(style.style.image)}
                         alt={style.style.name}
-                        className="w-full rounded-2xl"
+                        fill // Use fill for relative containers
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 17vw"
+                        className="object-cover rounded-2xl transform transition-transform duration-300 hover:scale-105"
                      />
 
                      <div className="absolute left-2 bottom-2 right-2 flex items-end p-2 bg-blend-color-burn bg-white/25 rounded-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-sm border border-white/30">

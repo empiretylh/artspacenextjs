@@ -58,7 +58,14 @@ api.interceptors.response.use(
       if (error.response?.status === 401 &&
          !original._retry &&
          !original.url?.includes("/sign-in") &&
-         !original.url?.includes("/refresh")) {
+         !original.url?.includes("/refresh")
+      ) {
+         const cookie = JSON.parse(Cookies.get('artspace_auth_session') || "{}");
+
+         if (!useAuth.getState().accessToken && !cookie.accessToken) {
+            return Promise.reject(error);
+         }
+
          original._retry = true;
 
          // We call our OWN Next.js API, which has access to the HttpOnly cookie
@@ -70,12 +77,18 @@ api.interceptors.response.use(
                if (!res.ok) throw new Error();
 
                // Update Zustand with the new short-lived access token
+               // if (typeof window !== "undefined") {
                useAuth.setState({ accessToken: data.access });
+               // }
+
                return data.access;
             } catch {
                // Global logout on failure
-               useAuth.getState().logout();
-               return null;
+               // if (typeof window !== "undefined") {
+
+               useAuth.setState({ accessToken: null, user: null });
+               window.location.replace("/sign-in?reason=session_expired&return=" + window.location.pathname);
+               // }
             } finally {
                refreshing = null;
             }
@@ -83,15 +96,20 @@ api.interceptors.response.use(
 
          const token = await refreshing;
          if (token) {
-            original.headers.Authorization = `Bearer ${token}`;
-            return api(original);
+            const retryConfig = {
+               ...original,
+               headers: {
+                  ...original.headers,
+                  Authorization: `Bearer ${token}`,
+               },
+            };
+            // ✅ Return the retried request, don’t reject yet
+            return api(retryConfig);
          }
       }
 
-      console.log(error)
-
       const message = error.response?.data?.detail || error.message;
-      if (error.response?.status !== 404 && document) {
+      if (error.response?.status !== 404 && error.response?.status !== 401 && typeof document !== "undefined") {
          useNotifications.getState().addNotification({
             type: "error",
             title: "Error",

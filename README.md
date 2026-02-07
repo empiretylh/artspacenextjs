@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Note
+### Google analytic 
+
+page view measurement is done by google “Enhanced Measurement” which is on next js doc https://nextjs.org/docs/app/guides/third-party-libraries#tracking-pageviews so we don't need to add page view manually
+
+
 ## Getting Started
 
 First, run the development server:

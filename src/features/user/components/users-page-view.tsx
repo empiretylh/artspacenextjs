@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { EmptyState } from "@/components/layout/empty-state";
 import type { ColumnFiltersState, SortingState } from "@/types";
 import { useInView } from "react-intersection-observer";
 import UsersListLoading from "./users-list-loading";
+import ProfileCardSkeleton from "@/components/app/profile/profile-card-skeleton";
 
 interface Props {
    title?: string;
@@ -41,6 +42,14 @@ const UsersPageView = ({
    hasNextPage,
    isFetchingNextPage,
 }: Props) => {
+   const resultsCount = useMemo(() => {
+      if (!pagesToRender?.length) return 0;
+      return pagesToRender.reduce((acc, page) => {
+         const results = page?.results ?? page?.data?.results ?? [];
+         return acc + (Array.isArray(results) ? results.length : 0);
+      }, 0);
+   }, [pagesToRender]);
+
    const { ref: loadMoreRef, inView } = useInView({
       threshold: 0,
    });
@@ -55,20 +64,35 @@ const UsersPageView = ({
    }, [inView, hasNextPage, isFetchingNextPage, loadingLock, fetchNextPage]);
 
    return (
-      <div className="flex-grow transition-all duration-300">
+      <section
+         className="flex-grow transition-all duration-300"
+         aria-labelledby="users-title"
+         aria-live="polite"
+      >
          <div className="flex flex-col lg:flex-row transition-all duration-300">
             <div className="transition-all duration-300 w-full space-y-3">
                {/* <FilterRow filters={filters} setFilters={setFilters} /> */}
 
                <div className="flex items-center justify-between">
-                  <h1 className="text-xl font-bold capitalize">{title}</h1>
+                  <h1
+                     id="users-title"
+                     className="text-xl font-bold capitalize"
+                  >
+                     {title}
+                  </h1>
                </div>
+               <p className="sr-only">
+                  Browse profiles. Showing {resultsCount} results.
+               </p>
 
                {filters.length > 0 &&
                   filters.some((f) => f.id !== "price_range") && (
                      <>
                         <span className="inline-block mr-2">SearchBy:</span>
-                        <div className="inline-flex flex-wrap gap-2 mb-4">
+                        <div
+                           className="inline-flex flex-wrap gap-2 mb-4"
+                           aria-label="Active filters"
+                        >
                            {filters
                               .filter((f) => f.id !== "price_range")
                               .map((f) => (
@@ -87,6 +111,9 @@ const UsersPageView = ({
                                        size="icon"
                                        className="size-4 hover:text-destructive"
                                        variant="link"
+                                       aria-label={`Remove filter ${String(
+                                          f.value
+                                       )}`}
                                     >
                                        <XIcon />
                                     </Button>
@@ -98,23 +125,24 @@ const UsersPageView = ({
 
                {isLoading && <UsersListLoading />}
                {!isLoading && (
-                  <div className="mb-4">
+                  <div className="mb-4" role="region" aria-live="polite">
                      {isDataEmpty() && <EmptyState />}
 
                      {!isDataEmpty() && (
                         <>
                            <div
                               className={cn(
-                                 "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6 gap-2"
+                                 "grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2"
                               )}
+                              role="list"
+                              aria-label="User results"
                            >
                               {pagesToRender.map((page) => (
                                  <Fragment key={page.next}>
-                                    {page.results.map((user: any) => (
-                                       <ProfileCard
-                                          key={user.id}
-                                          user={user}
-                                       />
+                                    {(page.results ?? []).map((user: any) => (
+                                       <div role="listitem" key={user.id}>
+                                          <ProfileCard user={user} />
+                                       </div>
                                     ))}
                                  </Fragment>
                               ))}
@@ -151,7 +179,7 @@ const UsersPageView = ({
                )}
             </div>
          </div>
-      </div>
+      </section>
    );
 };
 

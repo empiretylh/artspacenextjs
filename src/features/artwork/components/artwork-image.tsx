@@ -32,17 +32,15 @@ export default function ArtworkImage({ artwork }: { artwork: Artwork }) {
    }, []);
 
    return (
-      <>
-         {/* ⭐ Viewer.js attaches to this wrapper */}
+      <figure>
          <div ref={mainImage} className="w-full">
             <Image
                ref={mainImage as unknown as React.RefObject<HTMLImageElement>}
                className="select-none flex justify-center mb-4 [&_img]:hover:cursor-zoom-in w-full h-75 [&_img]:object-contain [&_img]:h-75 [&_img]:w-auto"
                src={getImage(artwork.image)}
-               alt={artwork.title}
-            // src={`https://swiperjs.com/demos/images/nature-${i + 1}.jpg`}
+               alt={`${artwork.title} artwork image`}
             />
          </div>
-      </>
+      </figure>
    );
 }

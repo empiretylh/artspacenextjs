@@ -1,9 +1,8 @@
+import { getQueryClient } from "@/lib/get-query-client";
 import type { User } from "@/types";
-import { create } from "zustand";
 import type { AxiosError } from "axios";
 import axios from "axios";
-import { env } from "@/config/env";
-import { getQueryClient } from "@/lib/get-query-client";
+import { create } from "zustand";
 
 interface RegisterForm {
    email: string;
@@ -29,7 +28,7 @@ export type State = {
    register: (
       values: RegisterForm
    ) => Promise<boolean | AxiosError<{ message: string }>>;
-   logout: () => Promise<void>;
+   logout: () => Promise<boolean>;
    init: (data: { user: User | null; accessToken: string | null }) => void;
    isBuyer: boolean;
    isArtist: boolean;
@@ -71,10 +70,10 @@ export const useAuth = create<State>((set) => {
 
             const newState = {
                accessToken: data.access,
-               refreshToken: data.refresh,
                user: data.user,
                isBuyer: data.user.user_type === "BUYER",
                isArtist: data.user.user_type === "ARTIST",
+               isCollector: data.user.user_type === "COLLECTOR",
             };
             set(newState);
 
@@ -110,10 +109,22 @@ export const useAuth = create<State>((set) => {
       },
 
       async logout() {
-         const queryClient = getQueryClient()
-         await fetch("/api/auth/logout", { method: "POST" });
-         set({ user: null, accessToken: null, loading: false });
-         queryClient.invalidateQueries();
+         try {
+            await fetch("/api/auth/logout", {
+               method: "POST",
+               credentials: "include",
+            });
+         } catch (e) {
+            // optional logging
+         }
+
+         set({
+            user: null,
+            accessToken: null,
+            loading: false,
+         });
+
+         return true;
       },
 
       init: (data: { user: User | null, accessToken: string | null }) => {
@@ -121,6 +132,7 @@ export const useAuth = create<State>((set) => {
             ...data,
             isBuyer: data.user?.user_type === "BUYER",
             isArtist: data.user?.user_type === "ARTIST",
+            isCollector: data.user?.user_type === "COLLECTOR",
             loading: false
          });
       },

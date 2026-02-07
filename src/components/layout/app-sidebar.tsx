@@ -34,10 +34,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   >
                      <div className="flex justify-start">
                         <SidebarTrigger className="-ml-1" />
-                        <Link to={"/"}>
-                           <h1 className="uppercase font-display font-bold text-sm">
-                              Myanmar Art Space
-                           </h1>
+                        <Link to={"/"} className="uppercase font-display font-bold text-sm">
+                           Myanmar Art Space
                         </Link>
                      </div>
                   </SidebarMenuButton>

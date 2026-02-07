@@ -11,6 +11,7 @@ import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
 import { paths } from "@/config/paths";
 import { UserRouteType } from "@/features/service/artspace/get-users";
+import AppImage from "@/components/common/app-image";
 
 export function cn(...inputs: ClassValue[]) {
    return twMerge(clsx(inputs));
@@ -152,7 +153,7 @@ export const slugify = (text: string) => {
 };
 
 export const getUserIcon = (type: string) => {
-   return <img src={'/assets/logo.png'} alt="logo" className="h-4 w-4 inline-block" />;
+   return <AppImage withoutContainer width={16} height={16} src={'/assets/logo.png'} className="inline-block" alt="logo" />;
    // if (type === "ARTIST") {
    //    return (
    //       <span className="inline-block border-2 border-primary p-1 rounded-full">

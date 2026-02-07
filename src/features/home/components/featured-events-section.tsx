@@ -41,7 +41,7 @@ export const FeaturedEventsSection = () => {
          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-2">
             {featuredEvents.map((event) => (
                <div className="shrink-0" key={event.id}>
-                  <EventWideCard event={event} key={event.id} />
+                  <EventWideCard event={event} key={event.id} sizes="(max-width: 1024px) 100vw, (max-width: 1536px) 50vw, 600px" />
                </div>
             ))}
          </div>

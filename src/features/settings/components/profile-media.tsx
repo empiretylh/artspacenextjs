@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import ReactCrop, {
    centerCrop,
    makeAspectCrop,
@@ -7,15 +7,15 @@ import ReactCrop, {
 } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserCircle2, User, Pencil, X, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useGetProfile } from "../api/get-profile";
+import AppImage from "@/components/common/app-image";
 import LoadingPage from "@/components/page/loading-page";
-import { useChangeProfilePicture } from "../api/change-profile-picture";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { getImage } from "@/lib/utils";
+import { Check, Pencil, User, UserCircle2, X } from "lucide-react";
 import { useChangeProfileCover } from "../api/change-profile-cover";
-import Image from "@/components/common/image";
+import { useChangeProfilePicture } from "../api/change-profile-picture";
+import { useGetProfile } from "../api/get-profile";
 
 type CropType = "avatar" | "banner";
 
@@ -255,7 +255,13 @@ export const ProfileMedia: React.FC = () => {
             <div className="relative">
                <Avatar className="w-24 h-24">
                   {profile_picture ? (
-                     <AvatarImage src={getImage(profile_picture)} alt={fullName} />
+                     <AppImage
+                        src={getImage(profile_picture)}
+                        alt={fullName}
+                        width={96}
+                        height={96}
+                        className="rounded-full" // Ensure image stays circular
+                     />
                   ) : (
                      <AvatarFallback className="text-2xl">
                         {first_name?.[0]?.toUpperCase() || <User />}
@@ -291,11 +297,14 @@ export const ProfileMedia: React.FC = () => {
          </div>
 
          {/* Banner */}
-         <div className="relative">
-            <Image
-               src={cover_photo ? getImage(cover_photo) : ""}
+         <div className="relative h-full">
+            <AppImage
+               src={cover_photo ? getImage(cover_photo) : "/assets/profile-cover-default.png"}
                alt="Cover"
-               className="w-full aspect-8/3 rounded-2xl overflow-hidden object-cover"
+               fill
+               preload
+               containerClassName="aspect-8/3 rounded-2xl overflow-hidden"
+               className="object-cover"
             />
 
             <input

@@ -74,13 +74,13 @@ const Footer = () => {
 
    return (
       <footer className="border-t border-border bg-background">
-         <div className="mx-auto py-12 px-4 max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+         <div className="mx-auto py-12 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
             {/* Navigation sections */}
             {Object.keys(navlinks).map((section) => (
                <div key={section} className="space-y-3">
-                  <h4 className="text-base font-semibold text-foreground">
+                  <h3 className="text-base font-semibold text-foreground">
                      {section}
-                  </h4>
+                  </h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                      {navlinks[section].map((item) => {
                         if (item.href) {

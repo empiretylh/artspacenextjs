@@ -32,7 +32,7 @@ const ControlledEventCard: React.FC<ControlledEventCardProps> = ({
    return (
       <div className="relative group inline-block break-inside-avoid mb-4 w-full">
          {/* Hover Buttons */}
-         <EventWideCard event={event} />
+         <EventWideCard event={event} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" />
          <div className="absolute top-54 right-2 flex space-x-2">
             <EventControlActions
                onDeleteButtonClick={() => onDeleteButtonClick(event)}

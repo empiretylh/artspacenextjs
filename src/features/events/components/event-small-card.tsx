@@ -1,17 +1,17 @@
-import { format } from "date-fns";
-import Image from "@/components/common/image";
+import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { paths } from "@/config/paths";
 import { getImage } from "@/lib/utils";
 import type { Event } from "@/types";
+import { format } from "date-fns";
 
 interface EventSmallCardProps {
    event: Event;
+   sizes?: string;
 }
 
-export const EventSmallCard: React.FC<EventSmallCardProps> = ({ event }) => {
+export const EventSmallCard: React.FC<EventSmallCardProps> = ({ event, sizes }) => {
    const startDate = event.start_date
       ? format(new Date(event.start_date), "MMM dd")
       : null;
@@ -22,10 +22,13 @@ export const EventSmallCard: React.FC<EventSmallCardProps> = ({ event }) => {
    return (
       <div className="overflow-hidden w-full border h-full rounded-md">
          <Link to={paths.events.detail.getHref(event.slug)}>
-            <div className="relative h-40 w-full">
-               <Image
+            <div className="relative aspect-video w-full">
+               <AppImage
                   src={getImage(event.cover_photo)}
                   alt={event.title}
+                  width={1600}
+                  height={900}
+                  sizes={sizes || "100vw"}
                   className="h-full w-full object-cover"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

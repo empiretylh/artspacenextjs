@@ -5,7 +5,7 @@ export default function ProfileCardSkeleton() {
       <div className="flex w-full justify-center border rounded-2xl overflow-hidden bg-background">
          <div className="w-full flex flex-col items-center">
             {/* Cover */}
-            <div className="hidden md:block relative w-full h-[110px]">
+            <div className="hidden md:block relative aspect-8/3 w-full ">
                <Skeleton className="absolute inset-0 w-full h-full rounded-none" />
                <div className="absolute inset-0 bg-gradient-to-b from-transparent from-30% to-background" />
             </div>
@@ -17,10 +17,10 @@ export default function ProfileCardSkeleton() {
                </div>
 
                {/* User Info */}
-               <div className="text-center mb-3 w-full flex flex-col items-center">
+               <div className="text-center px-2 mb-1 md:mb-3 w-full flex flex-col items-center">
                   {/* Name */}
-                  <div className="mb-2 min-h-[24px] flex items-center justify-center">
-                     <Skeleton className="h-4 sm:h-5 w-[120px]" />
+                  <div className="mb-2 min-h-[24px] w-full flex items-center justify-center">
+                     <Skeleton className="h-4 w-full sm:h-5 sm:w-[120px]" />
                   </div>
 
                   {/* Username */}
@@ -31,8 +31,8 @@ export default function ProfileCardSkeleton() {
                </div>
 
                {/* Actions */}
-               <div className="flex gap-1 w-full justify-center flex-wrap min-h-[36px]">
-                  <Skeleton className="h-8 w-[40px] sm:w-[90px] rounded-md" />
+               <div className="flex gap-1 px-2 w-full justify-center flex-wrap min-h-[36px]">
+                  <Skeleton className="h-8 w-full md:w-[40px] rounded-md" />
                   <Skeleton className="hidden sm:block h-8 w-[90px] rounded-md" />
                </div>
             </div>

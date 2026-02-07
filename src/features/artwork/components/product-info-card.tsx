@@ -1,7 +1,6 @@
-import Image from "@/components/common/image";
+import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import DeliverIcon from "@/components/icons/deliver-icon";
-import Home from "@/components/icons/home-icon";
 import SecureIcon from "@/components/icons/secure-icon";
 import VerifyIcon from "@/components/icons/verify-icon";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ import { paths } from "@/config/paths";
 import { useCartStore } from "@/features/cart/store/cart-store";
 import { getImage, timeAgo } from "@/lib/utils";
 import type { Artwork } from "@/types";
-import { User, ShieldCheck, Truck, UserIcon } from "lucide-react";
 
 export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
    const { addToCart } = useCartStore();
@@ -20,12 +18,15 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
          <CardContent>
             {/* Header */}
             <div className="flex items-center space-x-3 mb-2">
-               <Image
+               <AppImage
                   src={getImage(
                      artwork?.artist_profile?.profile?.profile_picture
                   )}
-                  alt="Profile Picture"
-                  className="w-14 h-14 rounded-full overflow-hidden border-4 border-background object-cover"
+                  width={48}
+                  height={48}
+                  alt={`${artwork.current_owner_display.first_name} ${artwork.current_owner_display.last_name} profile picture`}
+                  containerClassName="w-12 h-12 rounded-full overflow-hidden"
+                  className="object-cover"
                />
 
                <div className="space-y-1">
@@ -54,9 +55,9 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
 
             {/* Price */}
             <div className="mb-6 space-y-2">
-               <h1 className="text-2xl md:text-3xl font-display text-foreground">
+               <p className="text-2xl md:text-3xl font-display text-foreground">
                   {!artwork.hide_price && `$${artwork.price}`}
-               </h1>
+               </p>
                {artwork.hide_price && (
                   <Button
                      disabled

@@ -3,6 +3,7 @@ import { getImage, getUserIcon, getUserLink } from "@/lib/utils";
 import type { User } from "@/types";
 import { useAuth } from "@/features/auth/store";
 import Image from "../common/image";
+import AppImage from "../common/app-image";
 
 export default function UserSmallCard({ user }: { user: User }) {
    const { user: authUser } = useAuth();
@@ -17,20 +18,18 @@ export default function UserSmallCard({ user }: { user: User }) {
       "
       >
          {/* Avatar */}
-         <Link to={getUserLink(user, authUser!)}>
-            <Image
+         <Link to={getUserLink(user, authUser!)} className="mb-2">
+            <AppImage
                src={
                   user?.profile?.profile_picture
                      ? getImage(user.profile.profile_picture)
                      : "/assets/profile-default.png"
                }
                alt={`${user.first_name} ${user.last_name}`}
-               className="
-                  w-14 h-14
-                  rounded-full object-cover
-                  overflow-hidden
-                  mb-2
-               "
+               // Use fixed dimensions for small, consistent icons
+               width={56}
+               height={56}
+               className="rounded-full object-cover w-14 h-14"
             />
          </Link>
 

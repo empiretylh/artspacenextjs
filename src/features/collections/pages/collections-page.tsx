@@ -2,7 +2,7 @@ import { CollectionRow } from "../components/collection-row";
 
 export default function CollectionsPage() {
    return (
-      <main className="container mx-auto px-4 py-8 space-y-12">
+      <section className="container mx-auto px-4 py-8 space-y-12">
          {/* Page Header */}
          <header className="space-y-2">
             <h1 className="text-3xl font-bold">Arcade</h1>
@@ -23,6 +23,6 @@ export default function CollectionsPage() {
          {/* <CollectionRow title="Trending This Week" artworks={dummyArtworks} /> */}
 
          {/* <CollectionRow title="New & Noteworthy" artworks={dummyArtworks} /> */}
-      </main>
+      </section>
    );
 }

@@ -7,6 +7,8 @@ export function AuthInitializer() {
   const initialized = useRef(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     const sync = async () => {
       const res = await fetch('/api/auth/session');
       const data = await res.json();
@@ -17,6 +19,10 @@ export function AuthInitializer() {
       sync();
       initialized.current = true;
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return null;
