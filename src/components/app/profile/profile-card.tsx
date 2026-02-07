@@ -22,7 +22,7 @@ export default function ProfileCard({ user }: { user: User }) {
    const fullName = `${user.first_name} ${user.last_name}`;
 
    return (
-      <div className="flex w-full justify-center border rounded-2xl overflow-hidden bg-background">
+      <div className="flex w-full justify-center border rounded-xl overflow-hidden bg-background">
          <div className="w-full flex flex-col items-center">
             {/* Cover */}
             <div className="hidden md:block relative aspect-8/3 overflow-hidden w-full">
@@ -63,20 +63,20 @@ export default function ProfileCard({ user }: { user: User }) {
 
                {/* Info */}
                <div className="text-center px-2 mb-2 w-full">
-                  <div className="flex items-center justify-center gap-1 mb-2 min-h-[20px]">
+                  <div className="flex items-center justify-center gap-1/2 mb-2">
                      <Link to={getUserLink(user, authUser!)}>
-                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-[100px] lg:max-w-[150px]">
+                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-20 lg:max-w-32.5">
                            {fullName}
                         </h2>
                      </Link>
                      {getUserIcon(user.user_type)}
                   </div>
 
-                  <p className="text-xs text-muted-foreground mb-1 truncate max-w-[100px] lg:max-w-[150px] mx-auto min-h-[16px]">
+                  <p className="text-xs text-muted-foreground mb-1 truncate max-w-20 lg:max-w-32.5 mx-auto min-h-[16px]">
                      {user.email}
                   </p>
 
-                  <p className="hidden sm:block text-xs text-muted-foreground truncate max-w-[100px] lg:max-w-[150px] mx-auto min-h-[16px]">
+                  <p className="hidden sm:block text-xs text-muted-foreground truncate max-w-20 lg:max-w-32.5 mx-auto min-h-[16px]">
                      {user.profile?.bio}
                   </p>
                </div>
@@ -88,13 +88,13 @@ export default function ProfileCard({ user }: { user: User }) {
                      userId={String(user.id)}
                      userType={user.user_type}
                      following={user.profile.is_following}
-                     className="w-full sm:w-auto"
+                     className="w-full sm:w-auto rounded-lg"
                   />
                   <Button
                      disabled
                      size="sm"
                      variant="outline"
-                     className="hidden sm:block text-xs px-1 py-2"
+                     className="hidden sm:block text-xs px-1 py-2 rounded-lg"
                   >
                      Send Message
                   </Button>
