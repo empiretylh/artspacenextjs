@@ -101,7 +101,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   {/* Collection Popover */}
                   <Popover>
                      <PopoverTrigger asChild>
-                        <Button size="icon" variant="ghost" disabled>
+                        <Button size="icon" className="text-white" variant="ghost" disabled>
                            <Plus size={16} />
                         </Button>
                      </PopoverTrigger>
