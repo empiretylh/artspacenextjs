@@ -17,6 +17,7 @@ import { getGalleries } from "@/features/service/artspace/get-galleries";
 import { getCollectors } from "@/features/service/artspace/get-collectors";
 import { getQueryClient } from "@/lib/get-query-client";
 import BannerSliderContainer from "../components/banner-slider-container";
+import { SourceProvider } from "@/lib/analytics-source";
 
 // --- Main App Component ---
 export default async function HomePage() {
@@ -61,6 +62,6 @@ export default async function HomePage() {
          {/* <HydrationBoundary state={dehydrate(queryClient)}> */}
          {/* </HydrationBoundary> */}
          {/* <FeaturedCollectorsSection /> */}
-      </div>
+      </div >
    );
 }

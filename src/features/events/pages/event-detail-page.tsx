@@ -11,9 +11,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { paths } from "@/config/paths";
 import { useGetEvent } from "@/features/service/artspace/get-event";
 import { useGetEventInterestStatus } from "@/features/service/artspace/get-event-intereset-status";
+import { eventAnalytics } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 import { cn, getDate, getImage } from "@/lib/utils";
 import { format } from "date-fns";
 import { notFound, useParams } from "next/navigation";
+import { useEffect } from "react";
 
 const typeColorMap: Record<string, string> = {
    Solo: "bg-indigo-100 text-indigo-700",
@@ -33,6 +36,14 @@ export default function EventDetailPage() {
    })
 
    const event = eventQuery.data;
+
+   const { source } = useSource()
+
+   useEffect(() => {
+      if (event) {
+         eventAnalytics.view(event.id, event.event_type.toLowerCase() as Lowercase<typeof event.event_type>, source);
+      }
+   }, [event]);
 
    if (!event) {
       return (

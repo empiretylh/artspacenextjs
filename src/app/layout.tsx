@@ -37,8 +37,8 @@ export default async function RootLayout({
       >
         {/* <GoogleTagManager gtmId={env.GTM_ID as string} /> */}
         <GoogleAnalytics debugMode={env.NODE_ENV === "development"} gaId={env.GA_ID as string} />
-        <AuthInitializer />
         <AppProvider>
+          <AuthInitializer />
           <ScrollToTop />
           {children}
         </AppProvider>

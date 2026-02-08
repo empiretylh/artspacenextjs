@@ -49,6 +49,8 @@ import { useGetArtworksInfinite } from "@/features/service/artspace/get-artworks
 import type { Event } from "@/types";
 import { useImageUpload } from "@/features/service/artspace/image-upload";
 import { Checkbox } from "@/components/ui/checkbox";
+import { eventAnalytics } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 interface EventUpdateFormProps {
    event: Event;
@@ -87,6 +89,8 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
       },
    });
 
+   const { source } = useSource();
+
    const updateMutation = useEventUpdate({
       mutationConfig: {
          onError: (error) => handleFormError(error, form),
@@ -96,6 +100,7 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                title: "Updated",
                message: "Event updated successfully",
             });
+            eventAnalytics.update(event.id, source);
             onSuccess?.();
          },
       },

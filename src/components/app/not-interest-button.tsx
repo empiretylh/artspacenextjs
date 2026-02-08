@@ -8,6 +8,8 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useInterestEvent } from "@/features/service/artspace/interest-event";
+import { eventAnalytics } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 import { cn } from "@/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 
@@ -22,7 +24,14 @@ const NotInterestEventButton = ({
    className?: string;
    interested: boolean;
 }) => {
-   const interestEventMutation = useInterestEvent();
+   const { source } = useSource();
+   const interestEventMutation = useInterestEvent({
+      mutationConfig: {
+         onSuccess: () => {
+            eventAnalytics.uninterested(eventId, source);
+         },
+      },
+   });
 
    const handleInterestEvent = () => {
       interestEventMutation.mutate({ eventId, interested: false });

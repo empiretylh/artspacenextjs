@@ -27,6 +27,7 @@ import AppImage from "@/components/common/app-image";
 import { useEffect, useRef, useState } from "react";
 import { BaseDialog } from "@/components/common/dialogs/base-dialog";
 import { profileAnalytics } from "@/lib/analytics";
+import { SourceProvider } from "@/lib/analytics-source";
 
 const getIcon = (key: string) => {
    if (key === "artworks") return <ArtworksIcon />;

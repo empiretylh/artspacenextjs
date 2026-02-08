@@ -3,6 +3,7 @@ import { useAuth } from "@/features/auth/store";
 import { useGetUsers } from "@/features/service/artspace/get-users";
 import UserListItem from "../../../components/app/user-list-item";
 import UserListItemSkeleton from "../../../components/app/user-list-item-skeleton";
+import { SourceProvider } from "@/lib/analytics-source";
 
 const FeaturedGalleries = () => {
    const galleryQuery = useGetUsers({
@@ -24,19 +25,21 @@ const FeaturedGalleries = () => {
             Featured Galleries
          </h2>
 
-         <div className="flex flex-col gap-2">
-            {galleryQuery.isLoading || accessToken === undefined
-               ? Array.from({ length: 4 }).map((_, index) => (
-                  <UserListItemSkeleton key={index} />
-               ))
-               : galleries.map((gallery, index) => (
-                  <UserListItem
-                     key={index}
-                     user={gallery}
-                     className="max-w-[calc(var(--sidebar-width)-28px)]  md:max-w-[calc(var(--sidebar-width)-48px)]"
-                  />
-               ))}
-         </div>
+         <SourceProvider value={{ source: "sidebar" }}>
+            <div className="flex flex-col gap-2">
+               {galleryQuery.isLoading || accessToken === undefined
+                  ? Array.from({ length: 4 }).map((_, index) => (
+                     <UserListItemSkeleton key={index} />
+                  ))
+                  : galleries.map((gallery, index) => (
+                     <UserListItem
+                        key={index}
+                        user={gallery}
+                        className="max-w-[calc(var(--sidebar-width)-28px)]  md:max-w-[calc(var(--sidebar-width)-48px)]"
+                     />
+                  ))}
+            </div>
+         </SourceProvider>
       </div>
    );
 };

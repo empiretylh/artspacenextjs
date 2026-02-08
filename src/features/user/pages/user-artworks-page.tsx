@@ -17,6 +17,7 @@ import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-mod
 import { useGetArtworksByUserIdInfinite } from "@/features/service/artspace/get-artworks-by-user-id";
 import NotFound from "@/components/layout/not-found";
 import { useProfileUser } from "@/components/providers/profile-user-provider";
+import { SourceProvider } from "@/lib/analytics-source";
 
 type ControlledArtworkCardProps = {
    artwork: Artwork;
@@ -33,7 +34,7 @@ const ControlledArtworkCard: React.FC<ControlledArtworkCardProps> = ({
             className="inline-block w-full h-auto"
             artwork={artwork}
          />
-      </div>
+      </div >
    );
 };
 

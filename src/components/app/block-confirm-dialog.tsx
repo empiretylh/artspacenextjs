@@ -19,6 +19,8 @@ import { useAuth } from "@/features/auth/store";
 import { useRouter } from "next/navigation";
 import { paths } from "@/config/paths";
 import { getUserRouteType } from "@/lib/utils";
+import { profileAnalytics, UserType } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 interface BlockConfirmDialogProps {
    label?: string;
@@ -41,7 +43,15 @@ export const BlockConfirmDialog: React.FC<BlockConfirmDialogProps> = ({
    reFocusRef,
    onSuccess,
 }) => {
-   const blockUserMutation = useBlockUser();
+   const { source } = useSource();
+   const blockUserMutation = useBlockUser({
+      mutationConfig: {
+         onSuccess: () => {
+            profileAnalytics.block(entityId, entityType.toLocaleLowerCase() as UserType, source);
+            onSuccess?.();
+         },
+      }
+   });
    const { user } = useAuth();
    const router = useRouter();
 

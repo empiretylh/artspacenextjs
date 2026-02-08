@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { paths } from "@/config/paths";
 import debounce from "lodash/debounce";
 import { useLikeArtwork } from "@/features/service/artspace/like-artwork";
+import { artworkAnalytics } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 interface UseLikeOptions {
    artworkId: string; // postId, commentId, etc.
@@ -19,7 +21,18 @@ export function useLike({
 }: UseLikeOptions) {
    const router = useRouter();
    const { user } = useAuth();
-   const likeMutation = useLikeArtwork(); // custom mutation hook
+   const { source } = useSource();
+   const likeMutation = useLikeArtwork({
+      mutationConfig: {
+         onSuccess: () => {
+            if (isLiked) {
+               artworkAnalytics.like(String(artworkId), source);
+            } else {
+               artworkAnalytics.unlike(String(artworkId), source);
+            }
+         },
+      }
+   }); // custom mutation hook
 
    const { mutate } = likeMutation;
 

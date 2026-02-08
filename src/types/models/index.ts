@@ -142,7 +142,7 @@ export interface Event {
    slug: string;
    cover_photo: string;
    event_image: string | null;
-   event_type: "GROUP";
+   event_type: "GROUP" | "SOLO";
    about: string;
    artists: Artist[];
    artworks: Artwork[];

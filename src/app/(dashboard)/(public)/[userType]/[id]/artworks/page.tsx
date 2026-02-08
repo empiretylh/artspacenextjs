@@ -1,7 +1,7 @@
-import ArtistArtworksPage from "@/features/artist/pages/artist-artworks-page";
+import UserArtworksPage from "@/features/user/pages/user-artworks-page";
 
-const ArtistArtworksRoute = () => {
-  return <ArtistArtworksPage />;
+const UserArtworksRoute = () => {
+  return <UserArtworksPage />;
 };
 
-export default ArtistArtworksRoute;
+export default UserArtworksRoute;

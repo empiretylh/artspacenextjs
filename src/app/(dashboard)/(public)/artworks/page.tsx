@@ -1,6 +1,7 @@
 import LoadingPage from "@/components/page/loading-page";
 import { env } from "@/config/env";
 import ArtworksPage from "@/features/artwork/pages/artworks-page";
+import { SourceProvider } from "@/lib/analytics-source";
 import { getQueryClient } from "@/lib/get-query-client";
 import type { Metadata } from "next";
 import { Suspense } from "react";

@@ -1,7 +1,7 @@
-import ArtistLikedArtworksPage from "@/features/artist/pages/artist-liked-artworks-page";
+import UserLikedArtworksPage from "@/features/user/pages/user-liked-artworks-page";
 
-const ArtistLikedArtworksRoute = () => {
-  return <ArtistLikedArtworksPage />;
+const UserLikedArtworksRoute = () => {
+  return <UserLikedArtworksPage />;
 };
 
-export default ArtistLikedArtworksRoute;
+export default UserLikedArtworksRoute;

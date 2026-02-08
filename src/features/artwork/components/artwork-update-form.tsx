@@ -50,6 +50,8 @@ import ImageDnd from "@/components/common/dnd-image-upload";
 import { useImageUpload } from "@/features/service/artspace/image-upload";
 import RequiredAsterisk from "@/components/common/required-asterisk";
 import { Spinner } from "@/components/ui/spinner";
+import { artworkAnalytics } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 // import your update API hook & schema
 
@@ -75,6 +77,7 @@ export const ArtworkUpdateForm = ({
    const genres = genresResponse?.data ?? [];
    const { data: stylesResponse, isLoading: isLoadingStyles } = useGetStyles();
    const styles = stylesResponse?.data ?? [];
+   const { source } = useSource();
 
    const updateArtMutation = useUpdateArt({
       mutationConfig: {
@@ -85,6 +88,7 @@ export const ArtworkUpdateForm = ({
                title: "Success",
                message: "Artwork updated successfully",
             });
+            artworkAnalytics.update(artwork.id, source);
             onUpdateSuccess?.();
          },
       },

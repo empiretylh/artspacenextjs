@@ -12,6 +12,7 @@ import { useEventsListInfinite } from "@/features/events/hooks/use-events-list-i
 import { useUploadedEventsListInfinite } from "@/features/events/hooks/use-uploaded-events-list-infinite-hook";
 import { useEventSoftDelete } from "@/features/service/artspace/event-soft-delete";
 import { useSendEmailInviteEvent } from "@/features/service/artspace/send-email-invite-event";
+import { eventAnalytics } from "@/lib/analytics";
 import type { Event } from "@/types";
 import { Edit, Mail, Trash } from "lucide-react";
 import { useState } from "react";
@@ -94,6 +95,7 @@ const ProfileEventsPage = () => {
    const softDeleteEventMutation = useEventSoftDelete({
       mutationConfig: {
          onSuccess: () => {
+            eventAnalytics.delete(String(selectedEvent?.id), 'profile_page')
             setIsDeleteModalOpen(false);
          },
       },

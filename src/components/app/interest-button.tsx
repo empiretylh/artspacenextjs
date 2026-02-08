@@ -5,6 +5,9 @@ import { useInterestEvent } from "@/features/service/artspace/interest-event";
 import { useAuth } from "@/features/auth/store";
 import { useRouter } from "next/navigation";
 import { paths } from "@/config/paths";
+import { eventAnalytics } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
+import { useState } from "react";
 
 const InterestEventButton = ({
    eventId,
@@ -19,7 +22,14 @@ const InterestEventButton = ({
    className?: string;
    loading?: boolean;
 }) => {
-   const interestEventMutation = useInterestEvent();
+   const { source } = useSource();
+   const interestEventMutation = useInterestEvent({
+      mutationConfig: {
+         onSuccess: () => {
+            eventAnalytics.interested(eventId, source);
+         },
+      }
+   });
    const { user } = useAuth();
    const router = useRouter();
 

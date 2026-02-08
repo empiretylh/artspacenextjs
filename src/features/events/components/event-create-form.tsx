@@ -58,6 +58,8 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { debounce } from "lodash";
 import AsyncMultipleSelector from "@/components/common/async-multi-select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { eventAnalytics } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 type FormData = z.infer<typeof eventCreateInputSchema>;
 
@@ -117,6 +119,7 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
       artistsPagesToRender.flatMap((page) => page.results) ?? [];
 
    const imageUploadMutation = useImageUpload();
+   const { source } = useSource();
 
    const eventCreateMutation = useEventCreate({
       mutationConfig: {
@@ -127,6 +130,7 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                title: "Success",
                message: "Event created successfully",
             });
+            eventAnalytics.create(source);
             onCreateSuccess?.();
             form.reset();
          },

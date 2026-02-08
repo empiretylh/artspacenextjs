@@ -6,7 +6,7 @@ import { paths } from "@/config/paths";
 import { useFollowUser } from "@/features/service/artspace/follow-user";
 import debounce from "lodash/debounce";
 import { getUserRouteType } from "@/lib/utils";
-import { FollowSource, profileAnalytics, UserType } from "@/lib/analytics";
+import { profileAnalytics, UserType } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
 
 export function useFollow({
@@ -19,7 +19,7 @@ export function useFollow({
    following: boolean;
 }) {
    const router = useRouter();
-   const { source } = useSource<FollowSource>();
+   const { source } = useSource();
    const { user } = useAuth();
    const followUserMutation = useFollowUser({
       mutationConfig: {

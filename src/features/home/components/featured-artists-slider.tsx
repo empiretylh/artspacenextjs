@@ -14,7 +14,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtistsSectionSkeleton } from "./featured-artists-section-skeleton";
 import { useEffect, useState } from "react";
 import { SourceProvider } from "@/lib/analytics-source";
-import { FollowSource } from "@/lib/analytics";
 
 export const FeaturedArtistsSlider = () => {
    const artistsQuery = useQuery({
@@ -117,46 +116,44 @@ export const FeaturedArtistsSlider = () => {
                <CarouselNext className="relative static translate-y-0" />
             </div>
          </Carousel> */}
-         <SourceProvider<FollowSource> value={{ source: "home_feed" }}>
-            <div className="overflow-hidden">
-               <Swiper
-                  modules={[Navigation]}
-                  slidesPerView={3}
-                  spaceBetween={8}
-                  // onInit={(swiper) => {
-                  //    swiperRef.current = swiper;
-                  // }}
-                  breakpoints={{
-                     640: {
-                        slidesPerView: 3,
-                     },
-                     768: {
-                        slidesPerView: 3,
-                     },
-                     1024: {
-                        slidesPerView: 4,
-                     },
-                     1280: {
-                        slidesPerView: 5,
-                     },
-                     1440: {
-                        slidesPerView: 6,
-                     },
-                  }}
-                  navigation={{
-                     nextEl: ".swiper-artist-button-next-custom",
-                     prevEl: ".swiper-artist-button-prev-custom",
-                  }}
-                  className="!overflow-visible"
-               >
-                  {featuredArtists.map((artist) => (
-                     <SwiperSlide key={artist.id} className="shrink-0">
-                        <ProfileCard user={artist} />
-                     </SwiperSlide>
-                  ))}
-               </Swiper>
-            </div>
-         </SourceProvider>
+         <div className="overflow-hidden">
+            <Swiper
+               modules={[Navigation]}
+               slidesPerView={3}
+               spaceBetween={8}
+               // onInit={(swiper) => {
+               //    swiperRef.current = swiper;
+               // }}
+               breakpoints={{
+                  640: {
+                     slidesPerView: 3,
+                  },
+                  768: {
+                     slidesPerView: 3,
+                  },
+                  1024: {
+                     slidesPerView: 4,
+                  },
+                  1280: {
+                     slidesPerView: 5,
+                  },
+                  1440: {
+                     slidesPerView: 6,
+                  },
+               }}
+               navigation={{
+                  nextEl: ".swiper-artist-button-next-custom",
+                  prevEl: ".swiper-artist-button-prev-custom",
+               }}
+               className="!overflow-visible"
+            >
+               {featuredArtists.map((artist) => (
+                  <SwiperSlide key={artist.id} className="shrink-0">
+                     <ProfileCard user={artist} />
+                  </SwiperSlide>
+               ))}
+            </Swiper>
+         </div>
       </section>
    );
 };

@@ -164,7 +164,7 @@
 
 html, body {
   height: 100%;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
 /* body[data-scroll-locked] [data-slot="sidebar-inset"] {

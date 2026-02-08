@@ -1,7 +1,62 @@
 'use client'
 
 import { env } from '@/config/env'
+import { Event } from '@/types';
 import { sendGAEvent /*, sendGTMEvent*/ } from '@next/third-parties/google'
+
+export function analyticSourceFromPathname(
+  pathname: string | null
+): AnalyticsSource {
+  if (!pathname) return "unknown";
+
+  // normalize: remove trailing slash except root
+  const path =
+    pathname !== "/" ? pathname.replace(/\/+$/, "") : pathname;
+
+  // --- ROOT / HOME ---
+  if (path === "/") return "home_page";
+
+  // --- AUTH ---
+  if (path === "/sign-in") return "sign_in_page";
+  if (path === "/sign-up") return "sign_up_page";
+
+  // --- CART / CHECKOUT ---
+  if (path === "/cart") return "cart";
+  if (path === "/checkout") return "checkout";
+
+  // --- SETTINGS ---
+  if (path.startsWith("/settings")) return "settings_page";
+
+  // --- PROFILE (own profile area) ---
+  if (path === "/profile") return "profile_page";
+  if (path.startsWith("/profile/")) return "profile_page";
+
+  // --- ARTWORKS ---
+  if (path === "/artworks") return "artworks_page";
+  if (path.startsWith("/artworks/")) return "artwork_detail";
+
+  // --- EVENTS ---
+  if (path === "/events") return "discover";
+  if (path.startsWith("/events/")) return "event_detail";
+
+  // --- ARTISTS ---
+  if (path === "/artists") return "artists_page";
+  if (path.startsWith("/artists/")) return "profile_page";
+
+  // --- COLLECTORS ---
+  if (path === "/collectors") return "collectors_page";
+  if (path.startsWith("/collectors/")) return "profile_page";
+
+  // --- GALLERIES ---
+  if (path === "/galleries") return "galleries_page";
+  if (path.startsWith("/galleries/")) return "profile_page";
+
+  // --- COLLECTIONS / ARCADE ---
+  if (path === "/arcade") return "arcade";
+
+  // --- FALLBACK ---
+  return "unknown";
+}
 
 /**
  * ✅ Product-analytics pattern for this app:
@@ -24,29 +79,23 @@ function isEnabled() {
 
 export type UserType = 'buyer' | 'artist' | 'collector' | 'gallery'
 
-export type FollowSource =
-  | "profile_page"
-  | 'artist_page'
-  | 'gallery_page'
-  | 'collection_page'
-  | "sidebar"
-  | "home_feed"
-  | "unknown";
-
 export type AnalyticsSource =
-  | 'home_feed'
+  | 'home_page'
   | 'discover'
+  | 'arcade'
   | 'search'
-  | 'artist_page'
-  | 'gallery_page'
-  | 'collection_page'
+  | 'sidebar'
+  | 'artists_page'
+  | 'artworks_page'
+  | 'galleries_page'
+  | 'collectors_page'
   | 'artwork_detail'
   | 'event_detail'
   | 'profile_page'
   | 'cart'
   | 'checkout'
   | 'orders'
-  | 'settings'
+  | 'settings_page'
   | 'admin_dashboard'
   | 'unknown'
   | 'sign_in_page'
@@ -67,7 +116,7 @@ function baseParams() {
   }
 }
 
-type TrackParams = Record<string, any> & { source?: AnalyticsSource | FollowSource }
+type TrackParams = Record<string, any> & { source?: AnalyticsSource }
 
 function track(event: string, params?: TrackParams) {
   if (!isEnabled()) return
@@ -145,23 +194,31 @@ export const authAnalytics = {
 
 export const profileAnalytics = {
   view(profileId: string, opts?: { isOwnProfile?: boolean; source?: AnalyticsSource }) {
-    track('view_profile', {
+    track('profile_view', {
       profile_id: profileId,
       is_own_profile: !!opts?.isOwnProfile,
       source: opts?.source ?? 'profile_page',
     })
   },
 
-  follow(profileId: string, userType: UserType, source: FollowSource = 'profile_page') {
-    track('follow_profile', { profile_id: profileId, source, user_type: userType })
+  follow(profileId: string, userType: UserType, source: AnalyticsSource = 'profile_page') {
+    track('profile_follow', { profile_id: profileId, source, user_type: userType })
   },
 
-  unfollow(profileId: string, userType: UserType, source: FollowSource = 'profile_page') {
-    track('unfollow_profile', { profile_id: profileId, source, user_type: userType })
+  unfollow(profileId: string, userType: UserType, source: AnalyticsSource = 'profile_page') {
+    track('profile_unfollow', { profile_id: profileId, source, user_type: userType })
   },
 
-  edit(profileId: string, source: AnalyticsSource = 'settings') {
-    track('edit_profile', { profile_id: profileId, source })
+  block(profileId: string, userType: UserType, source: AnalyticsSource = 'profile_page') {
+    track('profile_block', { profile_id: profileId, source, user_type: userType })
+  },
+
+  unblock(profileId: string, userType: UserType, source: AnalyticsSource = 'settings_page') {
+    track('profile_unblock', { profile_id: profileId, source, user_type: userType })
+  },
+
+  edit(profileId: string, source: AnalyticsSource = 'settings_page') {
+    track('profile_edit', { profile_id: profileId, source })
   },
 }
 
@@ -259,11 +316,11 @@ export const ecommerceAnalytics = {
 =========================== */
 
 export const contentAnalytics = {
-  createPost(contentType: 'text' | 'image' | 'video', source: AnalyticsSource = 'home_feed') {
+  createPost(contentType: 'text' | 'image' | 'video', source: AnalyticsSource = 'home_page') {
     track('create_post', { content_type: contentType, source })
   },
 
-  viewPost(postId: string, contentType: 'text' | 'image' | 'video', source: AnalyticsSource = 'home_feed') {
+  viewPost(postId: string, contentType: 'text' | 'image' | 'video', source: AnalyticsSource = 'home_page') {
     track('view_post', {
       post_id: postId,
       content_type: contentType,
@@ -271,19 +328,19 @@ export const contentAnalytics = {
     })
   },
 
-  likePost(postId: string, source: AnalyticsSource = 'home_feed') {
+  likePost(postId: string, source: AnalyticsSource = 'home_page') {
     track('like_post', { post_id: postId, source })
   },
 
-  unlikePost(postId: string, source: AnalyticsSource = 'home_feed') {
+  unlikePost(postId: string, source: AnalyticsSource = 'home_page') {
     track('unlike_post', { post_id: postId, source })
   },
 
-  commentPost(postId: string, source: AnalyticsSource = 'home_feed') {
+  commentPost(postId: string, source: AnalyticsSource = 'home_page') {
     track('comment_post', { post_id: postId, source })
   },
 
-  sharePost(postId: string, source: AnalyticsSource = 'home_feed') {
+  sharePost(postId: string, source: AnalyticsSource = 'home_page') {
     track('share_post', { post_id: postId, source })
   },
 }
@@ -293,7 +350,7 @@ export const contentAnalytics = {
 =========================== */
 
 export const eventAnalytics = {
-  view(eventId: string, eventType: 'online' | 'offline', source: AnalyticsSource = 'event_detail') {
+  view(eventId: string, eventType: Lowercase<Event["event_type"]>, source: AnalyticsSource = 'event_detail') {
     track('view_event', {
       event_id: eventId,
       event_type: eventType,
@@ -302,23 +359,23 @@ export const eventAnalytics = {
   },
 
   interested(eventId: string, source: AnalyticsSource = 'event_detail') {
-    track('interested_event', { event_id: eventId, source })
+    track('event_interest', { event_id: eventId, source, interest_action: "interested" })
   },
 
   uninterested(eventId: string, source: AnalyticsSource = 'event_detail') {
-    track('uninterested_event', { event_id: eventId, source })
+    track('event_interest', { event_id: eventId, source, interest_action: "not_interested" })
   },
 
-  register(eventId: string, source: AnalyticsSource = 'event_detail') {
-    track('register_event', { event_id: eventId, source })
+  create(source: AnalyticsSource = 'profile_page') {
+    track('create_event', { source })
   },
 
-  cancelRegistration(eventId: string, source: AnalyticsSource = 'event_detail') {
-    track('cancel_event_registration', { event_id: eventId, source })
+  update(eventId: string, source: AnalyticsSource = 'profile_page') {
+    track('update_event', { event_id: eventId, source })
   },
 
-  attend(eventId: string, source: AnalyticsSource = 'event_detail') {
-    track('attend_event', { event_id: eventId, source })
+  delete(eventId: string, source: AnalyticsSource = 'profile_page') {
+    track('delete_event', { event_id: eventId, source })
   },
 }
 
@@ -350,6 +407,12 @@ export const searchAnalytics = {
   },
 }
 
+export const scrollAnalytics = {
+  scrollToEnd({ scrollPercent }: { scrollPercent: number }) {
+    track('content_scroll', { scroll_percent: scrollPercent })
+  },
+}
+
 // export const filterAnalytics = {
 //   apply(filters: string[], resultCount?: number, source: AnalyticsSource = 'discover') {
 //     track('apply_filter', {
@@ -359,3 +422,12 @@ export const searchAnalytics = {
 //     })
 //   },
 // }
+
+// left to do events
+// all share event
+// errorAnalytics
+// postAnalytics
+// searchAnalytics
+// contentAnalytics
+// ecommerceAnalytics
+// remove artwork view and change as view_item

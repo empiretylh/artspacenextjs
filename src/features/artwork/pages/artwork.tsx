@@ -11,13 +11,24 @@ import { ProductInfoCard } from "../components/product-info-card";
 import RelatedArtworkListContainer from "../components/related-artwork-list-container";
 import ArtworkDetailPageSkeleton from "./artwork-skeleton";
 import { useAuth } from "@/features/auth/store";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import LoadingPage from "@/components/page/loading-page";
 import { notFound } from "next/navigation";
+import { artworkAnalytics } from "@/lib/analytics";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
    const artworkQuery = useGetArtwork({ artworkId: id });
    const artwork = artworkQuery.data;
+
+   useEffect(() => {
+      if (artwork) {
+         artworkAnalytics.view(artwork.id, {
+            artistId: String(artwork.artist_profile.id),
+            category: String(artwork.category.id),
+            source: "artwork_detail"
+         })
+      }
+   }, [artwork]);
 
    if (artworkQuery.isLoading) {
       return <ArtworkDetailPageSkeleton />;

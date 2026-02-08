@@ -19,6 +19,7 @@ import DeleteConfirmDialog from "@/components/common/dialogs/delete-confirm-dial
 import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-modal";
 import { useGetUploadedArtworksInfinite } from "@/features/service/artspace/get-uploaded-artworks";
 import { ArtworkControlActions } from "@/components/app/artwork-control-actions";
+import { artworkAnalytics } from "@/lib/analytics";
 
 type ControlledArtworkCardProps = {
    onUpdateButtonClick: (artwork: Artwork) => void;
@@ -102,6 +103,7 @@ export const ProfileArtworksPage = () => {
    const softDeleteArtworkMutation = useSoftDeleteArtwork({
       mutationConfig: {
          onSuccess: () => {
+            artworkAnalytics.delete(String(selectedArtwork?.id), 'profile_page')
             setIsDeleteModalOpen(false);
          },
       },
