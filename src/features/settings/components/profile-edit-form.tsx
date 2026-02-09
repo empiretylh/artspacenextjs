@@ -32,7 +32,7 @@ import {
    useUpdateProfile,
 } from "../api/update-profile";
 import { useGetProfile } from "../api/get-profile";
-import { profileAnalytics } from "@/lib/analytics";
+import { userAnalytics } from "@/lib/analytics";
 
 // 🧩 Define the type for form data
 type FormData = z.infer<typeof updateProfileInputSchema>;
@@ -72,7 +72,7 @@ export default function ProfileEditForm({
                title: "Success",
                message: "Profile updated successfully",
             });
-            profileAnalytics.edit(String(profile?.id), 'settings');
+            userAnalytics.edit(String(profile?.id), 'settings');
             onUpdateSuccess();
             form.reset();
          },

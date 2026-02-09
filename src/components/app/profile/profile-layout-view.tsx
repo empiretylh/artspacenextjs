@@ -26,7 +26,7 @@ import { paths } from "@/config/paths";
 import AppImage from "@/components/common/app-image";
 import { useEffect, useRef, useState } from "react";
 import { BaseDialog } from "@/components/common/dialogs/base-dialog";
-import { profileAnalytics } from "@/lib/analytics";
+import { userAnalytics } from "@/lib/analytics";
 import { SourceProvider } from "@/lib/analytics-source";
 
 const getIcon = (key: string) => {
@@ -67,7 +67,7 @@ const ProfileLayoutView = ({
 
    useEffect(() => {
       if (user.id) {
-         profileAnalytics.view(String(user.id), {
+         userAnalytics.view(String(user.id), {
             isOwnProfile: String(user.id) === String(authUser?.id),
             source: 'profile_page',
          })
@@ -156,6 +156,10 @@ const ProfileLayoutView = ({
 
                   <div className="mt-3 flex justify-center items-center gap-2">
                      <ShareButton
+                        content_type={"user"}
+                        user_type={user.user_type}
+                        item_id={String(user?.id)}
+                        item_name={String(fullName)}
                         url={
                            typeof window !== "undefined"
                               ? `${window.location.origin}${paths[userType].detail.getHref(

@@ -9,7 +9,7 @@ import { z } from "zod";
 import { useNotifications } from "@/components/ui/notifications";
 import { paths } from "@/config/paths";
 import { handleFormError } from "@/lib/utils";
-import { authAnalytics, userAnalytics, UserType } from "@/lib/analytics";
+import { accessAnalytics, authAnalytics, UserType } from "@/lib/analytics";
 import { useAuth } from "../store";
 import { User } from "@/types";
 
@@ -52,7 +52,7 @@ export function useLoginForm({ returnTo }: { returnTo?: string } = {}) {
         authAnalytics.login({ method: "email" });
 
         const { id, user_type } = response as User;
-        userAnalytics.setUser(String(id), user_type.toLocaleLowerCase() as UserType);
+        accessAnalytics.setUser(String(id), user_type.toLocaleLowerCase() as UserType);
 
         if (returnTo) {
           router.push(returnTo);

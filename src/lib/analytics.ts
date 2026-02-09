@@ -1,8 +1,28 @@
 'use client'
 
 import { env } from '@/config/env'
-import { Event } from '@/types';
+import { Artwork, Event } from '@/types';
 import { sendGAEvent /*, sendGTMEvent*/ } from '@next/third-parties/google'
+
+export const itemFromArtwork = (artwork: Artwork) => ({
+  item_id: artwork.id,
+  item_name: artwork.title,
+  item_category: artwork.category.name,
+  price: Number(artwork.price),
+  quantity: 1,
+})
+
+export const itemsFromArtworks = (artworks: Artwork[]): GAItem[] => {
+  return artworks.map((artwork) => ({
+    item_id: artwork.id,
+    item_name: artwork.title,
+    item_category: artwork.category?.name,
+    price: Number(artwork.price),
+    quantity: 1,
+    currency: 'MMK'
+  }
+  ))
+}
 
 export function analyticSourceFromPathname(
   pathname: string | null
@@ -136,7 +156,7 @@ function track(event: string, params?: TrackParams) {
    - DO NOT pass email/username/name
 =========================== */
 
-export const userAnalytics = {
+export const accessAnalytics = {
   setUser(userId: string, userType: UserType) {
     if (!isEnabled()) return
     // This sets GA4 user_id for stitching sessions. Not an event.
@@ -179,7 +199,7 @@ export const authAnalytics = {
 
   logout(source: AnalyticsSource = 'unknown') {
     track('logout', { source })
-    userAnalytics.clearUser()
+    accessAnalytics.clearUser()
   },
 
   passwordReset(source: AnalyticsSource = 'unknown') {
@@ -192,33 +212,52 @@ export const authAnalytics = {
    🧑 PROFILE / SOCIAL
 =========================== */
 
-export const profileAnalytics = {
-  view(profileId: string, opts?: { isOwnProfile?: boolean; source?: AnalyticsSource }) {
-    track('profile_view', {
-      profile_id: profileId,
+export const userAnalytics = {
+  view(userId: string, opts?: { isOwnProfile?: boolean; source?: AnalyticsSource }) {
+    track('view_user', {
+      entity_id: userId,
       is_own_profile: !!opts?.isOwnProfile,
       source: opts?.source ?? 'profile_page',
     })
   },
 
-  follow(profileId: string, userType: UserType, source: AnalyticsSource = 'profile_page') {
-    track('profile_follow', { profile_id: profileId, source, user_type: userType })
+  follow(userId: string, userType: UserType, source: AnalyticsSource = 'profile_page') {
+    track('follow_user', {
+      entity_id: userId,
+      entity_type: userType,
+      source,
+    })
   },
 
-  unfollow(profileId: string, userType: UserType, source: AnalyticsSource = 'profile_page') {
-    track('profile_unfollow', { profile_id: profileId, source, user_type: userType })
+  unfollow(userId: string, userType: UserType, source: AnalyticsSource = 'profile_page') {
+    track('unfollow_user', {
+      entity_id: userId,
+      entity_type: userType,
+      source,
+    })
   },
 
-  block(profileId: string, userType: UserType, source: AnalyticsSource = 'profile_page') {
-    track('profile_block', { profile_id: profileId, source, user_type: userType })
+  block(userId: string, userType: UserType, source: AnalyticsSource = 'profile_page') {
+    track('block_user', {
+      entity_id: userId,
+      entity_type: userType,
+      source,
+    })
   },
 
-  unblock(profileId: string, userType: UserType, source: AnalyticsSource = 'settings_page') {
-    track('profile_unblock', { profile_id: profileId, source, user_type: userType })
+  unblock(userId: string, userType: UserType, source: AnalyticsSource = 'settings_page') {
+    track('unblock_user', {
+      entity_id: userId,
+      entity_type: userType,
+      source,
+    })
   },
 
-  edit(profileId: string, source: AnalyticsSource = 'settings_page') {
-    track('profile_edit', { profile_id: profileId, source })
+  edit(userId: string, source: AnalyticsSource = 'settings_page') {
+    track('edit_user', {
+      entity_id: userId,
+      source,
+    })
   },
 }
 
@@ -227,15 +266,15 @@ export const profileAnalytics = {
 =========================== */
 
 export const artworkAnalytics = {
-  view(artworkId: string, opts?: { artistId?: string; galleryId?: string; category?: string; source?: AnalyticsSource }) {
-    track('view_artwork', {
-      artwork_id: artworkId,
-      artist_id: opts?.artistId,
-      gallery_id: opts?.galleryId,
-      category: opts?.category,
-      source: opts?.source ?? 'artwork_detail',
-    })
-  },
+  // view(artworkId: string, opts?: { artistId?: string; galleryId?: string; category?: string; source?: AnalyticsSource }) {
+  //   track('view_artwork', {
+  //     artwork_id: artworkId,
+  //     artist_id: opts?.artistId,
+  //     gallery_id: opts?.galleryId,
+  //     category: opts?.category,
+  //     source: opts?.source ?? 'artwork_detail',
+  //   })
+  // },
 
   like(artworkId: string, source: AnalyticsSource = 'artwork_detail') {
     track('like_artwork', { artwork_id: artworkId, source })
@@ -243,10 +282,6 @@ export const artworkAnalytics = {
 
   unlike(artworkId: string, source: AnalyticsSource = 'artwork_detail') {
     track('unlike_artwork', { artwork_id: artworkId, source })
-  },
-
-  share(artworkId: string, source: AnalyticsSource = 'artwork_detail') {
-    track('share_artwork', { artwork_id: artworkId, source })
   },
 
   create(source: AnalyticsSource = 'admin_dashboard') {
@@ -272,6 +307,7 @@ type GAItem = {
   item_category?: string
   price?: number
   quantity?: number
+  currency?: 'MMK'
   // Helpful optional fields GA4 supports:
   item_variant?: string
   item_brand?: string
@@ -280,6 +316,14 @@ type GAItem = {
 export const ecommerceAnalytics = {
   viewItem(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'artwork_detail') {
     track('view_item', { currency, value, items, source })
+  },
+
+  viewItemList(currency: string, item_list_id: string, item_list_name: string, items: GAItem[], source: AnalyticsSource = 'cart') {
+    track('view_item_list', { item_list_id, item_list_name, currency, items, source })
+  },
+
+  select_item(item_list_id: string, item_list_name: string, items: GAItem[], source: AnalyticsSource = 'cart') {
+    track('select_item', { item_list_id, item_list_name, items, source })
   },
 
   addToCart(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'artwork_detail') {
@@ -359,11 +403,11 @@ export const eventAnalytics = {
   },
 
   interested(eventId: string, source: AnalyticsSource = 'event_detail') {
-    track('event_interest', { event_id: eventId, source, interest_action: "interested" })
+    track('interest_event', { event_id: eventId, source, interest_action: "interested" })
   },
 
   uninterested(eventId: string, source: AnalyticsSource = 'event_detail') {
-    track('event_interest', { event_id: eventId, source, interest_action: "not_interested" })
+    track('interest_event', { event_id: eventId, source, interest_action: "not_interested" })
   },
 
   create(source: AnalyticsSource = 'profile_page') {
@@ -398,11 +442,29 @@ export const errorAnalytics = {
 }
 
 export const searchAnalytics = {
-  search(term: string, opts?: { resultCount?: number; source?: AnalyticsSource }) {
+  search(term: string, opts?: { data?: any; source?: AnalyticsSource }) {
     track('search', {
       search_term: term,
-      result_count: opts?.resultCount,
       source: opts?.source ?? 'search',
+    })
+  },
+}
+
+type ShareAnalyticsParams = {
+  item_id: string
+  item_name: string
+  content_type: 'artwork' | 'user' | 'event'
+  user_type?: string   // optional — only when content_type === 'user'
+  method: string
+  source?: AnalyticsSource
+}
+
+export const shareAnalytics = {
+  share(params: ShareAnalyticsParams) {
+    track('share', {
+      ...params,
+      user_type: params.user_type?.toLocaleLowerCase(),
+      source: params.source ?? 'artwork_detail',
     })
   },
 }
@@ -424,10 +486,7 @@ export const scrollAnalytics = {
 // }
 
 // left to do events
-// all share event
 // errorAnalytics
 // postAnalytics
-// searchAnalytics
 // contentAnalytics
 // ecommerceAnalytics
-// remove artwork view and change as view_item

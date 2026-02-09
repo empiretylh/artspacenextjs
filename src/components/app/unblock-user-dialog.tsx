@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useUnblockUser } from "@/features/service/artspace/unblock-user";
 import type { User } from "@/types";
-import { profileAnalytics, UserType } from "@/lib/analytics";
+import { userAnalytics, UserType } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
 
 interface UnblockUserDialogProps {
@@ -33,7 +33,7 @@ export const UnblockUserDialog: React.FC<UnblockUserDialogProps> = ({
    const unblockUserMutation = useUnblockUser({
       mutationConfig: {
          onSuccess: () => {
-            profileAnalytics.unblock(entityId, entityType.toLocaleLowerCase() as UserType, source);
+            userAnalytics.unblock(entityId, entityType.toLocaleLowerCase() as UserType, source);
          },
       }
    });

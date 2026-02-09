@@ -280,3 +280,9 @@ export const getUserPath = (userRouteType: UserRouteType) => {
    }
    return newUserType
 };
+
+export const snakeToNormal = (id: string) =>
+   id
+      .split('_')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ')

@@ -89,7 +89,7 @@ export default function EventDetailPage() {
                            <h1 className="text-2xl sm:text-3xl font-semibold text-white leading-tight">
                               {event.title}
                            </h1>
-                           <ShareButton className="text-white" />
+                           <ShareButton content_type="event" item_id={String(event.id)} item_name={event.title} className="text-white" />
                         </div>
 
                         <div className="flex items-center gap-3 mb-2">

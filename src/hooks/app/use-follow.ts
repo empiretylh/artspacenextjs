@@ -6,7 +6,7 @@ import { paths } from "@/config/paths";
 import { useFollowUser } from "@/features/service/artspace/follow-user";
 import debounce from "lodash/debounce";
 import { getUserRouteType } from "@/lib/utils";
-import { profileAnalytics, UserType } from "@/lib/analytics";
+import { userAnalytics, UserType } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
 
 export function useFollow({
@@ -25,9 +25,9 @@ export function useFollow({
       mutationConfig: {
          onSuccess: () => {
             if (isFollowing) {
-               profileAnalytics.follow(String(userId), userType.toLocaleLowerCase() as UserType, source);
+               userAnalytics.follow(String(userId), userType.toLocaleLowerCase() as UserType, source);
             } else {
-               profileAnalytics.unfollow(String(userId), userType.toLocaleLowerCase() as UserType, source);
+               userAnalytics.unfollow(String(userId), userType.toLocaleLowerCase() as UserType, source);
             }
          },
       }

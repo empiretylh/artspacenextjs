@@ -14,19 +14,18 @@ import { useAuth } from "@/features/auth/store";
 import { Suspense, useEffect } from "react";
 import LoadingPage from "@/components/page/loading-page";
 import { notFound } from "next/navigation";
-import { artworkAnalytics } from "@/lib/analytics";
+import { artworkAnalytics, ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
    const artworkQuery = useGetArtwork({ artworkId: id });
    const artwork = artworkQuery.data;
+   const { source } = useSource()
 
    useEffect(() => {
       if (artwork) {
-         artworkAnalytics.view(artwork.id, {
-            artistId: String(artwork.artist_profile.id),
-            category: String(artwork.category.id),
-            source: "artwork_detail"
-         })
+         const item = itemFromArtwork(artwork);
+         ecommerceAnalytics.viewItem('MMK', Number(artwork.price), [item], source)
       }
    }, [artwork]);
 

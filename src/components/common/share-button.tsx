@@ -14,11 +14,18 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import ShareIcon from "../icons/share-icon";
+import { shareAnalytics } from "@/lib/analytics";
+import { User } from "@/types";
+import { useSource } from "@/lib/analytics-source";
 
 type ShareButtonProps = {
    textButton?: boolean;
    url?: string;
    title?: string;
+   item_id: string;
+   item_name: string;
+   content_type: "artwork" | "user" | "event";
+   user_type?: User["user_type"];
    className?: string;
    size?: "sm" | "default" | "lg" | "icon" | null | undefined;
    variant?:
@@ -36,6 +43,10 @@ export function ShareButton({
    textButton = false,
    url = typeof window !== "undefined" ? window.location.href : "",
    title = "",
+   item_id,
+   item_name,
+   content_type,
+   user_type,
    className,
    size = "icon",
    variant = "ghost",
@@ -66,8 +77,15 @@ export function ShareButton({
    const handleCopy = async () => {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      shareAnalytics.share({ source, content_type, item_id, item_name, user_type, method: 'copy' })
       setTimeout(() => setCopied(false), 2000);
    };
+
+   const { source } = useSource();
+
+   const handleShareClick = (name: string) => {
+      shareAnalytics.share({ source, content_type, item_id, item_name, user_type, method: name.toLowerCase() })
+   }
 
    return (
       <Popover>
@@ -85,6 +103,7 @@ export function ShareButton({
                      variant="ghost"
                      className="justify-start gap-2"
                      asChild
+                     onClick={() => handleShareClick(name)}
                   >
                      <a href={href} target="_blank" rel="noopener noreferrer">
                         <Icon className="h-4 w-4" />

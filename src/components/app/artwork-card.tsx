@@ -1,6 +1,6 @@
 'use client'
 import { paths } from "@/config/paths";
-import { cn, getImage } from "@/lib/utils";
+import { cn, getImage, snakeToNormal } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart, Plus, Square, CheckSquare } from "lucide-react";
@@ -15,6 +15,8 @@ import Image from "../common/image";
 import Link from "../common/link";
 import { useLike } from "@/hooks/app/use-like";
 import AppImage from "../common/app-image";
+import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 interface ArtworkCardProps {
    artwork: Artwork;
@@ -37,7 +39,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
       artworkId: String(artwork.id),
       initialLiked: artwork.is_liked,
    });
-
+   const { source } = useSource();
    const router = useRouter();
    const [collections, setCollections] = useState<
       {
@@ -63,6 +65,11 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    const masonrySizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1536px) 20vw, 300px";
    const defaultSizes = "(max-width: 768px) 100vw, 400px"; // Adjust based on your fixed-height row layout
 
+   const handleOnClick = () => {
+      const item = itemFromArtwork(artwork);
+      ecommerceAnalytics.select_item(source, snakeToNormal(source), [item], source);
+   }
+
    if (!artwork.original_width || !artwork.original_height) return null
 
    return (
@@ -71,7 +78,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
 
          <div className="relative group rounded-md overflow-hidden cursor-pointer">
             <div className="lg:hidden absolute z-10 inset-0 bg-gradient-to-b rounded-md from-black/40 via-transparent to-transparent" />
-            <Link to={paths.artworks.detail.getHref(artwork.id)}>
+            <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
                <div
                   title={artwork.title}
                   className="w-full h-full z-10 group-hover:bg-black/40 absolute transition-colors duration-200"
@@ -167,7 +174,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
          {/* Artwork Info */}
          {!pure && (
             <div className="p-2 space-y-1">
-               <Link to={paths.artworks.detail.getHref(artwork.id)}>
+               <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
                   <h3 className="font-semibold hover:underline font-display text-sm truncate">
                      {artwork.title}
                   </h3>
