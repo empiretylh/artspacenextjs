@@ -4,6 +4,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
+  productionBrowserSourceMaps: process.env.NODE_ENV === 'development',
   typescript: {
     ignoreBuildErrors: true,
     tsconfigPath: 'tsconfig.json',
