@@ -53,11 +53,11 @@ export default async function HomePage() {
          <GenreSection />
          <CategoryAndStyleSection />
          <HydrationBoundary state={dehydrate(queryClient)}>
-            {/* <FeaturedArtistsSlider /> */}
+            <FeaturedArtistsSlider />
             <FeaturedEventsSection />
-            {/* <FeaturedArtworksSection /> */}
-            {/* <FeaturedGalleriesSlider /> */}
-            {/* <FeaturedCollectorsSlider /> */}
+            <FeaturedArtworksSection />
+            <FeaturedGalleriesSlider />
+            <FeaturedCollectorsSlider />
          </HydrationBoundary>
          {/* <FeaturedCollectorsSection /> */}
       </div >
