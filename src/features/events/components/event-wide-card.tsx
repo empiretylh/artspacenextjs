@@ -1,10 +1,11 @@
 import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import { Badge } from "@/components/ui/badge";
+import { env } from "@/config/env";
 import { paths } from "@/config/paths";
 import { getImage } from "@/lib/utils";
 import type { Event } from "@/types";
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 
 interface EventWideCardProps {
    event: Event;
@@ -13,10 +14,10 @@ interface EventWideCardProps {
 
 export const EventWideCard: React.FC<EventWideCardProps> = ({ event, sizes }) => {
    const startDate = event.start_date
-      ? format(new Date(event.start_date), "MMM dd")
+      ? formatInTimeZone(event.start_date, env.TZ, "MMM dd")
       : null;
    const endDate = event.end_date
-      ? format(new Date(event.end_date), "MMM dd, yyyy")
+      ? formatInTimeZone(event.end_date, env.TZ, "MMM dd, yyyy")
       : null;
 
    return (

@@ -15,6 +15,7 @@ const createEnv = () => {
       GA_ID: z.string().optional(),
       NODE_ENV: z.enum(['development', 'production']).optional().default('development'),
       IMAGE_HOSTNAME: z.string().optional().default('artspaceapi-stagging.illuminati.com.mm'),
+      TZ: z.string().optional().default('Asia/Yangon'),
    }).superRefine((env, ctx) => {
       if (env.ENABLE_ANALYTICS && !env.GA_ID) {
          ctx.addIssue({
@@ -34,6 +35,7 @@ const createEnv = () => {
       GA_ID: process.env.NEXT_PUBLIC_GA_ID,
       NODE_ENV: process.env.NODE_ENV,
       IMAGE_HOSTNAME: process.env.IMAGE_HOSTNAME,
+      TZ: process.env.NEXT_PUBLIC_TZ,
    };
 
    const parsedEnv = EnvSchema.safeParse(envVars);
