@@ -16,6 +16,7 @@ export const FeaturedArtworksSection = () => {
    const artworksQuery = useQuery({
       queryKey: queryKeys.artwork.list({ limit: 10 }),
       queryFn: () => getArtworks({ limit: 10 }),
+      refetchOnMount: true,
    })
 
    const featuredArtworks = artworksQuery.data?.results ?? [];
