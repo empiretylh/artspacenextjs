@@ -56,8 +56,8 @@ export default async function HomePage() {
             {/* <FeaturedArtistsSlider /> */}
             <FeaturedEventsSection />
             {/* <FeaturedArtworksSection /> */}
-            <FeaturedGalleriesSlider />
-            <FeaturedCollectorsSlider />
+            {/* <FeaturedGalleriesSlider /> */}
+            {/* <FeaturedCollectorsSlider /> */}
          </HydrationBoundary>
          {/* <FeaturedCollectorsSection /> */}
       </div >
