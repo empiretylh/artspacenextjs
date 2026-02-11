@@ -3,10 +3,7 @@ export const revalidate = 60
 import HomePage from "@/features/home/pages";
 
 const HomePageRoute = () => {
-  // return <HomePage />;
-  return <main>
-    homepage
-  </main>
+  return <HomePage />;
 };
 
 export default HomePageRoute;
