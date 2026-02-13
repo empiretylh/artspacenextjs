@@ -1,7 +1,7 @@
 import { BaseDialog } from "@/components/common/dialogs/base-dialog";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Mail, Trash } from "lucide-react";
+import { Mail } from "lucide-react";
 
 type EventInviteEmailConfirmDialogProps = {
    isEventInviteEmailModalOpen: boolean;

@@ -2,16 +2,13 @@ import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import {
    queryOptions,
-   useInfiniteQuery,
    useQuery,
 } from "@tanstack/react-query";
 import type {
    ColumnFiltersState,
    Event,
    SortingState,
-   ListApiResponse,
 } from "@/types";
-import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
 
 // ----------------------------------------------------------------------

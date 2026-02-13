@@ -10,11 +10,10 @@ import ArtworkImage from "../components/artwork-image";
 import { ProductInfoCard } from "../components/product-info-card";
 import RelatedArtworkListContainer from "../components/related-artwork-list-container";
 import ArtworkDetailPageSkeleton from "./artwork-skeleton";
-import { useAuth } from "@/features/auth/store";
 import { Suspense, useEffect } from "react";
 import LoadingPage from "@/components/page/loading-page";
 import { notFound } from "next/navigation";
-import { artworkAnalytics, ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
+import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {

@@ -1,6 +1,5 @@
 'use client'
 
-import Image from "next/image";
 import Link from "@/components/common/link";
 import { ShareButton } from "@/components/common/share-button";
 import { ProfileUserProvider } from "@/components/providers/profile-user-provider";
@@ -18,7 +17,7 @@ import CollectionIcon from "@/components/icons/collection-icon";
 import HeartIcon from "@/components/icons/heart-icon";
 import OverviewIcon from "@/components/icons/overview-icon";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
-import { ClipboardPenLineIcon, X } from "lucide-react";
+import { ClipboardPenLineIcon } from "lucide-react";
 import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
 import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
 import { UserRouteType } from "@/features/service/artspace/get-users";
@@ -27,7 +26,6 @@ import AppImage from "@/components/common/app-image";
 import { useEffect, useRef, useState } from "react";
 import { BaseDialog } from "@/components/common/dialogs/base-dialog";
 import { userAnalytics } from "@/lib/analytics";
-import { SourceProvider } from "@/lib/analytics-source";
 
 const getIcon = (key: string) => {
    if (key === "artworks") return <ArtworksIcon />;

@@ -9,7 +9,7 @@ import "react-image-crop/dist/ReactCrop.css";
 
 import AppImage from "@/components/common/app-image";
 import LoadingPage from "@/components/page/loading-page";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getImage } from "@/lib/utils";
 import { Check, Pencil, User, UserCircle2, X } from "lucide-react";

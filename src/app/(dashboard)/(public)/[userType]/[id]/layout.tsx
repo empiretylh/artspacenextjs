@@ -3,7 +3,6 @@ import NotFound from "@/components/layout/not-found";
 import { paths } from "@/config/paths";
 import { getCachedUser } from "@/features/service/artspace/get-user";
 import { UserRouteType } from "@/features/service/artspace/get-users";
-import { User } from "@/types";
 
 const UserDetailLayout = async ({ params, children }: { params: Promise<{ userType: UserRouteType, id: string }>, children: React.ReactNode }) => {
   const { userType, id } = await params;

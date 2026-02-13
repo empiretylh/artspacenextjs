@@ -10,14 +10,13 @@ import type {
    SortingState,
    User,
 } from "@/types";
-import type { AxiosResponse } from "axios";
 import ArtworksPageView from "@/features/artwork/components/artworks-page-view";
 import ArtworkCard from "@/components/app/artwork-card";
 import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-modal";
 import { useGetArtworksByUserIdInfinite } from "@/features/service/artspace/get-artworks-by-user-id";
 import NotFound from "@/components/layout/not-found";
 import { useProfileUser } from "@/components/providers/profile-user-provider";
-import { SourceProvider, useSource } from "@/lib/analytics-source";
+import { useSource } from "@/lib/analytics-source";
 import { ecommerceAnalytics, itemsFromArtworks } from "@/lib/analytics";
 import { snakeToNormal } from "@/lib/utils";
 

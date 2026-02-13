@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { User, ShieldCheck, Truck, ShoppingCart } from "lucide-react"; // Using lucide for consistency
+// Using lucide for consistency
 
 export function ProductInfoCardSkeleton() {
    return (

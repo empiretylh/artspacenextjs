@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import Link from "../common/link";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { paths } from "@/config/paths";
@@ -21,7 +20,6 @@ import GalleryExportIcon from "../icons/gallery-export-icon";
 import Messages2Icon from "../icons/messages-2-icon";
 import Layers2Icon from "../icons/layers-2-icon";
 import ShoppingCartIcon from "../icons/shopping-cart-icon";
-import Home from "../icons/home-icon";
 import { ClipboardPenLineIcon, HomeIcon } from "lucide-react";
 
 

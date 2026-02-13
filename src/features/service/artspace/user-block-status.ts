@@ -3,7 +3,6 @@ import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import type { ApiResponse, User } from "@/types";
 import { queryKeys } from "@/config/query-keys";
-import { cache } from "react";
 import { useAuth } from "@/features/auth/store";
 import { UserRouteType } from "./get-users";
 import { getUserPath } from "@/lib/utils";

@@ -1,6 +1,5 @@
 import { SectionTitle } from "@/components/common";
 import { Button } from "@/components/ui/button";
-import ProfileCard from "../../../components/app/profile/profile-card";
 import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
 import { ArrowRight } from "lucide-react";

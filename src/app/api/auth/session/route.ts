@@ -13,7 +13,7 @@ export async function GET() {
   try {
     const data = JSON.parse(authSession);
     return NextResponse.json(data);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ user: null, accessToken: null }, { status: 400 });
   }
 }

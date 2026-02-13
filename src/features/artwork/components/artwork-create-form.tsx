@@ -47,7 +47,6 @@ import { useGetGenres } from "@/features/service/artspace/get-genres";
 import { useGetStyles } from "@/features/service/artspace/get-styles";
 import ImageDnd from "@/components/common/dnd-image-upload";
 import { useImageUpload } from "@/features/service/artspace/image-upload";
-import { useEffect } from "react";
 import RequiredAsterisk from "@/components/common/required-asterisk";
 import { artworkAnalytics } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";

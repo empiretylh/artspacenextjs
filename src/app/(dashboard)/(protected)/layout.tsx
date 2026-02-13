@@ -1,4 +1,3 @@
-import { useAuth } from "@/features/auth/store";
 import LoadingPage from "@/components/page/loading-page";
 import { paths } from "@/config/paths";
 import { redirect } from "next/navigation";

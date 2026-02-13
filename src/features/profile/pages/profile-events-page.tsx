@@ -8,13 +8,11 @@ import EventInviteEmailConfirmDialog from "@/features/events/components/event-in
 import EventUpdateModal from "@/features/events/components/event-update-modal";
 import { EventWideCard } from "@/features/events/components/event-wide-card";
 import EventsPageView from "@/features/events/components/events-page-view";
-import { useEventsListInfinite } from "@/features/events/hooks/use-events-list-infinite-hook";
 import { useUploadedEventsListInfinite } from "@/features/events/hooks/use-uploaded-events-list-infinite-hook";
 import { useEventSoftDelete } from "@/features/service/artspace/event-soft-delete";
 import { useSendEmailInviteEvent } from "@/features/service/artspace/send-email-invite-event";
 import { eventAnalytics } from "@/lib/analytics";
 import type { Event } from "@/types";
-import { Edit, Mail, Trash } from "lucide-react";
 import { useState } from "react";
 
 type ControlledEventCardProps = {

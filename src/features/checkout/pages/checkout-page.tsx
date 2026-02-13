@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { useCartStore } from "@/features/cart/store/cart-store";
 import { useNotifications } from "@/components/ui/notifications";
 import { CreditCard, Truck } from "lucide-react";

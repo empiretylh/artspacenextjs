@@ -1,6 +1,6 @@
 import { Main } from "@/components/layout/main";
 import { paths } from "@/config/paths";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import PostEditForm from "../component/post-edit-form";
 
 const PostEditPage = () => {

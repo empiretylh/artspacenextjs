@@ -12,8 +12,6 @@ import {
    CommandItem,
    CommandList,
 } from "@/components/ui/command";
-import { ScrollArea } from "../ui/scroll-area";
-import ScrollTest from "../app/profile/test";
 import { RefCallBack } from "react-hook-form";
 
 export interface Option {

@@ -1,7 +1,7 @@
 'use client'
 import { paths } from "@/config/paths";
 import { cn, getImage, snakeToNormal } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart, Plus, Square, CheckSquare } from "lucide-react";
 import {
@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import type { Artwork } from "@/types";
-import Image from "../common/image";
 import Link from "../common/link";
 import { useLike } from "@/hooks/app/use-like";
 import AppImage from "../common/app-image";
@@ -35,7 +34,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    publicCard = true,
    pure = false,
 }) => {
-   const { isLiked, handleLike, isMutating } = useLike({
+   const { isLiked, handleLike } = useLike({
       artworkId: String(artwork.id),
       initialLiked: artwork.is_liked,
    });

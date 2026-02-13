@@ -1,4 +1,3 @@
-import ArtworkCard from "@/components/app/artwork-card";
 import MasonryItem from "../../../components/app/masonry-item";
 
 const MasonryCards = ({ artworks }: { artworks: any[] }) => {

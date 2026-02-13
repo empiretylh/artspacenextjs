@@ -1,10 +1,8 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArchiveColumnHeader } from "./archive-column-header";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 import type { Order } from "@/types";
-import { DataTableHeaderActions } from "./data-table-header-actions";
 import { getDate } from "@/lib/utils";
 
 export const columns: ColumnDef<Order>[] = [

@@ -9,8 +9,7 @@ import {
    ArrowLeft,
    Bell,
    MoreVerticalIcon,
-   Search,
-   ShoppingCart
+   Search
 } from "lucide-react";
 import { Suspense, useState } from "react";
 import { InputWithLeftSelectSkeleton } from "../app/input-with-left-select-skeleton";

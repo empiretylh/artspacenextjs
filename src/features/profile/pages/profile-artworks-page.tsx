@@ -9,11 +9,8 @@ import type {
    ListApiResponse,
    SortingState,
 } from "@/types";
-import type { AxiosResponse } from "axios";
 import ArtworksPageView from "@/features/artwork/components/artworks-page-view";
 import ArtworkCard from "@/components/app/artwork-card";
-import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
 import { useSoftDeleteArtwork } from "../../service/artspace/soft-delete-artwork";
 import DeleteConfirmDialog from "@/components/common/dialogs/delete-confirm-dialog";
 import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-modal";

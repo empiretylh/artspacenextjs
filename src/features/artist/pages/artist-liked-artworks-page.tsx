@@ -10,7 +10,6 @@ import type {
    SortingState,
    User,
 } from "@/types";
-import type { AxiosResponse } from "axios";
 import ArtworksPageView from "@/features/artwork/components/artworks-page-view";
 import ArtworkCard from "@/components/app/artwork-card";
 import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-modal";

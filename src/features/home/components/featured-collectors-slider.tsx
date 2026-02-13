@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { paths } from "@/config/paths";
 import { queryKeys } from "@/config/query-keys";
 import { getCollectors } from "@/features/service/artspace/get-collectors";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";

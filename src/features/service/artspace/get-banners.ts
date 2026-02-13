@@ -2,7 +2,6 @@ import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import type { ColumnFiltersState, Banner, SortingState } from "@/types";
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
 
 export const getBanners = async (
   filters = {},

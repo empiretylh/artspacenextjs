@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FilterIcon, X } from "lucide-react";
+import { FilterIcon } from "lucide-react";
 import { FilterSection } from "./filter-section";
 import { filterOptions } from "@/mocks";
 import { Checkbox } from "@/components/ui/checkbox";

@@ -8,7 +8,7 @@ import { getArtworksOg } from "@/features/service/artspace/get-artworks";
 import { getQueryClient } from "@/lib/get-query-client";
 import { getImage } from "@/lib/utils";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import { cache } from "react";
 
 export async function generateStaticParams() {
@@ -23,12 +23,10 @@ const getCachedArtwork = cache((id: string) => getArtwork({ artworkId: id }))
 
 type Props = {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
+  { params }: Props
 ): Promise<Metadata> {
   const { id } = await params;
 

@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import debounce from "lodash/debounce";
 import { keepPreviousData } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
 
 import type {
    ColumnFiltersState,

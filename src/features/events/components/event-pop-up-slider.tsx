@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
    Carousel,
@@ -15,12 +14,11 @@ import { cn, getDate, getImage } from "@/lib/utils";
 import { paths } from "@/config/paths";
 import Link from "@/components/common/link";
 import { useRouter } from "next/navigation";
-import { getPopUpEvents, useGetPopUpEvents } from "@/features/service/artspace/get-pop-up-events";
+import { getPopUpEvents } from "@/features/service/artspace/get-pop-up-events";
 import { Spinner } from "@/components/ui/spinner";
 import { BaseDialog } from "@/components/common/dialogs/base-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/config/query-keys";
-import { useAuth } from "@/features/auth/store";
 
 export default function EventPopupSlider() {
    const [open, setOpen] = useState(false);

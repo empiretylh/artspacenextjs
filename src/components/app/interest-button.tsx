@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { paths } from "@/config/paths";
 import { eventAnalytics } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
-import { useState } from "react";
 
 const InterestEventButton = ({
    eventId,

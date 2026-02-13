@@ -5,7 +5,6 @@ import {
    Boxes,
    GalleryHorizontal,
    LayoutDashboard,
-   TrendingUp,
    Upload,
    User,
 } from "lucide-react";

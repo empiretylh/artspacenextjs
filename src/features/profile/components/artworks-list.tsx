@@ -1,7 +1,5 @@
-import ArtworkCard from "@/components/app/artwork-card";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
-import MasonryCards from "@/features/artwork/components/masonry-cards";
 import MasonryItem from "@/components/app/masonry-item";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

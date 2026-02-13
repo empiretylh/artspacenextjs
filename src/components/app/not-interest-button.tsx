@@ -3,8 +3,6 @@ import {
    DropdownMenu,
    DropdownMenuContent,
    DropdownMenuItem,
-   DropdownMenuLabel,
-   DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useInterestEvent } from "@/features/service/artspace/interest-event";
@@ -17,7 +15,6 @@ const NotInterestEventButton = ({
    eventId,
    size = "sm",
    className,
-   interested,
 }: {
    eventId: string;
    size?: "sm" | "default" | "lg" | "icon" | null | undefined;

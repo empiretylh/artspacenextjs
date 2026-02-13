@@ -1,5 +1,5 @@
 'use client'
-import React, { RefObject, useState } from "react";
+import React, { RefObject } from "react";
 import {
    AlertDialog,
    AlertDialogAction,
@@ -9,10 +9,7 @@ import {
    AlertDialogFooter,
    AlertDialogHeader,
    AlertDialogTitle,
-   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/lib/toast";
 import { useBlockUser } from "@/features/service/artspace/block-user";
 import type { User } from "@/types";
 import { useAuth } from "@/features/auth/store";
@@ -34,7 +31,6 @@ interface BlockConfirmDialogProps {
 }
 
 export const BlockConfirmDialog: React.FC<BlockConfirmDialogProps> = ({
-   label = "Block",
    entityType,
    entityName,
    entityId,
@@ -69,7 +65,7 @@ export const BlockConfirmDialog: React.FC<BlockConfirmDialogProps> = ({
 
    return (
       <AlertDialog open={openConfirmDialog} onOpenChange={onOpenConfirmDialogChange}>
-         <AlertDialogContent onCloseAutoFocus={(e) => {
+         <AlertDialogContent onCloseAutoFocus={() => {
             requestAnimationFrame(() => reFocusRef.current?.focus());
          }}>
             <AlertDialogHeader>

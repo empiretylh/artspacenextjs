@@ -34,7 +34,7 @@ import DatePicker from "@/components/ui/date-picker";
 import ImageDnd from "@/components/common/dnd-image-upload";
 import AsyncMultipleSelector from "@/components/common/async-multi-select";
 
-import { getDirtyValues, getImage, handleFormError, slugify } from "@/lib/utils";
+import { getDirtyValues, handleFormError, slugify } from "@/lib/utils";
 import { useNotifications } from "@/components/ui/notifications";
 
 import { keepPreviousData } from "@tanstack/react-query";

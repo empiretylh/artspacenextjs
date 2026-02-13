@@ -11,10 +11,7 @@ import type {
    SortingState,
    ListApiResponse,
 } from "@/types";
-import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
-import { env } from "@/config/env";
-import { useAuth } from "@/features/auth/store";
 
 export const getArtworksOg = async ({
    filters = [],

@@ -1,8 +1,5 @@
-import { queryKeys } from "@/config/query-keys";
 import ArtistsPage from "@/features/artist/pages/artists-page";
-import { getArtists } from "@/features/service/artspace/get-artists";
 import { getQueryClient } from "@/lib/get-query-client";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
 
 const ArtistsRoute = async () => {

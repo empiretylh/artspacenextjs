@@ -18,7 +18,6 @@ import type { Artwork, ColumnFiltersState, SortingState } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import ArtworkCard from "@/components/app/artwork-card";
 import { useInView } from "react-intersection-observer";
-import UpdatingLoader from "@/components/common/updating-loader";
 import LoadingPage from "@/components/page/loading-page";
 
 interface ArtworksPageViewOptions {

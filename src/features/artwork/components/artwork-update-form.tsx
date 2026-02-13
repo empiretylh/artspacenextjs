@@ -25,7 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useNotifications } from "@/components/ui/notifications";
-import { getDirtyValues, getImage, handleFormError } from "@/lib/utils";
+import { getDirtyValues, handleFormError } from "@/lib/utils";
 
 import {
    Select,

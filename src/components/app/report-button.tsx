@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 import {
-   Dialog,
-   DialogContent,
    DialogHeader,
    DialogTitle,
    DialogDescription,
-   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/lib/toast";
 import { useReportArtwork } from "@/features/service/artspace/report-artwork";
 import { useNotifications } from "../ui/notifications";
 import { BaseDialog } from "../common/dialogs/base-dialog";

@@ -1,11 +1,5 @@
 'use client'
-import { cn } from "@/lib/utils";
 import { useSidebar } from "../ui/sidebar";
-import { Suspense } from "react";
-import LoadingPage from "../page/loading-page";
-import { SourceProvider } from "@/lib/analytics-source";
-import { usePathname } from "next/navigation";
-import { analyticSourceFromPathname } from "@/lib/analytics";
 
 interface MainOutletProps {
    children?: React.ReactNode;

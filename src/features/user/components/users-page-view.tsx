@@ -11,7 +11,6 @@ import { EmptyState } from "@/components/layout/empty-state";
 import type { ColumnFiltersState, SortingState } from "@/types";
 import { useInView } from "react-intersection-observer";
 import UsersListLoading from "./users-list-loading";
-import ProfileCardSkeleton from "@/components/app/profile/profile-card-skeleton";
 
 interface Props {
    title?: string;

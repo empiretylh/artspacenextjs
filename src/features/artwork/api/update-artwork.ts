@@ -5,7 +5,6 @@ import { z } from "zod";
 import { api } from "@/lib/api-client";
 import type { MutationConfig } from "@/lib/react-query";
 import type { Artwork } from "@/types";
-import { generateFormdata } from "@/lib/utils";
 import { queryKeys } from "@/config/query-keys";
 
 /* -------------------------------------------------------

@@ -36,14 +36,11 @@ import {
 } from "@/components/ui/select";
 // import ImageDnd from "@/components/image-dnd";
 import {
-   useGetArtists,
    useGetArtistsInfinite,
 } from "@/features/service/artspace/get-artists";
 import {
-   useGetArtworks,
    useGetArtworksInfinite,
 } from "@/features/service/artspace/get-artworks";
-import MultipleSelector from "@/components/common/multi-select";
 import {
    eventCreateInputSchema,
    useEventCreate,
@@ -52,10 +49,8 @@ import DatePicker from "@/components/ui/date-picker";
 import { useImageUpload } from "@/features/service/artspace/image-upload";
 import ImageDnd from "@/components/common/dnd-image-upload";
 import { useEffect, useState } from "react";
-import type { Artist, Artwork, ListApiResponse, User } from "@/types";
-import type { AxiosResponse } from "axios";
+import type { Artwork, ListApiResponse, User } from "@/types";
 import { keepPreviousData } from "@tanstack/react-query";
-import { debounce } from "lodash";
 import AsyncMultipleSelector from "@/components/common/async-multi-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { eventAnalytics } from "@/lib/analytics";

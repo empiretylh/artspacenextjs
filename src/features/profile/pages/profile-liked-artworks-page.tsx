@@ -10,13 +10,11 @@ import type {
    SortingState,
    User,
 } from "@/types";
-import type { AxiosResponse } from "axios";
 import ArtworksPageView from "@/features/artwork/components/artworks-page-view";
 import ArtworkCard from "@/components/app/artwork-card";
 import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-modal";
 import NotFound from "@/components/layout/not-found";
 import {
-   useGetLikedArtworksByCurrentUser,
    useGetLikedArtworksByCurrentUserInfinite,
 } from "@/features/service/artspace/get-liked-artworks-by-current-user";
 import { useProfileUser } from "@/components/providers/profile-user-provider";

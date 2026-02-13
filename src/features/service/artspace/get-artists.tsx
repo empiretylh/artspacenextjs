@@ -1,4 +1,3 @@
-import { env } from "@/config/env";
 import { queryKeys } from "@/config/query-keys";
 import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
