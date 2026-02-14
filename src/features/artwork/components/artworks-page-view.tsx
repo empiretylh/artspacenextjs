@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -14,7 +14,12 @@ import MasonryItem from "../../../components/app/masonry-item";
 import { FilterRow } from "../components/filter-row";
 import { FilterSidebar } from "../components/filter-sidebar";
 import { FilterIcon, XIcon } from "lucide-react";
-import type { Artwork, ColumnFiltersState, SortingState } from "@/types";
+import type {
+   Artwork,
+   ColumnFiltersState,
+   ListApiResponse,
+   SortingState,
+} from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import ArtworkCard from "@/components/app/artwork-card";
 import { useInView } from "react-intersection-observer";
@@ -29,7 +34,7 @@ interface ArtworksPageViewProps {
    title?: string;
    isLoading: boolean;
    isFetching?: boolean;
-   pagesToRender: any[];
+   pagesToRender: ListApiResponse<Artwork>[];
    filters: ColumnFiltersState;
    setFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
    isSidebarOpen: boolean;
@@ -47,7 +52,7 @@ interface ArtworksPageViewProps {
 const ArtworksPageView = ({
    title,
    isLoading,
-   isFetching = false,
+   isFetching: _isFetching = false,
    pagesToRender,
    filters,
    setFilters,
@@ -65,15 +70,35 @@ const ArtworksPageView = ({
    const { ref: loadMoreRef, inView } = useInView({
       threshold: 0,
    });
-   const [loadingLock, setLoadingLock] = useState(false);
+   const loadingLockRef = useRef(false);
+   const lockTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
    useEffect(() => {
-      if (!inView || !hasNextPage || isFetchingNextPage || loadingLock) return;
+      if (
+         !inView ||
+         !hasNextPage ||
+         isFetchingNextPage ||
+         loadingLockRef.current
+      )
+         return;
 
-      setLoadingLock(true);
+      loadingLockRef.current = true;
       fetchNextPage();
-      setTimeout(() => setLoadingLock(false), 1000); // throttle 500ms
-   }, [inView, hasNextPage, isFetchingNextPage, loadingLock, fetchNextPage]);
+      if (lockTimeoutRef.current) {
+         clearTimeout(lockTimeoutRef.current);
+      }
+      lockTimeoutRef.current = setTimeout(() => {
+         loadingLockRef.current = false;
+      }, 1000); // throttle 500ms
+   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+   useEffect(() => {
+      return () => {
+         if (lockTimeoutRef.current) {
+            clearTimeout(lockTimeoutRef.current);
+         }
+      };
+   }, []);
 
    return (
       <>
@@ -259,7 +284,7 @@ const ArtworksPageView = ({
 
                      {!hasNextPage &&
                         !isFetchingNextPage &&
-                        pagesToRender?.[0]?.data?.results?.length > 0 && (
+                        pagesToRender?.[0]?.results?.length > 0 && (
                            <div className="flex justify-center my-2 text-sm text-muted-foreground">
                               Nothing more to load
                            </div>
