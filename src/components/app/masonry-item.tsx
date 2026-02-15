@@ -57,7 +57,12 @@ const MasonryItem = ({
    }, [artwork]);
 
    return (
-      <div ref={ref} style={{ gridRow: `span ${span}` }} className="mb-2">
+      <div
+         ref={ref}
+         data-testid="artwork-card"
+         style={{ gridRow: `span ${span}` }}
+         className="mb-2"
+      >
          {children || (
             <ArtworkCard
                variant="masonry"

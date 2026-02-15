@@ -191,20 +191,23 @@ const ArtworksPageView = ({
                                  setSorts([{ id, desc: order === "desc" }]);
                               }}
                            >
-                              <SelectTrigger className="w-[180px] h-10">
+                              <SelectTrigger
+                                 className="w-[180px] h-10"
+                                 data-testid="artworks-sort-select"
+                              >
                                  <SelectValue placeholder="Sort by" />
                               </SelectTrigger>
                               <SelectContent>
-                                 <SelectItem value="created_at-desc">
+                                 <SelectItem value="created_at-desc" data-testid="sort-created-desc">
                                     Date: Newest
                                  </SelectItem>
-                                 <SelectItem value="created_at-asc">
+                                 <SelectItem value="created_at-asc" data-testid="sort-created-asc">
                                     Date: Oldest
                                  </SelectItem>
-                                 <SelectItem value="price-desc">
+                                 <SelectItem value="price-desc" data-testid="sort-price-desc">
                                     Price: High to Low
                                  </SelectItem>
-                                 <SelectItem value="price-asc">
+                                 <SelectItem value="price-asc" data-testid="sort-price-asc">
                                     Price: Low to High
                                  </SelectItem>
                               </SelectContent>
@@ -271,7 +274,6 @@ const ArtworksPageView = ({
                               ref={loadMoreRef}
                               className="flex justify-center my-2 text-sm text-muted-foreground"
                            >
-                              {" "}
                               LoadMore
                            </div>
                         )}

@@ -80,6 +80,7 @@ export function SiteHeader() {
                         variant="ghost"
                         size="icon"
                         className="p-0 md:hidden"
+                        data-testid="open-search"
                      >
                         <Search />
                      </Button>
