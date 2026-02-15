@@ -1,19 +1,80 @@
 'use client'
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import debounce from "lodash/debounce";
-import { keepPreviousData } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
 
 import type {
    ColumnFiltersState,
-   ListApiResponse,
    SortingState,
-   User,
 } from "@/types";
 
 import { useGetBlockedUsersInfinite } from "@/features/service/artspace/get-blocked-users";
 import BlockedUsersListView from "./blocked-users-list-view";
+
+function parseSearchParams(sp: ReturnType<typeof useSearchParams>) {
+   const page = Number(sp.get("page")) || 1;
+   const limit = Number(sp.get("limit")) || 12;
+   const search = sp.get("search") || "";
+
+   const filters: ColumnFiltersState = [];
+   sp.forEach((value, key) => {
+      if (!["page", "limit", "search", "sort"].includes(key)) {
+         if (key === "price_range") {
+            if (value) filters.push({ id: key, value });
+         } else {
+            String(value)
+               .split(",")
+               .filter(Boolean)
+               .forEach((v) => filters.push({ id: key, value: v }));
+         }
+      }
+   });
+
+   const sorts: SortingState = [];
+   const sortParam = sp.get("sort");
+   if (sortParam) {
+      const [id, order] = sortParam.split("-");
+      if (id) sorts.push({ id, desc: order === "desc" });
+   }
+
+   return { page, limit, search, filters, sorts };
+}
+
+function buildSearchParams(input: {
+   page: number;
+   limit: number;
+   search: string;
+   filters: ColumnFiltersState;
+   sorts: SortingState;
+}) {
+   const sp = new URLSearchParams();
+
+   if (input.page !== 1) sp.set("page", String(input.page));
+   if (input.limit !== 12) sp.set("limit", String(input.limit));
+   if (input.search) sp.set("search", input.search);
+
+   const groups: Record<string, Set<string>> = {};
+   for (const f of input.filters) {
+      if (!f?.id || f.value == null) continue;
+      (groups[f.id] ??= new Set()).add(String(f.value));
+   }
+
+   if (input.filters.some((f) => f.id === "price_range")) {
+      const last = input.filters.filter((f) => f.id === "price_range").at(-1);
+      if (last?.value != null) groups["price_range"] = new Set([String(last.value)]);
+   }
+
+   for (const [key, set] of Object.entries(groups)) {
+      const values = Array.from(set);
+      sp.set(key, key === "price_range" ? (values[0] ?? "") : values.join(","));
+   }
+
+   if (input.sorts.length) {
+      const s = input.sorts[0];
+      sp.set("sort", `${s.id}-${s.desc ? "desc" : "asc"}`);
+   }
+
+   return sp;
+}
 
 const BlockedUsersListContainer = () => {
    // -----------------------------------------
@@ -22,142 +83,44 @@ const BlockedUsersListContainer = () => {
    const searchParams = useSearchParams();
    const pathname = usePathname();
    const { replace } = useRouter();
-   const [oldData, setOldData] = useState<
-      AxiosResponse<ListApiResponse<User>, any>[]
-   >([]);
-
-   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
-   const [limit, setLimit] = useState(Number(searchParams.get("limit")) || 12);
-   const [filters, setFilters] = useState<ColumnFiltersState>(
-      searchParams.get("filters")
-         ? JSON.parse(searchParams.get("filters")!)
-         : []
-   );
-   const [sorts, setSorts] = useState<SortingState>(
-      searchParams.get("sorts") ? JSON.parse(searchParams.get("sorts")!) : []
-   );
-
-   const [debouncedSearch, setDebouncedSearch] = useState("");
+   const urlState = useMemo(() => parseSearchParams(searchParams), [searchParams]);
 
    // -----------------------------------------
    // Fetch
    // -----------------------------------------
    const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
       useGetBlockedUsersInfinite({
-         search: searchParams.get("search") || "",
-         filters: [...filters].filter(Boolean) as ColumnFiltersState,
-         sorts,
-         limit,
-         queryConfig: {
-            placeholderData: keepPreviousData,
-         },
+         search: urlState.search,
+         filters: [...urlState.filters].filter(Boolean) as ColumnFiltersState,
+         sorts: urlState.sorts,
+         limit: urlState.limit,
       });
 
-   useEffect(() => {
-      if (!isLoading && data) setOldData(data.pages);
-   }, [data, isLoading]);
+   const pagesToRender = data?.pages || [];
 
-   const pagesToRender = isLoading ? oldData : data?.pages || [];
-
-   // -----------------------------------------
-   // Debounce
-   // -----------------------------------------
-   const debouncedSetSearch = useMemo(
-      () =>
-         debounce((value: string) => {
-            setDebouncedSearch(value);
-            setPage(1);
-         }, 500),
-      []
-   );
-
-   // -----------------------------------------
-   // Handlers
-   // -----------------------------------------
-   const handleSearchChange = (value: string) => {
-      debouncedSetSearch(value);
+   const updateUrl = (next: Partial<typeof urlState>) => {
+      const merged = {
+         page: next.page ?? urlState.page,
+         limit: next.limit ?? urlState.limit,
+         search: next.search ?? urlState.search,
+         filters: next.filters ?? urlState.filters,
+         sorts: next.sorts ?? urlState.sorts,
+      };
+      const sp = buildSearchParams(merged);
+      const nextUrl = sp.toString() ? `${pathname}?${sp.toString()}` : pathname;
+      replace(nextUrl);
    };
 
-   const buildParams = () => {
-      const params: Record<string, string> = {};
-
-      if (page && page !== 1) params.page = page.toString();
-      if (limit && limit !== 12) params.limit = limit.toString();
-      if (debouncedSearch) params.search = debouncedSearch;
-
-      return params;
+   const handleSearchChange = (value: string) => {
+      updateUrl({ search: value, page: 1 });
    };
 
    const removeFromFilter = (filterId: string, key: string) => {
-      setFilters((prev) =>
-         prev.filter((f) =>
-            f.id === filterId ? String(f.value) !== String(key) : true
-         )
+      const nextFilters = urlState.filters.filter((f) =>
+         f.id === filterId ? String(f.value) !== String(key) : true
       );
+      updateUrl({ filters: nextFilters, page: 1 });
    };
-
-   // -----------------------------------------
-   // Sync URL
-   // -----------------------------------------
-   useEffect(() => {
-      const params = buildParams();
-      const filterGroups: Record<string, Set<string>> = {};
-
-      for (const filter of filters) {
-         if (filter.id && filter.value) {
-            if (!filterGroups[filter.id]) filterGroups[filter.id] = new Set();
-            filterGroups[filter.id].add(String(filter.value));
-         }
-      }
-
-      Object.entries(filterGroups).forEach(([key, values]) => {
-         params[key] = Array.from(values).join("+");
-      });
-
-      if (sorts.length > 0) {
-         params.sort = `${sorts[0].id}-${sorts[0].desc ? "desc" : "asc"}`;
-      }
-
-      replace(`${pathname}?${decodeURI(
-         Object.entries(params)
-            .map(([k, v]) => `${k}=${v}`)
-            .join("&")
-      )}`);
-   }, [page, limit, debouncedSearch, filters, sorts]);
-
-   // -----------------------------------------
-   // Parse URL
-   // -----------------------------------------
-   useEffect(() => {
-      const newPage = Number(searchParams.get("page")) || 1;
-      const newLimit = Number(searchParams.get("limit")) || 12;
-      const newSearch = searchParams.get("search") || "";
-
-      const newFilters: ColumnFiltersState = [];
-
-      searchParams.forEach((value, key) => {
-         if (!["page", "limit", "search", "sort"].includes(key)) {
-            String(value)
-               .split(" ")
-               .forEach((v) => {
-                  if (v) newFilters.push({ id: key, value: Number(v) });
-               });
-         }
-      });
-
-      const sortParam = searchParams.get("sort");
-      const newSorts: SortingState = [];
-      if (sortParam) {
-         const [id, order] = sortParam.split("-");
-         newSorts.push({ id, desc: order === "desc" });
-      }
-
-      setPage(newPage);
-      setLimit(newLimit);
-      setDebouncedSearch(newSearch);
-      setFilters(newFilters);
-      setSorts(newSorts);
-   }, []);
 
    const isDataEmpty = () => pagesToRender[0]?.data?.results?.length <= 0;
 
@@ -165,22 +128,27 @@ const BlockedUsersListContainer = () => {
    // Render
    // -----------------------------------------
    return (
-      <>
-         <BlockedUsersListView
-            onSearchChange={handleSearchChange}
-            isLoading={isLoading}
-            filters={filters}
-            setFilters={setFilters}
-            sorts={sorts}
-            setSorts={setSorts}
-            pagesToRender={pagesToRender}
-            isDataEmpty={isDataEmpty}
-            removeFromFilter={removeFromFilter}
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-         />
-      </>
+      <BlockedUsersListView
+         onSearchChange={handleSearchChange}
+         isLoading={isLoading}
+         filters={urlState.filters}
+         setFilters={(next) => {
+            const resolved =
+               typeof next === "function"
+                  ? (next as (prev: ColumnFiltersState) => ColumnFiltersState)(urlState.filters)
+                  : next;
+
+            updateUrl({ filters: resolved, page: 1 });
+         }}
+         sorts={urlState.sorts}
+         setSorts={(next) => updateUrl({ sorts: next, page: 1 })}
+         pagesToRender={pagesToRender}
+         isDataEmpty={isDataEmpty}
+         removeFromFilter={removeFromFilter}
+         fetchNextPage={fetchNextPage}
+         hasNextPage={hasNextPage}
+         isFetchingNextPage={isFetchingNextPage}
+      />
    );
 };
 
