@@ -8,6 +8,9 @@ import dotenv from 'dotenv';
 import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+const isDev = process.env.NODE_ENV === 'development';
+const isCI = !!process.env.CI;
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -74,8 +77,11 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    command: isDev
+      ? 'npm run dev'
+      : 'npm run build && npm run start',
+    port: 3000,
+    reuseExistingServer: isDev && !isCI,
+    timeout: 120 * 1000,
   },
 });
