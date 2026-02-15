@@ -1,15 +1,7 @@
 'use client'
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import debounce from "lodash/debounce";
-import { keepPreviousData } from "@tanstack/react-query";
-import type {
-   Artwork,
-   ColumnFiltersState,
-   ListApiResponse,
-   SortingState,
-   User,
-} from "@/types";
+import type { Artwork, ColumnFiltersState, SortingState } from "@/types";
 import ArtworksPageView from "@/features/artwork/components/artworks-page-view";
 import ArtworkCard from "@/components/app/artwork-card";
 import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-modal";
@@ -35,13 +27,75 @@ const ControlledArtworkCard: React.FC<ControlledArtworkCardProps> = ({
             className="inline-block w-full h-auto"
             artwork={artwork}
          />
-      </div >
+      </div>
    );
 };
 
-type OutletContext = {
-   user: User;
-};
+function parseSearchParams(sp: ReturnType<typeof useSearchParams>) {
+   const page = Number(sp.get("page")) || 1;
+   const limit = Number(sp.get("limit")) || 12;
+   const search = sp.get("search") || "";
+
+   const filters: ColumnFiltersState = [];
+   sp.forEach((value, key) => {
+      if (!["page", "limit", "search", "sort"].includes(key)) {
+         if (key === "price_range") {
+            if (value) filters.push({ id: key, value });
+         } else {
+            String(value)
+               .split(",")
+               .filter(Boolean)
+               .forEach((v) => filters.push({ id: key, value: v }));
+         }
+      }
+   });
+
+   const sorts: SortingState = [];
+   const sortParam = sp.get("sort");
+   if (sortParam) {
+      const [id, order] = sortParam.split("-");
+      if (id) sorts.push({ id, desc: order === "desc" });
+   }
+
+   return { page, limit, search, filters, sorts };
+}
+
+function buildSearchParams(input: {
+   page: number;
+   limit: number;
+   search: string;
+   filters: ColumnFiltersState;
+   sorts: SortingState;
+}) {
+   const sp = new URLSearchParams();
+
+   if (input.page !== 1) sp.set("page", String(input.page));
+   if (input.limit !== 12) sp.set("limit", String(input.limit));
+   if (input.search) sp.set("search", input.search);
+
+   const groups: Record<string, Set<string>> = {};
+   for (const f of input.filters) {
+      if (!f?.id || f.value == null) continue;
+      (groups[f.id] ??= new Set()).add(String(f.value));
+   }
+
+   if (input.filters.some((f) => f.id === "price_range")) {
+      const last = input.filters.filter((f) => f.id === "price_range").at(-1);
+      if (last?.value != null) groups["price_range"] = new Set([String(last.value)]);
+   }
+
+   for (const [key, set] of Object.entries(groups)) {
+      const values = Array.from(set);
+      sp.set(key, key === "price_range" ? (values[0] ?? "") : values.join(","));
+   }
+
+   if (input.sorts.length) {
+      const s = input.sorts[0];
+      sp.set("sort", `${s.id}-${s.desc ? "desc" : "asc"}`);
+   }
+
+   return sp;
+}
 
 const ArtworksPageContainer = () => {
    const searchParams = useSearchParams();
@@ -49,23 +103,8 @@ const ArtworksPageContainer = () => {
    const { replace } = useRouter();
    const { data: user } = useProfileUser();
    const { source } = useSource();
-   // State
-   const [oldData, setOldData] = useState<ListApiResponse<Artwork>[]
-   >([]);
-   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
-   const [limit, setLimit] = useState(Number(searchParams.get("limit")) || 12);
-   const [globalFilter, setGlobalFilter] = useState({
-      search: searchParams.get("search") || "",
-   });
-   const [filters, setFilters] = useState<ColumnFiltersState>(
-      searchParams.get("filters")
-         ? JSON.parse(searchParams.get("filters")!)
-         : []
-   );
-   const [sorts, setSorts] = useState<SortingState>(
-      searchParams.get("sorts") ? JSON.parse(searchParams.get("sorts")!) : []
-   );
-   const [debouncedSearch, setDebouncedSearch] = useState(globalFilter.search);
+
+   const urlState = useMemo(() => parseSearchParams(searchParams), [searchParams]);
    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
    const [isArtworkUpdateModalOpen, setIsArtworkUpdateModalOpen] =
@@ -77,124 +116,42 @@ const ArtworksPageContainer = () => {
    const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
       useGetArtworksByUserIdInfinite({
          userId: String(user?.id),
-         page,
-         search: searchParams.get("search") || "",
-         filters: [...filters].filter(Boolean) as ColumnFiltersState,
-         sorts,
-         limit,
-         queryConfig: { placeholderData: keepPreviousData },
+         page: urlState.page,
+         search: urlState.search,
+         filters: [...urlState.filters].filter(Boolean) as ColumnFiltersState,
+         sorts: urlState.sorts,
+         limit: urlState.limit,
       });
 
    useEffect(() => {
       if (!isLoading && data) {
-         setOldData(data.pages);
          const newArtworks = data.pages.at(-1)?.results ?? [];
          if (newArtworks.length > 0) {
             const items = itemsFromArtworks(newArtworks);
             ecommerceAnalytics.viewItemList("MMK", source, snakeToNormal(source), items, source);
          }
       }
-   }, [data, isLoading]);
+   }, [data, isLoading, source]);
 
-   // const pagesToRender = isLoading ? oldData : data?.pages || [];
-
-   // Debounced search
-   const debouncedSetSearch = useMemo(
-      () =>
-         debounce((value: string) => {
-            setDebouncedSearch(value);
-            setPage(1);
-         }, 500),
-      []
-   );
+   const updateUrl = (next: Partial<typeof urlState>) => {
+      const merged = {
+         page: next.page ?? urlState.page,
+         limit: next.limit ?? urlState.limit,
+         search: next.search ?? urlState.search,
+         filters: next.filters ?? urlState.filters,
+         sorts: next.sorts ?? urlState.sorts,
+      };
+      const sp = buildSearchParams(merged);
+      const nextUrl = sp.toString() ? `${pathname}?${sp.toString()}` : pathname;
+      replace(nextUrl);
+   };
 
    const removeFromFilter = (filterId: string, key: string) => {
-      setFilters((prev) =>
-         prev.filter((f) =>
-            f.id === filterId ? String(f.value) !== String(key) : true
-         )
+      const nextFilters = urlState.filters.filter((f) =>
+         f.id === filterId ? String(f.value) !== String(key) : true
       );
+      updateUrl({ filters: nextFilters, page: 1 });
    };
-
-   const buildParams = () => {
-      const params: Record<string, string> = {};
-      if (page && page !== 1) params.page = page.toString();
-      if (limit && limit !== 12) params.limit = limit.toString();
-      if (globalFilter.search) params.search = globalFilter.search;
-
-      const filterGroups: Record<string, Set<string>> = {};
-      for (const filter of filters) {
-         if (filter.id && filter.value) {
-            if (!filterGroups[filter.id]) filterGroups[filter.id] = new Set();
-            filterGroups[filter.id].add(String(filter.value));
-         }
-      }
-
-      if (filters.some((f) => f.id === "price_range")) {
-         const priceFilters = filters.filter((f) => f.id === "price_range");
-         filterGroups["price_range"] = new Set([
-            String(priceFilters.at(-1)?.value),
-         ]);
-      }
-
-      Object.entries(filterGroups).forEach(([key, values]) => {
-         params[key] =
-            key === "price_range"
-               ? Array.from(values)[0]
-               : Array.from(values).join("+");
-      });
-
-      if (sorts.length > 0) {
-         params.sort = `${sorts[0].id}-${sorts[0].desc ? "desc" : "asc"}`;
-      }
-
-      return params;
-   };
-
-   // Update URL when state changes
-   useEffect(() => {
-      const params = buildParams();
-      replace(`${pathname}?${decodeURI(
-         Object.entries(params)
-            .map(([k, v]) => `${k}=${v}`)
-            .join("&")
-      )}`);
-   }, [page, limit, debouncedSearch, filters, sorts]);
-
-   // Parse URL on mount
-   useEffect(() => {
-      const newPage = Number(searchParams.get("page")) || 1;
-      const newLimit = Number(searchParams.get("limit")) || 12;
-      const newSearch = searchParams.get("search") || "";
-      const newFilters: ColumnFiltersState = [];
-
-      searchParams.forEach((value, key) => {
-         if (!["page", "limit", "search", "sort"].includes(key)) {
-            if (key === "price_range") {
-               if (value) newFilters.push({ id: key, value });
-            } else {
-               const values = String(value).split(" ");
-               values.forEach((v) => {
-                  if (v) newFilters.push({ id: key, value: Number(v) });
-               });
-            }
-         }
-      });
-
-      const newSorts: SortingState = [];
-      const sortParam = searchParams.get("sort");
-      if (sortParam) {
-         const [id, order] = sortParam.split("-");
-         newSorts.push({ id, desc: order === "desc" });
-      }
-
-      setPage(newPage);
-      setLimit(newLimit);
-      setGlobalFilter({ search: newSearch });
-      setDebouncedSearch(newSearch);
-      setFilters(newFilters);
-      setSorts(newSorts);
-   }, []);
 
    if (!user) {
       return <NotFound />;
@@ -205,10 +162,17 @@ const ArtworksPageContainer = () => {
          <ArtworksPageView
             isLoading={isLoading}
             pagesToRender={data?.pages || []}
-            filters={filters}
-            setFilters={setFilters}
-            sorts={sorts}
-            setSorts={setSorts}
+            filters={urlState.filters}
+            setFilters={(next) => {
+               const resolved =
+                  typeof next === "function"
+                     ? (next as (prev: ColumnFiltersState) => ColumnFiltersState)(urlState.filters)
+                     : next;
+
+               updateUrl({ filters: resolved, page: 1 });
+            }}
+            sorts={urlState.sorts}
+            setSorts={(next) => updateUrl({ sorts: next, page: 1 })}
             isSidebarOpen={isSidebarOpen}
             setIsSidebarOpen={setIsSidebarOpen}
             fetchNextPage={fetchNextPage}
