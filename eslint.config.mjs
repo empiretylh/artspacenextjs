@@ -17,7 +17,12 @@ const eslintConfig = defineConfig([
       "no-console": "warn",
       "react/no-unescaped-entities": "off",
       "@typescript-eslint/no-explicit-any": "warn",
+      "react-hooks/set-state-in-effect": "warn",
       "react-refresh/only-export-components": "warn",
+
+      // for shadcn
+      "react-hooks/purity": "off",
+      "react/display-name": "off",
 
       // ✅ Important: turn these off to avoid conflicts
       "no-unused-vars": "off",

@@ -72,22 +72,25 @@ const ProfileLayoutView = ({
       }
    }, [])
 
-
-   if (user.id === authUser?.id && variant !== "profile") {
-      return redirect(paths.profile.path);
-   }
+   const shouldRedirect =
+      user.id === authUser?.id && variant !== "profile";
+   const enableStatusQueries = !shouldRedirect && variant !== "profile";
 
    const followStatusQuery = useGetUserFollowStatus({
       userId: String(user?.id),
       userType,
-      queryConfig: { enabled: variant !== "profile" },
+      queryConfig: { enabled: enableStatusQueries },
    });
 
    const blockStatusQuery = useGetUserBlockStatus({
       userId: String(user?.id),
       userType,
-      queryConfig: { enabled: variant !== "profile" },
+      queryConfig: { enabled: enableStatusQueries },
    });
+
+   if (shouldRedirect) {
+      return redirect(paths.profile.path);
+   }
 
    const coverSrc = user?.profile.cover_photo
       ? getImage(user.profile.cover_photo)
@@ -146,7 +149,7 @@ const ProfileLayoutView = ({
                <div className="mt-3 space-y-1">
                   <div className="flex items-center justify-center gap-2">
                      <h1 className="font-display text-lg sm:text-xl">{fullName}</h1>
-                     {user?.user_type && getUserIcon(user.user_type)}
+                     {user?.user_type && getUserIcon()}
                   </div>
 
                   <p className="text-sm text-muted-foreground">{user?.email}</p>

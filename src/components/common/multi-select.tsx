@@ -413,7 +413,7 @@ const MultipleSelector = ({
    );
 
    /** Avoid Creatable Selector freezing or lagging when paste a long string. */
-   const commandFilter = React.useCallback(() => {
+   const commandFilter = React.useMemo(() => {
       if (commandProps?.filter) {
          return commandProps.filter;
       }
@@ -425,7 +425,7 @@ const MultipleSelector = ({
       }
       // Using default filter in `cmdk`. We don&lsquo;t have to provide it.
       return undefined;
-   }, [creatable, commandProps?.filter]);
+   }, [creatable, commandProps]);
 
    return (
       <div>
@@ -437,7 +437,7 @@ const MultipleSelector = ({
                "h-auto overflow-visible bg-transparent",
                commandProps?.className
             )}
-            filter={commandFilter()}
+            filter={commandFilter}
             // onKeyDown={(e) => {
             //    handleKeyDown(e);
             //    commandProps?.onKeyDown?.(e);

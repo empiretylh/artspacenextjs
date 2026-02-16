@@ -11,14 +11,14 @@ type Fixtures = {
 };
 
 const test = base.extend<Fixtures>({
-  page: async ({ page }, use) => {
+  page: async ({ page }, runFixture) => {
     await page.addInitScript(() => {
       sessionStorage.setItem('artspace:firstLoadPopup', 'true');
     });
-    await use(page);
+    await runFixture(page);
   },
-  mockArtworks: async ({ page }, use) => {
-    await use(async (options: MockArtworksOptions = {}) => {
+  mockArtworks: async ({ page }, runFixture) => {
+    await runFixture(async (options: MockArtworksOptions = {}) => {
       const defaultPageSize = options.pageSize ?? 2;
       const totalCount = options.total ?? defaultPageSize * 2;
       const delayMs = options.delayMs ?? 0;
