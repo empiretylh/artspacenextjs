@@ -1,4 +1,9 @@
-import type { Artwork } from "@/types";
+export type MockArtworkCard = {
+   id: string;
+   title: string;
+   price: number;
+   imageUrl: string;
+};
 
 // --- Placeholder Data ---
 export const featuredArtworks = [
@@ -162,9 +167,7 @@ export const mockArtists = [
    },
 ];
 
-export type MockArtworksByArtist = {
-   [key: string]: Artwork[];
-};
+export type MockArtworksByArtist = Record<string, MockArtworkCard[]>;
 
 export const mockArtworksByArtist: MockArtworksByArtist = {
    a1: [

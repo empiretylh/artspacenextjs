@@ -27,23 +27,23 @@ export function useLikeToggle({
 
    // Refs to avoid stale closures inside debounce
    const userRef = useRef(user);
-   const navigateRef = useRef(navigate);
+   const routerRef = useRef(router);
    const mutateRef = useRef(mutate);
    const isLikedRef = useRef(isLiked);
 
    useEffect(() => {
       userRef.current = user;
-      navigateRef.current = navigate;
+      routerRef.current = router;
       mutateRef.current = mutate;
       isLikedRef.current = isLiked;
-   }, [user, navigate, mutate, isLiked]);
+   }, [user, router, mutate, isLiked]);
 
    // Debounced server call
    const debouncedLikeRef = useRef<ReturnType<typeof debounce> | null>(null);
 
    debouncedLikeRef.current ??= debounce(() => {
       if (!userRef.current) {
-         navigateRef.current(paths.auth.login.path);
+         routerRef.current.push(paths.auth.login.path);
          return;
       }
 

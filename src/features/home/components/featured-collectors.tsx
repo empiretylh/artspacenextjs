@@ -10,7 +10,7 @@ import UserSmallCard from "@/components/app/user-small-card";
 export const FeaturedCollectorsSection = () => {
    const collectorsQuery = useGetCollectors();
 
-   const featuredCollectors = collectorsQuery.data?.data?.results ?? [];
+   const featuredCollectors = collectorsQuery.data?.results ?? [];
 
    if (collectorsQuery.isLoading) {
       return <FeaturedCollectorsSectionSkeleton />;

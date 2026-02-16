@@ -1,4 +1,4 @@
-import { env } from "@/config/env";
+import { env } from "./src/config/env";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: process.env.NODE_ENV === 'development',
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
     tsconfigPath: 'tsconfig.json',
   },
   images: {

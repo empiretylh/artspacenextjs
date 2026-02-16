@@ -50,7 +50,18 @@ export const getOrders = (
 
    console.log(mockOrders)
 
-   return new Promise((res) => setTimeout(() => res({ data: mockOrders, next: null, previous: null, count: 20 }), 1000));
+   return new Promise((res) =>
+      setTimeout(
+         () =>
+            res({
+               results: mockOrders,
+               next: null,
+               previous: null,
+               count: 20,
+            }),
+         1000
+      )
+   );
 
    return api.get(`/orders`, {
       params: {

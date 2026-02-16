@@ -11,7 +11,7 @@ export const PostsPage = () => {
       return <div>Loading...</div>;
    }
 
-   const posts = data?.data || [];
+   const posts = data?.results || [];
 
    return (
       <div className="container mx-auto p-4">

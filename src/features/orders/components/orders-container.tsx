@@ -10,6 +10,10 @@ import { useGetOrders } from "../api/get-orders";
 import OrdersProvider from "../context/orders-context";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
+import type {
+  ColumnFiltersState as ApiColumnFiltersState,
+  SortingState as ApiSortingState,
+} from "@/types";
 
 export default function OrdersContainer() {
   const searchParams = useSearchParams();
@@ -33,13 +37,13 @@ export default function OrdersContainer() {
 
   const ordersQuery = useGetOrders({
     search: globalFilter,
-    filters,
-    sorts,
+    filters: filters as unknown as ApiColumnFiltersState,
+    sorts: sorts as unknown as ApiSortingState,
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
   });
 
-  const orders = ordersQuery?.data?.data ?? [];
+  const orders = ordersQuery?.data?.results ?? [];
 
   const getTotalPages = () => {
     const total = ordersQuery?.data?.count ?? 0;

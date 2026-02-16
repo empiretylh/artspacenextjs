@@ -66,7 +66,7 @@ export default function ProfileEditForm({
                title: "Success",
                message: "Profile updated successfully",
             });
-            userAnalytics.edit(String(profile?.id), 'settings');
+            userAnalytics.edit(String(profile?.id), 'settings_page');
             onUpdateSuccess();
             form.reset();
          },

@@ -1,11 +1,12 @@
 import { Main } from "@/components/layout/main";
 import { paths } from "@/config/paths";
-import { useParams } from "react-router";
+import { useParams, useRouter } from "next/navigation";
 import PostEditForm from "../component/post-edit-form";
 
 const PostEditPage = () => {
-   const { id } = useParams();
+   const params = useParams() as { id?: string };
    const router = useRouter();
+   const id = params?.id;
 
    if (!id) {
       router.push(paths.notFound.path);

@@ -44,7 +44,7 @@ export const getPosts = (
          }
          return searchParams.toString();
       },
-   });
+   }).then((res) => res.data);
 };
 
 export const getPostsQueryOptions = (

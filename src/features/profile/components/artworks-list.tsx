@@ -32,7 +32,7 @@ const ArtworksList = () => {
          </div> */}
          <div
             className={cn(
-               data && data?.pages[0].data.results.length > 0
+               data && data?.pages[0].results.length > 0
                   ? "grid grid-cols-[repeat(auto-fill,1fr)] gap-x-2 auto-rows-[1px]"
                   : "h-[500px]"
             )}
@@ -40,18 +40,18 @@ const ArtworksList = () => {
             {" "}
             {data &&
                data.pages.map((page) => (
-                  <Fragment key={page.data.next}>
+                  <Fragment key={page.next ?? "page"}>
                      {isLoading ? (
                         <div className="text-center flex justify-center items-center h-full">
                            Loading artworks...
                         </div>
-                     ) : page.data.results.length === 0 ? (
+                     ) : page.results.length === 0 ? (
                         <div className="text-center flex justify-center items-center h-full">
                            No artworks found.
                         </div>
                      ) : (
                         <>
-                           {page.data.results.map((artwork) => {
+                           {page.results.map((artwork) => {
                               return (
                                  <MasonryItem
                                     key={artwork.id}

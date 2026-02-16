@@ -150,7 +150,7 @@ export const slugify = (text: string) => {
       .replace(/-+$/, ""); // Trim trailing hyphens
 };
 
-export const getUserIcon = () => {
+export const getUserIcon = (_type?: User["user_type"]) => {
    return <AppImage withoutContainer width={16} height={16} src={'/assets/logo.png'} className="inline-block" alt="logo" />;
    // if (type === "ARTIST") {
    //    return (
