@@ -65,7 +65,7 @@ export const useAuth = create<State>((set) => {
       async login(email, password) {
          const queryClient = getQueryClient()
          try {
-            const { data } = await axios.post("/api/auth/login", {
+            const { data, status } = await axios.post("/api/auth/login", {
                email, password
             })
 
@@ -81,8 +81,6 @@ export const useAuth = create<State>((set) => {
             queryClient.invalidateQueries();
 
             return data.user as User
-         } catch (error) {
-            return error as AxiosError<{ message: string }>;
          } finally {
             set({ loading: false });
          }

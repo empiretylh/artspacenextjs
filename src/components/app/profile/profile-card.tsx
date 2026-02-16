@@ -69,7 +69,7 @@ export default function ProfileCard({ user }: { user: User }) {
                            {fullName}
                         </h2>
                      </Link>
-                     {getUserIcon(user.user_type)}
+                     {getUserIcon()}
                   </div>
 
                   <p className="text-xs text-muted-foreground mb-1 truncate max-w-20 lg:max-w-32.5 mx-auto min-h-[16px]">

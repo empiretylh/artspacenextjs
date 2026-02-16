@@ -108,8 +108,8 @@ export async function generateMetadata({
   };
 }
 
-const UsersRoute = async ({ params }: { params: Promise<{ userType: UserRouteType }> }) => {
-  const { userType } = await params;
+const UsersRoute = async ({ params }: { params: Promise<{ userType: string }> }) => {
+  const { userType } = await params as { userType: UserRouteType };
 
   return (
     <Suspense fallback={<UsersListLoading withTitle />}>
