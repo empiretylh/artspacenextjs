@@ -58,7 +58,7 @@ export default function ImageDnd({
 
       const selected = multiple ? files : [files[0]];
 
-      onChange?.(selected.filter((f) => f instanceof File).map((f) => f as File));
+      onChange?.(selected.map((f) => f.file) as File[]);
 
       // clear internal queue immediately
       selected.forEach((f) => removeFile(f.id));
