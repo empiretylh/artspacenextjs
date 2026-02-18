@@ -16,6 +16,7 @@ import { useLike } from "@/hooks/app/use-like";
 import AppImage from "../common/app-image";
 import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
+import Price from "../common/price";
 
 interface ArtworkCardProps {
    artwork: Artwork;
@@ -192,7 +193,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                {!artwork.hide_price && (
                   <div className="flex justify-between items-center pt-2 text-sm">
                      <span className="font-bold text-foreground">
-                        ${artwork.price}
+                        <Price currency={artwork.currency} price={artwork.price} uniform size="xs" />
                      </span>
                   </div>
                )}

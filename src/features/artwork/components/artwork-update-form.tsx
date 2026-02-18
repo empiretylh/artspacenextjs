@@ -40,7 +40,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import YearPicker from "@/components/year-picker";
 import { updateArtInputSchema, useUpdateArt } from "../api/update-artwork";
-import type { Artwork } from "@/types";
+import type { Artwork, ListApiResponse, User } from "@/types";
 import MultipleSelector from "@/components/common/multi-select";
 import { useGetCategories } from "@/features/service/artspace/get-categories";
 import { useGetGenres } from "@/features/service/artspace/get-genres";
@@ -52,6 +52,11 @@ import RequiredAsterisk from "@/components/common/required-asterisk";
 import { Spinner } from "@/components/ui/spinner";
 import { artworkAnalytics } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
+import AsyncMultipleSelector from "@/components/common/async-multi-select";
+import { useGetArtistsInfinite } from "@/features/service/artspace/get-artists";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useGetCurrencies } from "@/features/service/artspace/get-currencies";
 
 // import your update API hook & schema
 
@@ -78,6 +83,36 @@ export const ArtworkUpdateForm = ({
    const { data: stylesResponse, isLoading: isLoadingStyles } = useGetStyles();
    const styles = stylesResponse?.data ?? [];
    const { source } = useSource();
+   const [page, setPage] = useState(1);
+   const [limit, setLimit] = useState(10);
+   const [artistSearch, setArtistSearch] = useState("");
+   const [artistsOldData, setArtistsOldData] = useState<ListApiResponse<User>[]
+   >([]);
+
+   const artistsInfiniteQuery = useGetArtistsInfinite({
+      page,
+      search: artistSearch,
+      limit,
+      queryConfig: { placeholderData: keepPreviousData },
+   });
+
+
+   useEffect(() => {
+      if (!artistsInfiniteQuery.isLoading && artistsInfiniteQuery.data)
+         setArtistsOldData(artistsInfiniteQuery.data.pages);
+   }, [artistsInfiniteQuery.data, artistsInfiniteQuery.isLoading]);
+
+   const artistsPagesToRender = artistsInfiniteQuery.isLoading
+      ? artistsOldData
+      : artistsInfiniteQuery.data?.pages || [];
+
+   const artists =
+      artistsPagesToRender.flatMap((page) => page.results) ?? [];
+
+   const { data: currencyQuery, isLoading: isLoadingCurrencies } = useGetCurrencies();
+
+   const currencies = currencyQuery?.data ?? [];
+
 
    const updateArtMutation = useUpdateArt({
       mutationConfig: {
@@ -105,10 +140,14 @@ export const ArtworkUpdateForm = ({
             label: styles.find((s) => s.id === styleId)?.name || "Unknown",
             value: String(styleId),
          })),
+         artist: artwork.artist_profile ? [{
+            label: artwork.artist_profile.first_name + " " + artwork.artist_profile.last_name, value: String(artwork.artist_profile.id)
+         }] : [],
          description: artwork.description ?? "",
          dimensions: artwork.dimensions ?? "",
          hide_price: artwork.hide_price ?? false,
          price: artwork.price ? Number(artwork.price) : 1,
+         currency: artwork.currency.code ?? "MMK",
          visibility: artwork.visibility ?? "PRIVATE",
          are_u_owner: artwork.current_owner === user?.id,
          current_owner: artwork.current_owner,
@@ -130,6 +169,8 @@ export const ArtworkUpdateForm = ({
       const payload = {
          ...dirtyValues,
          current_owner: values.are_u_owner ? user?.id : undefined,
+         // artist: values.artist,
+         // artist_name: values.artist_name,
          id: artwork.id,
       };
 
@@ -411,6 +452,91 @@ export const ArtworkUpdateForm = ({
                         </>
                      )}
 
+                     {!form.watch("hide_price") && (
+                        <>
+                           {/* Currency */}
+                           <FormField
+                              control={form.control}
+                              name="currency"
+                              render={({ field }) => (
+                                 <FormItem>
+                                    <FormLabel htmlFor={field.name}>
+                                       Currency <RequiredAsterisk />
+                                    </FormLabel>
+                                    <FormControl>
+                                       <Select
+                                          disabled={isLoadingCurrencies}
+                                          onValueChange={(value) =>
+                                             field.onChange(value)
+                                          }
+                                          value={field.value?.toString() ?? ""}
+                                       >
+                                          <SelectTrigger
+                                             ref={field.ref}
+                                             id={field.name}
+                                             className="w-full"
+                                          >
+                                             <SelectValue
+                                                placeholder={
+                                                   isLoadingCurrencies
+                                                      ? "Loading..."
+                                                      : "Select currency"
+                                                }
+                                             />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                             {currencies.length > 0 ? (
+                                                currencies.map((cat) => (
+                                                   <SelectItem
+                                                      key={cat.code}
+                                                      value={cat.code}
+                                                   >
+                                                      {cat.name}
+                                                   </SelectItem>
+                                                ))
+                                             ) : (
+                                                <SelectItem disabled value="no-cat">
+                                                   No currencies found
+                                                </SelectItem>
+                                             )}
+                                          </SelectContent>
+                                       </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                 </FormItem>
+                              )}
+                           />
+
+                           {/* Price */}
+                           <FormField
+                              control={form.control}
+                              name="price"
+                              render={({ field }) => (
+                                 <FormItem>
+                                    <FormLabel>
+                                       Price <RequiredAsterisk />
+                                    </FormLabel>
+                                    <FormControl>
+                                       <Input
+                                          type="number"
+                                          placeholder="e.g., 5000"
+                                          min={1}
+                                          step={1}
+                                          {...field}
+                                          onChange={(e) =>
+                                             field.onChange(
+                                                Number(e.target.value)
+                                             )
+                                          }
+                                       />
+                                    </FormControl>
+                                    <FormMessage />
+                                 </FormItem>
+                              )}
+                           />
+                        </>
+                     )}
+
                      {/* Year */}
                      <FormField
                         control={form.control}
@@ -586,6 +712,65 @@ export const ArtworkUpdateForm = ({
                            </FormItem>
                         )}
                      />
+
+
+                     <FormField
+                        control={form.control}
+                        name="artist"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>Artist</FormLabel>
+                              <FormControl>
+                                 <AsyncMultipleSelector
+                                    maxSelected={1}
+                                    onUserScrollToEnd={() => {
+                                       if (
+                                          artistsInfiniteQuery.hasNextPage &&
+                                          !artistsInfiniteQuery.isFetchingNextPage
+                                       ) {
+                                          artistsInfiniteQuery.fetchNextPage();
+                                       }
+                                       // load next page / fetch more
+                                    }}
+                                    options={artists.map((a) => ({
+                                       label: `${a.first_name} ${a.last_name}`,
+                                       value: String(a.id),
+                                    }))}
+                                    onSearchChange={(value) => {
+                                       setArtistSearch(value);
+                                    }}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    placeholder="Select artists"
+                                 />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     {
+                        (form.watch("artist")?.length === 0 || !form.watch("artist")) && (
+                           <FormField
+                              control={form.control}
+                              name="artist_name"
+                              render={({ field }) => (
+                                 <FormItem>
+                                    <FormLabel>
+                                       Artist Name
+                                    </FormLabel>
+                                    <FormControl>
+                                       <Input
+                                          placeholder="Artist Name"
+                                          {...field}
+                                       />
+                                    </FormControl>
+                                    <FormMessage />
+                                 </FormItem>
+                              )}
+                           />
+                        )
+                     }
 
                      {/* Owner fields */}
                      <div className="space-y-6">

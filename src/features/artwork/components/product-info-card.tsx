@@ -1,5 +1,6 @@
 import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
+import Price from "@/components/common/price";
 import DeliverIcon from "@/components/icons/deliver-icon";
 import SecureIcon from "@/components/icons/secure-icon";
 import VerifyIcon from "@/components/icons/verify-icon";
@@ -56,7 +57,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
             {/* Price */}
             <div className="mb-6 space-y-2">
                <p className="text-2xl md:text-3xl font-display text-foreground">
-                  {!artwork.hide_price && `$${artwork.price}`}
+                  {!artwork.hide_price && <Price currency={artwork.currency} price={artwork.price} />}
                </p>
                {artwork.hide_price && (
                   <Button

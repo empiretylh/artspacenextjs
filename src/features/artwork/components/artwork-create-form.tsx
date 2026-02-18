@@ -50,6 +50,12 @@ import { useImageUpload } from "@/features/service/artspace/image-upload";
 import RequiredAsterisk from "@/components/common/required-asterisk";
 import { artworkAnalytics } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
+import AsyncMultipleSelector from "@/components/common/async-multi-select";
+import { useGetArtistsInfinite } from "@/features/service/artspace/get-artists";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { ListApiResponse, User } from "@/types";
+import { useGetCurrencies } from "@/features/service/artspace/get-currencies";
 
 // ✅ Zod schema inferred type
 type FormData = z.infer<typeof createArtInputSchema>;
@@ -70,6 +76,36 @@ export const ArtworkCreateForm = ({
    const genres = genresResponse?.data ?? [];
    const { data: stylesResponse, isLoading: isLoadingStyles } = useGetStyles();
    const styles = stylesResponse?.data ?? [];
+   const [page, setPage] = useState(1);
+   const [limit, setLimit] = useState(10);
+   const [artistSearch, setArtistSearch] = useState("");
+   const [artistsOldData, setArtistsOldData] = useState<ListApiResponse<User>[]
+   >([]);
+
+   const artistsInfiniteQuery = useGetArtistsInfinite({
+      page,
+      search: artistSearch,
+      limit,
+      queryConfig: { placeholderData: keepPreviousData },
+   });
+
+
+   useEffect(() => {
+      if (!artistsInfiniteQuery.isLoading && artistsInfiniteQuery.data)
+         setArtistsOldData(artistsInfiniteQuery.data.pages);
+   }, [artistsInfiniteQuery.data, artistsInfiniteQuery.isLoading]);
+
+   const artistsPagesToRender = artistsInfiniteQuery.isLoading
+      ? artistsOldData
+      : artistsInfiniteQuery.data?.pages || [];
+
+   const artists =
+      artistsPagesToRender.flatMap((page) => page.results) ?? [];
+
+
+   const { data: currencyQuery, isLoading: isLoadingCurrencies } = useGetCurrencies();
+
+   const currencies = currencyQuery?.data ?? [];
 
    const imageUploadMutation = useImageUpload();
    const { source } = useSource();
@@ -101,6 +137,7 @@ export const ArtworkCreateForm = ({
          description: "",
          dimensions: "",
          price: 1,
+         currency: "MMK",
          visibility: "PRIVATE",
          are_u_owner: true,
          current_owner: user?.id,
@@ -417,8 +454,63 @@ export const ArtworkCreateForm = ({
                         )}
                      />
 
+
+
                      {!form.watch("hide_price") && (
                         <>
+                           {/* Currency */}
+                           <FormField
+                              control={form.control}
+                              name="currency"
+                              render={({ field }) => (
+                                 <FormItem>
+                                    <FormLabel htmlFor={field.name}>
+                                       Currency <RequiredAsterisk />
+                                    </FormLabel>
+                                    <FormControl>
+                                       <Select
+                                          disabled={isLoadingCurrencies}
+                                          onValueChange={(value) =>
+                                             field.onChange(value)
+                                          }
+                                          value={field.value?.toString() ?? ""}
+                                       >
+                                          <SelectTrigger
+                                             ref={field.ref}
+                                             id={field.name}
+                                             className="w-full"
+                                          >
+                                             <SelectValue
+                                                placeholder={
+                                                   isLoadingCurrencies
+                                                      ? "Loading..."
+                                                      : "Select currency"
+                                                }
+                                             />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                             {currencies.length > 0 ? (
+                                                currencies.map((cat) => (
+                                                   <SelectItem
+                                                      key={cat.code}
+                                                      value={cat.code}
+                                                   >
+                                                      {cat.name}
+                                                   </SelectItem>
+                                                ))
+                                             ) : (
+                                                <SelectItem disabled value="no-cat">
+                                                   No currencies found
+                                                </SelectItem>
+                                             )}
+                                          </SelectContent>
+                                       </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                 </FormItem>
+                              )}
+                           />
+
                            {/* Price */}
                            <FormField
                               control={form.control}
@@ -426,7 +518,7 @@ export const ArtworkCreateForm = ({
                               render={({ field }) => (
                                  <FormItem>
                                     <FormLabel>
-                                       Price (USD) <RequiredAsterisk />
+                                       Price <RequiredAsterisk />
                                     </FormLabel>
                                     <FormControl>
                                        <Input
@@ -590,6 +682,64 @@ export const ArtworkCreateForm = ({
                            </FormItem>
                         )}
                      />
+
+                     <FormField
+                        control={form.control}
+                        name="artist"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>Artist</FormLabel>
+                              <FormControl>
+                                 <AsyncMultipleSelector
+                                    maxSelected={1}
+                                    onUserScrollToEnd={() => {
+                                       if (
+                                          artistsInfiniteQuery.hasNextPage &&
+                                          !artistsInfiniteQuery.isFetchingNextPage
+                                       ) {
+                                          artistsInfiniteQuery.fetchNextPage();
+                                       }
+                                       // load next page / fetch more
+                                    }}
+                                    options={artists.map((a) => ({
+                                       label: `${a.first_name} ${a.last_name}`,
+                                       value: String(a.id),
+                                    }))}
+                                    onSearchChange={(value) => {
+                                       setArtistSearch(value);
+                                    }}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    placeholder="Select artists"
+                                 />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     {
+                        (form.watch("artist")?.length === 0 || !form.watch("artist")) && (
+                           <FormField
+                              control={form.control}
+                              name="artist_name"
+                              render={({ field }) => (
+                                 <FormItem>
+                                    <FormLabel>
+                                       Artist Name
+                                    </FormLabel>
+                                    <FormControl>
+                                       <Input
+                                          placeholder="Artist Name"
+                                          {...field}
+                                       />
+                                    </FormControl>
+                                    <FormMessage />
+                                 </FormItem>
+                              )}
+                           />
+                        )
+                     }
 
                      {/* Are you owner? */}
                      <FormField

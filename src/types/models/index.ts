@@ -71,6 +71,13 @@ export interface OrderItem {
    order: Order;
 }
 
+export interface Currency {
+   code: string;
+   name: string;
+   numeric_code: string;
+   symbol: string;
+}
+
 export interface Artwork {
    id: string;
    artist_name: string;
@@ -85,6 +92,7 @@ export interface Artwork {
    original_height: number;
    hide_price: boolean;
    visibility: "PRIVATE" | "PUBLIC";
+   currency: Currency;
    price: string;
    medium: string;
    dimensions: string;

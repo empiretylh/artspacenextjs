@@ -21,8 +21,13 @@ export const updateArtInputSchema = z
       description: z.string().optional(),
       dimensions: z.string().min(3).optional(),
 
+      artist: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
+      artist_name: z.string().optional(),
+
       // Allow zero, enforce business rule in refine
       price: z.number().min(0).optional(),
+
+      currency: z.string().optional(),
 
       year: z.number().min(1900).max(new Date().getFullYear()).optional(),
 
@@ -58,7 +63,22 @@ export const updateArtInputSchema = z
          message: "Current Owner Name is required if you are not the owner",
          path: ["current_owner_name"],
       }
-   );
+   ).superRefine((data, ctx) => {
+      if ((!data.artist && !data.artist_name) || (Array.isArray(data.artist) && data.artist?.length <= 0 && !data.artist_name)) {
+         ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Artist or Artist Name is required",
+            path: ["artist"], // attach the error to this field
+         });
+
+         ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Artist or Artist Name is required",
+            path: ["artist_name"], // attach the error to this field
+         });
+      }
+   })
+
 // Price vs hide_price rule
 // .refine(
 //    (data) =>
@@ -88,6 +108,11 @@ const transformUpdatePayload = (data: UpdateArtInput) => {
    if (data.visibility !== undefined) payload.visibility = data.visibility;
    if (data.genre !== undefined) payload.genre = data.genre;
    if (data.hide_price !== undefined) payload.hide_price = data.hide_price;
+
+   if (data.currency !== undefined) payload.currency = data.currency;
+
+   if (data.artist_name !== undefined && (Array.isArray(data.artist) ? data.artist.length <= 0 : !data.artist)) payload.artist_name = data.artist_name;
+   if (data.artist !== undefined && Array.isArray(data.artist) && data.artist.length > 0 && !data.artist_name) payload.artist = data.artist[0].value;
 
    if (data.hide_price) {
       delete payload.price;

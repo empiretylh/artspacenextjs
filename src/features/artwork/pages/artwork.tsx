@@ -67,6 +67,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                   medium={artwork.medium || "N/A"}
                   category={artwork.category}
                   categoryName={artwork.category_name}
+                  artistName={artwork.artist_name || "N/A"}
                   currentOwner={artwork.current_owner_name ? artwork.current_owner_name : artwork.current_owner_display.first_name + " " + artwork.current_owner_display.last_name}
                />
 
@@ -94,11 +95,15 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                      Description
                   </h2>
                   <p className="text-base text-foreground/80">
-                     {artwork.description}
+                     {artwork.description || "N/A"}
                   </p>
                </section>
 
-               <ArtistProfile artist={artwork.artist_profile} />
+               {
+                  artwork.artist_profile && (
+                     <ArtistProfile artist={artwork.artist_profile} />
+                  )
+               }
             </section>
 
             {/* Purchase Info + Artist */}
