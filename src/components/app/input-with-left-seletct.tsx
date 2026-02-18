@@ -13,6 +13,8 @@ import { Button } from "../ui/button";
 import { paths } from "@/config/paths";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { InputWithLeftSelectSkeleton } from "./input-with-left-select-skeleton";
+import { searchAnalytics } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 const routeMap: Record<string, string> = {
    artists: paths.artists.path,
@@ -32,6 +34,7 @@ function InputWithLeftSelect({
    const searchParams = useSearchParams();
    const router = useRouter();
    const pathname = usePathname();
+   const { source } = useSource();
 
    const onSearchClick = () => {
       const basePath = routeMap[selectedOption];
@@ -53,6 +56,7 @@ function InputWithLeftSelect({
          finalUrl = `${basePath}?search=${params.get('search')}`
       }
 
+      searchAnalytics.search(search, { source });
 
       router.push(finalUrl);
    };

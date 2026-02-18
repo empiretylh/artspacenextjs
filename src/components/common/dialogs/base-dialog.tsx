@@ -15,6 +15,7 @@ interface BaseDialogProps {
    children?: React.ReactNode;
    className?: string;
    headerOff?: boolean;
+   showCloseButton?: boolean;
 }
 
 export function BaseDialog({
@@ -24,18 +25,24 @@ export function BaseDialog({
    onClose,
    children,
    className,
-   headerOff = false,
+   headerOff = true,
+   showCloseButton = true
 }: Readonly<BaseDialogProps>) {
    return (
       <Dialog open={isOpen} onOpenChange={onClose}>
          <DialogContent
+            onCloseAutoFocus={(e) => {
+               e.preventDefault(); // stop Radix default behavior
+            }}
+            title={title}
             className={cn(
                "max-w-[calc(100%-2rem)] xs:max-w-sm sm:max-w-md rounded-lg p-0 overflow-hidden",
                className
             )}
+            showCloseButton={showCloseButton}
          >
-            {!headerOff && (
-               <DialogHeader className="hidden">
+            {headerOff && (
+               <DialogHeader className="sr-ony hidden">
                   <DialogTitle>{title}</DialogTitle>
                   <DialogDescription>{description}</DialogDescription>
                </DialogHeader>

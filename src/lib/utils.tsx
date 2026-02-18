@@ -103,7 +103,8 @@ export const getImage = (src: string | undefined | null) => {
    if (src && src?.startsWith("https")) {
       return src;
    }
-   return `${src ? env.API_URL + src : '/assets/logo.png'}`;
+   return `${src ? "https://" + env.IMAGE_HOSTNAME + src : '/assets/logo.png'
+      }`;
 };
 
 export const getDate = (date: string) => {
@@ -195,12 +196,12 @@ export function disableScroll() {
 
    document.body.style.overflow = "hidden";
    document.body.style.position = "fixed";
-   document.body.style.top = `-${scrollPosition}px`;
+   document.body.style.top = `- ${scrollPosition} px`;
    document.body.style.left = "0";
    document.body.style.width = "100%";
 
    if (scrollBarWidth > 0) {
-      document.body.style.paddingRight = `${scrollBarWidth}px`;
+      document.body.style.paddingRight = `${scrollBarWidth} px`;
    }
 }
 
@@ -268,8 +269,6 @@ export const getUserRouteType = (entityType: string) => {
          return "collectors";
       case "GALLERY":
          return "galleries";
-      case "USER":
-         return "users";
       default:
          return "artists";
    }
@@ -282,3 +281,9 @@ export const getUserPath = (userRouteType: UserRouteType) => {
    }
    return newUserType
 };
+
+export const snakeToNormal = (id: string) =>
+   id
+      .split('_')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ')

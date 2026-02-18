@@ -49,6 +49,8 @@ import ImageDnd from "@/components/common/dnd-image-upload";
 import { useImageUpload } from "@/features/service/artspace/image-upload";
 import { useEffect } from "react";
 import RequiredAsterisk from "@/components/common/required-asterisk";
+import { artworkAnalytics } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 // ✅ Zod schema inferred type
 type FormData = z.infer<typeof createArtInputSchema>;
@@ -71,6 +73,7 @@ export const ArtworkCreateForm = ({
    const styles = stylesResponse?.data ?? [];
 
    const imageUploadMutation = useImageUpload();
+   const { source } = useSource();
 
    const createArtMutation = useCreateArt({
       mutationConfig: {
@@ -82,6 +85,7 @@ export const ArtworkCreateForm = ({
                message: "Artwork created successfully",
             });
             form.reset();
+            artworkAnalytics.create(source);
             onCreateSuccess?.();
          },
       },

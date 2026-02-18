@@ -2,6 +2,8 @@ import { env } from "@/config/env";
 import { UserRouteType } from "@/features/service/artspace/get-users";
 import UsersPageContainer from "@/features/user/components/users-container";
 import UsersListLoading from "@/features/user/components/users-list-loading";
+import { AnalyticsSource } from "@/lib/analytics";
+import { SourceProvider } from "@/lib/analytics-source";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -114,7 +116,7 @@ const UsersRoute = async ({ params }: { params: Promise<{ userType: UserRouteTyp
   return (
     <Suspense fallback={<UsersListLoading withTitle />}>
       <UsersPageContainer userType={userType} />
-    </Suspense>
+    </Suspense >
   );
 };
 

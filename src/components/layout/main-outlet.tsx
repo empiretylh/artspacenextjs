@@ -3,6 +3,9 @@ import { cn } from "@/lib/utils";
 import { useSidebar } from "../ui/sidebar";
 import { Suspense } from "react";
 import LoadingPage from "../page/loading-page";
+import { SourceProvider } from "@/lib/analytics-source";
+import { usePathname } from "next/navigation";
+import { analyticSourceFromPathname } from "@/lib/analytics";
 
 interface MainOutletProps {
    children?: React.ReactNode;
@@ -11,12 +14,12 @@ interface MainOutletProps {
 const MainOutlet = ({ children }: MainOutletProps) => {
    // Logic remains the same, but values come from props instead of hooks
    const { open, isMobile } = useSidebar();
-
    const getClasses = () => {
       if (isMobile) return "max-w-full";
       if (open) return "max-w-[calc(98vw-var(--sidebar-width))]";
       return "max-w-[calc(92.9vw-var(--sidebar-width-icon)+(calc(0.3rem*4))+2px)]";
    };
+
 
    return (
       <div

@@ -18,12 +18,16 @@ import CollectionIcon from "@/components/icons/collection-icon";
 import HeartIcon from "@/components/icons/heart-icon";
 import OverviewIcon from "@/components/icons/overview-icon";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
-import { ClipboardPenLineIcon } from "lucide-react";
+import { ClipboardPenLineIcon, X } from "lucide-react";
 import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
 import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
 import { UserRouteType } from "@/features/service/artspace/get-users";
 import { paths } from "@/config/paths";
 import AppImage from "@/components/common/app-image";
+import { useEffect, useRef, useState } from "react";
+import { BaseDialog } from "@/components/common/dialogs/base-dialog";
+import { userAnalytics } from "@/lib/analytics";
+import { SourceProvider } from "@/lib/analytics-source";
 
 const getIcon = (key: string) => {
    if (key === "artworks") return <ArtworksIcon />;
@@ -56,6 +60,21 @@ const ProfileLayoutView = ({
    const isActive = (href: string) => pathname === href;
    const { user: authUser } = useAuth();
 
+   const [isAvatarOpen, setIsAvatarOpen] = useState(false);
+   const [isCoverOpen, setIsCoverOpen] = useState(false); // ✅ NEW
+   const avatarButtonRef = useRef<HTMLButtonElement>(null);
+   const coverButtonRef = useRef<HTMLButtonElement>(null);
+
+   useEffect(() => {
+      if (user.id) {
+         userAnalytics.view(String(user.id), {
+            isOwnProfile: String(user.id) === String(authUser?.id),
+            source: 'profile_page',
+         })
+      }
+   }, [])
+
+
    if (user.id === authUser?.id && variant !== "profile") {
       return redirect(paths.profile.path);
    }
@@ -80,28 +99,42 @@ const ProfileLayoutView = ({
       ? getImage(user.profile.profile_picture)
       : "/assets/profile-default.png";
 
-   const fullName = `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() || "User";
+   const fullName =
+      `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() || "User";
 
    return (
       <div>
          <ScrollToTop />
 
          <div className="relative w-full aspect-8/3 mb-2">
-            {/* Cover Image (replaces backgroundImage) */}
-            <AppImage
-               src={coverSrc}
-               alt={`${fullName} cover photo`}
-               width={800}
-               height={300}
-               preload
-               sizes="100vw"
-               className="object-cover rounded-md"
-            />
+            {/* ✅ Cover click-to-open */}
+            <button
+               ref={coverButtonRef}
+               tabIndex={0}
+               aria-label="Open cover photo"
+               onClick={() => setIsCoverOpen(true)}
+               className="relative w-full h-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
+            >
+               <AppImage
+                  src={coverSrc}
+                  alt={`${fullName} cover photo`}
+                  width={800}
+                  height={300}
+                  preload
+                  sizes="100vw"
+                  className="object-cover rounded-md"
+               />
+            </button>
 
-            {/* Overlay content */}
             <div className="absolute left-1/2 bottom-0 translate-x-[-50%] translate-y-[70%] text-center w-full px-4">
-               {/* Avatar */}
-               <div className="mx-auto relative aspect-square w-[120px] sm:w-[150px] rounded-full border border-white overflow-hidden">
+               {/* ✅ Avatar click-to-open */}
+               <button
+                  ref={avatarButtonRef}
+                  tabIndex={0}
+                  aria-label="Open profile picture"
+                  onClick={() => setIsAvatarOpen(true)}
+                  className="mx-auto relative aspect-square w-[120px] sm:w-[150px] rounded-full border border-white overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+               >
                   <AppImage
                      src={avatarSrc}
                      alt={`${fullName} profile picture`}
@@ -109,10 +142,8 @@ const ProfileLayoutView = ({
                      height={150}
                      sizes="150px"
                      className="object-cover"
-                  // If you use remote images and want fallback behavior:
-                  // onError={() => ...}
                   />
-               </div>
+               </button>
 
                <div className="mt-3 space-y-1">
                   <div className="flex items-center justify-center gap-2">
@@ -121,15 +152,19 @@ const ProfileLayoutView = ({
                   </div>
 
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
-
                   <p className="text-sm max-w-md mx-auto">{user?.profile.bio || "No bio"}</p>
 
                   <div className="mt-3 flex justify-center items-center gap-2">
-                     {/* Avoid window access during render if possible */}
                      <ShareButton
+                        content_type={"user"}
+                        user_type={user.user_type}
+                        item_id={String(user?.id)}
+                        item_name={String(fullName)}
                         url={
                            typeof window !== "undefined"
-                              ? `${window.location.origin}${paths[userType].detail.getHref(String(user?.id))}`
+                              ? `${window.location.origin}${paths[userType].detail.getHref(
+                                 String(user?.id)
+                              )}`
                               : undefined
                         }
                      />
@@ -161,7 +196,7 @@ const ProfileLayoutView = ({
 
          <div className="container pt-[180px] sm:pt-[200px]">
             <ScrollArea className="w-full">
-               <div className="flex justify-center">
+               <div className="flex justify-center my-2">
                   <div className="inline-flex gap-4 text-sm md:text-base border-b whitespace-nowrap">
                      {navLinks.map((link) => (
                         <Link
@@ -186,6 +221,96 @@ const ProfileLayoutView = ({
          <div className="my-6">
             <ProfileUserProvider initialValue={user}>{children}</ProfileUserProvider>
          </div>
+
+         {/* ✅ Avatar Dialog */}
+         <BaseDialog
+            isOpen={isAvatarOpen}
+            onClose={() => {
+               setIsAvatarOpen(false)
+               requestAnimationFrame(() => {
+                  avatarButtonRef.current?.focus();
+               })
+            }}
+            headerOff
+            title={fullName + " profile picture"}
+            description={fullName + " profile picture"}
+            showCloseButton={false}
+            className="bg-transparent border-none shadow-none max-w-none md:max-w-xl"
+         >
+            <div className="relative flex items-center justify-center bg-black">
+               <AppImage
+                  src={avatarSrc}
+                  alt={`${fullName} profile picture large`}
+                  width={1200}
+                  height={1200}
+                  sizes="100vw"
+                  className="object-contain"
+                  preload
+               />
+
+               <Button
+                  variant="clean"
+                  size={"icon"}
+                  onClick={(e) => {
+                     e.preventDefault();
+                     setIsAvatarOpen(false)
+                     requestAnimationFrame(() => {
+                        avatarButtonRef.current?.focus();
+                     })
+                  }}
+                  className="absolute text-white top-2 right-2"
+                  aria-label="Close"
+               >
+                  ✕
+               </Button>
+            </div>
+         </BaseDialog >
+
+         {/* ✅ Cover Dialog */}
+         <BaseDialog
+            isOpen={isCoverOpen}
+            onClose={() => {
+               setIsCoverOpen(false)
+               requestAnimationFrame(() => {
+                  coverButtonRef.current?.focus();
+               })
+            }}
+            headerOff
+            title={fullName + " cover photo"}
+            description={fullName + " cover photo"}
+            showCloseButton={false}
+            className="bg-transparent border-none shadow-none max-w-none md:max-w-5xl"
+         >
+            <div className="relative flex items-center justify-center bg-black">
+               {/* Give it a nice viewport height like FB */}
+               <div className="relative w-full h-[70vh]">
+                  <AppImage
+                     src={coverSrc}
+                     alt={`${fullName} cover photo large`}
+                     width={2000}
+                     height={750}
+                     sizes="100vw"
+                     className="object-contain"
+                     preload
+                  />
+               </div>
+
+               <Button
+                  variant="clean"
+                  size={"icon"}
+                  onClick={(e) => {
+                     setIsCoverOpen(false)
+                     requestAnimationFrame(() => {
+                        coverButtonRef.current?.focus();
+                     })
+                  }}
+                  className="absolute text-white top-2 right-2"
+                  aria-label="Close"
+               >
+                  ✕
+               </Button>
+            </div>
+         </BaseDialog>
       </div>
    );
 };

@@ -11,9 +11,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { paths } from "@/config/paths";
 import { useGetEvent } from "@/features/service/artspace/get-event";
 import { useGetEventInterestStatus } from "@/features/service/artspace/get-event-intereset-status";
+import { eventAnalytics } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 import { cn, getDate, getImage } from "@/lib/utils";
 import { format } from "date-fns";
 import { notFound, useParams } from "next/navigation";
+import { useEffect } from "react";
 
 const typeColorMap: Record<string, string> = {
    Solo: "bg-indigo-100 text-indigo-700",
@@ -34,6 +37,14 @@ export default function EventDetailPage() {
 
    const event = eventQuery.data;
 
+   const { source } = useSource()
+
+   useEffect(() => {
+      if (event) {
+         eventAnalytics.view(event.id, event.event_type.toLowerCase() as Lowercase<typeof event.event_type>, source);
+      }
+   }, [event]);
+
    if (!event) {
       return (
          notFound()
@@ -51,7 +62,7 @@ export default function EventDetailPage() {
    return (
       <div className="pb-24 sm:pb-16">
          {/* Hero */}
-         <div className="relative h-[400px] w-full sm:aspect-8/3">
+         <div className="relative h-[400px] w-screen md:w-full ml-[50%] translate-x-[-50%] md:aspect-8/3">
             <AppImage
                src={getImage(event.cover_photo)}
                alt={event.title}
@@ -78,7 +89,7 @@ export default function EventDetailPage() {
                            <h1 className="text-2xl sm:text-3xl font-semibold text-white leading-tight">
                               {event.title}
                            </h1>
-                           <ShareButton className="text-white" />
+                           <ShareButton content_type="event" item_id={String(event.id)} item_name={event.title} className="text-white" />
                         </div>
 
                         <div className="flex items-center gap-3 mb-2">

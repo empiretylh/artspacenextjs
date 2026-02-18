@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import Footer from "@/components/layout/footer";
 import MainOutlet from "@/components/layout/main-outlet";
+import ScrollContainer from "@/components/layout/scroll-contianer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { queryKeys } from "@/config/query-keys";
@@ -31,17 +32,9 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
       >
         <AppSidebar variant="inset" />
         <SidebarInset className="mb-0! h-screen overflow-hidden">
-          <div id="scroll-container" className="h-screen flex justify-between flex-col overflow-y-auto" style={{
-            scrollbarGutter: "stable"
-          }}>
-            <div>
-              <SiteHeader />
-              <MainOutlet>
-                {children}
-              </MainOutlet>
-            </div>
-            <Footer />
-          </div>
+          <ScrollContainer>
+            {children}
+          </ScrollContainer>
         </SidebarInset>
       </SidebarProvider>
       {/* <HydrationBoundary state={dehydrate(queryClient)}> */}

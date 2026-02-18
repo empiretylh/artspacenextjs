@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "./store";
 import { env } from "@/config/env";
+import { accessAnalytics, UserType } from "@/lib/analytics";
 
 export function AuthInitializer() {
   const initialized = useRef(false);
@@ -13,6 +14,10 @@ export function AuthInitializer() {
       const res = await fetch('/api/auth/session');
       const data = await res.json();
       useAuth.getState().init({ user: data.user, accessToken: data.accessToken });
+
+      if (data.user) {
+        accessAnalytics.setUser(String(data.user.id), data.user.user_type.toLocaleLowerCase() as UserType);
+      }
     }
 
     if (!initialized.current) {

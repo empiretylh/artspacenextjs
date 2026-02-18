@@ -6,12 +6,12 @@ import { paths } from "@/config/paths";
 import { queryKeys } from "@/config/query-keys";
 import { EventWideCard } from "@/features/events/components/event-wide-card";
 import { getEvents } from "@/features/service/artspace/get-events";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { FeaturedCollectorsSectionSkeleton } from "./featured-collectors-section-skeleton";
 
 export const FeaturedEventsSection = () => {
-   const eventsQuery = useSuspenseQuery({
+   const eventsQuery = useQuery({
       queryKey: queryKeys.event.list({ limit: 3 }),
       queryFn: () => getEvents({ limit: 3 }),
    })

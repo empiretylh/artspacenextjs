@@ -25,6 +25,7 @@ import {
    DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { SidebarTrigger } from "../ui/sidebar";
+import { SourceProvider } from "@/lib/analytics-source";
 
 export function SiteHeader() {
    const [isArtworkCreateModalOpen, setIsArtworkCreateModalOpen] =
@@ -37,7 +38,7 @@ export function SiteHeader() {
    const isLoggedIn = !!user;
 
    return (
-      <>
+      <SourceProvider value={{ source: "header" }}>
          <header className="bg-background sticky top-0 py-4 z-20 flex h-[var(--header-height)] items-center px-2 lg:px-4">
             {/* Mobile Search Mode */}
             {mobileSearchOpen ? (
@@ -215,6 +216,6 @@ export function SiteHeader() {
             isArtworkCreateModalOpen={isArtworkCreateModalOpen}
             setIsArtworkCreateModalOpen={setIsArtworkCreateModalOpen}
          />
-      </>
+      </SourceProvider>
    );
 }

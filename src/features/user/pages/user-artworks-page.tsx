@@ -17,6 +17,9 @@ import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-mod
 import { useGetArtworksByUserIdInfinite } from "@/features/service/artspace/get-artworks-by-user-id";
 import NotFound from "@/components/layout/not-found";
 import { useProfileUser } from "@/components/providers/profile-user-provider";
+import { SourceProvider, useSource } from "@/lib/analytics-source";
+import { ecommerceAnalytics, itemsFromArtworks } from "@/lib/analytics";
+import { snakeToNormal } from "@/lib/utils";
 
 type ControlledArtworkCardProps = {
    artwork: Artwork;
@@ -33,7 +36,7 @@ const ControlledArtworkCard: React.FC<ControlledArtworkCardProps> = ({
             className="inline-block w-full h-auto"
             artwork={artwork}
          />
-      </div>
+      </div >
    );
 };
 
@@ -46,6 +49,7 @@ const ArtworksPageContainer = () => {
    const pathname = usePathname();
    const { replace } = useRouter();
    const { data: user } = useProfileUser();
+   const { source } = useSource();
    // State
    const [oldData, setOldData] = useState<ListApiResponse<Artwork>[]
    >([]);
@@ -83,7 +87,14 @@ const ArtworksPageContainer = () => {
       });
 
    useEffect(() => {
-      if (!isLoading && data) setOldData(data.pages);
+      if (!isLoading && data) {
+         setOldData(data.pages);
+         const newArtworks = data.pages.at(-1)?.results ?? [];
+         if (newArtworks.length > 0) {
+            const items = itemsFromArtworks(newArtworks);
+            ecommerceAnalytics.viewItemList("MMK", source, snakeToNormal(source), items, source);
+         }
+      }
    }, [data, isLoading]);
 
    // const pagesToRender = isLoading ? oldData : data?.pages || [];

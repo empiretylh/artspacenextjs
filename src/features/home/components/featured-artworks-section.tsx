@@ -16,6 +16,7 @@ export const FeaturedArtworksSection = () => {
    const artworksQuery = useQuery({
       queryKey: queryKeys.artwork.list({ limit: 10 }),
       queryFn: () => getArtworks({ limit: 10 }),
+      refetchOnMount: "always",
    })
 
    const featuredArtworks = artworksQuery.data?.results ?? [];
@@ -106,7 +107,7 @@ export const FeaturedArtworksSection = () => {
             </div>
          </Carousel> */}
 
-         <div className="overflow-hidden">
+         <div className="ml-[50%] md:ml-auto translate-x-[-50%] md:translate-x-0 w-screen md:w-full overflow-hidden pl-4">
             <Swiper
                modules={[Navigation]}
                slidesPerView="auto"

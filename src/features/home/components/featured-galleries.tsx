@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { FeaturedGalleriesSectionSkeleton } from "./featured-galleries-section-skeleton";
 import { useGetGalleries } from "@/features/service/artspace/get-galleries";
 import UserSmallCard from "@/components/app/user-small-card";
+import { SourceProvider } from "@/lib/analytics-source";
 
 export const FeaturedGalleriesSection = () => {
    const galleriesQuery = useGetGalleries();

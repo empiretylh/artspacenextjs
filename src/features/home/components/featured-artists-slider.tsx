@@ -5,30 +5,21 @@ import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
 import { paths } from "@/config/paths";
 import { queryKeys } from "@/config/query-keys";
-import { getArtists, getArtistsOg } from "@/features/service/artspace/get-artists";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { getArtists } from "@/features/service/artspace/get-artists";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtistsSectionSkeleton } from "./featured-artists-section-skeleton";
-import { useEffect, useState } from "react";
 
 export const FeaturedArtistsSlider = () => {
    const artistsQuery = useQuery({
       queryKey: queryKeys.artist.list({ limit: 10 }),
       queryFn: () => getArtists({ limit: 10 }),
+      refetchOnMount: "always",
    });
 
    const featuredArtists = artistsQuery.data?.results ?? [];
-
-   const [mounted, setMounted] = useState(false);
-
-   useEffect(() => {
-      setMounted(true);
-   }, []);
-
-   if (!mounted) return <FeaturedArtistsSectionSkeleton />;
 
    if (artistsQuery.isLoading) {
       return <FeaturedArtistsSectionSkeleton />;
@@ -115,7 +106,6 @@ export const FeaturedArtistsSlider = () => {
                <CarouselNext className="relative static translate-y-0" />
             </div>
          </Carousel> */}
-
          <div className="overflow-hidden">
             <Swiper
                modules={[Navigation]}

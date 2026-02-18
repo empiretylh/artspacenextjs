@@ -25,6 +25,9 @@ const ArtworkDetailMore = ({ artwork }: { artwork: Artwork }) => {
                variant="outline"
             />
             <ShareButton
+               content_type={"artwork"}
+               item_id={artwork.id}
+               item_name={artwork.title}
                variant="outline"
                size="sm"
                className="w-full justify-start rounded-t-none border-0"

@@ -34,7 +34,7 @@ export default function BannerSlider({ banners }: Props) {
   if (!activeBanners.length) return null
 
   return (
-    <section className="relative w-full">
+    <section className="rounded-lg relative shadow-xl md:shadow-none aspect-2/1 md:aspect-8/3">
       <Swiper
         modules={[Autoplay, Pagination]}
         autoplay={{ delay: 15000, disableOnInteraction: false }}
@@ -44,12 +44,12 @@ export default function BannerSlider({ banners }: Props) {
           "--swiper-pagination-bullet-inactive-color": "#999999",
         } as SwiperStyle}
         loop
-        className="rounded-lg shadow-xl md:shadow-none aspect-2/1 md:aspect-8/3"
+        className="w-full h-full"
       >
         {activeBanners.map((banner) => (
           <SwiperSlide key={banner.id}>
             <Link href={banner.link} target="_blank">
-              <div className="relative h-full w-full">
+              <div className="relative h-full w-full aspect-2/1 md:aspect-8/3">
                 {/* Desktop Image */}
                 <div className="hidden md:block h-full w-full">
                   <AppImage
@@ -57,19 +57,19 @@ export default function BannerSlider({ banners }: Props) {
                     alt={banner.title}
                     fill
                     preload
-                    containerClassName="h-full w-full"
+                    sizes="100vw"
                     className="object-cover"
                   />
                 </div>
 
                 {/* Mobile Image */}
-                <div className="block md:hidden">
+                <div className="block md:hidden h-full w-full">
                   <AppImage
                     src={getImage(banner.image_mobile) || getImage(banner.image)}
                     alt={banner.title}
                     fill
                     preload
-                    containerClassName="aspect-8/3"
+                    sizes="100vw"
                     className="object-cover"
                   />
                 </div>

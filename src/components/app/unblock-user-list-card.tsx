@@ -37,7 +37,7 @@ const UnblockUserListCard = ({
                }
                width={40}
                height={40}
-               containerClassName="shrink-0"
+               containerClassName="shrink-0 w-10 h-10 "
                className="w-10 h-10 shrink-0 aspect-square overflow-hidden rounded-full"
                alt={user.first_name + " " + user.last_name}
             />

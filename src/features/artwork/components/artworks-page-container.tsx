@@ -10,11 +10,15 @@ import type {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from "react";
 import ArtworksPageView from "./artworks-page-view";
+import { ecommerceAnalytics, itemsFromArtworks } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
+import { snakeToNormal } from "@/lib/utils";
 
 const ArtworksPageContainer = () => {
    const searchParams = useSearchParams();
    const pathname = usePathname();
    const { replace } = useRouter();
+   const { source } = useSource();
 
    // State
    const [oldData, setOldData] = useState<ListApiResponse<Artwork>[]>([]);
@@ -54,7 +58,15 @@ const ArtworksPageContainer = () => {
    });
 
    useEffect(() => {
-      if (!isLoading && data) setOldData(data.pages);
+
+      if (!isLoading && data) {
+         setOldData(data.pages);
+         const newArtworks = data.pages.at(-1)?.results ?? [];
+         if (newArtworks.length > 0) {
+            const items = itemsFromArtworks(newArtworks);
+            ecommerceAnalytics.viewItemList("MMK", source, snakeToNormal(source), items, source);
+         }
+      }
    }, [data, isLoading]);
 
    const pagesToRender = isLoading ? oldData : data?.pages || [];

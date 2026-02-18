@@ -11,13 +11,23 @@ import { ProductInfoCard } from "../components/product-info-card";
 import RelatedArtworkListContainer from "../components/related-artwork-list-container";
 import ArtworkDetailPageSkeleton from "./artwork-skeleton";
 import { useAuth } from "@/features/auth/store";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import LoadingPage from "@/components/page/loading-page";
 import { notFound } from "next/navigation";
+import { artworkAnalytics, ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
    const artworkQuery = useGetArtwork({ artworkId: id });
    const artwork = artworkQuery.data;
+   const { source } = useSource()
+
+   useEffect(() => {
+      if (artwork) {
+         const item = itemFromArtwork(artwork);
+         ecommerceAnalytics.viewItem('MMK', Number(artwork.price), [item], source)
+      }
+   }, [artwork]);
 
    if (artworkQuery.isLoading) {
       return <ArtworkDetailPageSkeleton />;
