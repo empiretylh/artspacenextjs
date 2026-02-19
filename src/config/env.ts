@@ -16,6 +16,18 @@ const createEnv = () => {
       NODE_ENV: z.enum(['development', 'production']).optional().default('development'),
       IMAGE_HOSTNAME: z.string().optional().default('artspaceapi-stagging.illuminati.com.mm'),
       TZ: z.string().optional().default('Asia/Yangon'),
+      // firebase
+      FIREBASE_ENABLE: z.string().optional().default('false').transform((s) => s === 'true'),
+      FIREBASE_API_KEY: z.string().optional(),
+      FIREBASE_AUTH_DOMAIN: z.string().optional(),
+      FIREBASE_PROJECT_ID: z.string().optional(),
+      FIREBASE_STORAGE_BUCKET: z.string().optional(),
+      FIREBASE_MESSAGING_SENDER_ID: z.string().optional(),
+      FIREBASE_APP_ID: z.string().optional(),
+      FIREBASE_MEASUREMENT_ID: z.string().optional(),
+      // firebase admin
+      FIREBASE_PRIVATE_KEY: z.string().optional().transform((v) => v?.replace(/\\n/g, '\n')),
+      FIREBASE_CLIENT_EMAIL: z.string().optional(),
    }).superRefine((env, ctx) => {
       if (env.ENABLE_ANALYTICS && !env.GA_ID) {
          ctx.addIssue({
@@ -36,6 +48,18 @@ const createEnv = () => {
       NODE_ENV: process.env.NODE_ENV,
       IMAGE_HOSTNAME: process.env.IMAGE_HOSTNAME,
       TZ: process.env.NEXT_PUBLIC_TZ,
+      // firebase
+      FIREBASE_ENABLE: process.env.NEXT_PUBLIC_FIREBASE_ENABLE,
+      FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+      FIREBASE_AUTH_DOMAIN: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+      FIREBASE_PROJECT_ID: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      FIREBASE_STORAGE_BUCKET: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+      FIREBASE_MESSAGING_SENDER_ID: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+      FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+      FIREBASE_MEASUREMENT_ID: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+      // firebase admin
+      FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL,
+      FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,
    };
 
    const parsedEnv = EnvSchema.safeParse(envVars);
