@@ -326,68 +326,68 @@ export const ecommerceAnalytics = {
     track('select_item', { item_list_id, item_list_name, items, source })
   },
 
-  addToCart(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'artwork_detail') {
-    track('add_to_cart', { currency, value, items, source })
-  },
+  // addToCart(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'artwork_detail') {
+  //   track('add_to_cart', { currency, value, items, source })
+  // },
 
-  removeFromCart(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'cart') {
-    track('remove_from_cart', { currency, value, items, source })
-  },
+  // removeFromCart(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'cart') {
+  //   track('remove_from_cart', { currency, value, items, source })
+  // },
 
-  viewCart(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'cart') {
-    track('view_cart', { currency, value, items, source })
-  },
+  // viewCart(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'cart') {
+  //   track('view_cart', { currency, value, items, source })
+  // },
 
-  beginCheckout(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'checkout') {
-    track('begin_checkout', { currency, value, items, source })
-  },
+  // beginCheckout(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'checkout') {
+  //   track('begin_checkout', { currency, value, items, source })
+  // },
 
-  purchase(params: {
-    transaction_id: string
-    currency: string
-    value: number
-    tax?: number
-    shipping?: number
-    items: GAItem[]
-    source?: AnalyticsSource
-  }) {
-    track('purchase', { ...params, source: params.source ?? 'checkout' })
-  },
+  // purchase(params: {
+  //   transaction_id: string
+  //   currency: string
+  //   value: number
+  //   tax?: number
+  //   shipping?: number
+  //   items: GAItem[]
+  //   source?: AnalyticsSource
+  // }) {
+  //   track('purchase', { ...params, source: params.source ?? 'checkout' })
+  // },
 }
 
 /* ===========================
    📝 POSTS / SOCIAL FEED
 =========================== */
 
-export const contentAnalytics = {
-  createPost(contentType: 'text' | 'image' | 'video', source: AnalyticsSource = 'home_page') {
-    track('create_post', { content_type: contentType, source })
-  },
+// export const contentAnalytics = {
+//   createPost(contentType: 'text' | 'image' | 'video', source: AnalyticsSource = 'home_page') {
+//     track('create_post', { content_type: contentType, source })
+//   },
 
-  viewPost(postId: string, contentType: 'text' | 'image' | 'video', source: AnalyticsSource = 'home_page') {
-    track('view_post', {
-      post_id: postId,
-      content_type: contentType,
-      source,
-    })
-  },
+//   viewPost(postId: string, contentType: 'text' | 'image' | 'video', source: AnalyticsSource = 'home_page') {
+//     track('view_post', {
+//       post_id: postId,
+//       content_type: contentType,
+//       source,
+//     })
+//   },
 
-  likePost(postId: string, source: AnalyticsSource = 'home_page') {
-    track('like_post', { post_id: postId, source })
-  },
+//   likePost(postId: string, source: AnalyticsSource = 'home_page') {
+//     track('like_post', { post_id: postId, source })
+//   },
 
-  unlikePost(postId: string, source: AnalyticsSource = 'home_page') {
-    track('unlike_post', { post_id: postId, source })
-  },
+//   unlikePost(postId: string, source: AnalyticsSource = 'home_page') {
+//     track('unlike_post', { post_id: postId, source })
+//   },
 
-  commentPost(postId: string, source: AnalyticsSource = 'home_page') {
-    track('comment_post', { post_id: postId, source })
-  },
+//   commentPost(postId: string, source: AnalyticsSource = 'home_page') {
+//     track('comment_post', { post_id: postId, source })
+//   },
 
-  sharePost(postId: string, source: AnalyticsSource = 'home_page') {
-    track('share_post', { post_id: postId, source })
-  },
-}
+//   sharePost(postId: string, source: AnalyticsSource = 'home_page') {
+//     track('share_post', { post_id: postId, source })
+//   },
+// }
 
 /* ===========================
    📅 EVENTS / ACTIVITIES
@@ -427,19 +427,19 @@ export const eventAnalytics = {
    ❌ ERRORS & UX (HIGH VALUE)
 =========================== */
 
-export const errorAnalytics = {
-  apiError(errorCode: string, context: string, source: AnalyticsSource = 'unknown') {
-    track('api_error', { error_code: errorCode, context, source })
-  },
+// export const errorAnalytics = {
+//   apiError(errorCode: string, context: string, source: AnalyticsSource = 'unknown') {
+//     track('api_error', { error_code: errorCode, context, source })
+//   },
 
-  formValidationError(form: string, field?: string, source: AnalyticsSource = 'unknown') {
-    track('form_validation_error', { form, field, source })
-  },
+//   formValidationError(form: string, field?: string, source: AnalyticsSource = 'unknown') {
+//     track('form_validation_error', { form, field, source })
+//   },
 
-  paymentFailed(errorCode: string, source: AnalyticsSource = 'checkout') {
-    track('payment_failed', { error_code: errorCode, context: 'checkout', source })
-  },
-}
+//   paymentFailed(errorCode: string, source: AnalyticsSource = 'checkout') {
+//     track('payment_failed', { error_code: errorCode, context: 'checkout', source })
+//   },
+// }
 
 export const searchAnalytics = {
   search(term: string, opts?: { data?: any; source?: AnalyticsSource }) {

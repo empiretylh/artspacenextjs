@@ -65,6 +65,21 @@ These are validated in `src/config/env.ts`.
 ## Analytics
 Google Analytics is wired via `@next/third-parties` in `src/app/layout.tsx`. Set `NEXT_PUBLIC_ENABLE_ANALYTICS=true` and provide `NEXT_PUBLIC_GA_ID` to enable tracking. Enhanced Measurement handles page views automatically.
 
+### Event Tracking Usage
+
+The application uses a centralized analytics utility (`src/lib/analytics.ts`) to track specific user interactions and product metrics via Google Analytics.
+
+**How to use:**
+Import the relevant analytics module from `src/lib/analytics.ts` and call its methods. 
+```typescript
+import { authAnalytics } from '@/lib/analytics'
+
+// Track user login
+authAnalytics.login({ method: 'email', source: 'sign_in_page' })
+```
+
+👉 **[See the Full Analytics Event Reference](./docs/analytics_reference.md) for a complete list of events, payload schemas, and data types sent to the Dashboard/Data teams.**
+
 ## Deployment
 1. Set all required environment variables in your hosting platform.
 2. Run `npm run build`.
