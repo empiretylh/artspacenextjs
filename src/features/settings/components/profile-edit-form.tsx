@@ -4,14 +4,8 @@ import { z } from "zod";
 
 import LoadingPage from "@/components/page/loading-page";
 import { Button } from "@/components/ui/button";
-import {
-   Card,
-   CardContent,
-   CardDescription,
-   CardFooter,
-   CardHeader,
-   CardTitle,
-} from "@/components/ui/card";
+
+
 import {
    Form,
    FormControl,
@@ -72,7 +66,7 @@ export default function ProfileEditForm({
                title: "Success",
                message: "Profile updated successfully",
             });
-            userAnalytics.edit(String(profile?.id), 'settings');
+            userAnalytics.edit(String(profile?.id), 'settings_page');
             onUpdateSuccess();
             form.reset();
          },

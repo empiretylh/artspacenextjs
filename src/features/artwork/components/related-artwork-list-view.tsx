@@ -1,21 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-   Select,
-   SelectContent,
-   SelectItem,
-   SelectTrigger,
-   SelectValue,
-} from "@/components/ui/select";
+
+
 import { cn } from "@/lib/utils";
 import MasonryItem from "../../../components/app/masonry-item";
-import { FilterRow } from "../components/filter-row";
-import { FilterSidebar } from "../components/filter-sidebar";
-import { FilterIcon, XIcon } from "lucide-react";
-import type { Artwork, ColumnFiltersState, SortingState } from "@/types";
-import { Skeleton } from "@/components/ui/skeleton";
+import type { Artwork } from "@/types";
 import ArtworkCard from "@/components/app/artwork-card";
 import { useInView } from "react-intersection-observer";
 

@@ -1,8 +1,7 @@
 import Link from "@/components/common/link";
-import { getImage, getUserIcon, getUserLink } from "@/lib/utils";
+import { getImage, getUserLink } from "@/lib/utils";
 import type { User } from "@/types";
 import { useAuth } from "@/features/auth/store";
-import Image from "../common/image";
 import AppImage from "../common/app-image";
 
 export default function UserSmallCard({ user }: { user: User }) {

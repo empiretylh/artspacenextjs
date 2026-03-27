@@ -10,7 +10,7 @@ import { useGetArtists } from "@/features/service/artspace/get-artists";
 export const FeaturedArtistsSection = () => {
    const artistsQuery = useGetArtists();
 
-   const featuredArtists = artistsQuery.data?.data?.results ?? [];
+   const featuredArtists = artistsQuery.data?.results ?? [];
 
    if (artistsQuery.isLoading) {
       return <FeaturedArtistsSectionSkeleton />;

@@ -9,7 +9,7 @@ import "react-image-crop/dist/ReactCrop.css";
 
 import AppImage from "@/components/common/app-image";
 import LoadingPage from "@/components/page/loading-page";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getImage } from "@/lib/utils";
 import { Check, Pencil, User, UserCircle2, X } from "lucide-react";
@@ -23,6 +23,7 @@ export const ProfileMedia: React.FC = () => {
    const getProfile = useGetProfile();
    const changeProfilePictureMutation = useChangeProfilePicture();
    const changeProfileCoverMutation = useChangeProfileCover();
+   const [isSaving, setIsSaving] = useState(false);
 
    const profileInput = useRef<HTMLInputElement>(null);
    const bannerInput = useRef<HTMLInputElement>(null);
@@ -84,7 +85,7 @@ export const ProfileMedia: React.FC = () => {
       image: HTMLImageElement,
       crop: PixelCrop,
       type: string = "image/jpeg",
-      quality = 0.95
+      quality = 0.80
    ): Promise<Blob> {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
@@ -122,32 +123,120 @@ export const ProfileMedia: React.FC = () => {
       });
    }
 
+   async function cropToBlobMaxKB(
+      image: HTMLImageElement,
+      crop: PixelCrop,
+      {
+         maxKB = 500,
+         type = "image/jpeg",
+         startQuality = 0.95,
+         minQuality = 0.4,
+         maxOutputPx = 1600, // IMPORTANT: set 512 for avatar
+      } = {}
+   ) {
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+
+      const srcW = Math.round(crop.width * scaleX);
+      const srcH = Math.round(crop.height * scaleY);
+
+      // downscale output based on longest side
+      let outW = srcW;
+      let outH = srcH;
+      const longest = Math.max(outW, outH);
+      if (longest > maxOutputPx) {
+         const r = maxOutputPx / longest;
+         outW = Math.round(outW * r);
+         outH = Math.round(outH * r);
+      }
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("No 2D context");
+
+      const draw = (w: number, h: number) => {
+         canvas.width = w;
+         canvas.height = h;
+         ctx.clearRect(0, 0, w, h);
+         ctx.imageSmoothingEnabled = true;
+         ctx.imageSmoothingQuality = "high";
+         ctx.drawImage(
+            image,
+            Math.round(crop.x * scaleX),
+            Math.round(crop.y * scaleY),
+            srcW,
+            srcH,
+            0,
+            0,
+            w,
+            h
+         );
+      };
+
+      const toBlob = (q: number) =>
+         new Promise<Blob>((resolve, reject) => {
+            canvas.toBlob(
+               (b) => (b ? resolve(b) : reject(new Error("toBlob returned null"))),
+               type,
+               q
+            );
+         });
+
+      const targetBytes = maxKB * 1024;
+
+      // loop: try quality first, then shrink dimensions if needed
+      let w = outW;
+      let h = outH;
+
+      while (true) {
+         draw(w, h);
+
+         let q = startQuality;
+         let best: Blob | null = null;
+
+         while (q >= minQuality) {
+            const b = await toBlob(q);
+            best = b;
+            if (b.size <= targetBytes) return b;
+            q -= 0.07;
+         }
+
+         // still too big at minQuality => shrink dimensions
+         if (Math.max(w, h) <= 256) return best!; // can't shrink forever
+         w = Math.round(w * 0.85);
+         h = Math.round(h * 0.85);
+      }
+   }
+
    const handleSave = async () => {
       if (!completedCrop || !imgRef.current || !cropType) return;
 
-      const blob = await getHighQualityCroppedBlob(
-         imgRef.current,
-         completedCrop,
-         "image/jpeg",
-         0.95
-      );
+      try {
+         setIsSaving(true);
 
-      const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+         const blob = await cropToBlobMaxKB(imgRef.current, completedCrop, {
+            maxKB: 500,
+            type: "image/jpeg",
+            maxOutputPx: cropType === "avatar" ? 512 : 1600,
+         });
 
-      if (cropType === "avatar") {
-         changeProfilePictureMutation.mutate({
-            data: { profile_picture: file },
-         });
-      } else {
-         changeProfileCoverMutation.mutate({
-            data: { cover_photo: file },
-         });
+         const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+
+         if (cropType === "avatar") {
+            changeProfilePictureMutation.mutate({
+               data: { profile_picture: file },
+            });
+         } else {
+            changeProfileCoverMutation.mutate({
+               data: { cover_photo: file },
+            });
+         }
+
+         cleanup();
+      } finally {
+         setIsSaving(false);
       }
-
-      cleanup();
    };
-
-
 
    const getCroppedImage = async () => {
       if (!completedCrop || !imgRef.current) return;
@@ -241,7 +330,20 @@ export const ProfileMedia: React.FC = () => {
                      <Button variant="outline" onClick={cleanup}>
                         Cancel
                      </Button>
-                     <Button onClick={getCroppedImage} disabled={!completedCrop}>
+                     <Button
+                        onClick={handleSave}
+                        disabled={
+                           !completedCrop ||
+                           isSaving ||
+                           changeProfilePictureMutation.isPending ||
+                           changeProfileCoverMutation.isPending
+                        }
+                        loading={
+                           isSaving ||
+                           changeProfilePictureMutation.isPending ||
+                           changeProfileCoverMutation.isPending
+                        }
+                     >
                         <Check className="w-4 h-4 mr-2" />
                         Save
                      </Button>
@@ -280,6 +382,7 @@ export const ProfileMedia: React.FC = () => {
                <Button
                   size="icon"
                   className="absolute -bottom-1 -right-1 rounded-full"
+                  loading={changeProfilePictureMutation.isPending}
                   onClick={() => profileInput.current?.click()}
                >
                   <Pencil className="w-4 h-4" />
@@ -318,6 +421,7 @@ export const ProfileMedia: React.FC = () => {
             <Button
                size="icon"
                className="absolute bottom-4 right-4 rounded-full"
+               loading={changeProfileCoverMutation.isPending}
                onClick={() => bannerInput.current?.click()}
             >
                <Pencil className="w-4 h-4" />

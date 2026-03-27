@@ -15,12 +15,12 @@ const RegisterPage = () => {
             <AppImage
                title="logo"
                loading="eager"
-               width={80}
-               height={80}
+               width={160}
+               height={160}
                src={"/assets/logo.png"}
                alt="Logo"
                preload
-               className="mx-auto w-20 h-20"
+               className="mx-auto w-40 h-40 mb-4"
             />
          </Link>
          <div className="w-full max-w-sm">

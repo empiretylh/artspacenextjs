@@ -14,7 +14,7 @@ export function UnauthorisedError() {
                this resource.
             </p>
             <div className="mt-6 flex gap-4">
-               <Button variant="outline" onClick={() => router.push(-1)}>
+               <Button variant="outline" onClick={() => router.back()}>
                   Go Back
                </Button>
                <Button onClick={() => router.push(paths.root.path)}>

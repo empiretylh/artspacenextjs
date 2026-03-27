@@ -2,7 +2,6 @@ import { api } from "@/lib/api-client";
 import type { QueryConfig } from "@/lib/react-query";
 import type {
    ColumnFiltersState,
-   ListApiResponse,
    Style,
    SortingState,
 } from "@/types";

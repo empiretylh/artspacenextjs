@@ -1,17 +1,14 @@
-import ArtistMarkIcon from "@/components/icons/artist-mark-icon";
-import CollectorIcon from "@/components/icons/collector-icon";
-import GalleryIcon from "@/components/icons/gallery-icon";
+import AppImage from "@/components/common/app-image";
 import { env } from "@/config/env";
-import type { ApiErrorResponse, User } from "@/types";
+import { paths } from "@/config/paths";
+import { UserRouteType } from "@/features/service/artspace/get-users";
+import type { ApiErrorResponse, Currency, User } from "@/types";
 import { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import type { Path, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
-import { paths } from "@/config/paths";
-import { UserRouteType } from "@/features/service/artspace/get-users";
-import AppImage from "@/components/common/app-image";
 
 export function cn(...inputs: ClassValue[]) {
    return twMerge(clsx(inputs));
@@ -112,14 +109,6 @@ export const getDate = (date: string) => {
    return format(newDate, "MMMM d, yyyy");
 };
 
-export const getPrice = (price: number) => {
-   price = price / 100;
-   return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-   }).format(price);
-};
-
 export const generateFormdata = (values: any, excepts: string[] = []) => {
    const formData = new FormData();
    for (const key in values) {
@@ -153,7 +142,7 @@ export const slugify = (text: string) => {
       .replace(/-+$/, ""); // Trim trailing hyphens
 };
 
-export const getUserIcon = (type: string) => {
+export const getUserIcon = (_type?: User["user_type"]) => {
    return <AppImage withoutContainer width={16} height={16} src={'/assets/logo.png'} className="inline-block" alt="logo" />;
    // if (type === "ARTIST") {
    //    return (
@@ -287,3 +276,37 @@ export const snakeToNormal = (id: string) =>
       .split('_')
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
       .join(' ')
+
+
+const defaultGetPriceArgs = {
+   currency: { code: "USD", name: "USD", numeric_code: "840", symbol: "$" },
+   price: 0,
+};
+
+export const getPriceParts = (
+   { currency, price }: { currency: Currency; price: string | number } = defaultGetPriceArgs
+) => {
+   const numericPrice =
+      typeof price === "string" ? Number(price) : price;
+
+   if (!Number.isFinite(numericPrice)) {
+      return null;
+   }
+
+   const normalizedCurrency = (currency.code || "USD").toUpperCase();
+   const finalCurrency =
+      normalizedCurrency === "MMK" || normalizedCurrency === "USD"
+         ? normalizedCurrency
+         : "USD";
+
+   const fractionDigits = finalCurrency === "MMK" ? 0 : 2;
+
+   const formatter = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: finalCurrency,
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+   });
+
+   return formatter.formatToParts(numericPrice);
+};

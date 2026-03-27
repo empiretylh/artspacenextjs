@@ -13,7 +13,6 @@ import type {
 } from "@/types";
 import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
-import { artist } from "@/mocks/artists";
 
 /* ============================================================
  * API CALL

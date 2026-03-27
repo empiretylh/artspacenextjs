@@ -22,7 +22,7 @@ export const updatePost = ({
    data: UpdatePostInput;
    postId: string;
 }): Promise<ApiResponse<Post>> => {
-   return api.put(`/posts/${postId}`, data);
+   return api.put(`/posts/${postId}`, data).then((res) => res.data);
 };
 
 type UseUpdatePostOptions = {
@@ -39,7 +39,7 @@ export const useUpdatePost = ({
    return useMutation({
       onSuccess: (data, ...args) => {
          queryClient.refetchQueries({
-            queryKey: getPostQueryOptions(String(data.data.id)).queryKey,
+            queryKey: getPostQueryOptions(String(data.id)).queryKey,
          });
          queryClient.refetchQueries({
             queryKey: getPostsQueryOptions().queryKey,

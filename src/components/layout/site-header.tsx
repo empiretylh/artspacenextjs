@@ -9,8 +9,7 @@ import {
    ArrowLeft,
    Bell,
    MoreVerticalIcon,
-   Search,
-   ShoppingCart
+   Search
 } from "lucide-react";
 import { Suspense, useState } from "react";
 import { InputWithLeftSelectSkeleton } from "../app/input-with-left-select-skeleton";
@@ -81,6 +80,7 @@ export function SiteHeader() {
                         variant="ghost"
                         size="icon"
                         className="p-0 md:hidden"
+                        data-testid="open-search"
                      >
                         <Search />
                      </Button>

@@ -35,6 +35,7 @@ function InputWithLeftSelect({
    const router = useRouter();
    const pathname = usePathname();
    const { source } = useSource();
+   const searchParam = searchParams.get("search") ?? "";
 
    const onSearchClick = () => {
       const basePath = routeMap[selectedOption];
@@ -67,6 +68,12 @@ function InputWithLeftSelect({
    React.useEffect(() => {
       setMounted(true);
    }, []);
+
+   React.useEffect(() => {
+      const matched = Object.entries(routeMap).find(([, path]) => path === pathname);
+      if (matched) setSelectedOption(matched[0]);
+      setSearch(searchParam);
+   }, [pathname, searchParam]);
 
    // If not mounted yet, return a placeholder with the EXACT same height/width
    // to reserve the space and prevent layout shift.
@@ -111,6 +118,7 @@ function InputWithLeftSelect({
          <input
             type={type}
             data-slot="input"
+            data-testid="global-search-input"
             placeholder="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}

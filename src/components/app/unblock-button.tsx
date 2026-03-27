@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
    AlertDialog,
    AlertDialogAction,
@@ -11,7 +11,6 @@ import {
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/lib/toast";
 import { useUnblockUser } from "@/features/service/artspace/unblock-user";
 import type { User } from "@/types";
 

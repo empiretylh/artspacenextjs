@@ -1,28 +1,48 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import reactRefresh from "eslint-plugin-react-refresh";
+import unusedImports from "eslint-plugin-unused-imports";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
+
   {
+    plugins: {
+      "react-refresh": reactRefresh,
+      "unused-imports": unusedImports,
+    },
     rules: {
       "no-console": "warn",
-      "@typescript-eslint/no-unused-vars": "error",
       "react/no-unescaped-entities": "off",
       "@typescript-eslint/no-explicit-any": "warn",
-      "no-unused-vars": "off",
+      "react-hooks/set-state-in-effect": "warn",
       "react-refresh/only-export-components": "warn",
+
+      // for shadcn
+      "react-hooks/purity": "off",
+      "react/display-name": "off",
+
+      // ✅ Important: turn these off to avoid conflicts
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+
+      // ✅ Auto-remove unused imports/vars on --fix
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+        },
+      ],
     },
   },
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 ]);
 
 export default eslintConfig;

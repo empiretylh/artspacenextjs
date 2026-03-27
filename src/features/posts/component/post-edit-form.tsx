@@ -44,7 +44,7 @@ export default function PostEditForm({
 
    const postQuery = useGetPost({ postId: String(postId) });
 
-   const post = postQuery?.data?.data ?? null;
+   const post = postQuery?.data ?? null;
 
    // 1. Define your form.
    const form = useForm<FormData>({

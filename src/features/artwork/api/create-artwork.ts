@@ -5,17 +5,17 @@ import { z } from "zod";
 import { api } from "@/lib/api-client";
 import type { MutationConfig } from "@/lib/react-query";
 import type { Artwork } from "@/types";
-import { generateFormdata } from "@/lib/utils";
-import {
-   getUploadedArtworksQueryOptions,
-   useGetUploadedArtworksInfinite,
-} from "@/features/service/artspace/get-uploaded-artworks";
+
+
 import { queryKeys } from "@/config/query-keys";
 
 // ✅ Define schema
 export const createArtInputSchema = z
    .object({
+      artist: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
+      artist_name: z.string().optional(),
       category: z.number("Category is required"),
+      currency: z.string().optional(),
       title: z.string().min(2, "Title must be at least 2 characters."),
       description: z.string().optional(),
       dimensions: z.string().min(3, "Dimension must be at least 3 characters."),
@@ -38,7 +38,21 @@ export const createArtInputSchema = z
    .refine((data) => data.are_u_owner || !!data.current_owner_name, {
       message: "Current Owner Name is required if you are not the owner",
       path: ["current_owner_name"], // attach the error to this field
-   });
+   }).superRefine((data, ctx) => {
+      if (!data.artist && !data.artist_name) {
+         ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Artist or Artist Name is required",
+            path: ["artist"], // attach the error to this field
+         });
+
+         ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Artist or Artist Name is required",
+            path: ["artist_name"], // attach the error to this field
+         });
+      }
+   })
 
 export type CreateArtInput = z.infer<typeof createArtInputSchema>;
 
@@ -70,6 +84,8 @@ export const createArt = async ({
 
    const newPayload = {
       ...data,
+      artist: (data.artist && !data.artist_name) ? data.artist[0].value : null,
+      artist_name: (data.artist_name && (Array.isArray(data.artist) ? data.artist.length <= 0 : !data.artist)) ? data.artist_name : null,
       styles_artwork_ids: newStyles,
       image: data.image[0],
    };

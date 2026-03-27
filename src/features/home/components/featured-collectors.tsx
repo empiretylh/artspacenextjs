@@ -1,6 +1,5 @@
 import { SectionTitle } from "@/components/common";
 import { Button } from "@/components/ui/button";
-import ProfileCard from "../../../components/app/profile/profile-card";
 import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
 import { ArrowRight } from "lucide-react";
@@ -11,7 +10,7 @@ import UserSmallCard from "@/components/app/user-small-card";
 export const FeaturedCollectorsSection = () => {
    const collectorsQuery = useGetCollectors();
 
-   const featuredCollectors = collectorsQuery.data?.data?.results ?? [];
+   const featuredCollectors = collectorsQuery.data?.results ?? [];
 
    if (collectorsQuery.isLoading) {
       return <FeaturedCollectorsSectionSkeleton />;

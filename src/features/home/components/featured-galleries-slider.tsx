@@ -7,9 +7,9 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedGalleriesSectionSkeleton } from "./featured-galleries-section-skeleton";
-import { getGalleries, useGetGalleries } from "@/features/service/artspace/get-galleries";
+import { getGalleries } from "@/features/service/artspace/get-galleries";
 import UserSmallCard from "@/components/app/user-small-card";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/config/query-keys";
 
 export const FeaturedGalleriesSlider = () => {

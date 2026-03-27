@@ -1,6 +1,5 @@
 'use client'
 
-import Image from "next/image";
 import Link from "@/components/common/link";
 import { ShareButton } from "@/components/common/share-button";
 import { ProfileUserProvider } from "@/components/providers/profile-user-provider";
@@ -18,7 +17,7 @@ import CollectionIcon from "@/components/icons/collection-icon";
 import HeartIcon from "@/components/icons/heart-icon";
 import OverviewIcon from "@/components/icons/overview-icon";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
-import { ClipboardPenLineIcon, X } from "lucide-react";
+import { ClipboardPenLineIcon } from "lucide-react";
 import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
 import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
 import { UserRouteType } from "@/features/service/artspace/get-users";
@@ -27,7 +26,6 @@ import AppImage from "@/components/common/app-image";
 import { useEffect, useRef, useState } from "react";
 import { BaseDialog } from "@/components/common/dialogs/base-dialog";
 import { userAnalytics } from "@/lib/analytics";
-import { SourceProvider } from "@/lib/analytics-source";
 
 const getIcon = (key: string) => {
    if (key === "artworks") return <ArtworksIcon />;
@@ -74,22 +72,25 @@ const ProfileLayoutView = ({
       }
    }, [])
 
-
-   if (user.id === authUser?.id && variant !== "profile") {
-      return redirect(paths.profile.path);
-   }
+   const shouldRedirect =
+      user.id === authUser?.id && variant !== "profile";
+   const enableStatusQueries = !shouldRedirect && variant !== "profile";
 
    const followStatusQuery = useGetUserFollowStatus({
       userId: String(user?.id),
       userType,
-      queryConfig: { enabled: variant !== "profile" },
+      queryConfig: { enabled: enableStatusQueries },
    });
 
    const blockStatusQuery = useGetUserBlockStatus({
       userId: String(user?.id),
       userType,
-      queryConfig: { enabled: variant !== "profile" },
+      queryConfig: { enabled: enableStatusQueries },
    });
+
+   if (shouldRedirect) {
+      return redirect(paths.profile.path);
+   }
 
    const coverSrc = user?.profile.cover_photo
       ? getImage(user.profile.cover_photo)
@@ -148,7 +149,7 @@ const ProfileLayoutView = ({
                <div className="mt-3 space-y-1">
                   <div className="flex items-center justify-center gap-2">
                      <h1 className="font-display text-lg sm:text-xl">{fullName}</h1>
-                     {user?.user_type && getUserIcon(user.user_type)}
+                     {user?.user_type && getUserIcon()}
                   </div>
 
                   <p className="text-sm text-muted-foreground">{user?.email}</p>

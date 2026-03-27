@@ -6,7 +6,7 @@ import { Edit, Trash } from "lucide-react";
 import DeleteConfirmDialog from "@/components/common/dialogs/delete-confirm-dialog";
 import { useSoftDeleteArtwork } from "../../service/artspace/soft-delete-artwork";
 import { Pagination } from "@/components/common/pagination";
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { keepPreviousData } from "@tanstack/react-query";
 import type { Artwork } from "@/types";
 import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-modal";

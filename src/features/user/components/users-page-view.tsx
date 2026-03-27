@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,6 @@ import { EmptyState } from "@/components/layout/empty-state";
 import type { ColumnFiltersState, SortingState } from "@/types";
 import { useInView } from "react-intersection-observer";
 import UsersListLoading from "./users-list-loading";
-import ProfileCardSkeleton from "@/components/app/profile/profile-card-skeleton";
 
 interface Props {
    title?: string;
@@ -53,19 +52,33 @@ const UsersPageView = ({
    const { ref: loadMoreRef, inView } = useInView({
       threshold: 0,
    });
-   const [loadingLock, setLoadingLock] = useState(false);
+   const loadingLock = useRef<boolean>(false);
+   const lockTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
    useEffect(() => {
-      if (!inView || !hasNextPage || isFetchingNextPage || loadingLock) return;
+      if (!inView || !hasNextPage || isFetchingNextPage || loadingLock.current) return;
 
-      setLoadingLock(true);
+      loadingLock.current = true;
       fetchNextPage();
-      setTimeout(() => setLoadingLock(false), 1000); // throttle 500ms
-   }, [inView, hasNextPage, isFetchingNextPage, loadingLock, fetchNextPage]);
+      if (lockTimeoutRef.current) {
+         clearTimeout(lockTimeoutRef.current);
+      }
+      lockTimeoutRef.current = setTimeout(() => {
+         loadingLock.current = false;
+      }, 1000); // throttle 500ms
+   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+   useEffect(() => {
+      return () => {
+         if (lockTimeoutRef.current) {
+            clearTimeout(lockTimeoutRef.current);
+         }
+      };
+   }, []);
 
    return (
       <section
-         className="flex-grow transition-all duration-300"
+         className="grow transition-all duration-300"
          aria-labelledby="users-title"
          aria-live="polite"
       >

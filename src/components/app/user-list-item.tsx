@@ -1,12 +1,9 @@
 import { cn, getImage, getUserLink } from "@/lib/utils";
-import Image from "../common/image";
 import Link from "../common/link";
-import { paths } from "@/config/paths";
 import type { User } from "@/types";
 import FollowButton from "./follow-button";
 import { useSidebar } from "../ui/sidebar";
 import { useAuth } from "@/features/auth/store";
-import { UnblockButton } from "./unblock-button";
 import AppImage from "../common/app-image";
 
 const UserListItem = ({

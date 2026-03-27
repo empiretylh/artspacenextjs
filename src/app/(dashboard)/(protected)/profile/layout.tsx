@@ -1,16 +1,10 @@
 'use client'
 import ProfileLayoutSkeleton from "@/components/app/profile/profile-layout-skeleton";
 import ProfileLayoutView from "@/components/app/profile/profile-layout-view";
-import ArtworksIcon from "@/components/icons/artworks-icon";
-import BookmarkIcon from "@/components/icons/bookmark-icon";
-import CollectionIcon from "@/components/icons/collection-icon";
-import HeartIcon from "@/components/icons/heart-icon";
-import OverviewIcon from "@/components/icons/overview-icon";
 import NotFound from "@/components/layout/not-found";
 import { paths } from "@/config/paths";
 import { useGetProfile } from "@/features/profile/api/get-profile";
 import { getUserRouteType } from "@/lib/utils";
-import { ClipboardPenLineIcon } from "lucide-react";
 
 const ProfileDetailLayout = ({ children }: { children: React.ReactNode }) => {
   const profileQuery = useGetProfile();

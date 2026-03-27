@@ -1,7 +1,7 @@
 import type { Artwork, ListApiResponse } from "@/types";
 
 // data/dummy-artworks.ts
-export const dummyArtworks: ListApiResponse<Artwork[]> = {
+export const dummyArtworks = {
    data: {
       count: 33,
       next: "http://artspaceapi-stagging.illuminati.com.mm/api/v1/artworks/artworks/?page=3&page_size=10&search=",
@@ -749,4 +749,4 @@ export const dummyArtworks: ListApiResponse<Artwork[]> = {
          },
       ],
    },
-};
+} as unknown as ListApiResponse<Artwork>;

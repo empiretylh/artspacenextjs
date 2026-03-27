@@ -1,55 +1,63 @@
 import ProfileLayoutView from "@/components/app/profile/profile-layout-view";
-import ArtworksIcon from "@/components/icons/artworks-icon";
-import BookmarkIcon from "@/components/icons/bookmark-icon";
-import CollectionIcon from "@/components/icons/collection-icon";
-import HeartIcon from "@/components/icons/heart-icon";
-import OverviewIcon from "@/components/icons/overview-icon";
 import { paths } from "@/config/paths";
 import { useGetProfile } from "../api/get-profile";
-import { ClipboardPenLineIcon } from "lucide-react";
+import { getUserRouteType } from "@/lib/utils";
+import type { UserRouteType } from "@/features/service/artspace/get-users";
 
 const ProfileDetailLayout = ({ children }: { children: React.ReactNode }) => {
    const { data } = useGetProfile();
 
    const profile = data?.data;
+   const userType = profile?.user_type
+      ? (getUserRouteType(profile.user_type) as UserRouteType)
+      : undefined;
 
    const navLinks = [
       {
          title: "Overview",
          href: paths.profile.path,
-         icon: OverviewIcon,
+         icon: "overview",
       },
       {
          title: "Artworks",
          href: paths.profile.artworks.path,
-         icon: ArtworksIcon,
+         icon: "artworks",
       },
       {
          title: "Events",
          href: paths.profile.events.path,
-         icon: ClipboardPenLineIcon,
+         icon: "events",
       },
       {
          title: "Collections",
          href: paths.profile.collections.path,
-         icon: CollectionIcon,
+         icon: "collections",
          disabled: true,
       },
       {
          title: "Like artworks",
          href: paths.profile.likedArtworks.path,
-         icon: HeartIcon,
+         icon: "likes",
       },
       {
          title: "Save",
          href: paths.profile.save.path,
-         icon: BookmarkIcon,
+         icon: "save",
          disabled: true,
       },
    ];
 
+   if (!profile || !userType) {
+      return null;
+   }
+
    return (
-      <ProfileLayoutView variant="profile" user={profile} navLinks={navLinks}>
+      <ProfileLayoutView
+         variant="profile"
+         user={profile}
+         userType={userType}
+         navLinks={navLinks}
+      >
          {children}
       </ProfileLayoutView>
    );

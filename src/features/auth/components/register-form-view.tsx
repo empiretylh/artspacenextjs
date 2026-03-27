@@ -182,6 +182,7 @@ export default function RegisterFormView({
                 <FormControl>
                   <div className="relative">
                     <Input
+                      title={field.name}
                       type={showPassword ? "text" : "password"}
                       placeholder="Password *"
                       autoComplete="new-password"

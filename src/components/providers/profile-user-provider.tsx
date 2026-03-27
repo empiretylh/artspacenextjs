@@ -1,13 +1,25 @@
 // app/context-provider.tsx
 'use client';
 import { User } from '@/types';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useMemo, Dispatch, SetStateAction } from 'react';
 
-const DataContext = createContext<User>({} as User);
+type ProfileUserContextType = {
+  data: User;
+  setData: Dispatch<SetStateAction<User>>;
+};
+
+const DataContext = createContext<ProfileUserContextType | undefined>(undefined);
 
 export const ProfileUserProvider = ({ children, initialValue }: { children: React.ReactNode; initialValue: User }) => {
   const [data, setData] = useState(initialValue);
-  return <DataContext.Provider value={{ data, setData }}>{children}</DataContext.Provider>;
+  const value = useMemo(() => ({ data, setData }), [data]);
+  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
 
-export const useProfileUser = () => useContext<{ data: User; setData: any }>(DataContext);
+export const useProfileUser = () => {
+  const context = useContext(DataContext);
+  if (!context) {
+    throw new Error('useProfileUser must be used within a ProfileUserProvider');
+  }
+  return context;
+};

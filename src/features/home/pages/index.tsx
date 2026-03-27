@@ -1,4 +1,3 @@
-import HeroSection from "../components/hero-section";
 import { FeaturedArtworksSection } from "../components/featured-artworks-section";
 import { GenreSection } from "../components/genre-section";
 import { CategoryAndStyleSection } from "../components/category-and-style-section";
@@ -15,7 +14,6 @@ import { getGalleries } from "@/features/service/artspace/get-galleries";
 import { getCollectors } from "@/features/service/artspace/get-collectors";
 import { getQueryClient } from "@/lib/get-query-client";
 import BannerSliderContainer from "../components/banner-slider-container";
-import { SourceProvider } from "@/lib/analytics-source";
 
 // --- Main App Component ---
 export default async function HomePage() {

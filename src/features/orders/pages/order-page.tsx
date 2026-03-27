@@ -1,12 +1,40 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Order } from '@/types';
+import type { Order, User } from '@/types';
 import React from 'react';
 
+type OrderView = Omit<Order, "buyer" | "items"> & {
+  buyer: User;
+  items: Array<{
+    id: number;
+    artworkId: string;
+    quantity: number;
+    price_at_purchase: number;
+  }>;
+};
+
+const buyer: User = {
+  id: 201,
+  first_name: "Jane",
+  last_name: "Smith",
+  email: "j.smith@example.com",
+  user_type: "BUYER",
+  profile: {
+    bio: "",
+    about: "",
+    profile_picture: null,
+    cover_photo: null,
+    website: "",
+    features_photos: [],
+    is_following: false,
+    isBlocked: false,
+  },
+};
+
 // Using ord_1001 from the previous mock data
-const orderData: Order = {
+const orderData: OrderView = {
   id: "ord_1001",
   buyerId: 201,
-  buyer: { id: 201, first_name: "Jane Smith", last_name: "Doe", email: "j.smith@example.com" },
+  buyer,
   total_price: 154.99,
   shipping_address: "101 Innovation Way, Tech City, 90210",
   stripe_session_id: "cs_test_a7b2c9",
@@ -15,7 +43,7 @@ const orderData: Order = {
   created_at: new Date("2026-01-01T09:00:00Z"),
   updated_at: new Date("2026-01-02T14:20:00Z"),
   items: [
-    { id: "item_1_1", orderId: "ord_1001", productId: 51, quantity: 2, price: 77.49 }
+    { id: 1, artworkId: "51", quantity: 2, price_at_purchase: 77.49 }
   ]
 };
 
@@ -50,7 +78,10 @@ const OrderDetail = () => {
               Customer Details
             </h2>
             <div className="space-y-1 text-foreground">
-              <p><strong>Name:</strong> {orderData.buyer.name}</p>
+              <p>
+                <strong>Name:</strong>{" "}
+                {orderData.buyer.first_name} {orderData.buyer.last_name}
+              </p>
               <p><strong>Email:</strong> {orderData.buyer.email}</p>
               <p className="mt-4 font-semibold">Shipping Address:</p>
               <p className="text-sm text-muted-foreground">
@@ -92,14 +123,14 @@ const OrderDetail = () => {
               {orderData.items.map((item) => (
                 <tr key={item.id} className="border-b border-border">
                   <td className="py-4 px-4 text-primary font-medium">
-                    #{item.productId}
+                    #{item.artworkId}
                   </td>
                   <td className="py-4 px-4 text-center">{item.quantity}</td>
                   <td className="py-4 px-4 text-right">
-                    ${item.price.toFixed(2)}
+                    ${item.price_at_purchase.toFixed(2)}
                   </td>
                   <td className="py-4 px-4 text-right font-semibold">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ${(item.price_at_purchase * item.quantity).toFixed(2)}
                   </td>
                 </tr>
               ))}

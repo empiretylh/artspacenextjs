@@ -11,9 +11,7 @@ import type {
    SortingState,
    ListApiResponse,
 } from "@/types";
-import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
-import { dummyArtworks } from "@/features/collections/data/dummy-artworks";
 
 // ----------------------------------------------------------------------
 // 1. GET ARTWORKS (API CALL)

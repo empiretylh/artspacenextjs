@@ -5,16 +5,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { XIcon } from "lucide-react";
 
-import ProfileCard from "@/components/app/profile/profile-card";
 import { EmptyState } from "@/components/layout/empty-state";
 
 import type { ColumnFiltersState, SortingState, User } from "@/types";
-import LoadingPage from "@/components/page/loading-page";
-import UserListItem from "@/components/app/user-list-item";
 import { UnblockUserDialog } from "@/components/app/unblock-user-dialog";
 import UnblockUserListCard from "@/components/app/unblock-user-list-card";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import BlockedUsersListSkeleton from "./blocked-users-list-skeleton";
 
 interface Props {

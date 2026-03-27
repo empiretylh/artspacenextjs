@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { keepPreviousData } from "@tanstack/react-query";
 import type { Artwork, ListApiResponse } from "@/types";
-import type { AxiosResponse } from "axios";
 import ArtworkCard from "@/components/app/artwork-card";
 import ArtspaceCollectionsView from "./artspace-collections-view";
 import { useGetArtspaceCollectionsInfinite } from "@/features/service/artspace/get-artspace-collections";

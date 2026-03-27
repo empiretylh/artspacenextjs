@@ -1,7 +1,5 @@
 // components/collection-row.tsx
 
-import ArtworkCard from "@/components/app/artwork-card";
-import type { Artwork } from "@/types";
 import ArtspaceCollectionsContainer from "./artspace-collections-container";
 
 interface Props {

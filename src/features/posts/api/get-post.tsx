@@ -9,7 +9,7 @@ export const getPost = ({
 }: {
    postId: string;
 }): Promise<ApiResponse<Post>> => {
-   return api.get(`/posts/${postId}`);
+   return api.get(`/posts/${postId}`).then((res) => res.data);
 };
 
 export const getPostQueryOptions = (postId: string) => {

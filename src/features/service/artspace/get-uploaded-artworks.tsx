@@ -11,7 +11,6 @@ import type {
    SortingState,
    ListApiResponse,
 } from "@/types";
-import type { AxiosResponse } from "axios";
 import { queryKeys } from "@/config/query-keys";
 
 // ----------------------------------------------------------------------

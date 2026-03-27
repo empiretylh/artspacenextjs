@@ -70,7 +70,10 @@ export const FilterRow: React.FC<FilterRowProps> = ({
                   value={""}
                   onValueChange={(v) => handleSelectChange("category", v)}
                >
-                  <SelectTrigger className="w-auto max-w-full rounded-xl">
+                  <SelectTrigger
+                     className="w-auto max-w-full rounded-xl"
+                     data-testid="artworks-filter-category"
+                  >
                      <SelectValue placeholder="Category" />
                   </SelectTrigger>
 
@@ -97,7 +100,10 @@ export const FilterRow: React.FC<FilterRowProps> = ({
                   value={""}
                   onValueChange={(v) => handleSelectChange("genre", v)}
                >
-                  <SelectTrigger className="w-auto max-w-full rounded-xl">
+                  <SelectTrigger
+                     className="w-auto max-w-full rounded-xl"
+                     data-testid="artworks-filter-genre"
+                  >
                      <SelectValue placeholder="Genre" />
                   </SelectTrigger>
 
@@ -124,7 +130,10 @@ export const FilterRow: React.FC<FilterRowProps> = ({
                   value={""}
                   onValueChange={(v) => handleSelectChange("art-style", v)}
                >
-                  <SelectTrigger className="w-auto max-w-full rounded-xl">
+                  <SelectTrigger
+                     className="w-auto max-w-full rounded-xl"
+                     data-testid="artworks-filter-style"
+                  >
                      <SelectValue placeholder="Style" />
                   </SelectTrigger>
 
