@@ -14,7 +14,7 @@ const createEnv = () => {
       ENABLE_ANALYTICS: z.string().optional().default('false'),
       GA_ID: z.string().optional(),
       NODE_ENV: z.enum(['development', 'production']).optional().default('development'),
-      IMAGE_HOSTNAME: z.string().optional().default('artspaceapi-stagging.illuminati.com.mm'),
+      IMAGE_HOSTNAME: z.string().optional().default('api.myanmarartspace.net'),
       TZ: z.string().optional().default('Asia/Yangon'),
       // firebase
       FIREBASE_ENABLE: z.string().optional().default('false').transform((s) => s === 'true'),
@@ -63,6 +63,8 @@ const createEnv = () => {
    };
 
    const parsedEnv = EnvSchema.safeParse(envVars);
+
+   console.log(parsedEnv)
 
    if (!parsedEnv.success) {
       throw new Error(
