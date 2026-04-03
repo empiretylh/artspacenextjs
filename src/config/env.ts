@@ -46,7 +46,7 @@ const createEnv = () => {
       ENABLE_ANALYTICS: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS,
       GA_ID: process.env.NEXT_PUBLIC_GA_ID,
       NODE_ENV: process.env.NODE_ENV,
-      IMAGE_HOSTNAME: process.env.IMAGE_HOSTNAME,
+      IMAGE_HOSTNAME: process.env.NEXT_PUBLIC_IMAGE_HOSTNAME,
       TZ: process.env.NEXT_PUBLIC_TZ,
       // firebase
       FIREBASE_ENABLE: process.env.NEXT_PUBLIC_FIREBASE_ENABLE,
