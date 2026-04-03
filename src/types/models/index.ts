@@ -49,15 +49,25 @@ export interface Genre {
 
 export interface Order {
    id: string;
-   buyerId: number;
-   buyer: User;
-   total_price: number;
+   buyerId?: number;
+   buyer: User | string;
+   owner?: string;
+   price?: string;
+   currency?: string;
+   tax?: string;
+   deli_fee?: string;
+   total_price: number | string;
+   name?: string;
    shipping_address: string;
+   phone_number?: string;
+   description?: string;
+   order_status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED";
+   payment_status?: string;
    stripe_session_id?: string | null;
-   status: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED";
-   paid_at?: Date | null;
-   created_at: Date;
-   updated_at: Date;
+   status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED";
+   paid_at?: Date | string | null;
+   created_at: Date | string;
+   updated_at: Date | string;
    items: OrderItem[];
 }
 

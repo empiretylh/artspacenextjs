@@ -71,7 +71,7 @@ const data = {
          title: "order",
          url: paths.order.path,
          icon: ShoppingCartIcon,
-         disabled: true,
+         disabled: false,
       },
       // {
       //    title: "settings",
