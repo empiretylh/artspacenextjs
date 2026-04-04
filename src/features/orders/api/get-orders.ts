@@ -121,17 +121,17 @@ export const useGetOrders = ({
    });
 };
 
-export const getUserOrders = async (userId: number): Promise<Order[]> => {
+export const getUserOrders = async (userId: number, filters: Record<string, any> = {}): Promise<Order[]> => {
    const res = await api.get(`/orders/orders/`, {
-      params: { user: userId }
+      params: { user: userId, ...filters }
    });
    return res.data;
 };
 
-export const useGetUserOrders = (userId: number) => {
+export const useGetUserOrders = (userId: number, filters: Record<string, any> = {}) => {
    return useQuery({
-      queryKey: ["user-orders", userId],
-      queryFn: () => getUserOrders(userId),
+      queryKey: ["user-orders", userId, filters],
+      queryFn: () => getUserOrders(userId, filters),
       enabled: !!userId,
    });
 };

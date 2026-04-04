@@ -14,10 +14,10 @@ import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
 import { Loader2, Package } from 'lucide-react'
 
-export const UserOrderList = () => {
+export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> }) => {
   const { user } = useAuth()
   const userId = user?.id
-  const { data: orders, isLoading, error } = useGetUserOrders(userId as number)
+  const { data: orders, isLoading, error } = useGetUserOrders(userId as number, filters)
 
   if (isLoading) {
     return (
