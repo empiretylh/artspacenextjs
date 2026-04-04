@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,15 +14,28 @@ import { getImage } from '@/lib/utils'
 import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface PaymentPageProps {
   orderId: string
 }
 
 export const PaymentPage = ({ orderId }: PaymentPageProps) => {
+  const router = useRouter()
   const { data: order, isLoading: isOrderLoading, error: orderError } = useGetOrder({ orderId })
   const updateOrder = useUpdateOrder()
   const [isProcessing, setIsProcessing] = useState(false)
+
+  useEffect(() => {
+    if (order) {
+      const isPaymentProcessing = order.payment_status === 'PROCESSING' || order.payment_status === 'COMPLETED'
+      const isOrderProcessing = order.order_status === 'COMPLETED' || order.status === 'COMPLETED'
+      
+      if (isPaymentProcessing || isOrderProcessing) {
+        router.replace(paths.order.detail.getHref(order.id))
+      }
+    }
+  }, [order, router])
 
   const handlePayment = async () => {
     if (!order) return
@@ -79,17 +92,16 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
     )
   }
 
-  if (order.payment_status === 'COMPLETED') {
+  const isCompleted = order.payment_status === 'COMPLETED' || order.order_status === 'COMPLETED' || order.status === 'COMPLETED'
+  const isProcessingStatus = order.payment_status === 'PROCESSING'
+
+  if (isCompleted || isProcessingStatus) {
     return (
-      <div className="text-center py-20 px-4">
-        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600 mb-6 font-bold text-3xl italic">
-          ✓
-        </div>
-        <h2 className="text-2xl font-bold mb-4">Payment Completed</h2>
-        <p className="text-muted-foreground mb-8">This order has already been paid for.</p>
-        <Link to={paths.order.detail.getHref(order.id)}>
-          <Button>View Order Details</Button>
-        </Link>
+      <div className="flex flex-col justify-center items-center h-[50vh] gap-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <p className="text-muted-foreground font-medium">
+          {isCompleted ? 'Payment already completed. Redirecting...' : 'Payment is processing. Redirecting...'}
+        </p>
       </div>
     )
   }
