@@ -33,6 +33,7 @@ import {
 import type { Artwork } from '@/types'
 import Price from '@/components/common/price'
 import { Loader2 } from 'lucide-react'
+import { paths } from '@/config/paths'
 
 interface ArtworkOrderFormProps {
   artwork: Artwork
@@ -69,13 +70,13 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
 
   const onSubmit = async (data: CreateArtworkOrderInput) => {
     try {
-      await createOrderMutation.mutateAsync(data)
+      const order = await createOrderMutation.mutateAsync(data)
       addNotification({
         type: 'success',
         title: 'Order Created',
         message: 'Your order has been successfully placed.',
       })
-      router.push(`/artworks/${artwork.id}`)
+      router.push(paths.order.payment.getHref(order.id))
     } catch (error: any) {
       addNotification({
         type: 'error',
