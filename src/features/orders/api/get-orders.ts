@@ -123,7 +123,19 @@ export const useGetOrders = ({
 
 export const getUserOrders = async (userId: number, filters: Record<string, any> = {}): Promise<Order[]> => {
    const res = await api.get(`/orders/orders/`, {
-      params: { user: userId, ...filters }
+      params: { user: userId, ...filters },
+      paramsSerializer: (params) => {
+         const searchParams = new URLSearchParams();
+         for (const key in params) {
+            const value = params[key];
+            if (Array.isArray(value)) {
+               value.forEach(v => searchParams.append(key, v));
+            } else if (value !== undefined && value !== null) {
+               searchParams.append(key, value);
+            }
+         }
+         return searchParams.toString();
+      }
    });
    return res.data;
 };

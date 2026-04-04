@@ -76,7 +76,7 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
         title: 'Order Created',
         message: 'Your order has been successfully placed.',
       })
-      router.push(paths.order.payment.getHref(order.id))
+      router.replace(paths.order.payment.getHref(order.id))
     } catch (error: any) {
       addNotification({
         type: 'error',

@@ -61,7 +61,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
       })
 
       // 3. Redirect to Payment URL
-      window.location.href = paymentIntent.payment_url
+      window.location.replace(paymentIntent.payment_url)
     } catch (error: any) {
       console.error('Payment initialization failed:', error)
       toast.error(error.message || 'Payment initialization failed. Please try again.')
