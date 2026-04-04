@@ -16,6 +16,8 @@ const createEnv = () => {
       NODE_ENV: z.enum(['development', 'production']).optional().default('development'),
       IMAGE_HOSTNAME: z.string().optional().default('api.myanmarartspace.net'),
       TZ: z.string().optional().default('Asia/Yangon'),
+      PAYMENT_API_URL: z.string().optional().default('https://pg.mmgbpay.com'),
+      PAYMENT_API_TOKEN: z.string().optional(),
       // firebase
       FIREBASE_ENABLE: z.string().optional().default('false').transform((s) => s === 'true'),
       FIREBASE_API_KEY: z.string().optional(),
@@ -48,6 +50,8 @@ const createEnv = () => {
       NODE_ENV: process.env.NODE_ENV,
       IMAGE_HOSTNAME: process.env.NEXT_PUBLIC_IMAGE_HOSTNAME,
       TZ: process.env.NEXT_PUBLIC_TZ,
+      PAYMENT_API_URL: process.env.NEXT_PUBLIC_PAYMENT_API_URL,
+      PAYMENT_API_TOKEN: process.env.PAYMENT_API_TOKEN,
       // firebase
       FIREBASE_ENABLE: process.env.NEXT_PUBLIC_FIREBASE_ENABLE,
       FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,

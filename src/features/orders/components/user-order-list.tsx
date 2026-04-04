@@ -4,6 +4,7 @@ import React from 'react'
 import { useAuth } from '@/features/auth/store'
 import { useGetUserOrders } from '../api/get-orders'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Price from '@/components/common/price'
 import AppImage from '@/components/common/app-image'
@@ -94,6 +95,13 @@ export const UserOrderList = () => {
                   >
                     {status}
                   </Badge>
+                  {status === 'PENDING' && (order.payment_status === 'PENDING' || !order.payment_status) && (
+                    <Link to={paths.order.payment.getHref(order.id)}>
+                      <Button size="sm" className="font-bold">
+                        Pay Now
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </CardHeader>

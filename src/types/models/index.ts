@@ -62,7 +62,7 @@ export interface Order {
    phone_number?: string;
    description?: string;
    order_status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED";
-   payment_status?: string;
+   payment_status?: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
    stripe_session_id?: string | null;
    status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED";
    paid_at?: Date | string | null;

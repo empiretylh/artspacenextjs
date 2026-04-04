@@ -182,6 +182,10 @@ export const paths = {
          path: "/orders/:id",
          getHref: (id: string) => `/orders/${id}`,
       },
+      payment: {
+         path: "/orders/:id/payment",
+         getHref: (id: string) => `/orders/${id}/payment`,
+      },
    },
    profile: {
       path: "/profile",
