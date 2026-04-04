@@ -63,17 +63,17 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
         const artwork = firstItem?.artwork
 
         return (
-          <Card key={order.id} className="overflow-hidden">
-            <CardHeader className="bg-muted/30">
+          <Card key={order.id} className="overflow-hidden hover:shadow-md transition-all duration-300 group border-primary/10">
+            <CardHeader className="bg-muted/30 pb-4">
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground font-mono">ORDER #{order.id.slice(0, 8).toUpperCase()}</p>
-                  <p className="text-sm">Placed on {format(new Date(order.created_at), 'PPP')}</p>
-                </div>
+                <Link to={paths.order.detail.getHref(order.id)} className="space-y-1 block hover:opacity-80 transition-opacity">
+                  <p className="text-xs text-muted-foreground font-mono font-bold tracking-wider uppercase">ORDER #{order.id.slice(0, 8)}</p>
+                  <p className="text-sm font-medium">Placed on {format(new Date(order.created_at), 'PPP')}</p>
+                </Link>
                 <div className="flex items-center gap-4">
-                  <div className="text-right space-y-1">
-                    <p className="text-sm font-semibold">Total Price</p>
-                    <p className="text-lg font-bold text-primary">
+                  <div className="text-right space-y-0.5">
+                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Total Price</p>
+                    <p className="text-lg font-black text-primary">
                       <Price
                         price={order.total_price}
                         currency={{
@@ -87,17 +87,17 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
                   </div>
                   <Badge
                     className={
-                      status === 'COMPLETED' ? 'bg-green-500 hover:bg-green-600' :
-                        status === 'PENDING' ? 'bg-yellow-500 hover:bg-yellow-600' :
-                          status === 'FAILED' ? 'bg-red-500 hover:bg-red-600' :
-                            'bg-blue-500 hover:bg-blue-600'
+                      status === 'COMPLETED' ? 'bg-green-500 hover:bg-green-600 shadow-sm' :
+                        status === 'PENDING' ? 'bg-yellow-500 hover:bg-yellow-600 shadow-sm' :
+                          status === 'FAILED' ? 'bg-red-500 hover:bg-red-600 shadow-sm' :
+                            'bg-blue-500 hover:bg-blue-600 shadow-sm'
                     }
                   >
                     {status}
                   </Badge>
                   {status === 'PENDING' && (order.payment_status === 'PENDING' || !order.payment_status) && (
                     <Link to={paths.order.payment.getHref(order.id)}>
-                      <Button size="sm" className="font-bold">
+                      <Button size="sm" className="font-bold shadow-lg shadow-primary/20">
                         Pay Now
                       </Button>
                     </Link>
@@ -105,36 +105,47 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
-              {artwork ? (
-                <div className="flex gap-4">
-                  <div className="relative h-24 w-24 shrink-0 rounded-md overflow-hidden border">
-                    <AppImage
-                      src={getImage(artwork.image)}
-                      alt={artwork.title}
-                      fill
-                      className="object-cover"
-                    />
+            <Link to={paths.order.detail.getHref(order.id)} className="block">
+              <CardContent className="hover:bg-muted/10 transition-colors">
+                {artwork ? (
+                  <div className="flex gap-6">
+                    <div className="relative h-28 w-28 shrink-0 rounded-xl overflow-hidden border shadow-sm group-hover:shadow-md transition-all duration-500">
+                      <AppImage
+                        src={getImage(artwork.image)}
+                        alt={artwork.title}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                    </div>
+                    <div className="space-y-2 py-1">
+                      <div className="space-y-0.5">
+                        <h4 className="text-xl font-bold group-hover:text-primary transition-colors">{artwork.title}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          by {artwork.artist_profile ? `${artwork.artist_profile.first_name} ${artwork.artist_profile.last_name}` : artwork.artist_name}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4 mt-2">
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quantity</span>
+                            <span className="text-sm font-black">{firstItem.quantity}</span>
+                        </div>
+                        {order.items && order.items.length > 1 && (
+                            <Badge variant="secondary" className="text-[10px] font-bold uppercase">
+                                + {order.items.length - 1} more items
+                            </Badge>
+                        )}
+                      </div>
+                      <Button variant="link" className="p-0 h-auto font-bold text-primary text-xs mt-1">View Details</Button>
+                    </div>
                   </div>
-                  <div className="space-y-1 py-1">
-                    <Link to={paths.artworks.detail.getHref(artwork.id)}>
-                      <h4 className="font-bold hover:underline">{artwork.title}</h4>
-                    </Link>
-                    <p className="text-sm text-muted-foreground">
-                      by {artwork.artist_profile ? `${artwork.artist_profile.first_name} ${artwork.artist_profile.last_name}` : artwork.artist_name}
-                    </p>
-                    <p className="text-sm">Quantity: {firstItem.quantity}</p>
+                ) : (
+                  <div className="flex items-center gap-3 py-4 text-muted-foreground italic">
+                    <Package className="h-5 w-5" />
+                    Artwork details unavailable
                   </div>
-                </div>
-              ) : (
-                <p className="text-muted-foreground italic">Artwork details unavailable</p>
-              )}
-              {order.items && order.items.length > 1 && (
-                <p className="mt-4 text-sm text-primary font-semibold">
-                  + {order.items.length - 1} more items in this order
-                </p>
-              )}
-            </CardContent>
+                )}
+              </CardContent>
+            </Link>
           </Card>
         )
       })}

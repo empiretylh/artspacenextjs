@@ -135,3 +135,16 @@ export const useGetUserOrders = (userId: number, filters: Record<string, any> = 
       enabled: !!userId,
    });
 };
+
+export const getOrder = async (id: string): Promise<Order> => {
+   const res = await api.get(`/orders/orders/${id}/`);
+   return res.data;
+};
+
+export const useGetOrder = (id: string) => {
+   return useQuery({
+      queryKey: ["order", id],
+      queryFn: () => getOrder(id),
+      enabled: !!id,
+   });
+};

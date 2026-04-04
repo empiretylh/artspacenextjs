@@ -1,154 +1,229 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import type { Order, User } from '@/types';
+'use client'
+
 import React from 'react';
-
-type OrderView = Omit<Order, "buyer" | "items"> & {
-  buyer: User;
-  items: Array<{
-    id: number;
-    artworkId: string;
-    quantity: number;
-    price_at_purchase: number;
-  }>;
-};
-
-const buyer: User = {
-  id: 201,
-  first_name: "Jane",
-  last_name: "Smith",
-  email: "j.smith@example.com",
-  user_type: "BUYER",
-  profile: {
-    bio: "",
-    about: "",
-    profile_picture: null,
-    cover_photo: null,
-    website: "",
-    features_photos: [],
-    is_following: false,
-    isBlocked: false,
-  },
-};
-
-// Using ord_1001 from the previous mock data
-const orderData: OrderView = {
-  id: "ord_1001",
-  buyerId: 201,
-  buyer,
-  total_price: 154.99,
-  shipping_address: "101 Innovation Way, Tech City, 90210",
-  stripe_session_id: "cs_test_a7b2c9",
-  status: "COMPLETED",
-  paid_at: new Date("2026-01-02T10:30:00Z"),
-  created_at: new Date("2026-01-01T09:00:00Z"),
-  updated_at: new Date("2026-01-02T14:20:00Z"),
-  items: [
-    { id: 1, artworkId: "51", quantity: 2, price_at_purchase: 77.49 }
-  ]
-};
+import { useParams } from 'next/navigation';
+import { useGetOrder } from '../api/get-orders';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import Price from '@/components/common/price';
+import AppImage from '@/components/common/app-image';
+import { getImage } from '@/lib/utils';
+import { format } from 'date-fns';
+import Link from '@/components/common/link';
+import { paths } from '@/config/paths';
+import { Loader2, ArrowLeft, Package, MapPin, CreditCard, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const OrderDetail = () => {
+  const { id } = useParams() as { id: string };
+  const { data: order, isLoading, error } = useGetOrder(id);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <p className="text-muted-foreground animate-pulse">Loading order details...</p>
+      </div>
+    );
+  }
+
+  if (error || !order) {
+    return (
+      <div className="text-center py-20 flex flex-col items-center gap-4">
+        <div className="h-16 w-16 bg-destructive/10 rounded-full flex items-center justify-center">
+            <Package className="h-8 w-8 text-destructive" />
+        </div>
+        <div className="space-y-1">
+            <h2 className="text-2xl font-bold">Order not found</h2>
+            <p className="text-muted-foreground">We couldn't find the order you were looking for.</p>
+        </div>
+        <Link to={paths.order.getHref()}>
+          <Button variant="outline">Back to My Orders</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  const orderStatus = order.order_status || order.status || 'PENDING';
+  const paymentStatus = order.payment_status || 'PENDING';
+
   return (
-    <Card>
-      {/* Header */}
-      <CardHeader>
-        <div className="flex justify-between items-center border-b border-border pb-4">
-          <div>
-            <h1 className="text-2xl font-bold">Order #{orderData.id}</h1>
-            <p className="text-muted-foreground">
-              Placed on {orderData.created_at.toLocaleDateString()}
-            </p>
+    <div className="max-w-5xl mx-auto w-full px-4 md:px-0 py-8 lg:py-12 space-y-8">
+      {/* Top Navigation */}
+      <Link to={paths.order.getHref()} className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors gap-2 group">
+        <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+        Back to My Orders
+      </Link>
+
+      {/* Hero Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+             <Badge variant="outline" className="font-mono text-xs uppercase tracking-wider">
+               #{order.id.slice(0, 8)}
+             </Badge>
+             <Badge 
+               className={
+                 orderStatus === 'COMPLETED' ? 'bg-green-500 hover:bg-green-600' :
+                 orderStatus === 'PENDING' ? 'bg-yellow-500 hover:bg-yellow-600' :
+                 orderStatus === 'FAILED' ? 'bg-red-500 hover:bg-red-600' :
+                 'bg-blue-500 hover:bg-blue-600'
+               }
+             >
+               {orderStatus}
+             </Badge>
           </div>
-          <span
-            className={`px-4 py-1 rounded-full text-sm font-semibold ${orderData.status === 'COMPLETED'
-              ? 'bg-primary/10 text-primary'
-              : 'bg-muted text-muted-foreground'
-              }`}
-          >
-            {orderData.status}
-          </span>
+          <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">Order Details</h1>
+          <p className="text-muted-foreground flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
+            Placed on {format(new Date(order.created_at), 'PPPP')}
+          </p>
         </div>
-      </CardHeader>
 
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Customer & Shipping Info */}
-          <section>
-            <h2 className="text-lg font-semibold mb-3 border-l-4 border-primary pl-2">
-              Customer Details
-            </h2>
-            <div className="space-y-1 text-foreground">
-              <p>
-                <strong>Name:</strong>{" "}
-                {orderData.buyer.first_name} {orderData.buyer.last_name}
-              </p>
-              <p><strong>Email:</strong> {orderData.buyer.email}</p>
-              <p className="mt-4 font-semibold">Shipping Address:</p>
-              <p className="text-sm text-muted-foreground">
-                {orderData.shipping_address}
-              </p>
+        <div className="text-left md:text-right">
+            <p className="text-sm text-muted-foreground font-medium uppercase tracking-wide">Total Amount</p>
+            <div className="text-3xl font-black text-primary">
+                <Price
+                    price={order.total_price}
+                    currency={{
+                    code: order.currency || 'MMK',
+                    name: order.currency || 'MMK',
+                    symbol: '',
+                    numeric_code: ''
+                    }}
+                />
             </div>
-          </section>
+        </div>
+      </div>
 
-          {/* Payment Info */}
-          <section>
-            <h2 className="text-lg font-semibold mb-3 border-l-4 border-primary pl-2">
-              Payment Information
-            </h2>
-            <div className="space-y-1 text-foreground">
-              <p><strong>Status:</strong> {orderData.paid_at ? 'Paid' : 'Unpaid'}</p>
-              {orderData.paid_at && (
-                <p><strong>Paid On:</strong> {orderData.paid_at.toLocaleString()}</p>
-              )}
-              <p className="text-xs text-muted-foreground mt-2">
-                Stripe Session: {orderData.stripe_session_id || 'N/A'}
-              </p>
-            </div>
-          </section>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column - Main Details */}
+        <div className="lg:col-span-2 space-y-8">
+          <Card className="border-none shadow-sm overflow-hidden bg-muted/20">
+            <CardHeader className="bg-muted/30 pb-4">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Package className="h-5 w-5" />
+                Artworks
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="divide-y divide-border">
+                {order.items?.map((item) => (
+                  <div key={item.id} className="p-6 flex flex-col sm:flex-row gap-6 items-center sm:items-start group">
+                    <div className="relative h-32 w-32 shrink-0 rounded-xl overflow-hidden border shadow-sm group-hover:shadow-md transition-shadow">
+                      <AppImage
+                        src={getImage(item.artwork.image)}
+                        alt={item.artwork.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-3 py-2 text-center sm:text-left">
+                      <div className="space-y-1">
+                        <Link to={paths.artworks.detail.getHref(item.artwork.id)} className="group-hover:text-primary transition-colors">
+                          <h4 className="text-xl font-bold leading-none">{item.artwork.title}</h4>
+                        </Link>
+                        <p className="text-muted-foreground">
+                          by {item.artwork.artist_profile ? `${item.artwork.artist_profile.first_name} ${item.artwork.artist_profile.last_name}` : item.artwork.artist_name}
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2">
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-muted-foreground uppercase">Quantity</span>
+                            <span className="font-bold">{item.quantity}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-muted-foreground uppercase">Price</span>
+                            <span className="font-bold text-primary">
+                                <Price
+                                    price={item.price_at_purchase || item.artwork.price}
+                                    currency={{
+                                        code: order.currency || 'MMK',
+                                        name: order.currency || 'MMK',
+                                        symbol: '',
+                                        numeric_code: ''
+                                    }}
+                                />
+                            </span>
+                        </div>
+                      </div>
+                      <Link to={paths.artworks.detail.getHref(item.artwork.id)}>
+                        <Button variant="link" className="p-0 h-auto font-bold text-primary">View Artwork</Button>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Order Items Table */}
-        <div className="mt-10">
-          <h2 className="text-lg font-semibold mb-4">Order Items</h2>
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-muted border-y border-border">
-                <th className="py-3 px-4">Product ID</th>
-                <th className="py-3 px-4 text-center">Qty</th>
-                <th className="py-3 px-4 text-right">Unit Price</th>
-                <th className="py-3 px-4 text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orderData.items.map((item) => (
-                <tr key={item.id} className="border-b border-border">
-                  <td className="py-4 px-4 text-primary font-medium">
-                    #{item.artworkId}
-                  </td>
-                  <td className="py-4 px-4 text-center">{item.quantity}</td>
-                  <td className="py-4 px-4 text-right">
-                    ${item.price_at_purchase.toFixed(2)}
-                  </td>
-                  <td className="py-4 px-4 text-right font-semibold">
-                    ${(item.price_at_purchase * item.quantity).toFixed(2)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan={3} className="py-6 px-4 text-right font-bold text-lg">
-                  Total Amount:
-                </td>
-                <td className="py-6 px-4 text-right font-bold text-xl text-primary">
-                  ${orderData.total_price.toFixed(2)}
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+        {/* Right Column - Customer & Info */}
+        <div className="space-y-8">
+           <Card className="border-none shadow-sm bg-muted/20">
+              <CardHeader className="bg-muted/30 pb-4">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Delivery & Shipping
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <div className="space-y-1">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Customer</p>
+                  {typeof order.buyer === 'object' ? (
+                    <>
+                      <p className="font-semibold">{order.buyer.first_name} {order.buyer.last_name}</p>
+                      <p className="text-sm text-muted-foreground">{order.buyer.email}</p>
+                    </>
+                  ) : (
+                    <p className="font-semibold">Customer ID: #{order.buyer}</p>
+                  )}
+                </div>
+                <div className="space-y-1 pt-2 border-t border-border">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Shipping Address</p>
+                  <p className="text-sm leading-relaxed">{order.shipping_address}</p>
+                </div>
+                {order.phone_number && (
+                  <div className="space-y-1">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Contact</p>
+                    <p className="text-sm">{order.phone_number}</p>
+                  </div>
+                )}
+              </CardContent>
+           </Card>
+
+           <Card className="border-none shadow-sm bg-muted/20">
+              <CardHeader className="bg-muted/30 pb-4">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <CreditCard className="h-5 w-5" />
+                  Payment Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                 <div className="flex justify-between items-center pb-2 border-b border-border">
+                    <span className="text-sm font-medium">Status</span>
+                    <Badge variant={paymentStatus === 'COMPLETED' ? 'default' : 'secondary'}>
+                      {paymentStatus}
+                    </Badge>
+                 </div>
+                 <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Payment Date</span>
+                    <span className="text-sm text-muted-foreground">
+                      {order.paid_at ? format(new Date(order.paid_at), 'PPP') : 'N/A'}
+                    </span>
+                 </div>
+                 {orderStatus === 'PENDING' && (paymentStatus === 'PENDING') && (
+                    <Link to={paths.order.payment.getHref(order.id)} className="block pt-2">
+                      <Button className="w-full font-bold shadow-lg shadow-primary/20">
+                        Complete Payment
+                      </Button>
+                    </Link>
+                 )}
+              </CardContent>
+           </Card>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
