@@ -22,6 +22,10 @@ export const paths = {
          path: "/artworks/:id",
          getHref: (id: string) => `/artworks/${id}`,
       },
+      order: {
+         path: "/artworks/:id/order",
+         getHref: (id: string) => `/artworks/${id}/order`,
+      },
    },
    events: {
       path: "/events",
@@ -177,6 +181,10 @@ export const paths = {
       detail: {
          path: "/orders/:id",
          getHref: (id: string) => `/orders/${id}`,
+      },
+      payment: {
+         path: "/orders/:id/payment",
+         getHref: (id: string) => `/orders/${id}/payment`,
       },
    },
    profile: {

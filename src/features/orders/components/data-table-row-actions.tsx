@@ -38,6 +38,13 @@ export function DataTableRowActions<TData>({
             >
                <Link to={paths.order.detail.getHref(String(order.id))}>View</Link>
             </DropdownMenuItem>
+            {order.order_status === 'PENDING' && (order.payment_status === 'PENDING' || !order.payment_status) && (
+               <DropdownMenuItem
+                  asChild
+               >
+                  <Link to={paths.order.payment.getHref(String(order.id))}>Make Payment</Link>
+               </DropdownMenuItem>
+            )}
          </DropdownMenuContent>
       </DropdownMenu>
    );

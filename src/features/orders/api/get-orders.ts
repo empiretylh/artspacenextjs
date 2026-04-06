@@ -15,54 +15,8 @@ export const getOrders = (
    limit = 10,
    search = ""
 ): Promise<ListApiResponse<Order>> => {
-   const mockOrders: Order[] = Array.from({ length: 20 }).map((_, i) => {
-      const statusOptions: Order["status"][] = ["PENDING", "COMPLETED", "FAILED", "SHIPPED"];
-      const currentStatus = statusOptions[i % 4];
-      const date = new Date(2026, 0, i + 1);
-
-      return {
-         id: `ord_${1000 + i}`,
-         buyerId: 200 + i,
-         buyer: {
-            id: 200 + i,
-            first_name: `User `,
-            last_name: `${i + 1}`,
-            email: `user${i + 1}@example.com`,
-         } as any, // Cast to any if User interface is more complex
-         total_price: parseFloat((Math.random() * 500 + 20).toFixed(2)),
-         shipping_address: `${100 + i} Innovation Way, Tech City, 90210`,
-         stripe_session_id: currentStatus !== "PENDING" ? `cs_test_${Math.random().toString(36).substring(7)}` : null,
-         status: currentStatus,
-         paid_at: currentStatus === "COMPLETED" || currentStatus === "SHIPPED" ? date : null,
-         created_at: date,
-         updated_at: new Date(2026, 0, i + 2),
-         items: [
-            {
-               id: `item_${i}_1`,
-               orderId: `ord_${1000 + i}`,
-               productId: i + 50,
-               quantity: Math.floor(Math.random() * 3) + 1,
-               price: 25.00
-            }
-         ] as any
-      };
-   });
-
-   console.log(mockOrders)
-
-   return new Promise((res) =>
-      setTimeout(
-         () =>
-            res({
-               results: mockOrders,
-               next: null,
-               previous: null,
-               count: 20,
-            }),
-         1000
-      )
-   );
-
+   // Keep the existing mock logic for general getOrders if needed, 
+   // but primarily we want the real API for the user list.
    return api.get(`/orders`, {
       params: {
          filters,
@@ -164,5 +118,45 @@ export const useGetOrders = ({
    return useQuery({
       ...getOrdersQueryOptions({ filters, sorts, page, limit, search }),
       ...queryConfig,
+   });
+};
+
+export const getUserOrders = async (userId: number, filters: Record<string, any> = {}): Promise<Order[]> => {
+   const res = await api.get(`/orders/orders/`, {
+      params: { user: userId, ...filters },
+      paramsSerializer: (params) => {
+         const searchParams = new URLSearchParams();
+         for (const key in params) {
+            const value = params[key];
+            if (Array.isArray(value)) {
+               value.forEach(v => searchParams.append(key, v));
+            } else if (value !== undefined && value !== null) {
+               searchParams.append(key, value);
+            }
+         }
+         return searchParams.toString();
+      }
+   });
+   return res.data;
+};
+
+export const useGetUserOrders = (userId: number, filters: Record<string, any> = {}) => {
+   return useQuery({
+      queryKey: ["user-orders", userId, filters],
+      queryFn: () => getUserOrders(userId, filters),
+      enabled: !!userId,
+   });
+};
+
+export const getOrder = async (id: string): Promise<Order> => {
+   const res = await api.get(`/orders/orders/${id}/`);
+   return res.data;
+};
+
+export const useGetOrder = (id: string) => {
+   return useQuery({
+      queryKey: ["order", id],
+      queryFn: () => getOrder(id),
+      enabled: !!id,
    });
 };

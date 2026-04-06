@@ -51,7 +51,17 @@ export const columns: ColumnDef<Order>[] = [
       header: ({ column }) => (
          <DataTableColumnHeader column={column} title="Buyer" />
       ),
-      cell: ({ row }) => <span>{row.original.buyer.first_name + " " + row.original.buyer.last_name}</span>,
+      cell: ({ row }) => {
+         const buyer = row.original.buyer;
+         if (typeof buyer === "string") {
+            return <span>{buyer}</span>;
+         }
+         return (
+            <span>
+               {buyer.first_name} {buyer.last_name}
+            </span>
+         );
+      },
    },
    {
       accessorKey: "created_at",

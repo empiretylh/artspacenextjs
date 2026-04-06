@@ -53,7 +53,7 @@ export default function BannerSlider({ banners }: Props) {
                 {/* Desktop Image */}
                 <div className="hidden md:block h-full w-full">
                   <AppImage
-                    src={getImage(banner.image_desktop) || getImage(banner.image)}
+                    src={banner.image_desktop ? getImage(banner.image_desktop) : getImage(banner.image)}
                     alt={banner.title}
                     fill
                     preload
@@ -65,7 +65,7 @@ export default function BannerSlider({ banners }: Props) {
                 {/* Mobile Image */}
                 <div className="block md:hidden h-full w-full">
                   <AppImage
-                    src={getImage(banner.image_mobile) || getImage(banner.image)}
+                    src={banner.image_mobile ? getImage(banner.image_mobile) : getImage(banner.image)}
                     alt={banner.title}
                     fill
                     preload
