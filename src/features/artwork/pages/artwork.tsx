@@ -68,7 +68,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                   category={artwork.category}
                   categoryName={artwork.category_name}
                   artistName={artwork.artist_name || "N/A"}
-                  currentOwner={artwork.current_owner_name ? artwork.current_owner_name : artwork.current_owner_display.first_name + " " + artwork.current_owner_display.last_name}
+                  currentOwner={artwork.current_owner_name ? artwork.current_owner_name : artwork.current_owner_display?.first_name + " " + artwork.current_owner_display?.last_name}
                />
 
                {artwork.search_keywords &&

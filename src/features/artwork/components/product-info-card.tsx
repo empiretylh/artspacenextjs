@@ -35,7 +35,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   )}
                   width={48}
                   height={48}
-                  alt={`${artwork.current_owner_display.first_name} ${artwork.current_owner_display.last_name} profile picture`}
+                  alt={`${artwork.current_owner_display?.first_name || ''} ${artwork.current_owner_display?.last_name || ''} profile picture`}
                   containerClassName="w-12 h-12 rounded-full overflow-hidden"
                   className="object-cover"
                />
