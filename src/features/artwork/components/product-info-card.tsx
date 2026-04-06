@@ -7,10 +7,23 @@ import VerifyIcon from "@/components/icons/verify-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { paths } from "@/config/paths";
+import { useAuth } from "@/features/auth/store";
 import { getImage, timeAgo } from "@/lib/utils";
 import type { Artwork } from "@/types";
+import { useRouter } from "next/navigation";
 
 export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
+   const router = useRouter();
+   const { user, setLoginDialogOpen } = useAuth();
+
+   const handleOrder = () => {
+      if (!user) {
+         setLoginDialogOpen(true);
+         return;
+      }
+      router.push(paths.artworks.order.getHref(artwork.id));
+   };
+
    return (
       <Card>
          <CardContent>
@@ -68,13 +81,12 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
 
             {/* Buttons */}
             <div className="space-y-3 mb-6">
-               <Link to={paths.artworks.order.getHref(artwork.id)}>
-                  <Button
-                     className="w-full text-base rounded-md font-medium font-display bg-primary text-primary-foreground"
-                  >
-                     Order Now
-                  </Button>
-               </Link>
+               <Button
+                  onClick={handleOrder}
+                  className="w-full text-base rounded-md font-medium font-display bg-primary text-primary-foreground"
+               >
+                  Order Now
+               </Button>
 
                <Button
                   disabled

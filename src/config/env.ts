@@ -68,8 +68,6 @@ const createEnv = () => {
 
    const parsedEnv = EnvSchema.safeParse(envVars);
 
-   console.log(parsedEnv)
-
    if (!parsedEnv.success) {
       throw new Error(
          `Invalid env provided.
