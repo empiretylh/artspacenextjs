@@ -61,10 +61,10 @@ export interface Order {
    shipping_address: string;
    phone_number?: string;
    description?: string;
-   order_status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED";
+   order_status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED" | "CANCELLED";
    payment_status?: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
    stripe_session_id?: string | null;
-   status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED";
+   status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED" | "CANCELLED";
    paid_at?: Date | string | null;
    created_at: Date | string;
    updated_at: Date | string;

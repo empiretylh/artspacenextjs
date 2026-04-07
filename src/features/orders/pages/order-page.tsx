@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useGetOrder } from '../api/get-orders';
+import { useUpdateOrder } from '../api/update-order';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Price from '@/components/common/price';
@@ -13,10 +14,32 @@ import Link from '@/components/common/link';
 import { paths } from '@/config/paths';
 import { Loader2, ArrowLeft, Package, MapPin, CreditCard, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 const OrderDetail = () => {
   const { id } = useParams() as { id: string };
   const { data: order, isLoading, error } = useGetOrder(id);
+  const updateOrder = useUpdateOrder();
+
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+
+  const handleCancel = () => {
+    setIsCancelDialogOpen(true);
+  }
+
+  const confirmCancel = () => {
+    updateOrder.mutate({ orderId: id, data: { order_status: "CANCELLED" } })
+    setIsCancelDialogOpen(false);
+  }
 
   if (isLoading) {
     return (
@@ -67,6 +90,7 @@ const OrderDetail = () => {
                  orderStatus === 'COMPLETED' ? 'bg-green-500 hover:bg-green-600' :
                  orderStatus === 'PENDING' ? 'bg-yellow-500 hover:bg-yellow-600' :
                  orderStatus === 'FAILED' ? 'bg-red-500 hover:bg-red-600' :
+                 orderStatus === 'CANCELLED' ? 'bg-slate-500 hover:bg-slate-600' :
                  'bg-blue-500 hover:bg-blue-600'
                }
              >
@@ -100,12 +124,12 @@ const OrderDetail = () => {
         {/* Left Column - Main Details */}
         <div className="lg:col-span-2 space-y-8">
           <Card className="border-none shadow-sm overflow-hidden bg-muted/20">
-            <CardHeader className="bg-muted/30 pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
+            <div className="bg-muted/30 p-6 pb-4 border-b border-border">
+              <CardTitle className="text-lg flex items-center gap-2 font-bold font-sans">
                 <Package className="h-5 w-5" />
                 Artworks
               </CardTitle>
-            </CardHeader>
+            </div>
             <CardContent className="p-0">
               <div className="divide-y divide-border">
                 {order.items?.map((item) => (
@@ -161,12 +185,12 @@ const OrderDetail = () => {
         {/* Right Column - Customer & Info */}
         <div className="space-y-8">
            <Card className="border-none shadow-sm bg-muted/20">
-              <CardHeader className="bg-muted/30 pb-4">
-                <CardTitle className="text-lg flex items-center gap-2">
+              <div className="bg-muted/30 p-6 pb-4 border-b border-border">
+                <CardTitle className="text-lg flex items-center gap-2 font-bold font-sans">
                   <MapPin className="h-5 w-5" />
                   Delivery & Shipping
                 </CardTitle>
-              </CardHeader>
+              </div>
               <CardContent className="pt-6 space-y-4">
                 <div className="space-y-1">
                   <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Customer</p>
@@ -193,12 +217,12 @@ const OrderDetail = () => {
            </Card>
 
            <Card className="border-none shadow-sm bg-muted/20">
-              <CardHeader className="bg-muted/30 pb-4">
-                <CardTitle className="text-lg flex items-center gap-2">
+              <div className="bg-muted/30 p-6 pb-4 border-b border-border">
+                <CardTitle className="text-lg flex items-center gap-2 font-bold font-sans">
                   <CreditCard className="h-5 w-5" />
                   Payment Information
                 </CardTitle>
-              </CardHeader>
+              </div>
               <CardContent className="pt-6 space-y-4">
                  <div className="flex justify-between items-center pb-2 border-b border-border">
                     <span className="text-sm font-medium">Status</span>
@@ -212,17 +236,46 @@ const OrderDetail = () => {
                       {order.paid_at ? format(new Date(order.paid_at), 'PPP') : 'N/A'}
                     </span>
                  </div>
-                 {orderStatus === 'PENDING' && (paymentStatus === 'PENDING') && (
-                    <Link to={paths.order.payment.getHref(order.id)} className="block pt-2">
-                      <Button className="w-full font-bold shadow-lg shadow-primary/20">
-                        Complete Payment
-                      </Button>
-                    </Link>
+                 {orderStatus === 'PENDING' && (paymentStatus === 'PENDING' || paymentStatus === 'FAILED') && (
+                    <div className="space-y-3 pt-2">
+                       <Link to={paths.order.payment.getHref(order.id)} className="block">
+                          <Button className="w-full font-bold shadow-lg shadow-primary/20">
+                             Complete Payment
+                          </Button>
+                       </Link>
+                       <Button 
+                          variant="secondary" 
+                          onClick={handleCancel}
+                          disabled={updateOrder.isPending}
+                          className="w-full font-bold"
+                       >
+                          Cancel Order
+                       </Button>
+                    </div>
                  )}
               </CardContent>
            </Card>
         </div>
       </div>
+      <AlertDialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold font-sans">Cancel Order</AlertDialogTitle>
+            <AlertDialogDescription className="font-medium font-sans">
+              Are you sure you want to cancel this order? This action cannot be undone and will stop any further processing for this order.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-bold border-2">Keep Order</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmCancel}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold"
+            >
+              Cancel Order
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

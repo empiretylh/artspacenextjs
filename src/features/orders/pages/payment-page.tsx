@@ -118,7 +118,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
       </div>
 
       <Card className="shadow-lg border-primary/10">
-        <CardHeader className="bg-primary/5 border-b">
+        <div className="bg-primary/5 p-6 border-b border-border">
           <div className="flex flex-wrap justify-between items-center gap-4">
             <div>
               <CardTitle className="text-2xl">Complete Your Payment</CardTitle>
@@ -128,7 +128,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
               {order.payment_status || 'PENDING'}
             </Badge>
           </div>
-        </CardHeader>
+        </div>
         
         <CardContent className="pt-6 space-y-6">
           {/* Order Summary */}

@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { useAuth } from '@/features/auth/store'
 import { useGetUserOrders } from '../api/get-orders'
+import { useUpdateOrder } from '../api/update-order'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,12 +15,36 @@ import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
 import { Loader2, Package } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> }) => {
   const { user } = useAuth()
   const userId = user?.id
   const { data: orders, isLoading, error } = useGetUserOrders(userId as number, filters)
-  
+  const updateOrder = useUpdateOrder()
+
+  const [orderIdToCancel, setOrderIdToCancel] = useState<string | null>(null)
+
+  const handleCancel = (orderId: string) => {
+    setOrderIdToCancel(orderId)
+  }
+
+  const confirmCancel = () => {
+    if (orderIdToCancel) {
+      updateOrder.mutate({ orderId: orderIdToCancel, data: { order_status: "CANCELLED" } })
+      setOrderIdToCancel(null)
+    }
+  }
+
   const hasFilters = Object.keys(filters).length > 0;
 
   if (isLoading) {
@@ -48,16 +73,16 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
               {hasFilters ? "No matching orders" : "No orders yet"}
             </h3>
             <p className="text-muted-foreground font-medium max-w-xs mx-auto font-sans">
-              {hasFilters 
-                ? "Try adjusting your filters to find what you're looking for." 
+              {hasFilters
+                ? "Try adjusting your filters to find what you're looking for."
                 : "When you buy an artwork, it will show up here."}
             </p>
           </div>
           <div className="flex gap-3">
             {hasFilters ? (
-              <Button 
-                variant="outline" 
-                onClick={() => window.location.reload()} 
+              <Button
+                variant="outline"
+                onClick={() => window.location.reload()}
                 className="font-bold uppercase tracking-widest text-xs border-2 font-sans"
               >
                 Clear all filters
@@ -85,7 +110,7 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
 
         return (
           <Card key={order.id} className="overflow-hidden hover:shadow-md transition-all duration-300 group border-primary/10">
-            <CardHeader className="bg-muted/30 pb-4">
+            <div className="bg-muted/30 p-6 pb-4 border-b border-border">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <Link to={paths.order.detail.getHref(order.id)} className="space-y-1 block hover:opacity-80 transition-opacity">
                   <p className="text-xs text-muted-foreground font-mono font-bold tracking-wider uppercase font-sans">ORDER #{order.id.slice(0, 8)}</p>
@@ -112,21 +137,33 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
                       status === 'COMPLETED' ? 'bg-green-500 hover:bg-green-600 shadow-sm' :
                         status === 'PENDING' ? 'bg-yellow-500 hover:bg-yellow-600 shadow-sm' :
                           status === 'FAILED' ? 'bg-red-500 hover:bg-red-600 shadow-sm' :
-                            'bg-blue-500 hover:bg-blue-600 shadow-sm'
+                            status === 'CANCELLED' ? 'bg-slate-500 hover:bg-slate-600 shadow-sm' :
+                              'bg-blue-500 hover:bg-blue-600 shadow-sm'
                     )}
                   >
                     {status}
                   </Badge>
-                  {status === 'PENDING' && (order.payment_status === 'PENDING' || !order.payment_status) && (
-                    <Link to={paths.order.payment.getHref(order.id)}>
-                      <Button size="sm" className="font-bold shadow-lg shadow-primary/20 font-sans">
-                        Pay Now
+                  {status === 'PENDING' && (order.payment_status === 'PENDING' || order.payment_status === 'FAILED' || !order.payment_status) && (
+                    <div className="flex gap-2">
+                      <Link to={paths.order.payment.getHref(order.id)}>
+                        <Button size="sm" className="font-bold shadow-lg shadow-primary/20 font-sans">
+                          Pay Now
+                        </Button>
+                      </Link>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleCancel(order.id)}
+                        disabled={updateOrder.isPending}
+                        className="font-bold font-sans border-2"
+                      >
+                        Cancel Order
                       </Button>
-                    </Link>
+                    </div>
                   )}
                 </div>
               </div>
-            </CardHeader>
+            </div>
             <Link to={paths.order.detail.getHref(order.id)} className="block">
               <CardContent className="hover:bg-muted/10 transition-colors">
                 {artwork ? (
@@ -148,13 +185,13 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
                       </div>
                       <div className="flex items-center gap-4 mt-2 font-sans">
                         <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quantity</span>
-                            <span className="text-sm font-black">{firstItem.quantity}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quantity</span>
+                          <span className="text-sm font-black">{firstItem.quantity}</span>
                         </div>
                         {order.items && order.items.length > 1 && (
-                            <Badge variant="secondary" className="text-[10px] font-bold uppercase font-sans">
-                                + {order.items.length - 1} more items
-                            </Badge>
+                          <Badge variant="secondary" className="text-[10px] font-bold uppercase font-sans">
+                            + {order.items.length - 1} more items
+                          </Badge>
                         )}
                       </div>
                       <Button variant="link" className="p-0 h-auto font-bold text-primary text-xs mt-1 font-sans uppercase tracking-widest">View Details</Button>
@@ -171,6 +208,25 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
           </Card>
         )
       })}
+      <AlertDialog open={!!orderIdToCancel} onOpenChange={(open) => !open && setOrderIdToCancel(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold font-sans">Cancel Order</AlertDialogTitle>
+            <AlertDialogDescription className="font-medium font-sans">
+              Are you sure you want to cancel this order? This action cannot be undone and will stop any further processing for this order.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-bold border-2">Keep Order</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmCancel}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold"
+            >
+              Cancel Order
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
