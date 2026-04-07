@@ -62,6 +62,12 @@ These are validated in `src/config/env.ts`.
 - `npm run start` - Serve the production build.
 - `npm run lint` - Run ESLint.
 
+## Firebase & Chat
+
+Firebase is utilized to provide the **Real-time Chat** feature within the platform. A custom authentication integration ensures that logged-in users are automatically authenticated in Firebase for secure Firestore access.
+
+👉 **[See the Firebase Setup & Integration Guide](./docs/firebase.md) for full configuration details and environment setup.**
+
 ## Analytics
 Google Analytics is wired via `@next/third-parties` in `src/app/layout.tsx`. Set `NEXT_PUBLIC_ENABLE_ANALYTICS=true` and provide `NEXT_PUBLIC_GA_ID` to enable tracking. Enhanced Measurement handles page views automatically.
 
