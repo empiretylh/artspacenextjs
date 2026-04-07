@@ -21,6 +21,7 @@ import Messages2Icon from "../icons/messages-2-icon";
 import Layers2Icon from "../icons/layers-2-icon";
 import ShoppingCartIcon from "../icons/shopping-cart-icon";
 import { ClipboardPenLineIcon, HomeIcon } from "lucide-react";
+import { useAuth } from "@/features/auth/store";
 
 
 const data = {
@@ -106,6 +107,7 @@ export function NavMain() {
    const pathname = usePathname();
    const { setOpenMobile } = useSidebar();
    const router = useRouter();
+   const { user } = useAuth();
 
    const isActive = (url: string) => {
       return pathname === url;
@@ -134,12 +136,17 @@ export function NavMain() {
                            <Link
                               to={item.url}
                               onClick={(e) => {
+                                 const isDisabled = item.disabled || (item.title === "order" && !user);
+                                 if (isDisabled) {
+                                    e.preventDefault();
+                                    return;
+                                 }
                                  e.preventDefault();
                                  setOpenMobile(false);
                                  router.push(item.url);
                               }}
                               className={cn(
-                                 item.disabled &&
+                                 (item.disabled || (item.title === "order" && !user)) &&
                                  "pointer-events-none opacity-50"
                               )}
                            >

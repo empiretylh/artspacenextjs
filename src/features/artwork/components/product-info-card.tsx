@@ -14,11 +14,11 @@ import { useRouter } from "next/navigation";
 
 export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
    const router = useRouter();
-   const { user, setLoginDialogOpen } = useAuth();
+   const { user } = useAuth();
 
    const handleOrder = () => {
       if (!user) {
-         setLoginDialogOpen(true);
+         router.push(paths.auth.login.getHref())
          return;
       }
       router.push(paths.artworks.order.getHref(artwork.id));
@@ -41,19 +41,23 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                />
 
                <div className="space-y-1">
-                  <Link
-                     to={paths.artists.detail.getHref(
-                        String(artwork.current_owner_display.id)
-                     )}
-                  >
-                     <p className="flex items-center hover:underline gap-2 text-muted-foreground font-semibold text-sm">
-                        {artwork.current_owner_display.first_name}{" "}
-                        {artwork.current_owner_display.last_name}
-                        {/* <span>
+                  {
+                     artwork.current_owner_display && (
+                        <Link
+                           to={paths.artists.detail.getHref(
+                              String(artwork.current_owner_display.id)
+                           )}
+                        >
+                           <p className="flex items-center hover:underline gap-2 text-muted-foreground font-semibold text-sm">
+                              {artwork.current_owner_display.first_name}{" "}
+                              {artwork.current_owner_display.last_name}
+                              {/* <span>
                         <Home className="w-4 h-4" />
                      </span> */}
-                     </p>
-                  </Link>
+                           </p>
+                        </Link>
+                     )
+                  }
                   <p className="text-muted-foreground text-xs">
                      {timeAgo(artwork.created_at)}
                   </p>
