@@ -23,6 +23,7 @@ import type { UseFormReturn } from "react-hook-form";
 
 import { paths } from "@/config/paths";
 import type { RegisterFormValues } from "../hooks/use-register-form";
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 
 type Props = {
   form: UseFormReturn<RegisterFormValues>;
@@ -34,6 +35,7 @@ type Props = {
 
   showConfirmPassword: boolean;
   setShowConfirmPassword: (v: boolean) => void;
+  handleGoogleSuccess: (credentialResponse: CredentialResponse) => Promise<void>;
 };
 
 export default function RegisterFormView({
@@ -44,6 +46,7 @@ export default function RegisterFormView({
   setShowPassword,
   showConfirmPassword,
   setShowConfirmPassword,
+  handleGoogleSuccess,
 }: Props) {
   return (
     <div className="">
@@ -247,6 +250,30 @@ export default function RegisterFormView({
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Loading..." : "Sign up"}
           </Button>
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
+          </div>
+
+          <div className="flex justify-center w-full overflow-hidden">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                console.error("Google Registration Failed");
+              }}
+              useOneTap
+              theme="outline"
+              shape="rectangular"
+              width="100%"
+            />
+          </div>
 
           <FieldDescription className="px-6 text-center">
             Already have an account?{" "}

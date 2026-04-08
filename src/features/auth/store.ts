@@ -30,6 +30,9 @@ export type State = {
       email: string,
       password: string
    ) => Promise<User | AxiosError<{ message: string }>>;
+   loginWithGoogle: (
+      token: string
+   ) => Promise<User | AxiosError<{ message: string }>>;
    register: (
       values: RegisterForm
    ) => Promise<boolean | AxiosError<{ message: string }>>;
@@ -62,6 +65,7 @@ export const useAuth = create<State>((set) => {
       isBuyer: stored?.user?.user_type === "BUYER",
       isArtist: stored?.user?.user_type === "ARTIST",
       isCollector: stored?.user?.user_type === "COLLECTOR",
+      isGallery: stored?.user?.user_type === "GALLERY",
       isLoginDialogOpen: false,
       isRegisterDialogOpen: false,
 
@@ -91,12 +95,48 @@ export const useAuth = create<State>((set) => {
                isBuyer: data.user.user_type === "BUYER",
                isArtist: data.user.user_type === "ARTIST",
                isCollector: data.user.user_type === "COLLECTOR",
+               isGallery: data.user.user_type === "GALLERY",
             };
             set(newState);
 
             queryClient.invalidateQueries();
 
             return data.user as User
+         } finally {
+            set({ loading: false });
+         }
+      },
+
+      async loginWithGoogle(token) {
+         const { api } = await import("@/lib/api-client");
+         const queryClient = getQueryClient();
+         try {
+            set({ loading: true });
+            // Direct backend call with placeholder URL as requested
+            const { data } = await api.post("/users/auth/google-login/", {
+               token
+            });
+
+            // 1. SILENT FIREBASE HANDSHAKE (if enabled and token provided)
+            if (env.FIREBASE_ENABLE && firebaseAuth && data.firebaseToken) {
+               await signInWithCustomToken(firebaseAuth, data.firebaseToken);
+            }
+
+            const newState = {
+               accessToken: data.access,
+               firebaseToken: data.firebaseToken,
+               user: data.user,
+               isBuyer: data.user.user_type === "BUYER",
+               isArtist: data.user.user_type === "ARTIST",
+               isCollector: data.user.user_type === "COLLECTOR",
+               isGallery: data.user.user_type === "GALLERY",
+            };
+            set(newState);
+
+            queryClient.invalidateQueries();
+            return data.user as User;
+         } catch (error) {
+            return error as AxiosError<{ message: string }>;
          } finally {
             set({ loading: false });
          }

@@ -9,8 +9,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@/components/ui/notifications";
 import { paths } from "@/config/paths";
 import { handleFormError } from "@/lib/utils";
-import { authAnalytics } from "@/lib/analytics";
+import { authAnalytics, accessAnalytics, UserType } from "@/lib/analytics";
 import { useAuth } from "../store";
+import type { CredentialResponse } from "@react-oauth/google";
+import type { User } from "@/types";
 
 const myanmarPhoneRegex = /^(?:\+?95|0)9(?:2|3|4|5|6|7|8|9)\d{7,9}$/;
 
@@ -49,6 +51,7 @@ export type RegisterFormValues = z.infer<typeof registerSchema>;
 export function useRegisterForm() {
   const {
     register: registerUser,
+    loginWithGoogle,
     loading,
     setRegisterDialogOpen,
     setLoginDialogOpen,
@@ -94,10 +97,47 @@ export function useRegisterForm() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    const idToken = credentialResponse.credential;
+    if (!idToken) return;
+
+    try {
+      const response = await loginWithGoogle(idToken);
+
+      if (!(response instanceof Error) && response) {
+        addNotification({
+          title: "Welcome!",
+          message: "You’ve successfully signed in with Google.",
+          type: "success",
+        });
+
+        authAnalytics.signUp({ method: "google" });
+
+        const { id, user_type } = response as User;
+        accessAnalytics.setUser(String(id), user_type.toLocaleLowerCase() as UserType);
+
+        router.push(paths.root.path);
+      } else {
+        addNotification({
+          title: "Sign Up Failed",
+          message: "Could not authenticate with Google",
+          type: "error",
+        });
+      }
+    } catch (err) {
+      addNotification({
+        title: "Sign Up Failed",
+        message: "An unexpected error occurred during Google sign-up",
+        type: "error",
+      });
+    }
+  };
+
   return {
     // form + submit
     form,
     onSubmit,
+    handleGoogleSuccess,
 
     // state
     loading,

@@ -9,7 +9,7 @@ const LoginPage = () => {
          // className="flex min-h-svh w-full items-center justify-center p-6 md:p-10
          //         bg-[url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1600&q=80')]
          //         bg-cover bg-center bg-no-repeat"
-         className="bg-[#faf7ef] flex min-h-svh w-full flex-col gap-3 items-center justify-center p-6 md:p-10"
+         className="bg-[#faf7ef] dark:bg-[#1a1915] flex min-h-svh w-full flex-col gap-3 items-center justify-center p-6 md:p-10"
       >
          <div className="max-w-sm flex gap-3 flex-col items-center w-full">
             <Link to="/">

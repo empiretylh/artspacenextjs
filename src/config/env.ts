@@ -30,6 +30,7 @@ const createEnv = () => {
       // firebase admin
       FIREBASE_PRIVATE_KEY: z.string().optional().transform((v) => v?.replace(/\\n/g, '\n')),
       FIREBASE_CLIENT_EMAIL: z.string().optional(),
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().optional(),
    }).superRefine((env, ctx) => {
       if (env.ENABLE_ANALYTICS && !env.GA_ID) {
          ctx.addIssue({
@@ -64,6 +65,7 @@ const createEnv = () => {
       // firebase admin
       FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL,
       FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
    };
 
    const parsedEnv = EnvSchema.safeParse(envVars);

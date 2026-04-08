@@ -10,6 +10,7 @@ export default function RegisterForm() {
       <RegisterFormView
          form={vm.form}
          onSubmit={vm.onSubmit}
+         handleGoogleSuccess={vm.handleGoogleSuccess}
          loading={vm.loading}
          showPassword={vm.showPassword}
          setShowPassword={vm.setShowPassword}
