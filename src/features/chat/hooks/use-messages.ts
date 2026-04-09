@@ -7,10 +7,10 @@ import {
    type QuerySnapshot
 } from "firebase/firestore";
 import { db } from "@/features/service/firebase/firebase";
-import type { ChatMessage } from "../types";
+import type { Message } from "../types";
 
 export const useMessages = (conversationId: string | null) => {
-   const [messages, setMessages] = useState<ChatMessage[]>([]);
+   const [messages, setMessages] = useState<Message[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<Error | null>(null);
 
@@ -32,7 +32,7 @@ export const useMessages = (conversationId: string | null) => {
             const msgs = snapshot.docs.map((doc) => ({
                id: doc.id,
                ...doc.data(),
-            })) as ChatMessage[];
+            })) as Message[];
             
             setMessages(msgs);
             setLoading(false);

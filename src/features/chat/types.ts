@@ -15,7 +15,7 @@ export interface Conversation {
    unreadCount?: Record<string, number>;
 }
 
-export interface ChatMessage {
+export interface Message {
    id: string;
    senderId: string;
    content: string;
