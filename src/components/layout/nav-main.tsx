@@ -1,5 +1,7 @@
 "use client";
 
+import { env } from "@/config/env";
+
 import {
    SidebarGroup,
    SidebarGroupContent,
@@ -60,7 +62,7 @@ const data = {
          title: "messages",
          url: paths.chats.path,
          icon: Messages2Icon,
-         disabled: true,
+         disabled: false,
       },
       {
          title: "inventory",
@@ -117,11 +119,18 @@ export function NavMain() {
       <SidebarGroup>
          <SidebarGroupContent>
             <SidebarMenu className="pr-3">
-               {data.navMain.map((item) => {
-                  const active = isActive(item.url);
+               {data.navMain
+                  .filter((item) => {
+                     if (item.title === "messages") {
+                        return env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE;
+                     }
+                     return true;
+                  })
+                  .map((item) => {
+                     const active = isActive(item.url);
 
-                  return (
-                     <SidebarMenuItem key={item.title}>
+                     return (
+                        <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                            asChild
                            className={cn(

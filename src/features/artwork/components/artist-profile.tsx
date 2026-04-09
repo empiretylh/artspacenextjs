@@ -3,6 +3,7 @@ import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { env } from "@/config/env";
 import { paths } from "@/config/paths";
 import { getImage, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
@@ -56,9 +57,13 @@ export function ArtistProfile({ artist }: { artist: User }) {
                   className="rounded-lg"
                />
 
-               <Button disabled variant="outline" className="rounded-lg">
-                  Send Message
-               </Button>
+               {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
+                  <Link to={`${paths.chats.path}?userId=${artist.id}&userType=${artist.user_type === 'ARTIST' ? 'artists' : artist.user_type === 'GALLERY' ? 'galleries' : 'collectors'}`}>
+                     <Button variant="outline" className="rounded-lg">
+                        Send Message
+                     </Button>
+                  </Link>
+               )}
             </div>
          </div>
 

@@ -1,43 +1,81 @@
 // components/chat/chat-layout.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { ChatList } from "./chat-list";
 import { ChatWindow } from "./chat-window";
+import { useConversations } from "../hooks/use-conversations";
+import { useAuth } from "@/features/auth/store";
+import { UserRouteType } from "@/features/service/artspace/get-users";
 
 export const ChatLayout = () => {
-   const [activeConversationId, setActiveConversationId] = useState<
-      string | null
-   >(null);
+   const searchParams = useSearchParams();
+   const router = useRouter();
+   const { user: currentUser } = useAuth();
+   const { conversations, loading: conversationsLoading } = useConversations();
+   
+   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+   const [pendingRecipientId, setPendingRecipientId] = useState<string | null>(null);
+
+   const userIdParam = searchParams.get("userId");
+   const userTypeParam = searchParams.get("userType") as UserRouteType | null;
+
+   // Handle Deep Linking
+   useEffect(() => {
+      if (!userIdParam || conversationsLoading || !currentUser) return;
+
+      const existingConv = conversations.find(c => 
+         c.participants.includes(userIdParam) && c.participants.includes(String(currentUser.id))
+      );
+
+      if (existingConv) {
+         setActiveConversationId(existingConv.id);
+         setPendingRecipientId(null);
+      } else {
+         setActiveConversationId(null);
+         setPendingRecipientId(userIdParam);
+      }
+   }, [userIdParam, conversations, conversationsLoading, currentUser]);
 
    return (
-      <div className="relative flex h-full w-full overflow-hidden rounded-lg border bg-card">
+      <div className="relative flex h-[calc(100vh-12rem)] w-full overflow-hidden rounded-lg border bg-card">
          {/* Chat List */}
          <div
             className={`
-          w-full
-          border-r
-          bg-background
-          md:w-1/3
-          ${activeConversationId ? "hidden md:block" : "block"}
-        `}
+               h-full
+               border-r
+               bg-background
+               md:w-1/3
+               ${(activeConversationId || pendingRecipientId) ? "hidden md:block" : "block w-full"}
+            `}
          >
             <ChatList
                activeId={activeConversationId}
-               onSelect={setActiveConversationId}
+               onSelect={(id) => {
+                  setActiveConversationId(id);
+                  setPendingRecipientId(null);
+                  if (userIdParam) router.replace("/chats");
+               }}
             />
          </div>
 
          {/* Chat Window */}
          <div
             className={`
-          flex flex-1 flex-col
-          ${!activeConversationId ? "hidden md:flex" : "flex"}
-        `}
+               flex flex-1 flex-col
+               ${(!activeConversationId && !pendingRecipientId) ? "hidden md:flex" : "flex w-full"}
+            `}
          >
             <ChatWindow
                conversationId={activeConversationId}
-               onBack={() => setActiveConversationId(null)}
+               recipientId={pendingRecipientId}
+               userType={userTypeParam}
+               onBack={() => {
+                  setActiveConversationId(null);
+                  setPendingRecipientId(null);
+                  if (userIdParam) router.replace("/chats");
+               }}
             />
          </div>
       </div>

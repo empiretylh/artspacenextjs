@@ -1,10 +1,12 @@
 import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
+import { env } from "@/config/env";
 import { useAuth } from "@/features/auth/store";
 import { getImage, getUserIcon, getUserLink } from "@/lib/utils";
 import type { User } from "@/types";
 import FollowButton from "../follow-button";
+import { paths } from "@/config/paths";
 
 export default function ProfileCard({ user }: { user: User }) {
    const { user: authUser } = useAuth();
@@ -90,16 +92,22 @@ export default function ProfileCard({ user }: { user: User }) {
                      following={user.profile.is_following}
                      className="w-full sm:w-auto rounded-lg"
                   />
-                  <Button
-                     disabled
-                     size="sm"
-                     variant="outline"
-                     className="hidden sm:block text-xs px-1 py-2 rounded-lg"
+               {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
+                  <Link
+                     to={`${paths.chats.path}?userId=${user.id}&userType=${user.user_type === 'ARTIST' ? 'artists' : user.user_type === 'GALLERY' ? 'galleries' : 'collectors'}`}
+                     className="hidden sm:block"
                   >
-                     Send Message
-                  </Button>
-               </div>
+                     <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs px-1 py-2 rounded-lg"
+                     >
+                        Send Message
+                     </Button>
+                  </Link>
+               )}
             </div>
+         </div>
          </div>
       </div>
    );

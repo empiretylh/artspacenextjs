@@ -3,6 +3,7 @@
 import Link from "@/components/common/link";
 import { ShareButton } from "@/components/common/share-button";
 import { ProfileUserProvider } from "@/components/providers/profile-user-provider";
+import { env } from "@/config/env";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useAuth } from "@/features/auth/store";
@@ -181,9 +182,13 @@ const ProfileLayoutView = ({
                                  following={followStatusQuery.data || false}
                               />
                            )}
-                           <Button disabled variant="outline">
-                              Send Message
-                           </Button>
+                           {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
+                              <Link to={`${paths.chats.path}?userId=${user.id}&userType=${userType}`}>
+                                 <Button variant="outline">
+                                    Send Message
+                                 </Button>
+                              </Link>
+                           )}
                         </>
                      )}
 

@@ -1,13 +1,17 @@
 // components/chat/chat-messages.tsx
-import type { Message } from "../dummy-data";
-import { ChatMessageBubble } from "./chat-message-bubble";
+"use client";
+
 import { useEffect, useRef } from "react";
+import { ChatMessageBubble } from "./chat-message-bubble";
+import { useAuth } from "@/features/auth/store";
+import type { Message } from "../types";
 
 type Props = {
    messages: Message[];
 };
 
 export const ChatMessages = ({ messages }: Props) => {
+   const { user } = useAuth();
    const bottomRef = useRef<HTMLDivElement | null>(null);
 
    useEffect(() => {
@@ -20,7 +24,7 @@ export const ChatMessages = ({ messages }: Props) => {
             <ChatMessageBubble
                key={msg.id}
                message={msg}
-               isMine={msg.senderId === "me"}
+               isMine={msg.senderId === String(user?.id)}
             />
          ))}
          <div ref={bottomRef} />

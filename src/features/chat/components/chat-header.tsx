@@ -1,10 +1,13 @@
 // components/chat/chat-header.tsx
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+"use client";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import type { ChatUser } from "../types";
 
 type Props = {
-   user: { name: string };
+   user: ChatUser;
    onBack: () => void;
 };
 
@@ -21,6 +24,7 @@ export const ChatHeader = ({ user, onBack }: Props) => {
          </Button>
 
          <Avatar>
+            <AvatarImage src={user.avatar || undefined} alt={user.name} />
             <AvatarFallback>{user.name[0]}</AvatarFallback>
          </Avatar>
 

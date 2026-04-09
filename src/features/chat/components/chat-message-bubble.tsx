@@ -1,6 +1,9 @@
 // components/chat/chat-message-bubble.tsx
+"use client";
+
 import { cn } from "@/lib/utils";
-import type { Message } from "../dummy-data";
+import { format } from "date-fns";
+import type { Message } from "../types";
 
 type Props = {
    message: Message;
@@ -8,6 +11,10 @@ type Props = {
 };
 
 export const ChatMessageBubble = ({ message, isMine }: Props) => {
+   const dateLabel = message.createdAt?.toDate?.() 
+      ? format(message.createdAt.toDate(), "HH:mm")
+      : "Sending...";
+
    return (
       <div
          className={cn(
@@ -15,8 +22,10 @@ export const ChatMessageBubble = ({ message, isMine }: Props) => {
             isMine ? "ml-auto bg-primary text-primary-foreground" : "bg-muted"
          )}
       >
-         <p>{message.content}</p>
-         <span className="mt-1 text-xs opacity-70">{message.createdAt}</span>
+         <p className="whitespace-pre-wrap break-words">{message.content}</p>
+         <span className="mt-1 text-[10px] opacity-70 text-right">
+            {dateLabel}
+         </span>
       </div>
    );
 };
