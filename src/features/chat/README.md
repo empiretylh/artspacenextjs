@@ -19,7 +19,7 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 
 1. **Initiation**: Chats can be initiated by navigating to `/chats?userId=[id]&userType=[type]`.
 2. **Lazy Creation**: Conversations are only saved to Firestore when the first message is sent.
-3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore.
+3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore. These hooks explicitly wait for the Firebase Authentication session (`auth.currentUser`) to be fully established before subscribing to listeners, preventing "Missing or insufficient permissions" errors during login/logout transitions.
 
 ## 🔐 Security & Operations
 
