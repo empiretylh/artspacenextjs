@@ -26,9 +26,11 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
     - **Mirroring**: User profiles are mirrored to a Firestore `/users` collection on every login and profile update.
     - **Retroactive Sync**: Updating a profile in Settings automatically triggers a batch update for the current user's entry in their top 50 most recent conversations.
     - **Self-Healing**: Every message sent refreshes the sender's metadata in the conversation to ensure long-term consistency.
+7. **Search Logic**: Local, client-side filtering of conversations for instant results without database round-trips.
 
 ## 🎨 UI & UX Patterns
 
+- **Conversation Discovery**: High-speed local search implemented in the `ChatList` header using a togglable `Input` field. It filters by participant names in real-time.
 - **Visual Anchoring**: The chat list uses `flex-col-reverse` to natively anchor the scroll to the bottom. This ensures that new messages appear at the bottom without requiring manual programmatic scrolling.
 - **Message Bubbles**: Uses a modern rounded design (`rounded-2xl`) with directional "tails" (`rounded-tr-none` for sender, `rounded-tl-none` for receiver) to provide clear visual orientation.
 - **Vertical Rhythm**: A `gap-y-3` is maintained between messages in the `ChatMessages` container to improve readability and prevent visual clutter.
