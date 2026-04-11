@@ -18,20 +18,10 @@ export const useConversations = () => {
    const [error, setError] = useState<Error | null>(null);
 
    useEffect(() => {
-      // 1. Wait for both our store user AND Firebase Auth user to be ready
-      // This prevents "Missing or insufficient permissions" errors on login/logout
-      if (!user?.id || !db || !auth?.currentUser) {
-         setLoading(!!user?.id); // Keep loading if we have a user but Firebase isn't ready
-         setConversations([]);
+      if (!db || !user?.id) {
+         setLoading(false);
          return;
       }
-
-      // 2. Optional: Verify that Firebase Auth UID matches our user ID
-      // (Safety check for multi-account environments)
-      if (auth.currentUser.uid !== String(user.id)) {
-         return;
-      }
-
       const q = query(
          collection(db, "conversations"),
          where("participants", "array-contains", String(user.id)),

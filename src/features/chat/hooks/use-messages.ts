@@ -4,6 +4,7 @@ import {
    query, 
    orderBy, 
    onSnapshot,
+   limit,
    type QuerySnapshot
 } from "firebase/firestore";
 import { db, auth } from "@/features/service/firebase/firebase";
@@ -15,6 +16,8 @@ export const useMessages = (conversationId: string | null) => {
    const [messages, setMessages] = useState<Message[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<Error | null>(null);
+   const [limitAmount, setLimitAmount] = useState(10); // Increased as user scrolls
+   const [hasMore, setHasMore] = useState(true);
 
    useEffect(() => {
       // 1. Reset messages if no conversation
@@ -23,22 +26,11 @@ export const useMessages = (conversationId: string | null) => {
          return;
       }
 
-      // 2. Wait for Firebase Auth to be ready
-      // This prevents "Missing or insufficient permissions" errors
-      if (!auth?.currentUser) {
-         setLoading(true); // Keep loading while waiting for auth
-         return;
-      }
-
-      // 3. Optional: Verify that Firebase Auth UID matches our session user
-      if (user?.id && auth.currentUser.uid !== String(user.id)) {
-         return;
-      }
-
       setLoading(true);
       const q = query(
          collection(db, "conversations", conversationId, "messages"),
-         orderBy("createdAt", "asc")
+         orderBy("createdAt", "desc"),
+         limit(limitAmount)
       );
 
       const unsubscribe = onSnapshot(
@@ -50,6 +42,7 @@ export const useMessages = (conversationId: string | null) => {
             })) as Message[];
             
             setMessages(msgs);
+            setHasMore(msgs.length === limitAmount);
             setError(null);
             setLoading(false);
          },
@@ -61,7 +54,19 @@ export const useMessages = (conversationId: string | null) => {
       );
 
       return () => unsubscribe();
-   }, [conversationId, auth?.currentUser?.uid, user?.id]);
+   }, [conversationId, auth?.currentUser?.uid, user?.id, limitAmount]);
 
-   return { messages, loading, error };
+   const loadMore = () => {
+      if (hasMore && !loading) {
+         setLimitAmount((prev) => prev + 10);
+      }
+   };
+
+   return { 
+      messages, 
+      loading, 
+      error, 
+      hasMore, 
+      loadMore 
+   };
 };

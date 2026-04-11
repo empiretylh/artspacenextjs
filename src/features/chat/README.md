@@ -20,6 +20,14 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 1. **Initiation**: Chats can be initiated by navigating to `/chats?userId=[id]&userType=[type]`.
 2. **Lazy Creation**: Conversations are only saved to Firestore when the first message is sent.
 3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore. These hooks explicitly wait for the Firebase Authentication session (`auth.currentUser`) to be fully established before subscribing to listeners, preventing "Missing or insufficient permissions" errors during login/logout transitions.
+4. **Pagination**: Messages are fetched in batches (default: 10) starting from the most recent. This is managed via `useMessages` by increasing the Firestore `limit()` on-demand.
+5. **Infinite Scroll**: The `ChatMessages` component implements an automated pagination trigger using an `IntersectionObserver`. When the user scrolls to the top of the history, the next batch is fetched without a manual "Load More" button.
+
+## 🎨 UI & UX Patterns
+
+- **Visual Anchoring**: The chat list uses `flex-col-reverse` to natively anchor the scroll to the bottom. This ensures that new messages appear at the bottom without requiring manual programmatic scrolling.
+- **Smart Loading**: During pagination, the chat list stays mounted. This prevents scroll position resets and ensures a flicker-free experience when loading older messages.
+- **Auto-Correction**: If the initial load of 10 messages doesn't fill the entire viewport, the system detects the visible "load more" sentinel and immediately fetches additional batches until the screen is full.
 
 ## 🔐 Security & Operations
 

@@ -24,7 +24,7 @@ type Props = {
 export const ChatWindow = ({ conversationId, recipientId, userType = "artists", onBack }: Props) => {
    const { user: currentUser } = useAuth();
    const { conversations } = useConversations();
-   const { messages, loading: messagesLoading } = useMessages(conversationId);
+   const { messages, loading: messagesLoading, hasMore, loadMore } = useMessages(conversationId);
    const { sendMessage } = useSendMessage(conversationId);
 
    // Fetch recipient data for new chats
@@ -72,13 +72,19 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
       <div className="flex h-full flex-col">
          {finalUser && <ChatHeader user={finalUser} onBack={onBack} />}
          
-         <div className="flex-1 overflow-y-auto">
-            {messagesLoading ? (
+         <div className="flex-1 min-h-0 flex flex-col">
+            {messagesLoading && messages.length === 0 ? (
                <div className="flex h-full items-center justify-center">
                   <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/40" />
                </div>
             ) : (
-               <ChatMessages messages={messages} />
+               <ChatMessages 
+                  conversationId={conversationId}
+                  messages={messages} 
+                  hasMore={hasMore} 
+                  onLoadMore={loadMore} 
+                  loading={messagesLoading}
+               />
             )}
          </div>
 
