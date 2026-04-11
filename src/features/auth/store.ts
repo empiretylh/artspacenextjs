@@ -108,16 +108,16 @@ export const useAuth = create<State>((set) => {
       },
 
       async loginWithGoogle(token) {
-         const { api } = await import("@/lib/api-client");
          const queryClient = getQueryClient();
          try {
             set({ loading: true });
-            // Direct backend call with placeholder URL as requested
-            const { data } = await api.post("/users/auth/google-login/", {
+            
+            // Proxy through Next.js API route to handle cookies and firebase sync
+            const { data } = await axios.post("/api/auth/google", {
                token
             });
 
-            // 1. SILENT FIREBASE HANDSHAKE (if enabled and token provided)
+            // 1. SILENT FIREBASE HANDSHAKE
             if (env.FIREBASE_ENABLE && firebaseAuth && data.firebaseToken) {
                await signInWithCustomToken(firebaseAuth, data.firebaseToken);
             }
