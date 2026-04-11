@@ -6,17 +6,32 @@ import {
    onSnapshot,
    type QuerySnapshot
 } from "firebase/firestore";
-import { db } from "@/features/service/firebase/firebase";
+import { db, auth } from "@/features/service/firebase/firebase";
+import { useAuth } from "@/features/auth/store";
 import type { Message } from "../types";
 
 export const useMessages = (conversationId: string | null) => {
+   const { user } = useAuth();
    const [messages, setMessages] = useState<Message[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<Error | null>(null);
 
    useEffect(() => {
+      // 1. Reset messages if no conversation
       if (!conversationId || !db) {
          setMessages([]);
+         return;
+      }
+
+      // 2. Wait for Firebase Auth to be ready
+      // This prevents "Missing or insufficient permissions" errors
+      if (!auth?.currentUser) {
+         setLoading(true); // Keep loading while waiting for auth
+         return;
+      }
+
+      // 3. Optional: Verify that Firebase Auth UID matches our session user
+      if (user?.id && auth.currentUser.uid !== String(user.id)) {
          return;
       }
 
@@ -35,6 +50,7 @@ export const useMessages = (conversationId: string | null) => {
             })) as Message[];
             
             setMessages(msgs);
+            setError(null);
             setLoading(false);
          },
          (err) => {
@@ -45,7 +61,7 @@ export const useMessages = (conversationId: string | null) => {
       );
 
       return () => unsubscribe();
-   }, [conversationId]);
+   }, [conversationId, auth?.currentUser?.uid, user?.id]);
 
    return { messages, loading, error };
 };

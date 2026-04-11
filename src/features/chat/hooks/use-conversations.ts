@@ -7,7 +7,7 @@ import {
    onSnapshot,
    type QuerySnapshot
 } from "firebase/firestore";
-import { db } from "@/features/service/firebase/firebase";
+import { db, auth } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
 import type { Conversation } from "../types";
 
@@ -18,8 +18,17 @@ export const useConversations = () => {
    const [error, setError] = useState<Error | null>(null);
 
    useEffect(() => {
-      if (!user?.id || !db) {
-         setLoading(false);
+      // 1. Wait for both our store user AND Firebase Auth user to be ready
+      // This prevents "Missing or insufficient permissions" errors on login/logout
+      if (!user?.id || !db || !auth?.currentUser) {
+         setLoading(!!user?.id); // Keep loading if we have a user but Firebase isn't ready
+         setConversations([]);
+         return;
+      }
+
+      // 2. Optional: Verify that Firebase Auth UID matches our user ID
+      // (Safety check for multi-account environments)
+      if (auth.currentUser.uid !== String(user.id)) {
          return;
       }
 
@@ -38,6 +47,7 @@ export const useConversations = () => {
             })) as Conversation[];
             
             setConversations(convs);
+            setError(null);
             setLoading(false);
          },
          (err) => {
@@ -48,7 +58,7 @@ export const useConversations = () => {
       );
 
       return () => unsubscribe();
-   }, [user?.id]);
+   }, [user?.id, auth?.currentUser?.uid]);
 
    return { conversations, loading, error };
 };
