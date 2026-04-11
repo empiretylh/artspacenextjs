@@ -5,7 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import type { ChatUser } from "../types";
-import { getImage } from "@/lib/utils";
+import { cn, getImage } from "@/lib/utils";
+import { useUserStatus } from "../hooks/use-user-status";
 
 type Props = {
    user: ChatUser;
@@ -13,6 +14,8 @@ type Props = {
 };
 
 export const ChatHeader = ({ user, onBack }: Props) => {
+   const { status, isOnline } = useUserStatus(user.id);
+   
    return (
       <div className="flex items-center gap-3 border-b p-4">
          <Button
@@ -23,15 +26,23 @@ export const ChatHeader = ({ user, onBack }: Props) => {
          >
             <ArrowLeft className="h-4 w-4" />
          </Button>
-
-         <Avatar>
-            <AvatarImage src={getImage(user.avatar)} alt={user.name} />
-            <AvatarFallback>{user.name[0]}</AvatarFallback>
-         </Avatar>
-
+ 
+         <div className="relative">
+            <Avatar>
+               <AvatarImage src={getImage(user.avatar)} alt={user.name} />
+               <AvatarFallback>{user.name[0]}</AvatarFallback>
+            </Avatar>
+            <span 
+               className={cn(
+                  "absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background",
+                  isOnline ? "bg-green-500" : "bg-gray-400"
+               )} 
+            />
+         </div>
+ 
          <div>
             <p className="text-sm font-medium">{user.name}</p>
-            <p className="text-xs text-muted-foreground">Active now</p>
+            <p className="text-xs text-muted-foreground">{status}</p>
          </div>
       </div>
    );

@@ -6,10 +6,12 @@ import { auth as firebaseAuth } from "@/features/service/firebase/firebase"; // 
 import { signInWithCustomToken } from "firebase/auth";
 import { env } from "@/config/env";
 import { useSyncUserProfile } from "../chat/hooks/use-sync-user-profile";
+import { usePresence } from "../chat/hooks/use-presence";
 
 export function AuthInitializer() {
   const initialized = useRef(false);
   const { syncProfile } = useSyncUserProfile();
+  usePresence();
 
   useEffect(() => {
     const sync = async () => {

@@ -21,12 +21,15 @@ export const useMessages = (conversationId: string | null) => {
 
    useEffect(() => {
       // 1. Reset messages if no conversation
-      if (!conversationId || !db) {
+      if (!conversationId || !db || !auth?.currentUser) {
          setMessages([]);
+         setLoading(false);
          return;
       }
 
       setLoading(true);
+      setError(null);
+      
       const q = query(
          collection(db, "conversations", conversationId, "messages"),
          orderBy("createdAt", "desc"),
@@ -48,13 +51,14 @@ export const useMessages = (conversationId: string | null) => {
          },
          (err) => {
             console.error("Error fetching messages:", err);
+            // Handle permission error specifically if needed
             setError(err);
             setLoading(false);
          }
       );
 
       return () => unsubscribe();
-   }, [conversationId, auth?.currentUser?.uid, user?.id, limitAmount]);
+   }, [conversationId, auth?.currentUser?.uid, limitAmount, db]);
 
    const loadMore = () => {
       if (hasMore && !loading) {

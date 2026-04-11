@@ -19,6 +19,7 @@ export const useSyncUserProfile = () => {
          id: userIdStr,
          name,
          avatar,
+         lastSeen: serverTimestamp() as any,
          updatedAt: serverTimestamp() as any,
       };
 

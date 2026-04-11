@@ -24,9 +24,13 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 5. **Infinite Scroll**: The `ChatMessages` component implements an automated pagination trigger using an `IntersectionObserver`.
 6. **Data Synchronization**: 
     - **Mirroring**: User profiles are mirrored to a Firestore `/users` collection on every login and profile update.
+    - **Presence Tracking**: A global loop (`usePresence`) updates the current user's `lastSeen` timestamp in Firestore every 60 seconds.
+    - **Online Status**: Real-time status (Active now vs Last seen) is determined via `useUserStatus` hook with a 3-minute activity threshold.
+    - **Logout Sync**: Explicitly sets `lastSeen` to the past on logout for immediate offline appearance across devices.
     - **Retroactive Sync**: Updating a profile in Settings automatically triggers a batch update for the current user's entry in their top 50 most recent conversations.
     - **Self-Healing**: Every message sent refreshes the sender's metadata in the conversation to ensure long-term consistency.
 7. **Search Logic**: Local, client-side filtering of conversations for instant results without database round-trips.
+
 
 ## 🎨 UI & UX Patterns
 
@@ -43,7 +47,9 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 Production-grade security rules. 
 - **Conversations**: Restricted to participants only.
 - **Messages**: Restricted to conversation participants.
-- **Users**: Owners can write to their own `/users/{uid}` document.
+- **Users**: 
+  - **Read**: Any authenticated user can read public profiles (needed for presence status).
+  - **Write**: Restricted to the owner (`request.auth.uid == userId`) for profile mirroring and presence updates.
 - **Validation**: Ensures only legitimate participants can be added.
 
 ### Deployment

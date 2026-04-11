@@ -5,6 +5,7 @@ import { cn, getImage } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/features/auth/store";
+import { useUserStatus } from "../hooks/use-user-status";
 import type { Conversation } from "../types";
 
 type Props = {
@@ -21,6 +22,7 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
       (id) => id !== String(currentUser?.id)
    );
    const otherUser = otherUserId ? conversation.participantDetails[otherUserId] : null;
+   const { isOnline } = useUserStatus(otherUserId || null);
 
    if (!otherUser) return null;
 
@@ -37,9 +39,12 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
                <AvatarImage src={getImage(otherUser.avatar)} alt={otherUser.name} />
                <AvatarFallback>{otherUser.name[0]}</AvatarFallback>
             </Avatar>
-
-            {/* In a real app we'd check online status from a presence system */}
-            {/* For now we stick to the UI mock from before */}
+            <span 
+               className={cn(
+                  "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background",
+                  isOnline ? "bg-green-500" : "bg-gray-400"
+               )} 
+            />
          </div>
 
          <div className="min-w-0 flex-1">

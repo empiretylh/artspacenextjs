@@ -7,6 +7,13 @@ service cloud.firestore {
     function isSignedIn() {
       return request.auth != null;
     }
+    
+    match /users/{userId} {
+      // Allow any authenticated user to read profiles (needed for status display)
+      allow read: if isSignedIn();
+      // Allow only the owner to update their own profile and status
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
 
     match /conversations/{conversationId} {
       // CREATE: Allow if the user is one of the participants in the new data
