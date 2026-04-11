@@ -6,6 +6,11 @@ export interface ChatUser {
    avatar?: string | null;
 }
 
+export interface UserDocument extends ChatUser {
+   lastSeen?: Timestamp;
+   updatedAt: Timestamp;
+}
+
 export interface Conversation {
    id: string;
    participants: string[]; // Array of user IDs

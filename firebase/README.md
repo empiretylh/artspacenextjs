@@ -16,6 +16,7 @@ npm run deploy:firebase
 Production-grade security rules. 
 - **Conversations**: Restricted to participants only.
 - **Messages**: Restricted to conversation participants.
+- **Users**: Owners can write to their own `/users/{uid}` document.
 - **Validation**: Ensures only legitimate participants can be added.
 
 ### [firestore.indexes.json](file:///d:/data/learning/work/real-work/art-space-next/firebase/firestore.indexes.json)

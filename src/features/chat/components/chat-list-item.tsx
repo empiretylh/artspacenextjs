@@ -1,7 +1,7 @@
 // components/chat/chat-list-item.tsx
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, getImage } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/features/auth/store";
@@ -15,7 +15,7 @@ type Props = {
 
 export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
    const { user: currentUser } = useAuth();
-   
+
    // Find the other participant
    const otherUserId = conversation.participants.find(
       (id) => id !== String(currentUser?.id)
@@ -34,7 +34,7 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
       >
          <div className="relative">
             <Avatar>
-               <AvatarImage src={otherUser.avatar || undefined} alt={otherUser.name} />
+               <AvatarImage src={getImage(otherUser.avatar)} alt={otherUser.name} />
                <AvatarFallback>{otherUser.name[0]}</AvatarFallback>
             </Avatar>
 

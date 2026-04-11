@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
-
+import { useSyncUserProfile } from "@/features/chat/hooks/use-sync-user-profile";
+import { useAuth } from "@/features/auth/store";
 import { api } from "@/lib/api-client";
 import type { MutationConfig } from "@/lib/react-query";
 import type { User } from "@/types";
@@ -48,15 +49,23 @@ export const useUpdateProfile = ({
    mutationConfig,
 }: UseUpdateProfileOptions = {}) => {
    const queryClient = useQueryClient();
+   const { syncProfile } = useSyncUserProfile();
    const { onSuccess, ...restConfig } = mutationConfig || {};
 
    return useMutation({
       mutationFn: updateProfile,
       onSuccess: (data, ...args) => {
-         // refetch user profile query
+         // 1. Refetch user profile query
          queryClient.invalidateQueries({
             queryKey: getProfileQueryOptions().queryKey,
          });
+
+         // 2. Update global auth state immediately
+         useAuth.getState().updateUser(data.data);
+
+         // 3. Sync to Firestore (retroactively update chats)
+         syncProfile(true);
+
          onSuccess?.(data, ...args);
       },
       ...restConfig,

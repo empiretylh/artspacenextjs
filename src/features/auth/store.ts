@@ -38,9 +38,11 @@ export type State = {
    ) => Promise<boolean | AxiosError<{ message: string }>>;
    logout: () => Promise<boolean>;
    init: (data: { user: User | null; accessToken: string | null; firebaseToken: string | null }) => void;
+   updateUser: (user: User) => void;
    isBuyer: boolean;
    isArtist: boolean;
    isCollector: boolean;
+   isGallery: boolean;
 };
 
 export const useAuth = create<State>((set) => {
@@ -194,7 +196,17 @@ export const useAuth = create<State>((set) => {
             isBuyer: data.user?.user_type === "BUYER",
             isArtist: data.user?.user_type === "ARTIST",
             isCollector: data.user?.user_type === "COLLECTOR",
+            isGallery: data.user?.user_type === "GALLERY",
             loading: false
+         });
+      },
+      updateUser: (user: User) => {
+         set({
+            user,
+            isBuyer: user.user_type === "BUYER",
+            isArtist: user.user_type === "ARTIST",
+            isCollector: user.user_type === "COLLECTOR",
+            isGallery: user.user_type === "GALLERY",
          });
       },
    };

@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import type { ChatUser } from "../types";
+import { getImage } from "@/lib/utils";
 
 type Props = {
    user: ChatUser;
@@ -24,7 +25,7 @@ export const ChatHeader = ({ user, onBack }: Props) => {
          </Button>
 
          <Avatar>
-            <AvatarImage src={user.avatar || undefined} alt={user.name} />
+            <AvatarImage src={getImage(user.avatar)} alt={user.name} />
             <AvatarFallback>{user.name[0]}</AvatarFallback>
          </Avatar>
 

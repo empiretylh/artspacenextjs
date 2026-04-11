@@ -52,11 +52,20 @@ export const useSendMessage = (conversationId: string | null) => {
                createdAt: serverTimestamp(),
             });
 
-            // 3. Update conversation root metadata
+            // 3. Update conversation root metadata (including self-healing details)
             const convRef = doc(db, "conversations", targetId);
+            const name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email;
+            
             await setDoc(convRef, {
                lastMessage: content,
                updatedAt: serverTimestamp(),
+               participantDetails: {
+                  [user.id]: {
+                     id: String(user.id),
+                     name,
+                     avatar: user.profile?.profile_picture || null
+                  }
+               }
             }, { merge: true });
          }
 

@@ -19,9 +19,13 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 
 1. **Initiation**: Chats can be initiated by navigating to `/chats?userId=[id]&userType=[type]`.
 2. **Lazy Creation**: Conversations are only saved to Firestore when the first message is sent.
-3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore. These hooks explicitly wait for the Firebase Authentication session (`auth.currentUser`) to be fully established before subscribing to listeners, preventing "Missing or insufficient permissions" errors during login/logout transitions.
+3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore. These hooks explicitly wait for the Firebase Authentication session (`auth.currentUser`) to be fully established.
 4. **Pagination**: Messages are fetched in batches (default: 10) starting from the most recent. This is managed via `useMessages` by increasing the Firestore `limit()` on-demand.
-5. **Infinite Scroll**: The `ChatMessages` component implements an automated pagination trigger using an `IntersectionObserver`. When the user scrolls to the top of the history, the next batch is fetched without a manual "Load More" button.
+5. **Infinite Scroll**: The `ChatMessages` component implements an automated pagination trigger using an `IntersectionObserver`.
+6. **Data Synchronization**: 
+    - **Mirroring**: User profiles are mirrored to a Firestore `/users` collection on every login and profile update.
+    - **Retroactive Sync**: Updating a profile in Settings automatically triggers a batch update for the current user's entry in their top 50 most recent conversations.
+    - **Self-Healing**: Every message sent refreshes the sender's metadata in the conversation to ensure long-term consistency.
 
 ## 🎨 UI & UX Patterns
 
@@ -33,9 +37,12 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 
 ## 🔐 Security & Operations
 
-### Firestore Rules
-Security is enforced by participant-based rules. Only users whose IDs are in the `participants` array can read or write to a conversation and its nested messages.
-- Location: [firebase/firestore.rules](file:///d:/data/learning/work/real-work/art-space-next/firebase/firestore.rules)
+### [firestore.rules](file:///d:/data/learning/work/real-work/art-space-next/firebase/firestore.rules)
+Production-grade security rules. 
+- **Conversations**: Restricted to participants only.
+- **Messages**: Restricted to conversation participants.
+- **Users**: Owners can write to their own `/users/{uid}` document.
+- **Validation**: Ensures only legitimate participants can be added.
 
 ### Deployment
 Infrastructure changes (rules/indexes) must be synced using:
