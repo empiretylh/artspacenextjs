@@ -75,7 +75,7 @@ export interface OrderItem {
    id: number;
    orderId: string;
    artworkId: string;
-   price_at_purchase: number;
+   price_at_purchase: number | string;
    quantity: number;
    artwork: Artwork;
    order: Order;

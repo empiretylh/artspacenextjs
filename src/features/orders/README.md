@@ -20,9 +20,9 @@
 - **AI NOTE**: Payment processing is decoupled from the main Artspace API logic for security and scalability.
 
 ### 3. Data Table (User Views)
-- [user-order-list.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/user-order-list.tsx) implements a premium TanStack Table.
-- It supports custom filtering and sorting via a polymorphic `FilterProducts` structure defined in the feature's `types`.
+- [user-order-list.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/user-order-list.tsx) implements a premium TanStack Table with pagination support.
+- It uses the shared [pagination.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/common/pagination.tsx) component for navigating through order history.
 
 ## 📂 Key Files
 - [create-artwork-order.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/api/create-artwork-order.ts): The primary mutation hook for placing orders.
-- [get-orders.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/api/get-orders.ts): Handles paginated retrieval of user orders.
+- [get-orders.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/api/get-orders.ts): Handles paginated retrieval of user orders (supports `page` parameter).

@@ -15,6 +15,7 @@ import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
 import { Loader2, Package } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Pagination } from '@/components/common/pagination'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,7 +30,9 @@ import {
 export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> }) => {
   const { user } = useAuth()
   const userId = user?.id
-  const { data: orders, isLoading, error } = useGetUserOrders(userId as number, filters)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+  const { data: orders, isLoading, error } = useGetUserOrders(userId as number, page, filters)
   const updateOrder = useUpdateOrder()
 
   const [orderIdToCancel, setOrderIdToCancel] = useState<string | null>(null)
@@ -63,7 +66,7 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
     )
   }
 
-  if (!orders || orders.length === 0) {
+  if (!orders || orders.results.length === 0) {
     return (
       <Card className="text-center py-20 border-dashed bg-muted/20 border-2 rounded-3xl">
         <CardContent className="flex flex-col items-center gap-6">
@@ -102,7 +105,7 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
 
   return (
     <div className="grid gap-6">
-      {orders.map((order) => {
+      {orders.results.map((order) => {
         // Use either order_status or status
         const status = order.order_status || order.status || 'PENDING'
         const firstItem = order.items?.[0]
@@ -208,6 +211,16 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
           </Card>
         )
       })}
+      {orders && orders.count > 0 && (
+        <Pagination
+          total={orders.count}
+          page={page}
+          limit={limit}
+          onPageChange={setPage}
+          onLimitChange={setLimit}
+          showLimitSelector={false}
+        />
+      )}
       <AlertDialog open={!!orderIdToCancel} onOpenChange={(open) => !open && setOrderIdToCancel(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
