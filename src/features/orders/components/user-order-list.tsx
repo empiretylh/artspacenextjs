@@ -9,11 +9,12 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Price from '@/components/common/price'
 import AppImage from '@/components/common/app-image'
-import { getImage } from '@/lib/utils'
+import { getImage, getUserRouteType } from '@/lib/utils'
 import { format } from 'date-fns'
 import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
-import { Loader2, Package } from 'lucide-react'
+import { Loader2, Package, MessageSquare } from 'lucide-react'
+import { env } from '@/config/env'
 import { cn } from '@/lib/utils'
 import { Pagination } from '@/components/common/pagination'
 import {
@@ -197,7 +198,26 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
                           </Badge>
                         )}
                       </div>
-                      <Button variant="link" className="p-0 h-auto font-bold text-primary text-xs mt-1 font-sans uppercase tracking-widest">View Details</Button>
+                      <div className="flex items-center gap-4 mt-1">
+                        <Button variant="link" className="p-0 h-auto font-bold text-primary text-xs font-sans uppercase tracking-widest">View Details</Button>
+                        {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && artwork?.current_owner_display && (
+                          <Link 
+                            to={paths.chats.getHref({ 
+                              userId: artwork.current_owner_display.id, 
+                              userType: getUserRouteType(artwork.current_owner_display.user_type) 
+                            })}
+                          >
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="gap-2 font-bold text-muted-foreground hover:text-primary transition-colors h-auto py-1 px-2 rounded-lg hover:bg-primary/5 text-[10px] uppercase tracking-widest font-sans"
+                            >
+                              <MessageSquare className="h-3 w-3" />
+                              Contact Seller
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ) : (

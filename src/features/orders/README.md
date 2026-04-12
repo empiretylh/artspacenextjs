@@ -19,9 +19,13 @@
 - **External API**: It calls `env.PAYMENT_API_URL` to receive a `payment_url`.
 - **AI NOTE**: Payment processing is decoupled from the main Artspace API logic for security and scalability.
 
-### 3. Data Table (User Views)
 - [user-order-list.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/user-order-list.tsx) implements a premium TanStack Table with pagination support.
 - It uses the shared [pagination.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/common/pagination.tsx) component for navigating through order history.
+
+### 4. Communication
+- **Contact Seller**: Orders provide a direct entry point to the Chat feature via a "Contact Seller" button.
+- **Dynamic Routing**: It targets the `current_owner_display` of the artwork, mapping their user type to the appropriate chat route using the `getUserRouteType` utility.
+- **Feature Flag**: This functionality is conditionally rendered based on `env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE`.
 
 ## 📂 Key Files
 - [create-artwork-order.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/api/create-artwork-order.ts): The primary mutation hook for placing orders.

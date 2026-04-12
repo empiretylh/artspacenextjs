@@ -8,12 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Price from '@/components/common/price';
 import AppImage from '@/components/common/app-image';
-import { getImage } from '@/lib/utils';
+import { getImage, getUserRouteType } from '@/lib/utils';
 import { format } from 'date-fns';
 import Link from '@/components/common/link';
 import { paths } from '@/config/paths';
-import { Loader2, ArrowLeft, Package, MapPin, CreditCard, Calendar } from 'lucide-react';
+import { Loader2, ArrowLeft, Package, MapPin, CreditCard, Calendar, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { env } from '@/config/env';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -171,9 +172,28 @@ const OrderDetail = () => {
                             </span>
                         </div>
                       </div>
-                      <Link to={paths.artworks.detail.getHref(item.artwork.id)}>
-                        <Button variant="link" className="p-0 h-auto font-bold text-primary">View Artwork</Button>
-                      </Link>
+                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
+                        <Link to={paths.artworks.detail.getHref(item.artwork.id)}>
+                          <Button variant="link" className="p-0 h-auto font-bold text-primary">View Artwork</Button>
+                        </Link>
+                        {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && item.artwork.current_owner_display && (
+                          <Link 
+                            to={paths.chats.getHref({ 
+                              userId: item.artwork.current_owner_display.id, 
+                              userType: getUserRouteType(item.artwork.current_owner_display.user_type) 
+                            })}
+                          >
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="gap-2 font-bold text-muted-foreground hover:text-primary transition-colors h-auto py-1 px-2 rounded-lg hover:bg-primary/10"
+                            >
+                              <MessageSquare className="h-4 w-4" />
+                              Contact Seller
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

@@ -15,6 +15,7 @@
 - **Payload Transformers**:
     - **Styles**: Backend requires a comma-separated string of IDs (`styles_artwork_ids`).
     - **Ownership**: Logic switches between `current_owner` (ID) and `current_owner_name` (string) based on the `are_u_owner` boolean.
+    - **Owner Routing**: UI components use the `getUserRouteType` utility to dynamically route links to the correct owner profile (Artist, Gallery, or Collector) based on `current_owner_display.user_type`.
     - **Image**: Though the frontend handles arrays, the backend currently expects the first image as a single string.
 
 ### 2. Filtering & Discovery

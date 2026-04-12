@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { paths } from "@/config/paths";
 import { useAuth } from "@/features/auth/store";
-import { getImage, timeAgo } from "@/lib/utils";
+import { getImage, getUserRouteType, timeAgo } from "@/lib/utils";
 import type { Artwork } from "@/types";
 import { useRouter } from "next/navigation";
 
@@ -44,7 +44,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   {
                      artwork.current_owner_display && (
                         <Link
-                           to={paths.artists.detail.getHref(
+                           to={paths[getUserRouteType(artwork.current_owner_display.user_type)].detail.getHref(
                               String(artwork.current_owner_display.id)
                            )}
                         >
