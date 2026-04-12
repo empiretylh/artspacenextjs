@@ -86,10 +86,14 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
             {/* Buttons */}
             <div className="space-y-3 mb-6">
                <Button
+                  disabled={artwork.status !== "AVAILABLE"}
                   onClick={handleOrder}
                   className="w-full text-base rounded-md font-medium font-display bg-primary text-primary-foreground"
                >
-                  Order Now
+                  {artwork.status === "AVAILABLE" ? "Order Now" :
+                     artwork.status === "SOLD" ? "Sold" :
+                        artwork.status === "SOLD_OUT" ? "Sold Out" :
+                           artwork.status === "NOT_FOR_SALE" ? "Not For Sale" : "Order Now"}
                </Button>
 
                <Button

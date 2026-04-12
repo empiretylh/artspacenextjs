@@ -107,7 +107,7 @@ export interface Artwork {
    medium: string;
    dimensions: string;
    year: number;
-   status: "AVAILABLE";
+   status: "AVAILABLE" | "SOLD" | "NOT_FOR_SALE" | "SOLD_OUT";
    search_keywords?: string[];
    current_owner_display: User;
    current_owner?: number;

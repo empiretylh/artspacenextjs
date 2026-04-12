@@ -19,7 +19,13 @@
     - **Image**: Though the frontend handles arrays, the backend currently expects the first image as a single string.
 
 ### 2. Filtering & Discovery
-- The [filter-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/filter-sidebar.tsx) is the most complex component. It synchronizes URL params with the global [queryKeys.artwork](file:///d:/data/learning/work/real-work/art-space-next/src/config/query-keys.ts).
+- **Editorial Minimalist Aesthetic**: All gallery filters must follow the "High-Gravity Pill" standard:
+    - **Inactive**: `bg-white`, `border-2 border-muted/70`, `shadow-sm`.
+    - **Active**: `bg-primary`, `text-primary-foreground`.
+- **Status Filter Logic**: The `status` filter (`AVAILABLE`, `SOLD`, etc.) is strictly **single-select**. Selecting a new status replaces the existing one in the URL state.
+- **Quick Actions**: The "Available" pill acts as a high-visibility toggle for the `AVAILABLE` status.
+- **Labels**: UI labels for status enums should use Title Case (e.g., "Available") rather than database ALL_CAPS.
+- **Sidebar**: The [filter-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/filter-sidebar.tsx) handles mutual exclusivity for status and performs advanced style/genre lookups.
 
 ## 📊 Model Enums
 | Property | Valid Values |

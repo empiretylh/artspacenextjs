@@ -10,6 +10,7 @@ import {
    PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import type { Artwork } from "@/types";
 import Link from "../common/link";
 import { useLike } from "@/hooks/app/use-like";
@@ -77,6 +78,15 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
          {/* Image + Hover Buttons */}
 
          <div className="relative group rounded-md overflow-hidden cursor-pointer">
+            {artwork.status !== "AVAILABLE" && (
+               <div className="absolute top-2 left-2 z-20 pointer-events-none">
+                  <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-black border-none text-[10px] font-bold px-1.5 py-0.5 rounded-sm shadow-sm">
+                     {artwork.status === "SOLD" ? "SOLD" : 
+                      artwork.status === "SOLD_OUT" ? "SOLD OUT" : 
+                      artwork.status === "NOT_FOR_SALE" ? "NOT FOR SALE" : artwork.status}
+                  </Badge>
+               </div>
+            )}
             <div className="lg:hidden absolute z-10 inset-0 bg-gradient-to-b rounded-md from-black/40 via-transparent to-transparent" />
             <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
                <div
