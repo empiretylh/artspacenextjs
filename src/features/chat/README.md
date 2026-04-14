@@ -29,7 +29,10 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
     - **Logout Sync**: Explicitly sets `lastSeen` to the past on logout for immediate offline appearance across devices.
     - **Retroactive Sync**: Updating a profile in Settings automatically triggers a batch update for the current user's entry in their top 50 most recent conversations.
     - **Self-Healing**: Every message sent refreshes the sender's metadata in the conversation to ensure long-term consistency.
-7. **Search Logic**: Local, client-side filtering of conversations for instant results without database round-trips.
+7. **Unread Tracking**:
+    - **Logic**: A `runTransaction` in `useSendMessage` atomically increments the `unreadCount` Map for participants.
+    - **Resolution**: The `useMarkRead` hook resets the count and cleans up legacy fields.
+8. **Search Logic**: Local, client-side filtering of conversations for instant results without database round-trips.
 
 
 ## 🎨 UI & UX Patterns
@@ -40,6 +43,10 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 - **Vertical Rhythm**: A `gap-y-3` is maintained between messages in the `ChatMessages` container to improve readability and prevent visual clutter.
 - **Smart Loading**: During pagination, the chat list stays mounted. This prevents scroll position resets and ensures a flicker-free experience when loading older messages.
 - **Auto-Correction**: If the initial load of 10 messages doesn't fill the entire viewport, the system detects the visible "load more" sentinel and immediately fetches additional batches until the screen is full.
+43. **Unread Awareness**: 
+    - Unread conversations are visually anchored in the `ChatList` using **bold text** for the participant name and the **Primary color** for the last message snippet.
+    - A count badge indicates precisely how many messages are waiting.
+    - These indicators clear automatically when the chat window becomes active or when new messages arrive while the window is focused.
 
 ## 🔐 Security & Operations
 

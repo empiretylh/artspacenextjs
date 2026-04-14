@@ -12,7 +12,9 @@ import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserQueryOptions } from "@/features/service/artspace/get-user";
 import { UserRouteType } from "@/features/service/artspace/get-users";
+import { useMarkRead } from "../hooks/use-mark-read";
 import type { ChatUser } from "../types";
+import { useEffect } from "react";
 
 type Props = {
    conversationId: string | null;
@@ -24,6 +26,7 @@ type Props = {
 export const ChatWindow = ({ conversationId, recipientId, userType = "artists", onBack }: Props) => {
    const { user: currentUser } = useAuth();
    const { conversations } = useConversations();
+   const { markAsRead } = useMarkRead();
    const { messages, loading: messagesLoading, hasMore, loadMore } = useMessages(conversationId);
    const { sendMessage } = useSendMessage(conversationId);
 
@@ -51,6 +54,14 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
    } : null;
 
    const finalUser = displayUser || recipientUser;
+   const currentUnreadCount = activeConversation?.unreadCount?.[String(currentUser?.id)] || 0;
+
+   // Mark as read when conversation becomes active or messages arrive
+   useEffect(() => {
+      if (conversationId && currentUnreadCount > 0) {
+         markAsRead(conversationId);
+      }
+   }, [conversationId, currentUnreadCount, markAsRead]);
 
    if (!conversationId && !recipientId) {
       return (

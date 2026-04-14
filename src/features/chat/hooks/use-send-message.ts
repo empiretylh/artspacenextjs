@@ -4,7 +4,8 @@ import {
    setDoc,
    addDoc,
    serverTimestamp,
-   runTransaction
+   runTransaction,
+   increment
 } from "firebase/firestore";
 import { db } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
@@ -52,21 +53,43 @@ export const useSendMessage = (conversationId: string | null) => {
                createdAt: serverTimestamp(),
             });
 
-            // 3. Update conversation root metadata (including self-healing details)
             const convRef = doc(db, "conversations", targetId);
             const name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email;
             
-            await setDoc(convRef, {
-               lastMessage: content,
-               updatedAt: serverTimestamp(),
-               participantDetails: {
-                  [user.id]: {
-                     id: String(user.id),
-                     name,
-                     avatar: user.profile?.profile_picture || null
+            // For unreadCount, we need to know participants.
+            // In 1-on-1, we can find the other participant from the targetId if it's the deterministic format.
+            // However, a more robust way is to use the recipient if provided (lazy) 
+            // OR fetch participants if it's an existing conversation.
+            
+            await runTransaction(db, async (transaction) => {
+               const convSnap = await transaction.get(convRef);
+               const convData = convSnap.data();
+               const participants = (convData?.participants || []) as string[];
+               
+               // Construct unreadCount map
+               const newUnreadCount: Record<string, any> = { ...convData?.unreadCount };
+               participants.forEach(pId => {
+                  if (pId !== String(user.id)) {
+                     const current = newUnreadCount[pId] || 0;
+                     // Note: Inside transaction we can compute the new value
+                     // rather than using increment() if we have current data
+                     newUnreadCount[pId] = current + 1;
                   }
-               }
-            }, { merge: true });
+               });
+
+               transaction.set(convRef, {
+                  lastMessage: content,
+                  updatedAt: serverTimestamp(),
+                  participantDetails: {
+                     [user.id]: {
+                        id: String(user.id),
+                        name,
+                        avatar: user.profile?.profile_picture || null
+                     }
+                  },
+                  unreadCount: newUnreadCount
+               }, { merge: true });
+            });
          }
 
          return targetId;

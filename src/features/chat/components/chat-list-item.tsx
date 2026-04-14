@@ -23,6 +23,7 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
    );
    const otherUser = otherUserId ? conversation.participantDetails[otherUserId] : null;
    const { isOnline } = useUserStatus(otherUserId || null);
+   const unreadCount = conversation.unreadCount?.[String(currentUser?.id)] || 0;
 
    if (!otherUser) return null;
 
@@ -48,18 +49,28 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
          </div>
 
          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">
+            <p className={cn(
+               "truncate text-sm font-medium",
+               unreadCount > 0 && "text-foreground font-semibold"
+            )}>
                {otherUser.name}
             </p>
-            <p className="truncate text-xs text-muted-foreground">
+            <p className={cn(
+               "truncate text-xs text-muted-foreground",
+               unreadCount > 0 && "text-primary font-medium"
+            )}>
                {conversation.lastMessage || "No messages yet"}
             </p>
          </div>
 
-         {/* unreadCount placeholder */}
-         {/* {conversation.unreadCount > 0 && (
-            <Badge variant="default">{conversation.unreadCount}</Badge>
-         )} */}
+         {unreadCount > 0 && (
+            <Badge 
+               variant="default" 
+               className="h-5 min-w-[20px] justify-center px-1 text-[10px]"
+            >
+               {unreadCount}
+            </Badge>
+         )}
       </button>
    );
 };
