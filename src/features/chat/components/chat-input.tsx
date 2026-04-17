@@ -5,18 +5,22 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
+import { useTypingIndicator } from "../hooks/use-typing-indicator";
 
 type Props = {
+   conversationId: string | null;
    onSend: (message: string) => void;
 };
 
-export const ChatInput = ({ onSend }: Props) => {
+export const ChatInput = ({ conversationId, onSend }: Props) => {
    const [value, setValue] = useState("");
+   const { setTyping } = useTypingIndicator(conversationId);
 
    const handleSend = () => {
       if (!value.trim()) return;
       onSend(value);
       setValue("");
+      setTyping(false); // Explicitly stop typing immediately on send
    };
 
    return (
@@ -24,7 +28,10 @@ export const ChatInput = ({ onSend }: Props) => {
          <div className="flex items-end gap-2">
             <Textarea
                value={value}
-               onChange={(e) => setValue(e.target.value)}
+               onChange={(e) => {
+                  setValue(e.target.value);
+                  setTyping(true);
+               }}
                placeholder="Type a message..."
                rows={1}
                className="resize-none"

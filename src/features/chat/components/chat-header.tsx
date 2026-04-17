@@ -7,14 +7,17 @@ import { ArrowLeft } from "lucide-react";
 import type { ChatUser } from "../types";
 import { cn, getImage } from "@/lib/utils";
 import { useUserStatus } from "../hooks/use-user-status";
+import { useTypingIndicator } from "../hooks/use-typing-indicator";
 
 type Props = {
+   conversationId: string | null;
    user: ChatUser;
    onBack: () => void;
 };
 
-export const ChatHeader = ({ user, onBack }: Props) => {
+export const ChatHeader = ({ conversationId, user, onBack }: Props) => {
    const { status, isOnline } = useUserStatus(user.id);
+   const { isOtherTyping } = useTypingIndicator(conversationId);
    
    return (
       <div className="flex items-center gap-3 border-b p-4">
@@ -42,7 +45,13 @@ export const ChatHeader = ({ user, onBack }: Props) => {
  
          <div>
             <p className="text-sm font-medium">{user.name}</p>
-            <p className="text-xs text-muted-foreground">{status}</p>
+            <p className="text-xs text-muted-foreground">
+               {isOtherTyping ? (
+                  <span className="text-primary font-medium animate-pulse">Typing...</span>
+               ) : (
+                  status
+               )}
+            </p>
          </div>
       </div>
    );

@@ -93,7 +93,13 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
 
    return (
       <div className="flex h-full flex-col">
-         {finalUser && <ChatHeader user={finalUser} onBack={onBack} />}
+         {finalUser && (
+            <ChatHeader 
+               conversationId={conversationId} 
+               user={finalUser} 
+               onBack={onBack} 
+            />
+         )}
          
          <div className="flex-1 min-h-0 flex flex-col">
             {messagesLoading && messages.length === 0 ? (
@@ -117,6 +123,7 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
             </div>
          ) : (
             <ChatInput 
+               conversationId={conversationId}
                onSend={async (text) => {
                   await sendMessage(text, recipientUser || undefined);
                }} 

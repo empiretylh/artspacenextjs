@@ -19,6 +19,7 @@ export interface Conversation {
    lastMessage: string | null;
    updatedAt: Timestamp | null;
    unreadCount?: Record<string, number>;
+   typing?: Record<string, Timestamp>;
 }
 
 export interface Message {

@@ -11,7 +11,7 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 
 ### Directory Structure
 - `components/`: UI components including the window, list, input, and messages.
-- `hooks/`: Specialized listeners for conversations and messages.
+- `hooks/`: Specialized listeners for conversations, messages, and typing indicators.
 - `pages/`: The top-level composition page.
 - `types.ts`: Domain-specific types for messages and conversations.
 
@@ -37,6 +37,10 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
     - **Architecture**: Separates private block lists (`/users/{uid}/blocks/`) from conversation-level metadata (`blockedBy` mapping).
     - **Instant Sync**: The `useBlockUser` and `useUnblockUser` mutations immediately update the deterministic conversation document's `blockedBy` mapping to ensure zero-lag enforcement.
     - **Self-Healing**: The `useChatSecurity` hook runs when a chat window opens, cross-referencing the Backend API status with Firestore to repair any metadata inconsistencies.
+10. **Typing Indicators**:
+    - **Throttling**: The `useTypingIndicator` hook throttles Firestore writes to once every 2 seconds to minimize database overhead.
+    - **Resilience**: Uses a `Timestamp` based model. The recipient validates the age of the indicator (clears after 5s), ensuring no "stuck" indicators if a user disconnects abruptly.
+    - **Auto-stop**: Automatically clears the status after 3 seconds of inactivity or upon sending a message.
 
 
 ## 🎨 UI & UX Patterns
@@ -51,6 +55,8 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
     - Unread conversations are visually anchored in the `ChatList` using **bold text** for the participant name and the **Primary color** for the last message snippet.
     - A count badge indicates precisely how many messages are waiting.
     - These indicators clear automatically when the chat window becomes active or when new messages arrive while the window is focused.
+54. **Live Feedback**:
+    - The `ChatHeader` displays an animated "**Typing...**" pulse when the other participant is active, providing immediate social presence feedback.
 
 ## 🔐 Security & Operations
 
