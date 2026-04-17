@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserQueryOptions } from "@/features/service/artspace/get-user";
 import { UserRouteType } from "@/features/service/artspace/get-users";
 import { useMarkRead } from "../hooks/use-mark-read";
+import { useChatSecurity } from "../hooks/use-chat-security";
 import type { ChatUser } from "../types";
 import { useEffect } from "react";
 
@@ -46,6 +47,17 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
       );
       displayUser = otherUserId ? activeConversation.participantDetails[otherUserId] : null;
    }
+
+   const otherUserId = activeConversation?.participants.find(
+      (id) => id !== String(currentUser?.id)
+   );
+   const finalRecipientId = recipientId || otherUserId || null;
+
+   const { isBlocked, loading: securityLoading } = useChatSecurity(
+      conversationId,
+      finalRecipientId, 
+      userType || "artists"
+   );
 
    const recipientUser: ChatUser | null = recipientData ? {
       id: String((recipientData as any).id),
@@ -99,11 +111,17 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
             )}
          </div>
 
-         <ChatInput 
-            onSend={async (text) => {
-               await sendMessage(text, recipientUser || undefined);
-            }} 
-         />
+         {isBlocked ? (
+            <div className="p-4 bg-muted/30 border-t text-center text-sm text-muted-foreground italic">
+               You cannot message this user.
+            </div>
+         ) : (
+            <ChatInput 
+               onSend={async (text) => {
+                  await sendMessage(text, recipientUser || undefined);
+               }} 
+            />
+         )}
       </div>
    );
 };

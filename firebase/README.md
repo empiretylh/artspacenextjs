@@ -14,12 +14,16 @@ npm run deploy:firebase
 
 ### [firestore.rules](file:///d:/data/learning/work/real-work/art-space-next/firebase/firestore.rules)
 Production-grade security rules. 
-- **Conversations**: Restricted to participants only.
-- **Messages**: Restricted to conversation participants.
+- **Conversations**: 
+  - **Create**: Restricted to participants; verified against private block lists via `exists()`.
+  - **Read/Update**: Restricted to participants only.
+- **Messages**: 
+  - **Create**: Verified against the parent conversation's `blockedBy` metadata for "Zero-Cost" instant enforcement.
+- **Blocks**:
+  - **Read/Write**: Strictly owner-only to preserve user privacy.
 - **Users**: 
   - **Read**: Any authenticated user can read public profiles (needed for presence status).
   - **Write**: Restricted to the owner (`request.auth.uid == userId`) for profile mirroring and presence updates.
-- **Validation**: Ensures only legitimate participants can be added.
 
 ### [firestore.indexes.json](file:///d:/data/learning/work/real-work/art-space-next/firebase/firestore.indexes.json)
 Composite indexes required for advanced querying (e.g., sorting chats by `updatedAt` while filtering by `participants`).

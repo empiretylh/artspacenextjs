@@ -33,6 +33,10 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
     - **Logic**: A `runTransaction` in `useSendMessage` atomically increments the `unreadCount` Map for participants.
     - **Resolution**: The `useMarkRead` hook resets the count and cleans up legacy fields.
 8. **Search Logic**: Local, client-side filtering of conversations for instant results without database round-trips.
+9. **Hybrid Blocking**:
+    - **Architecture**: Separates private block lists (`/users/{uid}/blocks/`) from conversation-level metadata (`blockedBy` mapping).
+    - **Instant Sync**: The `useBlockUser` and `useUnblockUser` mutations immediately update the deterministic conversation document's `blockedBy` mapping to ensure zero-lag enforcement.
+    - **Self-Healing**: The `useChatSecurity` hook runs when a chat window opens, cross-referencing the Backend API status with Firestore to repair any metadata inconsistencies.
 
 
 ## 🎨 UI & UX Patterns
@@ -52,8 +56,13 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 
 ### [firestore.rules](file:///d:/data/learning/work/real-work/art-space-next/firebase/firestore.rules)
 Production-grade security rules. 
-- **Conversations**: Restricted to participants only.
-- **Messages**: Restricted to conversation participants.
+- **Conversations**: 
+  - **Create**: Restricted to participants; verified against private block lists via `exists()` to prevent unauthorized initiation.
+  - **Read/Update**: Restricted to participants only.
+- **Messages**: 
+  - **Create**: Verified against the parent conversation's `blockedBy` metadata for "Zero-Cost" instant enforcement.
+- **Blocks**:
+  - **Read/Write**: Strictly owner-only to preserve user privacy.
 - **Users**: 
   - **Read**: Any authenticated user can read public profiles (needed for presence status).
   - **Write**: Restricted to the owner (`request.auth.uid == userId`) for profile mirroring and presence updates.

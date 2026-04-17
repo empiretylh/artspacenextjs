@@ -9,6 +9,7 @@ export interface ChatUser {
 export interface UserDocument extends ChatUser {
    lastSeen?: Timestamp;
    updatedAt: Timestamp;
+   blockedUserIds?: string[];
 }
 
 export interface Conversation {
