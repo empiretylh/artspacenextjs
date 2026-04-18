@@ -7,8 +7,9 @@ import {
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
+import { FallbackProps } from "react-error-boundary";
 
-export const ErrorFallback = () => {
+export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
    return (
       <div
          role="alert"
@@ -25,18 +26,39 @@ export const ErrorFallback = () => {
                </CardTitle>
             </CardHeader>
 
-            <CardContent className="text-sm text-muted-foreground">
-               An unexpected error occurred. Please refresh the page or try
-               again later.
+            <CardContent className="space-y-4">
+               <p className="text-sm text-muted-foreground">
+                  An unexpected error occurred. Please refresh the page or try
+                  again later.
+               </p>
+               
+               {!!error && (
+                  <div className="rounded-md bg-destructive/5 p-3 text-left">
+                     <p className="font-mono text-xs font-medium text-destructive break-words">
+                        {error instanceof Error
+                           ? error.message
+                           : typeof error === "string"
+                             ? error
+                             : "An unknown error occurred"}
+                     </p>
+                  </div>
+               )}
             </CardContent>
 
-            <CardFooter className="flex justify-center">
+            <CardFooter className="flex justify-center gap-3">
                <Button
-                  onClick={() => window.location.assign(window.location.origin)}
+                  variant="outline"
+                  onClick={() => window.location.reload()}
                   className="gap-2"
                >
                   <RefreshCcw className="h-4 w-4" />
-                  Refresh page
+                  Reload Page
+               </Button>
+               <Button
+                  onClick={resetErrorBoundary}
+                  className="gap-2"
+               >
+                  Try Again
                </Button>
             </CardFooter>
          </Card>
