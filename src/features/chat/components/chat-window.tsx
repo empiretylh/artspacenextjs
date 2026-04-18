@@ -8,14 +8,28 @@ import { ChatMessages } from "./chat-messages";
 import { ChatInput } from "./chat-input";
 import { useConversations } from "../hooks/use-conversations";
 import { useAuth } from "@/features/auth/store";
-import { Loader2 } from "lucide-react";
+import { Loader2, User as UserIcon, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserQueryOptions } from "@/features/service/artspace/get-user";
 import { UserRouteType } from "@/features/service/artspace/get-users";
 import { useMarkRead } from "../hooks/use-mark-read";
 import { useChatSecurity } from "../hooks/use-chat-security";
 import type { ChatUser } from "../types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+   Sheet,
+   SheetContent,
+   SheetHeader,
+   SheetTitle,
+   SheetDescription,
+} from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { getImage, getUserRouteType } from "@/lib/utils";
+import Link from "next/link";
+import { paths } from "@/config/paths";
 
 type Props = {
    conversationId: string | null;
@@ -28,36 +42,26 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
    const { user: currentUser } = useAuth();
    const { conversations } = useConversations();
    const { markAsRead } = useMarkRead();
+   const [isProfileOpen, setIsProfileOpen] = useState(false);
+   
    const { messages, loading: messagesLoading, hasMore, loadMore } = useMessages(conversationId);
    const { sendMessage } = useSendMessage(conversationId);
 
-   // Fetch recipient data for new chats
-   const { data: recipientData, isLoading: recipientLoading } = useQuery({
-      ...getUserQueryOptions(recipientId || "", userType || "artists"),
-      enabled: !!recipientId && !conversationId,
-   });
-
    const activeConversation = conversations.find((c) => c.id === conversationId);
-   
-   let displayUser: ChatUser | null = null;
-
-   if (activeConversation) {
-      const otherUserId = activeConversation.participants.find(
-         (id) => id !== String(currentUser?.id)
-      );
-      displayUser = otherUserId ? activeConversation.participantDetails[otherUserId] : null;
-   }
-
    const otherUserId = activeConversation?.participants.find(
       (id) => id !== String(currentUser?.id)
    );
    const finalRecipientId = recipientId || otherUserId || null;
 
-   const { isBlocked, loading: securityLoading } = useChatSecurity(
-      conversationId,
-      finalRecipientId, 
-      userType || "artists"
-   );
+   // Fetch full recipient data for profile sheet
+   const { data: recipientData, isLoading: recipientLoading } = useQuery({
+      ...getUserQueryOptions(finalRecipientId || "", userType || "artists"),
+      enabled: !!finalRecipientId,
+   });
+
+   const displayUser: ChatUser | null = activeConversation && otherUserId 
+      ? activeConversation.participantDetails[otherUserId] 
+      : null;
 
    const recipientUser: ChatUser | null = recipientData ? {
       id: String((recipientData as any).id),
@@ -66,6 +70,13 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
    } : null;
 
    const finalUser = displayUser || recipientUser;
+
+   const { isBlocked } = useChatSecurity(
+      conversationId,
+      finalRecipientId, 
+      userType || "artists"
+   );
+
    const currentUnreadCount = activeConversation?.unreadCount?.[String(currentUser?.id)] || 0;
 
    // Mark as read when conversation becomes active or messages arrive
@@ -83,13 +94,9 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
       );
    }
 
-   if (recipientLoading) {
-      return (
-         <div className="flex h-full items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/40" />
-         </div>
-      );
-   }
+   const userProfile = recipientData as any;
+   const resolvedUserType = userProfile ? getUserRouteType(userProfile.user_type) : (userType || "artists");
+   const profileUrl = finalUser ? `/${resolvedUserType}/${finalUser.id}` : "#";
 
    return (
       <div className="flex h-full flex-col">
@@ -97,7 +104,8 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
             <ChatHeader 
                conversationId={conversationId} 
                user={finalUser} 
-               onBack={onBack} 
+               onBack={onBack}
+               onClick={() => setIsProfileOpen(true)}
             />
          )}
          
@@ -129,6 +137,95 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
                }} 
             />
          )}
+
+         {/* Profile Preview Sheet */}
+         <Sheet open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+            <SheetContent side="right" className="w-full sm:max-w-md p-0 gap-0">
+               <SheetHeader className="sr-only">
+                  <SheetTitle>{finalUser?.name || "User Profile"} Preview</SheetTitle>
+                  <SheetDescription>
+                     View basic information and featured works of {finalUser?.name || "this user"}.
+                  </SheetDescription>
+               </SheetHeader>
+               <ScrollArea className="h-full">
+                  <div className="flex flex-col pb-8">
+                     {/* Cover Section */}
+                     <div className="h-32 bg-muted relative">
+                        {userProfile?.profile?.cover_photo && (
+                           <img 
+                              src={getImage(userProfile.profile.cover_photo)} 
+                              alt="Cover" 
+                              className="w-full h-full object-cover"
+                           />
+                        )}
+                        <div className="absolute -bottom-12 left-6">
+                           <Avatar className="h-24 w-24 border-4 border-background shadow-sm">
+                              <AvatarImage src={getImage(finalUser?.avatar)} alt={finalUser?.name} />
+                              <AvatarFallback><UserIcon className="h-10 w-10 text-muted-foreground/40" /></AvatarFallback>
+                           </Avatar>
+                        </div>
+                     </div>
+
+                     <div className="mt-14 px-6 space-y-6">
+                        {/* Name & Title */}
+                        <div>
+                           <div className="flex items-center gap-2">
+                              <h3 className="text-2xl font-bold">{finalUser?.name}</h3>
+                              {userProfile?.user_type && (
+                                 <Badge variant="secondary" className="capitalize">
+                                    {userProfile.user_type.toLowerCase()}
+                                 </Badge>
+                              )}
+                           </div>
+                           <p className="text-muted-foreground text-sm">
+                              {userProfile?.email}
+                           </p>
+                        </div>
+
+                        {/* Bio/About */}
+                        {userProfile?.profile?.about && (
+                           <div className="space-y-2">
+                              <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/70">About</h4>
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">
+                                 {userProfile.profile.about}
+                              </p>
+                           </div>
+                        )}
+
+                        {/* Gallery Preview */}
+                        {userProfile?.profile?.features_photos && userProfile.profile.features_photos.length > 0 && (
+                           <div className="space-y-3">
+                              <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/70">Featured Works</h4>
+                              <div className="grid grid-cols-2 gap-2">
+                                 {userProfile.profile.features_photos.slice(0, 4).map((p: any) => (
+                                    <div key={p.id} className="aspect-square rounded-md overflow-hidden bg-muted group relative">
+                                       <img 
+                                          src={getImage(p.image)} 
+                                          alt="Featured" 
+                                          className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                                       />
+                                    </div>
+                                 ))}
+                              </div>
+                           </div>
+                        )}
+
+                        {/* Full Profile Action */}
+                        {userProfile?.user_type !== "BUYER" && (
+                           <div className="pt-4">
+                              <Button asChild className="w-full gap-2" variant="default">
+                                 <Link href={profileUrl}>
+                                    View Full Profile
+                                    <ExternalLink className="h-4 w-4" />
+                                 </Link>
+                              </Button>
+                           </div>
+                        )}
+                     </div>
+                  </div>
+               </ScrollArea>
+            </SheetContent>
+         </Sheet>
       </div>
    );
 };

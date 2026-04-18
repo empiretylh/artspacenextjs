@@ -55,8 +55,14 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
     - Unread conversations are visually anchored in the `ChatList` using **bold text** for the participant name and the **Primary color** for the last message snippet.
     - A count badge indicates precisely how many messages are waiting.
     - These indicators clear automatically when the chat window becomes active or when new messages arrive while the window is focused.
-54. **Live Feedback**:
+- **Live Feedback**:
     - The `ChatHeader` displays an animated "**Typing...**" pulse when the other participant is active, providing immediate social presence feedback.
+- **Contextual Discovery (Profile Preview)**: 
+    - Clicking the `ChatHeader` (participant name or avatar) opens a slide-out **Profile Preview Sheet**.
+    - **Purpose**: Allows users to verify biographies, about sections, and featured works without losing conversation context.
+    - **Navigation**: Includes a "View Full Profile" button for deep exploration.
+    - **Smart Logic**: The "View Full Profile" link is automatically hidden for **BUYER** account types, as they lack public detail pages, maintaining interface integrity.
+    - **Accessibility**: Implements visually hidden `SheetTitle` and `SheetDescription` to comply with ARIA requirements while maintaining a minimal visual aesthetic.
 
 ## 🔐 Security & Operations
 
