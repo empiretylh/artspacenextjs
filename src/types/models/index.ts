@@ -28,6 +28,7 @@ export interface Profile {
    profile_picture: string | null;
    cover_photo: string | null;
    website: string;
+   show_email: boolean;
    features_photos: FeaturedPhoto[];
    is_following: boolean;
    isBlocked: boolean;

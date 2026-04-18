@@ -75,7 +75,7 @@ export default function ProfileCard({ user }: { user: User }) {
                   </div>
 
                   <p className="text-xs text-muted-foreground mb-1 truncate max-w-20 lg:max-w-32.5 mx-auto min-h-[16px]">
-                     {user.email}
+                     {user.profile?.show_email ? user.email : ""}
                   </p>
 
                   <p className="hidden sm:block text-xs text-muted-foreground truncate max-w-20 lg:max-w-32.5 mx-auto min-h-[16px]">

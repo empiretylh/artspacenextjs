@@ -16,6 +16,7 @@ export const updateProfileInputSchema = z.object({
    bio: z.string().optional(),
    website: z.string().url().optional().or(z.literal("")),
    about: z.string().optional(),
+   show_email: z.boolean().optional(),
    // profile_picture: z.string().nullable().optional(),
 });
 
@@ -34,6 +35,7 @@ export const updateProfile = ({
          bio: data.bio,
          website: data.website,
          about: data.about,
+         show_email: data.show_email,
       },
    };
 
