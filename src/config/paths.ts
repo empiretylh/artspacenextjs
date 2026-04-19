@@ -149,7 +149,14 @@ export const paths = {
    },
    chats: {
       path: "/chats",
-      getHref: () => "/chats",
+      getHref: (params?: { userId?: string | number; userType?: string }) => {
+         if (!params) return "/chats";
+         const query = new URLSearchParams();
+         if (params.userId) query.set("userId", String(params.userId));
+         if (params.userType) query.set("userType", params.userType);
+         const queryString = query.toString();
+         return queryString ? `/chats?${queryString}` : "/chats";
+      },
       detail: {
          path: "/chats/:id",
          getHref: (id: string) => `/chats/${id}`,

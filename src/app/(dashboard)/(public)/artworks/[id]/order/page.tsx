@@ -1,10 +1,12 @@
 import { getArtwork } from "@/features/service/artspace/get-artwork";
 import { ArtworkOrderForm } from "@/features/orders/components/artwork-order-form";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import React, { cache } from "react";
 import { getQueryClient } from "@/lib/get-query-client";
 import { queryKeys } from "@/config/query-keys";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { getSession } from "@/lib/auth";
+import { paths } from "@/config/paths";
 
 const getCachedArtwork = cache((id: string) => getArtwork({ artworkId: id }))
 
@@ -14,6 +16,12 @@ type Props = {
 
 const ArtworkOrderRoute = async ({ params }: Props) => {
   const { id } = await params;
+  const session = await getSession();
+
+  if (!session?.user) {
+    redirect(`${paths.auth.login.getHref()}?redirectTo=${paths.artworks.order.getHref(id)}`);
+  }
+
   const queryClient = getQueryClient();
 
   try {

@@ -15,12 +15,17 @@ import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { ecommerceAnalytics, itemFromArtwork } from '@/lib/analytics'
+import { useAuth } from '@/features/auth/store'
+import { useSource } from '@/lib/analytics-source'
 
 interface PaymentPageProps {
   orderId: string
 }
 
 export const PaymentPage = ({ orderId }: PaymentPageProps) => {
+  const { user } = useAuth()
+  const { source } = useSource()
   const router = useRouter()
   const { data: order, isLoading: isOrderLoading, error: orderError } = useGetOrder({ orderId })
   const updateOrder = useUpdateOrder()
@@ -59,6 +64,15 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
           stripe_session_id: paymentIntent.txn_id,
         },
       })
+
+      // Tracking: Add Payment Info
+      ecommerceAnalytics.addPaymentInfo(
+        order.currency || "MMK",
+        parseFloat(String(order.total_price)),
+        order.items?.map((item) => itemFromArtwork(item.artwork as any)) || [],
+        "Online Payment",
+        source
+      );
 
       // 3. Redirect to Payment URL
       window.location.replace(paymentIntent.payment_url)
@@ -118,7 +132,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
       </div>
 
       <Card className="shadow-lg border-primary/10">
-        <CardHeader className="bg-primary/5 border-b">
+        <div className="bg-primary/5 p-6 border-b border-border">
           <div className="flex flex-wrap justify-between items-center gap-4">
             <div>
               <CardTitle className="text-2xl">Complete Your Payment</CardTitle>
@@ -128,7 +142,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
               {order.payment_status || 'PENDING'}
             </Badge>
           </div>
-        </CardHeader>
+        </div>
         
         <CardContent className="pt-6 space-y-6">
           {/* Order Summary */}

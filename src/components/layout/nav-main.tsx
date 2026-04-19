@@ -1,5 +1,7 @@
 "use client";
 
+import { env } from "@/config/env";
+
 import {
    SidebarGroup,
    SidebarGroupContent,
@@ -21,6 +23,7 @@ import Messages2Icon from "../icons/messages-2-icon";
 import Layers2Icon from "../icons/layers-2-icon";
 import ShoppingCartIcon from "../icons/shopping-cart-icon";
 import { ClipboardPenLineIcon, HomeIcon } from "lucide-react";
+import { useAuth } from "@/features/auth/store";
 
 
 const data = {
@@ -59,13 +62,7 @@ const data = {
          title: "messages",
          url: paths.chats.path,
          icon: Messages2Icon,
-         disabled: true,
-      },
-      {
-         title: "inventory",
-         url: paths.inventory.path,
-         icon: Layers2Icon,
-         disabled: true,
+         disabled: false,
       },
       {
          title: "order",
@@ -106,6 +103,7 @@ export function NavMain() {
    const pathname = usePathname();
    const { setOpenMobile } = useSidebar();
    const router = useRouter();
+   const { user } = useAuth();
 
    const isActive = (url: string) => {
       return pathname === url;
@@ -115,41 +113,53 @@ export function NavMain() {
       <SidebarGroup>
          <SidebarGroupContent>
             <SidebarMenu className="pr-3">
-               {data.navMain.map((item) => {
-                  const active = isActive(item.url);
+               {data.navMain
+                  .filter((item) => {
+                     if (item.title === "messages") {
+                        return env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE;
+                     }
+                     return true;
+                  })
+                  .map((item) => {
+                     const active = isActive(item.url);
 
-                  return (
-                     <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                           asChild
-                           className={cn(
-                              "hover:bg-primary/16 hover:text-primary active:bg-primary/16 active:text-primary",
-                              active && "bg-primary/16 text-primary"
-                           )}
-                           tooltip={
-                              item.title.at(0)?.toUpperCase() +
-                              item.title.slice(1)
-                           }
-                        >
-                           <Link
-                              to={item.url}
-                              onClick={(e) => {
-                                 e.preventDefault();
-                                 setOpenMobile(false);
-                                 router.push(item.url);
-                              }}
+                     return (
+                        <SidebarMenuItem key={item.title}>
+                           <SidebarMenuButton
+                              asChild
                               className={cn(
-                                 item.disabled &&
-                                 "pointer-events-none opacity-50"
+                                 "hover:bg-primary/16 hover:text-primary active:bg-primary/16 active:text-primary",
+                                 active && "bg-primary/16 text-primary"
                               )}
+                              tooltip={
+                                 item.title.at(0)?.toUpperCase() +
+                                 item.title.slice(1)
+                              }
                            >
-                              {item.icon && <item.icon />}
-                              <span className="capitalize">{item.title}</span>
-                           </Link>
-                        </SidebarMenuButton>
-                     </SidebarMenuItem>
-                  );
-               })}
+                              <Link
+                                 to={item.url}
+                                 onClick={(e) => {
+                                    const isDisabled = item.disabled || (item.title === "order" && !user);
+                                    if (isDisabled) {
+                                       e.preventDefault();
+                                       return;
+                                    }
+                                    e.preventDefault();
+                                    setOpenMobile(false);
+                                    router.push(item.url);
+                                 }}
+                                 className={cn(
+                                    (item.disabled || ((item.title === "order" && !user)) || (item.title === "messages" && !user)) &&
+                                    "pointer-events-none opacity-50"
+                                 )}
+                              >
+                                 {item.icon && <item.icon />}
+                                 <span className="capitalize">{item.title}</span>
+                              </Link>
+                           </SidebarMenuButton>
+                        </SidebarMenuItem>
+                     );
+                  })}
             </SidebarMenu>
          </SidebarGroupContent>
       </SidebarGroup>

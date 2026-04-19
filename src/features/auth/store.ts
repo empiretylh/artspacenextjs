@@ -5,7 +5,8 @@ import type { AxiosError } from "axios";
 import axios from "axios";
 import { signInWithCustomToken, signOut as firebaseSignOut } from "firebase/auth";
 import { create } from "zustand";
-import { auth as firebaseAuth } from "@/features/service/firebase/firebase";
+import { auth as firebaseAuth, db } from "@/features/service/firebase/firebase";
+import { doc, setDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { env } from "@/config/env";
 
 interface RegisterForm {
@@ -30,17 +31,22 @@ export type State = {
       email: string,
       password: string
    ) => Promise<User | AxiosError<{ message: string }>>;
+   loginWithGoogle: (
+      token: string
+   ) => Promise<User | AxiosError<{ message: string }>>;
    register: (
       values: RegisterForm
    ) => Promise<boolean | AxiosError<{ message: string }>>;
    logout: () => Promise<boolean>;
    init: (data: { user: User | null; accessToken: string | null; firebaseToken: string | null }) => void;
+   updateUser: (user: User) => void;
    isBuyer: boolean;
    isArtist: boolean;
    isCollector: boolean;
+   isGallery: boolean;
 };
 
-export const useAuth = create<State>((set) => {
+export const useAuth = create<State>((set, get) => {
    const stored = {
       user: {
          id: 0,
@@ -62,6 +68,7 @@ export const useAuth = create<State>((set) => {
       isBuyer: stored?.user?.user_type === "BUYER",
       isArtist: stored?.user?.user_type === "ARTIST",
       isCollector: stored?.user?.user_type === "COLLECTOR",
+      isGallery: stored?.user?.user_type === "GALLERY",
       isLoginDialogOpen: false,
       isRegisterDialogOpen: false,
 
@@ -91,12 +98,48 @@ export const useAuth = create<State>((set) => {
                isBuyer: data.user.user_type === "BUYER",
                isArtist: data.user.user_type === "ARTIST",
                isCollector: data.user.user_type === "COLLECTOR",
+               isGallery: data.user.user_type === "GALLERY",
             };
             set(newState);
 
             queryClient.invalidateQueries();
 
             return data.user as User
+         } finally {
+            set({ loading: false });
+         }
+      },
+
+      async loginWithGoogle(token) {
+         const queryClient = getQueryClient();
+         try {
+            set({ loading: true });
+            
+            // Proxy through Next.js API route to handle cookies and firebase sync
+            const { data } = await axios.post("/api/auth/google", {
+               token
+            });
+
+            // 1. SILENT FIREBASE HANDSHAKE
+            if (env.FIREBASE_ENABLE && firebaseAuth && data.firebaseToken) {
+               await signInWithCustomToken(firebaseAuth, data.firebaseToken);
+            }
+
+            const newState = {
+               accessToken: data.access,
+               firebaseToken: data.firebaseToken,
+               user: data.user,
+               isBuyer: data.user.user_type === "BUYER",
+               isArtist: data.user.user_type === "ARTIST",
+               isCollector: data.user.user_type === "COLLECTOR",
+               isGallery: data.user.user_type === "GALLERY",
+            };
+            set(newState);
+
+            queryClient.invalidateQueries();
+            return data.user as User;
+         } catch (error) {
+            return error as AxiosError<{ message: string }>;
          } finally {
             set({ loading: false });
          }
@@ -130,6 +173,22 @@ export const useAuth = create<State>((set) => {
          });
 
          if (env.FIREBASE_ENABLE && firebaseAuth) {
+            const currentUser = get().user;
+            // Explicitly set lastSeen to a past time for immediate offline appearance
+            if (currentUser?.id && db) {
+               try {
+                  const userRef = doc(db, "users", String(currentUser.id));
+                  // Set lastSeen to 10 minutes ago
+                  const tenMinsAgo = new Date(Date.now() - 10 * 60 * 1000);
+                  await setDoc(userRef, { 
+                     lastSeen: Timestamp.fromDate(tenMinsAgo),
+                     updatedAt: serverTimestamp() 
+                  }, { merge: true });
+               } catch (e) {
+                  console.warn("Failed to update status on logout:", e);
+               }
+            }
+
             await firebaseSignOut(firebaseAuth)
 
             if (env.NODE_ENV === 'development') {
@@ -154,7 +213,17 @@ export const useAuth = create<State>((set) => {
             isBuyer: data.user?.user_type === "BUYER",
             isArtist: data.user?.user_type === "ARTIST",
             isCollector: data.user?.user_type === "COLLECTOR",
+            isGallery: data.user?.user_type === "GALLERY",
             loading: false
+         });
+      },
+      updateUser: (user: User) => {
+         set({
+            user,
+            isBuyer: user.user_type === "BUYER",
+            isArtist: user.user_type === "ARTIST",
+            isCollector: user.user_type === "COLLECTOR",
+            isGallery: user.user_type === "GALLERY",
          });
       },
    };

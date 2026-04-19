@@ -1,8 +1,11 @@
+'use client'
 import React, { useState } from "react";
-import { FilterIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FilterIcon, XIcon } from "lucide-react";
 import { FilterSection } from "./filter-section";
 import { filterOptions } from "@/mocks";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import type { ColumnFiltersState } from "@/types";
 import { PriceFilter } from "./price-filter";
@@ -13,6 +16,7 @@ import {
    SheetDescription,
    SheetHeader,
    SheetTitle,
+   SheetClose,
 } from "@/components/ui/sheet";
 import { useGetCategories } from "@/features/service/artspace/get-categories";
 
@@ -52,7 +56,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       value: string | number,
       checked: boolean
    ) => {
-      console.log('this is working')
       setFilters((prev) => {
          if (checked) {
             const without = prev.filter((f) => {
@@ -72,7 +75,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       value: string | number,
       checked: boolean
    ) => {
-      console.log('this is working 2')
       setFilters((prev) => {
          if (checked) {
             const without = prev.filter((f) => {
@@ -87,230 +89,137 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
    };
 
    return (
-      <>
-         <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-            <SheetContent>
-               <SheetHeader className="sr-only">
-                  <SheetTitle>Edit Filter</SheetTitle>
-                  <SheetDescription>
-                     Make changes to your filter here.
-                  </SheetDescription>
-               </SheetHeader>
-               <aside
-                  className={`
-          w-full bg-background`}
-               >
-                  <ScrollArea className="h-screen">
-                     <div className="p-4 w-full">
-                        {/* Header */}
-                        <div className="flex items-center justify-between">
-                           <h2 className="text-2xl font-bold flex items-center">
-                              <FilterIcon className="h-6 w-6 mr-2 text-primary" />
-                              Filters
-                           </h2>
+      <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+         <SheetContent className="w-full sm:max-w-md p-0 border-none bg-background shadow-2xl">
+            <SheetHeader className="p-6 border-b border-border/50">
+               <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                     <SheetTitle className="text-2xl font-bold tracking-tight flex items-center gap-2.5">
+                        <FilterIcon className="size-5 text-primary" />
+                        Refine Search
+                     </SheetTitle>
+                     <SheetDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground/70">
+                        Customize your discovery
+                     </SheetDescription>
+                  </div>
+               </div>
+            </SheetHeader>
 
-                           {/* <div className="flex items-center gap-2">
-                              <button
-                                 onClick={() => setIsSidebarOpen(false)}
-                                 className="lg:hidden rounded hover:bg-muted"
-                                 aria-label="Close filters"
-                              >
-                                 <X className="h-5 w-5" />
-                              </button>
-                           </div> */}
-                        </div>
-
-                        {/* Price Filter */}
-                        {/* <FilterSection
-                  title="Price Range"
-                  isOpen={openSections.price}
-                  onToggle={() => toggleSection("price")}
-               >
-                  {filterOptions.priceRanges.map((range) => (
-                     <div className="flex gap-3" key={range.label}>
-                        <Checkbox
-                           id={`price-${range.label}`}
-                           checked={filters.some(
-                              (f) =>
-                                 f.id === "price_range" &&
-                                 f.value === `${range.min}-${range.max}`
-                           )}
-                           onCheckedChange={(value) => {
-                              handleFilterChange(
-                                 "price_range",
-                                 `${range.min}-${range.max}`,
-                                 !!value
-                              );
-                           }}
+            <ScrollArea className="h-[calc(100vh-200px)] px-6">
+               <div className="">
+                  {/* Price Filter */}
+                  <FilterSection
+                     title="Value Range"
+                     isOpen={openSections.price}
+                     onToggle={() => toggleSection("price")}
+                  >
+                     <div className="pt-2">
+                        <PriceFilter
+                           filterOptions={filterOptions}
+                           filters={filters}
+                           handleFilterChange={handlePriceFilterChange}
                         />
-                        <Label htmlFor={`price-${range.label}`}>
-                           {range.label}
-                        </Label>
                      </div>
-                  ))}
-               </FilterSection> */}
+                  </FilterSection>
 
-                        <FilterSection
-                           title="Price Range"
-                           isOpen={openSections.price}
-                           onToggle={() => toggleSection("price")}
-                        >
-                           <PriceFilter
-                              filterOptions={filterOptions} // your mock filter options
-                              filters={filters}
-                              handleFilterChange={handlePriceFilterChange}
-                              debounceTime={500} // optional, default 500ms
-                           />
-                        </FilterSection>
+                  {/* Status Filter */}
+                  <FilterSection
+                     title="Availability"
+                     isOpen={openSections.status}
+                     onToggle={() => toggleSection("status")}
+                  >
+                     <RadioGroup
+                        value={filters.find(f => f.id === "status")?.value as string || "ALL"}
+                        onValueChange={(val) => {
+                           if (val === "ALL") {
+                              setFilters(prev => prev.filter(f => f.id !== "status"));
+                           } else {
+                              setFilters(prev => [
+                                 ...prev.filter(f => f.id !== "status"),
+                                 { id: "status", value: val }
+                              ]);
+                           }
+                        }}
+                        className="grid grid-cols-1 gap-4 pt-1"
+                     >
+                        <div className="flex items-center gap-3 group cursor-pointer">
+                           <RadioGroupItem value="ALL" id="status-all" className="size-5 border-muted-foreground/30 focus:border-primary" />
+                           <Label htmlFor="status-all" className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors">
+                              Show All Artworks
+                           </Label>
+                        </div>
+                        {filterOptions.status.map((status) => (
+                           <div className="flex items-center gap-3 group cursor-pointer" key={status}>
+                              <RadioGroupItem value={status} id={`status-${status}`} className="size-5 border-muted-foreground/30 focus:border-primary" />
+                              <Label
+                                 htmlFor={`status-${status}`}
+                                 className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors"
+                              >
+                                 {status === "AVAILABLE" ? "Available Now" :
+                                    status === "SOLD" ? "Recently Sold" :
+                                       status === "NOT_FOR_SALE" ? "Exhibition Only" :
+                                          status === "SOLD_OUT" ? "Sold Out" : status}
+                              </Label>
+                           </div>
+                        ))}
+                     </RadioGroup>
+                  </FilterSection>
 
-                        {/* Category Filter */}
-                        <FilterSection
-                           title="Category"
-                           isOpen={openSections.category}
-                           onToggle={() => toggleSection("category")}
-                        >
-                           {categories.map((category) => (
-                              <div className="flex gap-3" key={category.slug}>
-                                 <Checkbox
-                                    id={`category-${category.slug}`}
-                                    checked={filters.some(
-                                       (f) =>
-                                          f.id === "category" &&
-                                          String(f.value) ===
-                                          String(category.slug)
-                                    )}
-                                    onCheckedChange={(value) =>
-                                       handleFilterChange(
-                                          "category",
-                                          category.slug,
-                                          !!value
-                                       )
-                                    }
-                                 />
-                                 <Label htmlFor={`category-${category.slug}`}>
-                                    {category.name}
-                                 </Label>
-                              </div>
-                           ))}
-                        </FilterSection>
-
-                        {/* Style Filter */}
-                        {/* <FilterSection
-                           title="Style"
-                           isOpen={openSections.style}
-                           onToggle={() => toggleSection("style")}
-                        >
-                           {filterOptions.styles.map((style) => (
-                              <div className="flex gap-3" key={style}>
-                                 <Checkbox
-                                    id={`style-${style}`}
-                                    checked={filters.some(
-                                       (f) =>
-                                          f.id === "style" && f.value === style
-                                    )}
-                                    onCheckedChange={(value) =>
-                                       handleFilterChange(
-                                          "style",
-                                          style,
-                                          !!value
-                                       )
-                                    }
-                                 />
-                                 <Label htmlFor={`style-${style}`}>
-                                    {style}
-                                 </Label>
-                              </div>
-                           ))}
-                        </FilterSection> */}
-
-                        {/* Year Filter */}
-                        {/* <FilterSection
-                           title="Year"
-                           isOpen={openSections.year}
-                           onToggle={() => toggleSection("year")}
-                        >
-                           {filterOptions.years.map((year) => (
-                              <div className="flex gap-3" key={year}>
-                                 <Checkbox
-                                    id={`year-${year}`}
-                                    checked={filters.some(
-                                       (f) =>
-                                          f.id === "year" && f.value === year
-                                    )}
-                                    onCheckedChange={(value) =>
-                                       handleFilterChange("year", year, !!value)
-                                    }
-                                 />
-                                 <Label htmlFor={`year-${year}`}>{year}</Label>
-                              </div>
-                           ))}
-                        </FilterSection> */}
-
-                        {/* Status Filter */}
-                        {/* <FilterSection
-                           title="Status"
-                           isOpen={openSections.status}
-                           onToggle={() => toggleSection("status")}
-                        >
-                           {filterOptions.status.map((status) => (
-                              <div className="flex gap-3" key={status}>
-                                 <Checkbox
-                                    id={`status-${status}`}
-                                    checked={filters.some(
-                                       (f) =>
-                                          f.id === "status" &&
-                                          f.value === status
-                                    )}
-                                    onCheckedChange={(value) =>
-                                       handleFilterChange(
-                                          "status",
-                                          status,
-                                          !!value
-                                       )
-                                    }
-                                 />
-                                 <Label htmlFor={`status-${status}`}>
-                                    {status}
-                                 </Label>
-                              </div>
-                           ))}
-                        </FilterSection> */}
-
-                        {/* Medium Filter */}
-                        {/* <FilterSection
-                           title="Medium"
-                           isOpen={openSections.medium}
-                           onToggle={() => toggleSection("medium")}
-                        >
-                           {filterOptions.mediums.map((medium) => (
-                              <div className="flex gap-3" key={medium}>
-                                 <Checkbox
-                                    id={`medium-${medium}`}
-                                    checked={filters.some(
-                                       (f) =>
-                                          f.id === "medium" &&
-                                          f.value === medium
-                                    )}
-                                    onCheckedChange={(value) =>
-                                       handleFilterChange(
-                                          "medium",
-                                          medium,
-                                          !!value
-                                       )
-                                    }
-                                 />
-                                 <Label htmlFor={`medium-${medium}`}>
-                                    {medium}
-                                 </Label>
-                              </div>
-                           ))}
-                        </FilterSection> */}
+                  {/* Category Filter */}
+                  <FilterSection
+                     title="Art Forms"
+                     isOpen={openSections.category}
+                     onToggle={() => toggleSection("category")}
+                  >
+                     <div className="grid grid-cols-1 gap-y-4 pt-1">
+                        {categories.map((category) => (
+                           <div className="flex items-center gap-3 group cursor-pointer" key={category.slug}>
+                              <Checkbox
+                                 id={`category-${category.slug}`}
+                                 checked={filters.some(
+                                    (f) =>
+                                       f.id === "category" &&
+                                       String(f.value) === String(category.slug)
+                                 )}
+                                 onCheckedChange={(value) =>
+                                    handleFilterChange(
+                                       "category",
+                                       category.slug,
+                                       !!value
+                                    )
+                                 }
+                                 className="size-5 rounded-md border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                              />
+                              <Label
+                                 htmlFor={`category-${category.slug}`}
+                                 className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors"
+                              >
+                                 {category.name}
+                              </Label>
+                           </div>
+                        ))}
                      </div>
-                  </ScrollArea>
-               </aside>
-            </SheetContent>
-         </Sheet>
-         {/* Sidebar */}
-      </>
+                  </FilterSection>
+               </div>
+               <div className="h-10" /> {/* Extra padding at bottom for scroll */}
+            </ScrollArea>
+
+            <div className="p-6 border-t border-border/50 bg-background/80 backdrop-blur-md absolute bottom-0 w-full flex gap-3">
+               <Button
+                  className="flex-1 rounded-full h-12 font-bold shadow-lg shadow-primary/20"
+                  onClick={() => setIsSidebarOpen(false)}
+               >
+                  Show Results
+               </Button>
+               <Button
+                  variant="outline"
+                  className="rounded-full h-12 px-6 font-bold"
+                  onClick={() => setFilters([])}
+               >
+                  Reset
+               </Button>
+            </div>
+         </SheetContent>
+      </Sheet>
    );
 };

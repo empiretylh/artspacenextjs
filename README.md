@@ -2,93 +2,53 @@
 
 Myanmar Art Space is a social media and e-commerce platform focused on showcasing Myanmar artists, galleries, collectors, and curated collections. This repository contains the Next.js frontend application, including public discovery pages and authenticated dashboards for commerce, orders, and user management.
 
-## Highlights
-- Public discovery pages for artists, galleries, collections, artworks, and events.
-- Authenticated experiences for cart, checkout, orders, profile, and settings.
-- Responsive UI built with Tailwind CSS and Radix UI components.
-- Client state handled with TanStack Query, React Hook Form, and Zustand.
-- SEO-friendly metadata, sitemap, robots, and Open Graph assets.
+## 📖 Documentation (Start Here)
+To ensure consistent development and AI-efficiency, please refer to:
+- **[AGENTS.md](./AGENTS.md)**: Global coding policies, navigation rules, and "Source of Truth" pointers.
+- **[src/README.md](./src/README.md)**: The **Universal Map** of the project architecture and standard data flow.
 
-## Tech Stack
-- Next.js 16 (App Router) + React 19
-- TypeScript + ESLint
-- Tailwind CSS 4 + Radix UI
-- TanStack Query, React Hook Form, Zod
-- Zustand, DnD Kit, Framer Motion
+---
 
-## Getting Started
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Create your environment file:
-   ```bash
-   cp .env.example .env
-   ```
-3. Update values in `.env`.
-4. Start the dev server:
-   ```bash
-   npm run dev
-   ```
-5. Visit `http://localhost:3000`.
+## 🏗️ Tech Stack
+- **Next.js 16** (App Router) + **React 19**
+- **Tailwind CSS 4** + Radix UI
+- **TanStack Query** (Data Fetching), **Zustand** (Session State)
+- **Zod** (Validation), **React Hook Form** (Form Logic)
 
-## Environment Variables
-These are validated in `src/config/env.ts`.
+## 🚀 Getting Started
+1. Install dependencies: `npm install`
+2. Create environment file: `cp .env.example .env` (Update values accordingly).
+3. Start dev server: `npm run dev`
+4. Visit `http://localhost:3000`.
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `NEXT_PUBLIC_API_URL` | Yes | Base URL for the backend API. |
-| `NEXT_PUBLIC_APP_URL` | Yes | Public site URL, used for canonical URLs/SEO. |
-| `NEXT_PUBLIC_ENABLE_ANALYTICS` | No | Set to `true` to enable Google Analytics. |
-| `NEXT_PUBLIC_GA_ID` | Conditionally | Required when analytics are enabled. |
-| `NEXT_PUBLIC_ENABLE_API_MOCKING` | No | Enable mock API support when available. |
-| `NEXT_PUBLIC_MOCK_API_PORT` | No | Port for mock API (defaults to `8080`). |
-| `NODE_ENV` | No | `development` or `production` (defaults to `development`). |
-| `IMAGE_HOSTNAME` | No | Allowed hostname for Next.js image optimization. |
+## 📂 Project Structure (The Three Pillars)
+The project follows a vertical-slice architecture. See the [Universal Map](./src/README.md) for details.
+- **`src/app` (The Shell)**: Routing, layouts, and page-level composition.
+- **`src/features` (The Muscles)**: Vertical feature slices (`auth`, `artwork`, `orders`). Contains all business logic.
+- **`src/components` (The Skin)**: Shared, generic UI primitives (shadcn).
+- **`src/features/service` (The Data Hub)**: Centralized API implementation for the entire app.
 
-## Project Structure
-- `src/app` - App Router routes, layouts, metadata, and API handlers.
-- `src/features` - Feature-specific UI and logic (auth, artwork, events, cart, orders).
-- `src/components` - Shared UI components and layout primitives.
-- `src/lib` - Shared utilities, API clients, and helpers.
-- `src/hooks` - Custom React hooks.
-- `src/config` - Environment, route paths, and query keys.
-- `src/mocks` - Local mock data for development.
-- `public` - Static assets (icons, screenshots, PWA assets).
+## 🔑 Environment Variables
+Validated in `src/config/env.ts`.
 
-## Scripts
-- `npm run dev` - Start the local dev server.
-- `npm run build` - Create a production build.
-- `npm run start` - Serve the production build.
-- `npm run lint` - Run ESLint.
+| Variable | Description |
+| --- | --- |
+| `NEXT_PUBLIC_API_URL` | Base URL for the backend API. |
+| `NEXT_PUBLIC_APP_URL` | Public site URL for canonical SEO. |
+| `NEXT_PUBLIC_GA_ID` | Google Analytics ID. |
+| `NEXT_PUBLIC_IMAGE_HOSTNAME` | Allowed hostname for Next.js Image optimization. |
 
-## Analytics
-Google Analytics is wired via `@next/third-parties` in `src/app/layout.tsx`. Set `NEXT_PUBLIC_ENABLE_ANALYTICS=true` and provide `NEXT_PUBLIC_GA_ID` to enable tracking. Enhanced Measurement handles page views automatically.
+## 📦 Features & Docs
+- **Authentication**: Backend JWT + Firebase Synchronization. [Auth Guide](./src/features/auth/README.md).
+- **Real-time Chat**: Powered by Firebase Firestore. [Firebase Guide](./docs/firebase.md).
+- **Artwork Engine**: Masonry catalogs and complex submission forms. [Artwork Guide](./src/features/artwork/README.md).
+- **Ecommerce**: Orders, tracking, and checkout flows. [Orders Guide](./src/features/orders/README.md).
 
-### Event Tracking Usage
+## 📊 Analytics
+Google Analytics is wired via `@next/third-parties`. Standardized tracking is implemented in `src/lib/analytics.ts`.
+👉 **[Full Analytics Reference](./docs/analytics_reference.md)**
 
-The application uses a centralized analytics utility (`src/lib/analytics.ts`) to track specific user interactions and product metrics via Google Analytics.
-
-**How to use:**
-Import the relevant analytics module from `src/lib/analytics.ts` and call its methods. 
-```typescript
-import { authAnalytics } from '@/lib/analytics'
-
-// Track user login
-authAnalytics.login({ method: 'email', source: 'sign_in_page' })
-```
-
-👉 **[See the Full Analytics Event Reference](./docs/analytics_reference.md) for a complete list of events, payload schemas, and data types sent to the Dashboard/Data teams.**
-
-## Deployment
-1. Set all required environment variables in your hosting platform.
-2. Run `npm run build`.
-3. Serve the app with `npm run start` (or your platform's Next.js runtime).
-
-## Contributing
-1. Create a feature branch from `main`.
-2. Keep changes scoped and formatted.
+## ✅ Contributing
+1. Always check [AGENTS.md](./AGENTS.md) before starting a task.
+2. Update the relevant feature `README.md` if you change its architecture.
 3. Run `npm run lint` before opening a PR.
-
-## Support
-If you run into issues, capture the exact error message, Node.js version, and steps to reproduce.

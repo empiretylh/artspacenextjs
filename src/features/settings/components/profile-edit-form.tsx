@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useNotifications } from "@/components/ui/notifications";
 import { handleFormError } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
 
 // import { useGetProfile } from "../api/get-profile";
 import {
@@ -53,6 +54,7 @@ export default function ProfileEditForm({
          bio: profile?.profile?.bio ?? "",
          website: profile?.profile?.website ?? "",
          about: profile?.profile?.about ?? "",
+         show_email: profile?.profile?.show_email ?? false,
       },
    });
 
@@ -176,6 +178,26 @@ export default function ProfileEditForm({
                         />
                      </FormControl>
                      <FormMessage />
+                  </FormItem>
+               )}
+            />
+            <FormField
+               control={form.control}
+               name="show_email"
+               render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm">
+                     <div className="space-y-0.5">
+                        <FormLabel>Show Email on Public Profile</FormLabel>
+                        <FormDescription>
+                           Toggle whether your primary email address is visible on your public profile.
+                        </FormDescription>
+                     </div>
+                     <FormControl>
+                        <Switch
+                           checked={field.value}
+                           onCheckedChange={field.onChange}
+                        />
+                     </FormControl>
                   </FormItem>
                )}
             />

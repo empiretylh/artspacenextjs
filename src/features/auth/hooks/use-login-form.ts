@@ -12,6 +12,7 @@ import { handleFormError } from "@/lib/utils";
 import { accessAnalytics, authAnalytics, UserType } from "@/lib/analytics";
 import { useAuth } from "../store";
 import { User } from "@/types";
+import type { CredentialResponse } from "@react-oauth/google";
 
 export const loginSchema = z.object({
   email: z
@@ -24,7 +25,7 @@ export const loginSchema = z.object({
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function useLoginForm({ returnTo }: { returnTo?: string } = {}) {
-  const { login, user, loading, setLoginDialogOpen } = useAuth();
+  const { login, loginWithGoogle, loading } = useAuth();
   const router = useRouter();
   const { addNotification } = useNotifications();
 
@@ -42,7 +43,7 @@ export function useLoginForm({ returnTo }: { returnTo?: string } = {}) {
     try {
       const response = await login(values.email, values.password);
 
-      if (response) {
+      if (!(response instanceof Error) && response) {
         addNotification({
           title: "Welcome Back!",
           message: "You’ve successfully signed in.",
@@ -71,9 +72,50 @@ export function useLoginForm({ returnTo }: { returnTo?: string } = {}) {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    const idToken = credentialResponse.credential;
+    if (!idToken) return;
+
+    try {
+      const response = await loginWithGoogle(idToken);
+
+      if (!(response instanceof Error) && response) {
+        addNotification({
+          title: "Welcome Back!",
+          message: "You’ve successfully signed in with Google.",
+          type: "success",
+        });
+
+        authAnalytics.login({ method: "google" });
+
+        const { id, user_type } = response as User;
+        accessAnalytics.setUser(String(id), user_type.toLocaleLowerCase() as UserType);
+
+        if (returnTo) {
+          router.push(returnTo);
+        } else {
+          router.push(paths.root.path);
+        }
+      } else {
+         addNotification({
+          title: "Login Failed",
+          message: "Could not authenticate with Google",
+          type: "error",
+        });
+      }
+    } catch (err) {
+      addNotification({
+        title: "Login Failed",
+        message: "An unexpected error occurred during Google sign-in",
+        type: "error",
+      });
+    }
+  };
+
   return {
     form,
     onSubmit,
+    handleGoogleSuccess,
     loading,
     showPassword,
     setShowPassword,

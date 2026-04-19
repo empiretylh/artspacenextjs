@@ -1,3 +1,4 @@
+'use client'
 import { Fragment, useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,9 @@ import { Label } from "@/components/ui/label";
 import {
    Select,
    SelectContent,
+   SelectGroup,
    SelectItem,
+   SelectLabel,
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
@@ -118,191 +121,200 @@ const ArtworksPageView = ({
                )}
 
                {/* Artworks Grid */}
-               <div className="transition-all duration-300 w-full space-y-3">
+               <div className="transition-all duration-300 w-full">
                   {options.enableFilters && (
-                     <FilterRow filters={filters} setFilters={setFilters} />
-                  )}
-
-                  {(isLoading) && <Skeleton className="h-7 w-48 rounded-md" />}
-                  {!isLoading && (
-                     <div className="flex items-center justify-between">
-                        <h1 className="text-xl font-bold capitalize">
-                           {title ?? "Artworks"}
-                        </h1>
+                     <div className="mb-6">
+                        <FilterRow filters={filters} setFilters={setFilters} />
                      </div>
                   )}
 
-                  {options.enableFilters && filters.length > 0 && !isLoading && (
-                     <>
-                        <span className="inline-block mr-2">SearchBy:</span>
-                        <div className="inline-flex flex-wrap gap-2 mb-4">
-                           {filters.map((f) => (
-                              <Badge
-                                 className="bg-primary/15 text-primary"
-                                 key={"artwork-filters-" + f.id + f.value}
-                              >
-                                 {f.value}
-                                 <Button
-                                    onClick={() =>
-                                       removeFromFilter(f.id, String(f.value))
+                  <div className="space-y-4 px-1">
+                     {(isLoading) && <Skeleton className="h-9 w-64 rounded-xl" />}
+                     {!isLoading && (
+                        <div className="flex items-center justify-between mb-2">
+                           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+                              {title ?? "Artworks"}
+                           </h1>
+                        </div>
+                     )}
+
+                     {options.enableFilters && filters.length > 0 && !isLoading && (
+                        <div className="animate-in fade-in slide-in-from-top-1 duration-300">
+                           <div className="flex flex-wrap gap-2.5 mb-5 items-center">
+                              <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground mr-1">Active Filters:</span>
+                              {filters.map((f) => {
+                                 const getFilterLabel = (id: string, val: string) => {
+                                    if (id === "status") {
+                                       if (val === "AVAILABLE") return "Available";
+                                       if (val === "SOLD") return "Sold";
+                                       if (val === "NOT_FOR_SALE") return "Not for Sale";
+                                       if (val === "SOLD_OUT") return "Sold Out";
                                     }
-                                    size="icon"
-                                    className="size-4 hover:text-destructive"
-                                    variant="link"
-                                 >
-                                    <XIcon />
-                                 </Button>
-                              </Badge>
-                           ))}
-                           <Button
-                              size="xs"
-                              className="rounded-full"
-                              onClick={() => setFilters([])}
-                           >
-                              Clear All
-                           </Button>
-                        </div>
-                     </>
-                  )}
+                                    return val.toLowerCase().replace(/_/g, " ");
+                                 };
 
-                  {options.enableFilters && filters.length > 0 && isLoading && (
-                     <div className="inline-flex flex-wrap gap-2 mb-4">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                           <Skeleton key={i} className="h-6 w-24 rounded-full" />
-                        ))}
-                     </div>
-                  )}
-
-                  <div className="flex gap-2 items-center justify-end">
-                     {options.enableSorting && (
-                        <div className="inline-flex gap-2 items-center justify-between">
-                           <Label>
-                              <span>Sort By</span>
-                           </Label>
-                           <Select
-                              value={
-                                 sorts[0]?.id
-                                    ? `${sorts[0]?.id}-${sorts[0]?.desc ? "desc" : "asc"}`
-                                    : ""
-                              }
-                              onValueChange={(value) => {
-                                 if (!value) return setSorts([]);
-                                 const [id, order] = value.split("-");
-                                 setSorts([{ id, desc: order === "desc" }]);
-                              }}
-                           >
-                              <SelectTrigger
-                                 className="w-[180px] h-10"
-                                 data-testid="artworks-sort-select"
+                                 return (
+                                    <Badge
+                                       className="bg-primary/5 text-primary border border-primary/10 rounded-full px-3.5 py-1 font-semibold capitalize h-8 flex items-center gap-2 hover:bg-primary/10 transition-colors cursor-default"
+                                       key={"artwork-filters-" + f.id + f.value}
+                                    >
+                                       <span className="truncate max-w-[150px]">
+                                          {getFilterLabel(f.id, String(f.value))}
+                                       </span>
+                                       <button
+                                          onClick={() =>
+                                             removeFromFilter(f.id, String(f.value))
+                                          }
+                                          className="p-0.5 hover:bg-primary/20 rounded-full transition-all group/close"
+                                          aria-label="Remove filter"
+                                       >
+                                          <XIcon className="size-3 text-primary/60 group-hover/close:text-primary transition-colors" />
+                                       </button>
+                                    </Badge>
+                                 );
+                              })}
+                              <Button
+                                 variant="link"
+                                 size="sm"
+                                 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-destructive h-8 px-2 transition-colors"
+                                 onClick={() => setFilters([])}
                               >
-                                 <SelectValue placeholder="Sort by" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                 <SelectItem value="created_at-desc" data-testid="sort-created-desc">
-                                    Date: Newest
-                                 </SelectItem>
-                                 <SelectItem value="created_at-asc" data-testid="sort-created-asc">
-                                    Date: Oldest
-                                 </SelectItem>
-                                 <SelectItem value="price-desc" data-testid="sort-price-desc">
-                                    Price: High to Low
-                                 </SelectItem>
-                                 <SelectItem value="price-asc" data-testid="sort-price-asc">
-                                    Price: Low to High
-                                 </SelectItem>
-                              </SelectContent>
-                           </Select>
+                                 Clear All
+                              </Button>
+                           </div>
                         </div>
                      )}
 
-                     {options.enableFilters && (
-                        <Button
-                           variant="outline"
-                           onClick={() => setIsSidebarOpen(true)}
-                           className="flex items-center gap-2"
-                        >
-                           <FilterIcon className="h-5 w-5" />
-                           <span className="hidden md:inline">Filters</span>
-                        </Button>
+                     {options.enableFilters && filters.length > 0 && isLoading && (
+                        <div className="inline-flex flex-wrap gap-2 mb-4">
+                           {Array.from({ length: 3 }).map((_, i) => (
+                              <Skeleton key={i} className="h-8 w-24 rounded-full" />
+                           ))}
+                        </div>
                      )}
-                  </div>
 
-                  <div>
-                     {pagesToRender?.[0]?.results?.length <= 0 &&
-                        !isLoading && (
-                           <div className="flex items-center justify-center h-40">
-                              <p className="text-sm text-muted-foreground">
-                                 No results found
-                              </p>
+                     <div className="flex gap-3 items-center justify-end py-1">
+                        {options.enableSorting && (
+                           <div className="inline-flex gap-3 items-center">
+                              <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                                 Sort By
+                              </Label>
+                              <Select
+                                 value={
+                                    sorts[0]?.id
+                                       ? `${sorts[0]?.id}-${sorts[0]?.desc ? "desc" : "asc"}`
+                                       : ""
+                                 }
+                                 onValueChange={(value) => {
+                                    if (!value) return setSorts([]);
+                                    const [id, order] = value.split("-");
+                                    setSorts([{ id, desc: order === "desc" }]);
+                                 }}
+                              >
+                                 <SelectTrigger
+                                    className="w-[180px] h-10 rounded-full bg-white border-2 border-muted/70 shadow-sm hover:border-primary/30 hover:bg-muted/10 transition-all font-bold focus:ring-primary/20"
+                                    data-testid="artworks-sort-select"
+                                 >
+                                    <SelectValue placeholder="Sort by" />
+                                 </SelectTrigger>
+                                 <SelectContent className="rounded-2xl border-none shadow-2xl p-2 min-w-[200px]">
+                                    <SelectGroup>
+                                       <SelectLabel className="px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Ordering</SelectLabel>
+                                       <SelectItem value="created_at-desc" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                                          Date: Newest
+                                       </SelectItem>
+                                       <SelectItem value="created_at-asc" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                                          Date: Oldest
+                                       </SelectItem>
+                                       <SelectItem value="price-desc" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                                          Price: High to Low
+                                       </SelectItem>
+                                       <SelectItem value="price-asc" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                                          Price: Low to High
+                                       </SelectItem>
+                                    </SelectGroup>
+                                 </SelectContent>
+                              </Select>
                            </div>
                         )}
-                  </div>
 
-                  {isLoading && <LoadingPage />}
-
-                  <div className="mb-4">
-                     <div
-                        className={cn(
-                           "",
-                           "grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-x-2 auto-rows-[1px] h-full"
+                        {options.enableFilters && (
+                           <Button
+                              variant="outline"
+                              onClick={() => setIsSidebarOpen(true)}
+                              className="flex items-center gap-2 rounded-full h-10 px-6 bg-background border-2 border-muted/70 shadow-sm hover:!border-primary/30 hover:bg-muted/10 transition-all font-bold"
+                           >
+                              <FilterIcon className="h-4 w-4" />
+                              <span className="hidden md:inline">More Filters</span>
+                           </Button>
                         )}
-                     >
-                        {pagesToRender?.map((page) => (
-                           <Fragment key={page.next}>
-                              {page.results.map((artwork: Artwork) => (
-                                 <MasonryItem key={artwork.id} artwork={artwork}>
-                                    {artworkCard ? (
-                                       artworkCard(artwork)
-                                    ) : (
-                                       <ArtworkCard
-                                          variant="masonry"
-                                          className="inline-block w-full h-auto"
-                                          artwork={artwork}
-                                       />
-                                    )}
-                                 </MasonryItem>
-                              ))}
-                           </Fragment>
-                        ))}
                      </div>
 
-                     {/* Infinite scroll sentinel */}
-                     {hasNextPage &&
-                        !isFetchingNextPage &&
-                        pagesToRender?.[0]?.results?.length > 0 && (
-                           <div
-                              ref={loadMoreRef}
-                              className="flex justify-center my-2 text-sm text-muted-foreground"
-                           >
-                              LoadMore
-                           </div>
-                        )}
+                     <div>
+                        {pagesToRender?.[0]?.results?.length <= 0 &&
+                           !isLoading && (
+                              <div className="flex items-center justify-center h-60">
+                                 <p className="text-sm text-muted-foreground font-medium italic">
+                                    We couldn't find any artworks matching your selection.
+                                 </p>
+                              </div>
+                           )}
+                     </div>
 
-                     {isFetchingNextPage && (
-                        <div className="flex justify-center my-2 text-sm text-muted-foreground">
-                           Loading more...
+                     {isLoading && <LoadingPage />}
+
+                     <div className="mb-8">
+                        <div
+                           className={cn(
+                              "",
+                              "grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-x-3 auto-rows-[1px] h-full"
+                           )}
+                        >
+                           {pagesToRender?.map((page) => (
+                              <Fragment key={page.next}>
+                                 {page.results.map((artwork: Artwork) => (
+                                    <MasonryItem key={artwork.id} artwork={artwork}>
+                                       {artworkCard ? (
+                                          artworkCard(artwork)
+                                       ) : (
+                                          <ArtworkCard
+                                             variant="masonry"
+                                             className="inline-block w-full h-auto"
+                                             artwork={artwork}
+                                          />
+                                       )}
+                                    </MasonryItem>
+                                 ))}
+                              </Fragment>
+                           ))}
                         </div>
-                     )}
 
-                     {!hasNextPage &&
-                        !isFetchingNextPage &&
-                        pagesToRender?.[0]?.results?.length > 0 && (
-                           <div className="flex justify-center my-2 text-sm text-muted-foreground">
-                              Nothing more to load
+                        {/* Infinite scroll sentinel */}
+                        {hasNextPage &&
+                           !isFetchingNextPage &&
+                           pagesToRender?.[0]?.results?.length > 0 && (
+                              <div
+                                 ref={loadMoreRef}
+                                 className="flex justify-center my-8 text-sm font-bold uppercase tracking-widest text-muted-foreground/50 animate-pulse"
+                              >
+                                 Load More
+                              </div>
+                           )}
+
+                        {isFetchingNextPage && (
+                           <div className="flex justify-center my-8 text-sm font-medium text-muted-foreground">
+                              Discovering more masterpieces...
                            </div>
                         )}
 
-                     {/* <div
-                     ref={loadMoreRef}
-                     className="flex justify-center my-2 text-sm text-muted-foreground min-h-[24px]"
-                  >
-                     {isFetchingNextPage && "Loading more..."}
-                     {!isFetchingNextPage && hasNextPage && "Load More"}
-                     {!isFetchingNextPage &&
-                        !hasNextPage &&
-                        pagesToRender?.[0]?.results?.length > 0 &&
-                        "Nothing more to load"}
-                  </div> */}
+                        {!hasNextPage &&
+                           !isFetchingNextPage &&
+                           pagesToRender?.[0]?.results?.length > 0 && (
+                              <div className="flex justify-center my-8 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/30">
+                                 End of Collection
+                              </div>
+                           )}
+                     </div>
                   </div>
                </div>
             </div>

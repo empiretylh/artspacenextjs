@@ -24,7 +24,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
    useEffect(() => {
       if (artwork) {
          const item = itemFromArtwork(artwork);
-         ecommerceAnalytics.viewItem('MMK', Number(artwork.price), [item], source)
+         ecommerceAnalytics.viewItem(artwork.currency.code || 'MMK', Number(artwork.price), [item], source)
       }
    }, [artwork]);
 
@@ -68,7 +68,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                   category={artwork.category}
                   categoryName={artwork.category_name}
                   artistName={artwork.artist_name || "N/A"}
-                  currentOwner={artwork.current_owner_name ? artwork.current_owner_name : artwork.current_owner_display.first_name + " " + artwork.current_owner_display.last_name}
+                  currentOwner={artwork.current_owner_name ? artwork.current_owner_name : artwork.current_owner_display?.first_name + " " + artwork.current_owner_display?.last_name}
                />
 
                {artwork.search_keywords &&

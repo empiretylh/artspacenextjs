@@ -121,9 +121,9 @@ export const useGetOrders = ({
    });
 };
 
-export const getUserOrders = async (userId: number, filters: Record<string, any> = {}): Promise<Order[]> => {
+export const getUserOrders = async (userId: number, page: number = 1, filters: Record<string, any> = {}): Promise<ListApiResponse<Order>> => {
    const res = await api.get(`/orders/orders/`, {
-      params: { user: userId, ...filters },
+      params: { user: userId, page, ...filters },
       paramsSerializer: (params) => {
          const searchParams = new URLSearchParams();
          for (const key in params) {
@@ -140,10 +140,10 @@ export const getUserOrders = async (userId: number, filters: Record<string, any>
    return res.data;
 };
 
-export const useGetUserOrders = (userId: number, filters: Record<string, any> = {}) => {
+export const useGetUserOrders = (userId: number, page: number = 1, filters: Record<string, any> = {}) => {
    return useQuery({
-      queryKey: ["user-orders", userId, filters],
-      queryFn: () => getUserOrders(userId, filters),
+      queryKey: ["user-orders", userId, page, filters],
+      queryFn: () => getUserOrders(userId, page, filters),
       enabled: !!userId,
    });
 };

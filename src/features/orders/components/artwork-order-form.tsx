@@ -34,6 +34,8 @@ import type { Artwork } from '@/types'
 import Price from '@/components/common/price'
 import { Loader2 } from 'lucide-react'
 import { paths } from '@/config/paths'
+import { ecommerceAnalytics, itemFromArtwork } from '@/lib/analytics'
+import { useSource } from '@/lib/analytics-source'
 
 interface ArtworkOrderFormProps {
   artwork: Artwork
@@ -44,6 +46,7 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
   const { addNotification } = useNotifications()
   const { data: deliveryCharges, isLoading: isLoadingCharges } = useGetDeliveryCharges()
   const createOrderMutation = useCreateArtworkOrder()
+  const { source } = useSource()
 
   const form = useForm<CreateArtworkOrderInput>({
     resolver: zodResolver(createArtworkOrderInputSchema),
@@ -71,6 +74,16 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
   const onSubmit = async (data: CreateArtworkOrderInput) => {
     try {
       const order = await createOrderMutation.mutateAsync(data)
+      
+      // Tracking: Add Shipping Info
+      ecommerceAnalytics.addShippingInfo(
+        artwork.currency.code || "MMK",
+        totalPrice,
+        [itemFromArtwork(artwork)],
+        data.city, // Using city as the shipping tier/proxy
+        source
+      );
+
       addNotification({
         type: 'success',
         title: 'Order Created',

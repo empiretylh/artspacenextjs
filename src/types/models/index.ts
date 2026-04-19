@@ -28,6 +28,7 @@ export interface Profile {
    profile_picture: string | null;
    cover_photo: string | null;
    website: string;
+   show_email: boolean;
    features_photos: FeaturedPhoto[];
    is_following: boolean;
    isBlocked: boolean;
@@ -61,10 +62,10 @@ export interface Order {
    shipping_address: string;
    phone_number?: string;
    description?: string;
-   order_status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED";
+   order_status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED" | "CANCELLED";
    payment_status?: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
    stripe_session_id?: string | null;
-   status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED";
+   status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED" | "CANCELLED";
    paid_at?: Date | string | null;
    created_at: Date | string;
    updated_at: Date | string;
@@ -75,7 +76,7 @@ export interface OrderItem {
    id: number;
    orderId: string;
    artworkId: string;
-   price_at_purchase: number;
+   price_at_purchase: number | string;
    quantity: number;
    artwork: Artwork;
    order: Order;
@@ -107,7 +108,7 @@ export interface Artwork {
    medium: string;
    dimensions: string;
    year: number;
-   status: "AVAILABLE";
+   status: "AVAILABLE" | "SOLD" | "NOT_FOR_SALE" | "SOLD_OUT";
    search_keywords?: string[];
    current_owner_display: User;
    current_owner?: number;

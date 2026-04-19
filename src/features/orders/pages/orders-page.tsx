@@ -17,6 +17,7 @@ const ORDER_STATUS_OPTIONS = [
   { label: "Pending", value: "PENDING" },
   { label: "Shipped", value: "SHIPPED" },
   { label: "Completed", value: "COMPLETED" },
+  { label: "Cancelled", value: "CANCELLED" },
   { label: "Failed", value: "FAILED" },
 ];
 

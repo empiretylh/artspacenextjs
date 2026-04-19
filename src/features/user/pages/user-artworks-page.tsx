@@ -128,7 +128,7 @@ const ArtworksPageContainer = () => {
          const newArtworks = data.pages.at(-1)?.results ?? [];
          if (newArtworks.length > 0) {
             const items = itemsFromArtworks(newArtworks);
-            ecommerceAnalytics.viewItemList("MMK", source, snakeToNormal(source), items, source);
+            ecommerceAnalytics.viewItemList(newArtworks[0]?.currency.code || "MMK", source, snakeToNormal(source), items, source);
          }
       }
    }, [data, isLoading, source]);

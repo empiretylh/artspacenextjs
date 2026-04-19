@@ -5,9 +5,13 @@ import { accessAnalytics, UserType } from "@/lib/analytics";
 import { auth as firebaseAuth } from "@/features/service/firebase/firebase"; // Your client config
 import { signInWithCustomToken } from "firebase/auth";
 import { env } from "@/config/env";
+import { useSyncUserProfile } from "../chat/hooks/use-sync-user-profile";
+import { usePresence } from "../chat/hooks/use-presence";
 
 export function AuthInitializer() {
   const initialized = useRef(false);
+  const { syncProfile } = useSyncUserProfile();
+  usePresence();
 
   useEffect(() => {
     const sync = async () => {
@@ -33,6 +37,9 @@ export function AuthInitializer() {
           // If we have a token and Firebase isn't already logged in
           if (env.FIREBASE_ENABLE && firebaseAuth && data.firebaseToken && !firebaseAuth.currentUser) {
             await signInWithCustomToken(firebaseAuth, data.firebaseToken);
+            
+            // 4. Initial Sync of Profile to Firestore
+            syncProfile();
 
             if (env.NODE_ENV === 'development') {
               console.log("Firebase session re-synced from auth initializer");

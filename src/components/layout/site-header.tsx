@@ -38,7 +38,7 @@ export function SiteHeader() {
 
    return (
       <SourceProvider value={{ source: "header" }}>
-         <header className="bg-background sticky top-0 py-4 z-20 flex h-[var(--header-height)] items-center px-2 lg:px-4">
+         <header className="bg-background sticky top-0 py-4 z-50 flex h-[var(--header-height)] items-center px-2 lg:px-4">
             {/* Mobile Search Mode */}
             {mobileSearchOpen ? (
                <div className="flex w-full items-center gap-2">
@@ -66,7 +66,7 @@ export function SiteHeader() {
                   {/* Search Input on Desktop */}
                   <div className={cn(
                      "hidden md:flex fixed left-(--sidebar-width) lg:left-1/2 lg:-translate-x-1/2",
-                  )}>
+                   )}>
                      <Suspense fallback={<InputWithLeftSelectSkeleton />}>
                         <InputWithLeftSelect />
                      </Suspense>
@@ -95,18 +95,6 @@ export function SiteHeader() {
                         <Bell className="h-4 w-4" />
                      </Button>
 
-                     {/* <Link to={paths.cart.path}>
-                        <Button
-                           variant="ghost"
-                           className="h-8 w-8 p-0 relative hidden lg:flex"
-                        >
-                           <span className="absolute text-xs text-primary-foreground p-1 w-5 h-5 flex items-center justify-center -top-2 right-0 bg-primary rounded-full">
-                              {items.length}
-                           </span>
-                           <ShoppingCart className="h-4 w-4" />
-                        </Button>
-                     </Link> */}
-
                      {isLoggedIn && (
                         <Button
                            onClick={() => setIsArtworkCreateModalOpen(true)}
@@ -115,18 +103,6 @@ export function SiteHeader() {
                            Create
                         </Button>
                      )}
-
-                     {/* 
-                  <Button
-                     onClick={() => router.push(paths.cart.path)}
-                     variant="ghost"
-                     className="h-8 w-8 p-0 relative"
-                  >
-                     <span className="absolute text-xs text-primary-foreground p-1 w-5 h-5 flex items-center justify-center -top-2 -right-2 bg-primary rounded-full">
-                        {items.length}
-                     </span>
-                     <ShoppingCart className="h-4 w-4" />
-                  </Button> */}
 
                      {/* Auth Buttons / Profile */}
                      {!isLoggedIn ? (

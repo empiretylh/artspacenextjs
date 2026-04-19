@@ -118,7 +118,7 @@ export const filterOptions = {
       "2011",
       "2010",
    ],
-   status: ["AVAILABLE", "SOLD"],
+   status: ["AVAILABLE", "SOLD", "NOT_FOR_SALE", "SOLD_OUT"],
    priceRanges: [
       { label: "Under $1,000", min: 0, max: 1000 },
       { label: "$1,000 - $5,000", min: 1000, max: 5000 },
