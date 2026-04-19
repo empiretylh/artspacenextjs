@@ -65,12 +65,6 @@ const data = {
          disabled: false,
       },
       {
-         title: "inventory",
-         url: paths.inventory.path,
-         icon: Layers2Icon,
-         disabled: true,
-      },
-      {
          title: "order",
          url: paths.order.path,
          icon: ShoppingCartIcon,
@@ -131,41 +125,41 @@ export function NavMain() {
 
                      return (
                         <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                           asChild
-                           className={cn(
-                              "hover:bg-primary/16 hover:text-primary active:bg-primary/16 active:text-primary",
-                              active && "bg-primary/16 text-primary"
-                           )}
-                           tooltip={
-                              item.title.at(0)?.toUpperCase() +
-                              item.title.slice(1)
-                           }
-                        >
-                           <Link
-                              to={item.url}
-                              onClick={(e) => {
-                                 const isDisabled = item.disabled || (item.title === "order" && !user);
-                                 if (isDisabled) {
-                                    e.preventDefault();
-                                    return;
-                                 }
-                                 e.preventDefault();
-                                 setOpenMobile(false);
-                                 router.push(item.url);
-                              }}
+                           <SidebarMenuButton
+                              asChild
                               className={cn(
-                                 (item.disabled || (item.title === "order" && !user)) &&
-                                 "pointer-events-none opacity-50"
+                                 "hover:bg-primary/16 hover:text-primary active:bg-primary/16 active:text-primary",
+                                 active && "bg-primary/16 text-primary"
                               )}
+                              tooltip={
+                                 item.title.at(0)?.toUpperCase() +
+                                 item.title.slice(1)
+                              }
                            >
-                              {item.icon && <item.icon />}
-                              <span className="capitalize">{item.title}</span>
-                           </Link>
-                        </SidebarMenuButton>
-                     </SidebarMenuItem>
-                  );
-               })}
+                              <Link
+                                 to={item.url}
+                                 onClick={(e) => {
+                                    const isDisabled = item.disabled || (item.title === "order" && !user);
+                                    if (isDisabled) {
+                                       e.preventDefault();
+                                       return;
+                                    }
+                                    e.preventDefault();
+                                    setOpenMobile(false);
+                                    router.push(item.url);
+                                 }}
+                                 className={cn(
+                                    (item.disabled || ((item.title === "order" && !user)) || (item.title === "messages" && !user)) &&
+                                    "pointer-events-none opacity-50"
+                                 )}
+                              >
+                                 {item.icon && <item.icon />}
+                                 <span className="capitalize">{item.title}</span>
+                              </Link>
+                           </SidebarMenuButton>
+                        </SidebarMenuItem>
+                     );
+                  })}
             </SidebarMenu>
          </SidebarGroupContent>
       </SidebarGroup>
