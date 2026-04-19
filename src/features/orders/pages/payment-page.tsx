@@ -15,12 +15,17 @@ import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { ecommerceAnalytics, itemFromArtwork } from '@/lib/analytics'
+import { useAuth } from '@/features/auth/store'
+import { useSource } from '@/lib/analytics-source'
 
 interface PaymentPageProps {
   orderId: string
 }
 
 export const PaymentPage = ({ orderId }: PaymentPageProps) => {
+  const { user } = useAuth()
+  const { source } = useSource()
   const router = useRouter()
   const { data: order, isLoading: isOrderLoading, error: orderError } = useGetOrder({ orderId })
   const updateOrder = useUpdateOrder()
@@ -59,6 +64,15 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
           stripe_session_id: paymentIntent.txn_id,
         },
       })
+
+      // Tracking: Add Payment Info
+      ecommerceAnalytics.addPaymentInfo(
+        order.currency || "MMK",
+        parseFloat(String(order.total_price)),
+        order.items?.map((item) => itemFromArtwork(item.artwork as any)) || [],
+        "Online Payment",
+        source
+      );
 
       // 3. Redirect to Payment URL
       window.location.replace(paymentIntent.payment_url)

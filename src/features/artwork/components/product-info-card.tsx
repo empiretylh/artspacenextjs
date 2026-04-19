@@ -11,16 +11,28 @@ import { useAuth } from "@/features/auth/store";
 import { getImage, getUserRouteType, timeAgo } from "@/lib/utils";
 import type { Artwork } from "@/types";
 import { useRouter } from "next/navigation";
+import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
+import { useSource } from "@/lib/analytics-source";
 
 export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
    const router = useRouter();
    const { user } = useAuth();
+   const { source } = useSource();
 
    const handleOrder = () => {
       if (!user) {
          router.push(paths.auth.login.getHref())
          return;
       }
+      
+      // Tracking: Begin Checkout
+      ecommerceAnalytics.beginCheckout(
+         artwork.currency.code || "MMK",
+         Number(artwork.price) || 0,
+         [itemFromArtwork(artwork)],
+         source
+      );
+
       router.push(paths.artworks.order.getHref(artwork.id));
    };
 

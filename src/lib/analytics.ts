@@ -7,19 +7,20 @@ import { sendGAEvent /*, sendGTMEvent*/ } from '@next/third-parties/google'
 export const itemFromArtwork = (artwork: Artwork) => ({
   item_id: artwork.id,
   item_name: artwork.title,
-  item_category: artwork.category.name,
+  item_category: artwork.category?.name || "Uncategorized",
   price: Number(artwork.price),
   quantity: 1,
+  currency: artwork.currency?.code || "MMK"
 })
 
 export const itemsFromArtworks = (artworks: Artwork[]): GAItem[] => {
   return artworks.map((artwork) => ({
     item_id: artwork.id,
     item_name: artwork.title,
-    item_category: artwork.category?.name,
+    item_category: artwork.category?.name || "Uncategorized",
     price: Number(artwork.price),
     quantity: 1,
-    currency: 'MMK'
+    currency: artwork.currency.code || 'MMK'
   }
   ))
 }
@@ -53,7 +54,17 @@ export function analyticSourceFromPathname(
 
   // --- ARTWORKS ---
   if (path === "/artworks") return "artworks_page";
-  if (path.startsWith("/artworks/")) return "artwork_detail";
+  if (path.startsWith("/artworks/")) {
+    if (path.endsWith("/order")) return "order_form";
+    return "artwork_detail";
+  }
+
+  // --- ORDERS ---
+  if (path === "/orders") return "orders";
+  if (path.startsWith("/orders/")) {
+    if (path.endsWith("/payment")) return "payment_page";
+    return "orders";
+  }
 
   // --- EVENTS ---
   if (path === "/events") return "discover";
@@ -114,6 +125,8 @@ export type AnalyticsSource =
   | 'profile_page'
   | 'cart'
   | 'checkout'
+  | 'order_form'
+  | 'payment_page'
   | 'orders'
   | 'settings_page'
   | 'admin_dashboard'
@@ -307,7 +320,7 @@ type GAItem = {
   item_category?: string
   price?: number
   quantity?: number
-  currency?: 'MMK'
+  currency?: string
   // Helpful optional fields GA4 supports:
   item_variant?: string
   item_brand?: string
@@ -338,9 +351,41 @@ export const ecommerceAnalytics = {
   //   track('view_cart', { currency, value, items, source })
   // },
 
-  // beginCheckout(currency: string, value: number, items: GAItem[], source: AnalyticsSource = 'checkout') {
-  //   track('begin_checkout', { currency, value, items, source })
-  // },
+  beginCheckout(currency: string, value: number, items: GAItem[], source: AnalyticsSource = "checkout") {
+    track("begin_checkout", { currency, value, items, source });
+  },
+
+  addShippingInfo(
+    currency: string,
+    value: number,
+    items: GAItem[],
+    shipping_tier?: string,
+    source: AnalyticsSource = "checkout"
+  ) {
+    track("add_shipping_info", {
+      currency,
+      value,
+      items,
+      shipping_tier,
+      source,
+    });
+  },
+
+  addPaymentInfo(
+    currency: string,
+    value: number,
+    items: GAItem[],
+    payment_type?: string,
+    source: AnalyticsSource = "checkout"
+  ) {
+    track("add_payment_info", {
+      currency,
+      value,
+      items,
+      payment_type,
+      source,
+    });
+  },
 
   // purchase(params: {
   //   transaction_id: string

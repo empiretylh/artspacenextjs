@@ -152,7 +152,7 @@ export default function ArtworksPageContainer() {
       const newArtworks = pagesToRender.at(-1)?.results ?? [];
       if (newArtworks.length) {
          const items = itemsFromArtworks(newArtworks);
-         ecommerceAnalytics.viewItemList("MMK", source, snakeToNormal(source), items, source);
+         ecommerceAnalytics.viewItemList(newArtworks[0]?.currency.code || "MMK", source, snakeToNormal(source), items, source);
       }
       // clear expectation (state update) MUST NOT happen here if you want zero mutations during render.
       // So instead: clear it in the same handler after navigation OR store expectation in URL/local state differently.

@@ -33,6 +33,10 @@
 | **Status** | `AVAILABLE`, `SOLD`, `NOT_FOR_SALE`, `SOLD_OUT` |
 | **Visibility** | `PUBLIC`, `PRIVATE` |
 
+## 📈 Analytics Tracking
+- **`begin_checkout`**: Triggered when a user clicks the "Order Now" button on the [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx).
+- **Source Context**: Auto-tagged as `artwork_detail` via the `useSource()` hook.
+
 ## 📂 Key Files
 - [artwork-create-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-create-form.tsx): The 300+ line form handling multi-step artwork entry.
 - [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The primary UI card used in the masonry layout.

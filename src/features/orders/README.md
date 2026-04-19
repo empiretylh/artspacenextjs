@@ -27,6 +27,13 @@
 - **Dynamic Routing**: It targets the `current_owner_display` of the artwork, mapping their user type to the appropriate chat route using the `getUserRouteType` utility.
 - **Feature Flag**: This functionality is conditionally rendered based on `env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE`.
 
+## 📈 Analytics Tracking
+- **Checkout Funnel**:
+    - **`add_shipping_info`**: Fired on successful order creation in [artwork-order-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/artwork-order-form.tsx).
+    - **`add_payment_info`**: Fired when the user proceeds to the payment gateway in [payment-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/pages/payment-page.tsx).
+- **Metadata**: Both events capture `currency`, `total_price`, and specific item data.
+- **Source Context**: Dynamically provided by the `useSource()` hook based on the page hierarchy (`order_form`, `payment_page`).
+
 ## 📂 Key Files
 - [create-artwork-order.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/api/create-artwork-order.ts): The primary mutation hook for placing orders.
 - [get-orders.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/api/get-orders.ts): Handles paginated retrieval of user orders (supports `page` parameter).
