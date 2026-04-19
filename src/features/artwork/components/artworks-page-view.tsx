@@ -242,7 +242,7 @@ const ArtworksPageView = ({
                            <Button
                               variant="outline"
                               onClick={() => setIsSidebarOpen(true)}
-                              className="flex items-center gap-2 rounded-full h-10 px-6 bg-white border-2 border-muted/70 shadow-sm hover:border-primary/30 hover:bg-muted/10 transition-all font-bold"
+                              className="flex items-center gap-2 rounded-full h-10 px-6 bg-background border-2 border-muted/70 shadow-sm hover:!border-primary/30 hover:bg-muted/10 transition-all font-bold"
                            >
                               <FilterIcon className="h-4 w-4" />
                               <span className="hidden md:inline">More Filters</span>

@@ -54,7 +54,7 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
 
    // High-Contrast Premium pill styles
    const activeFilterClass = "bg-primary text-primary-foreground hover:bg-primary/95 hover:text-primary-foreground shadow-md ring-1 ring-primary/20 scale-[1.02] transition-transform";
-   const inactiveFilterClass = "bg-white border-2 border-muted/70 shadow-sm hover:border-primary/30 hover:bg-muted/10 transition-all";
+   const inactiveFilterClass = "bg-background border-2 border-muted/70 shadow-sm hover:!border-primary/30 hover:bg-muted/10 transition-all";
 
    return (
       <div className="w-full mb-6">
