@@ -9,19 +9,23 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
+import { useDocumentVisibility } from "@/hooks/use-document-visibility";
 import type { Conversation } from "../types";
 
 export const useConversations = () => {
    const { user } = useAuth();
+   const isVisible = useDocumentVisibility();
    const [conversations, setConversations] = useState<Conversation[]>([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState<Error | null>(null);
 
    useEffect(() => {
-      if (!db || !user?.id) {
+      // Pause listener if document is not visible or no user session
+      if (!db || !user?.id || !isVisible) {
          setLoading(false);
          return;
       }
+
       const q = query(
          collection(db, "conversations"),
          where("participants", "array-contains", String(user.id)),
@@ -39,6 +43,9 @@ export const useConversations = () => {
             setConversations(convs);
             setError(null);
             setLoading(false);
+            if (process.env.NODE_ENV === "development") {
+               console.log("Chat: Conversations listener active", convs.length);
+            }
          },
          (err) => {
             console.error("Error fetching conversations:", err);
@@ -47,8 +54,13 @@ export const useConversations = () => {
          }
       );
 
-      return () => unsubscribe();
-   }, [user?.id, auth?.currentUser?.uid]);
+      return () => {
+         unsubscribe();
+         if (process.env.NODE_ENV === "development") {
+            console.log("Chat: Conversations listener unsubscribed");
+         }
+      };
+   }, [user?.id, auth?.currentUser?.uid, isVisible]);
 
    return { conversations, loading, error };
 };

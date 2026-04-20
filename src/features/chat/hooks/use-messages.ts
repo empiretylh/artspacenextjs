@@ -9,10 +9,12 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
+import { useDocumentVisibility } from "@/hooks/use-document-visibility";
 import type { Message } from "../types";
 
 export const useMessages = (conversationId: string | null) => {
    const { user } = useAuth();
+   const isVisible = useDocumentVisibility();
    const [messages, setMessages] = useState<Message[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<Error | null>(null);
@@ -24,6 +26,11 @@ export const useMessages = (conversationId: string | null) => {
       if (!conversationId || !db || !auth?.currentUser) {
          setMessages([]);
          setLoading(false);
+         return;
+      }
+
+      // 2. Pause if not visible
+      if (!isVisible) {
          return;
       }
 
@@ -48,17 +55,24 @@ export const useMessages = (conversationId: string | null) => {
             setHasMore(msgs.length === limitAmount);
             setError(null);
             setLoading(false);
+            if (process.env.NODE_ENV === "development") {
+               console.log(`Chat: Messages listener active for ${conversationId}`, msgs.length);
+            }
          },
          (err) => {
             console.error("Error fetching messages:", err);
-            // Handle permission error specifically if needed
             setError(err);
             setLoading(false);
          }
       );
 
-      return () => unsubscribe();
-   }, [conversationId, auth?.currentUser?.uid, limitAmount, db]);
+      return () => {
+         unsubscribe();
+         if (process.env.NODE_ENV === "development") {
+            console.log(`Chat: Messages listener unsubscribed for ${conversationId}`);
+         }
+      };
+   }, [conversationId, auth?.currentUser?.uid, limitAmount, db, isVisible]);
 
    const loadMore = () => {
       if (hasMore && !loading) {

@@ -19,12 +19,14 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 
 1. **Initiation**: Chats can be initiated by navigating to `/chats?userId=[id]&userType=[type]`.
 2. **Lazy Creation**: Conversations are only saved to Firestore when the first message is sent.
-3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore. These hooks explicitly wait for the Firebase Authentication session (`auth.currentUser`) to be fully established.
+3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore. 
+    - **Optimization**: These listeners now call `unsubscribe()` when the browser tab is hidden and re-sync automatically upon focus. This significantly reduces Firestore read billing for background tabs.
 4. **Pagination**: Messages are fetched in batches (default: 10) starting from the most recent. This is managed via `useMessages` by increasing the Firestore `limit()` on-demand.
 5. **Infinite Scroll**: The `ChatMessages` component implements an automated pagination trigger using an `IntersectionObserver`.
 6. **Data Synchronization**: 
     - **Mirroring**: User profiles are mirrored to a Firestore `/users` collection on every login and profile update.
     - **Presence Tracking**: A global loop (`usePresence`) updates the current user's `lastSeen` timestamp in Firestore every 60 seconds.
+    - **Optimization**: The presence heartbeat pauses when the tab is hidden and is **throttled** to a maximum of one write per minute to prevent abuse from rapid tab switching.
     - **Online Status**: Real-time status (Active now vs Last seen) is determined via `useUserStatus` hook with a 3-minute activity threshold.
     - **Logout Sync**: Explicitly sets `lastSeen` to the past on logout for immediate offline appearance across devices.
     - **Retroactive Sync**: Updating a profile in Settings automatically triggers a batch update for the current user's entry in their top 50 most recent conversations.

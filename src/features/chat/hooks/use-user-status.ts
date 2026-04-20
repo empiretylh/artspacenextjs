@@ -1,22 +1,23 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/features/service/firebase/firebase";
+import { useDocumentVisibility } from "@/hooks/use-document-visibility";
 import type { UserDocument } from "../types";
 import { formatDistanceToNow } from "date-fns";
 
 /**
  * Hook to listen for a specific user's online status in real-time.
+ * Optimization: Only listens when the document is visible.
  */
 export const useUserStatus = (userId: string | null) => {
+   const isVisible = useDocumentVisibility();
    const [data, setData] = useState<{ status: string; isOnline: boolean }>({
       status: "Offline",
       isOnline: false,
    });
 
    useEffect(() => {
-      if (!userId || !db) return;
+      if (!userId || !db || !isVisible) return;
 
       const userRef = doc(db, "users", userId);
 
@@ -47,7 +48,7 @@ export const useUserStatus = (userId: string | null) => {
       });
 
       return () => unsubscribe();
-   }, [userId]);
+   }, [userId, isVisible]);
 
    return data;
 };
