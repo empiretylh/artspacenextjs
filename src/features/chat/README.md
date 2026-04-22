@@ -9,6 +9,50 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 - **Real-time**: Handled via `onSnapshot` listeners in React hooks.
 - **Identity**: Linked to the application's Firebase Authentication state.
 
+### 📊 Data Model (ERD)
+
+```mermaid
+erDiagram
+    USER ||--o{ CONVERSATION : participates
+    USER ||--o{ MESSAGE : sends
+    USER ||--o{ USER-BLOCK : owns
+    CONVERSATION ||--|{ MESSAGE : contains
+
+    USER {
+        string id PK "Firebase UID"
+        string name
+        string avatar "Nullable URL"
+        timestamp lastSeen "Presence heartbeats"
+        timestamp updatedAt
+        string_array blockedUserIds "Local cache of blocks"
+    }
+
+    CONVERSATION {
+        string id PK "Deterministic (uid1_uid2)"
+        string_array participants "List of UIDs"
+        map participantDetails "Cached {uid: {name, avatar}}"
+        string lastMessage "Snippet for preview"
+        timestamp updatedAt "Sort key for chat list"
+        map unreadCount "{uid: count}"
+        map typing "{uid: timestamp}"
+        map blockedBy "{uid: boolean} metadata"
+    }
+
+    MESSAGE {
+        string id PK "Auto-generated"
+        string senderId FK "UID of sender"
+        timestamp createdAt
+        enum type "'text' | 'image'"
+        string content "Text or caption"
+        string_array mediaUrls "Batch image URLs"
+    }
+
+    USER-BLOCK {
+        string id PK "Blocked User UID"
+        timestamp createdAt
+    }
+```
+
 ### Directory Structure
 - `components/`: UI components including the window, list, input, and messages.
 - `hooks/`: Specialized listeners for conversations, messages, and typing indicators.
