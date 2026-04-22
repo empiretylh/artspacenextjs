@@ -46,10 +46,21 @@ export const useMessages = (conversationId: string | null) => {
       const unsubscribe = onSnapshot(
          q,
          (snapshot: QuerySnapshot) => {
-            const msgs = snapshot.docs.map((doc) => ({
-               id: doc.id,
-               ...doc.data(),
-            })) as Message[];
+               const msgs = snapshot.docs.map((doc) => {
+                  const data = doc.data();
+                  const message = {
+                     id: doc.id,
+                     type: data.type || 'text',
+                     ...data,
+                  } as any;
+
+                  // Grouped images normalization
+                  if (message.type === 'image' && !message.mediaUrls) {
+                     message.mediaUrls = message.mediaUrl ? [message.mediaUrl] : [];
+                  }
+
+                  return message as Message;
+               });
             
             setMessages(msgs);
             setHasMore(msgs.length === limitAmount);

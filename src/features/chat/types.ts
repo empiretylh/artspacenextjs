@@ -22,9 +22,22 @@ export interface Conversation {
    typing?: Record<string, Timestamp>;
 }
 
-export interface Message {
+export type Message = BaseMessage & (TextMessage | ImageMessage);
+
+interface BaseMessage {
    id: string;
    senderId: string;
-   content: string;
    createdAt: Timestamp;
+}
+
+interface TextMessage {
+   type: 'text';
+   content: string;
+}
+
+interface ImageMessage {
+   type: 'image';
+   content: string; // Fallback text/caption
+   mediaUrls: string[]; 
+   mediaUrl?: string; // Legacy field
 }

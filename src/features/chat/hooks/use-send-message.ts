@@ -15,16 +15,20 @@ import type { ChatUser } from "../types";
 export const useSendMessage = (conversationId: string | null) => {
    const { user } = useAuth();
 
-   const sendMessage = async (content: string, recipient?: ChatUser) => {
-      if (!user?.id || !db || !content.trim()) return;
+   const sendMessage = async (
+      content: string, 
+      recipient?: ChatUser, 
+      type: 'text' | 'image' = 'text',
+      mediaUrls?: string[]
+   ) => {
+      const hasMedia = mediaUrls && mediaUrls.length > 0;
+      if (!user?.id || !db || (!content.trim() && !hasMedia)) return;
 
       try {
          let targetId = conversationId;
 
-         // 1. Handle Lazy Creation (if no conversationId exists)
+         // 1. Handle Lazy Creation
          if (!targetId && recipient) {
-            // Generate a deterministic ID for 1-on-1 to avoid duplicates
-            // Or just use a random one. Standard for 1-on-1 is deterministic: sort ids.
             const participants = [String(user.id), String(recipient.id)].sort();
             targetId = `one-on-one-${participants.join("-")}`;
 
@@ -40,13 +44,12 @@ export const useSendMessage = (conversationId: string | null) => {
                   },
                   [recipient.id]: recipient
                },
-               lastMessage: content,
+               lastMessage: type === 'image' ? "Sent an image" : content,
                updatedAt: serverTimestamp(),
             }, { merge: true });
          }
 
          if (targetId) {
-            // 2. Block Check: Final safety gate before sending
             const convSnap = await getDoc(doc(db!, "conversations", targetId));
             const convData = convSnap.data();
             
@@ -54,40 +57,33 @@ export const useSendMessage = (conversationId: string | null) => {
                throw new Error("BLOCK_EXISTS");
             }
 
-            // 3. Add message to sub-collection
             const messagesRef = collection(db!, "conversations", targetId, "messages");
             await addDoc(messagesRef, {
                senderId: String(user.id),
                content,
+               type,
+               ...(hasMedia && { mediaUrls }),
                createdAt: serverTimestamp(),
             });
 
             const convRef = doc(db!, "conversations", targetId);
             const name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email;
             
-            // For unreadCount, we need to know participants.
-            // In 1-on-1, we can find the other participant from the targetId if it's the deterministic format.
-            // However, a more robust way is to use the recipient if provided (lazy) 
-            // OR fetch participants if it's an existing conversation.
-            
             await runTransaction(db!, async (transaction) => {
                const convSnap = await transaction.get(convRef);
                const convData = convSnap.data();
                const participants = (convData?.participants || []) as string[];
                
-               // Construct unreadCount map
                const newUnreadCount: Record<string, any> = { ...convData?.unreadCount };
                participants.forEach(pId => {
                   if (pId !== String(user.id)) {
                      const current = newUnreadCount[pId] || 0;
-                     // Note: Inside transaction we can compute the new value
-                     // rather than using increment() if we have current data
                      newUnreadCount[pId] = current + 1;
                   }
                });
 
                transaction.set(convRef, {
-                  lastMessage: content,
+                  lastMessage: type === 'image' ? "Sent an image" : content,
                   updatedAt: serverTimestamp(),
                   participantDetails: {
                      [user.id]: {

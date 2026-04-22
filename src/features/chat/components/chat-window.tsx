@@ -132,8 +132,8 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
          ) : (
             <ChatInput 
                conversationId={conversationId}
-               onSend={async (text) => {
-                  await sendMessage(text, recipientUser || undefined);
+               onSend={async (text, type, mediaUrls) => {
+                  await sendMessage(text, recipientUser || undefined, type, mediaUrls as any);
                }} 
             />
          )}

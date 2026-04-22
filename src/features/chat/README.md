@@ -23,7 +23,11 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
     - **Optimization**: These listeners now call `unsubscribe()` when the browser tab is hidden and re-sync automatically upon focus. This significantly reduces Firestore read billing for background tabs.
 4. **Pagination**: Messages are fetched in batches (default: 10) starting from the most recent. This is managed via `useMessages` by increasing the Firestore `limit()` on-demand.
 5. **Infinite Scroll**: The `ChatMessages` component implements an automated pagination trigger using an `IntersectionObserver`.
-6. **Data Synchronization**: 
+6. **Grouped Media Gallery**:
+    *   **Architecture**: Images are sent as a batch in a single message document using the `mediaUrls: string[]` field.
+    *   **Normalization**: The `useMessages` hook includes a self-healing normalization layer that automatically converts legacy single `mediaUrl` strings into the new plural format. This ensures 100% backward compatibility for all historical chat data.
+    *   **Limits**: Enforces a **10-image limit** per batch to maintain Firestore performance and UI responsiveness.
+7. **Data Synchronization**: 
     - **Mirroring**: User profiles are mirrored to a Firestore `/users` collection on every login and profile update.
     - **Presence Tracking**: A global loop (`usePresence`) updates the current user's `lastSeen` timestamp in Firestore every 60 seconds.
     - **Optimization**: The presence heartbeat pauses when the tab is hidden and is **throttled** to a maximum of one write per minute to prevent abuse from rapid tab switching.
@@ -31,15 +35,15 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
     - **Logout Sync**: Explicitly sets `lastSeen` to the past on logout for immediate offline appearance across devices.
     - **Retroactive Sync**: Updating a profile in Settings automatically triggers a batch update for the current user's entry in their top 50 most recent conversations.
     - **Self-Healing**: Every message sent refreshes the sender's metadata in the conversation to ensure long-term consistency.
-7. **Unread Tracking**:
+8. **Unread Tracking**:
     - **Logic**: A `runTransaction` in `useSendMessage` atomically increments the `unreadCount` Map for participants.
     - **Resolution**: The `useMarkRead` hook resets the count and cleans up legacy fields.
-8. **Search Logic**: Local, client-side filtering of conversations for instant results without database round-trips.
-9. **Hybrid Blocking**:
+9. **Search Logic**: Local, client-side filtering of conversations for instant results without database round-trips.
+10. **Hybrid Blocking**:
     - **Architecture**: Separates private block lists (`/users/{uid}/blocks/`) from conversation-level metadata (`blockedBy` mapping).
     - **Instant Sync**: The `useBlockUser` and `useUnblockUser` mutations immediately update the deterministic conversation document's `blockedBy` mapping to ensure zero-lag enforcement.
     - **Self-Healing**: The `useChatSecurity` hook runs when a chat window opens, cross-referencing the Backend API status with Firestore to repair any metadata inconsistencies.
-10. **Typing Indicators**:
+11. **Typing Indicators**:
     - **Throttling**: The `useTypingIndicator` hook throttles Firestore writes to once every 2 seconds to minimize database overhead.
     - **Resilience**: Uses a `Timestamp` based model. The recipient validates the age of the indicator (clears after 5s), ensuring no "stuck" indicators if a user disconnects abruptly.
     - **Auto-stop**: Automatically clears the status after 3 seconds of inactivity or upon sending a message.
@@ -53,7 +57,13 @@ The Chat feature provides real-time messaging between Users (Artists, Galleries,
 - **Vertical Rhythm**: A `gap-y-3` is maintained between messages in the `ChatMessages` container to improve readability and prevent visual clutter.
 - **Smart Loading**: During pagination, the chat list stays mounted. This prevents scroll position resets and ensures a flicker-free experience when loading older messages.
 - **Auto-Correction**: If the initial load of 10 messages doesn't fill the entire viewport, the system detects the visible "load more" sentinel and immediately fetches additional batches until the screen is full.
-43. **Unread Awareness**: 
+- **Grouped Media Gallery**: 
+    - **Smart Grid**: Automatically adapts its layout based on the image count (1, 2, 3, or 4+ images). Uses a custom collage layout for 3-image batches to highlight the first piece.
+    - **Overflow Logic**: Batches larger than 4 images display a blurred **"+X"** overlay on the 4th thumbnail to maintain a compact vertical rhythm.
+- **Media Lightbox Viewer**:
+    - **Experience**: Clicking any gallery image opens a full-screen, high-resolution viewer with a dark overlay.
+    - **Navigation**: Supports keyboard arrows (Left/Right/Esc), mobile tap zones, and a persistent thumbnail strip for rapid navigation within a batch.
+- **Unread Awareness**: 
     - Unread conversations are visually anchored in the `ChatList` using **bold text** for the participant name and the **Primary color** for the last message snippet.
     - A count badge indicates precisely how many messages are waiting.
     - These indicators clear automatically when the chat window becomes active or when new messages arrive while the window is focused.
