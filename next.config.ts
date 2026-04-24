@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     tsconfigPath: 'tsconfig.json',
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
