@@ -80,7 +80,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
          <div className="relative group rounded-md overflow-hidden cursor-pointer">
             {artwork.status !== "AVAILABLE" && (
                <div className="absolute top-2 left-2 z-20 pointer-events-none">
-                  <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-black border-none text-[10px] font-bold px-1.5 py-0.5 rounded-sm shadow-sm">
+                  <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-black border-none text-[10px] font-bold px-1.5 py-0.5 rounded-sm">
                      {artwork.status === "SOLD" ? "SOLD" : 
                       artwork.status === "SOLD_OUT" ? "SOLD OUT" : 
                       artwork.status === "NOT_FOR_SALE" ? "NOT FOR SALE" : artwork.status}
@@ -105,7 +105,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   width={variant === "masonry" ? artwork.original_width : undefined}
                   height={variant === "masonry" ? artwork.original_height : undefined}
                   containerClassName={cn(
-                     "w-full object-cover cursor-pointer select-none border rounded-md overflow-hidden",
+                     "w-full object-cover cursor-pointer select-none rounded-md overflow-hidden",
                      variant === "default" ? "h-[280px] md:h-[320px]" : "h-auto"
                   )}
                   sizes={variant === "masonry" ? masonrySizes : defaultSizes}
