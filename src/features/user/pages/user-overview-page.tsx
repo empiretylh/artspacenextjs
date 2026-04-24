@@ -59,7 +59,7 @@ const UserOverviewPage = () => {
                   </li>
                </ul>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-col-3 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                {user.profile.features_photos?.map((image) => (
                   <figure key={image.id} className="relative">
                      <img

@@ -13,7 +13,7 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import MasonryItem from "../../../components/app/masonry-item";
+
 import { FilterRow } from "../components/filter-row";
 import { FilterSidebar } from "../components/filter-sidebar";
 import { FilterIcon, XIcon } from "lucide-react";
@@ -266,55 +266,53 @@ const ArtworksPageView = ({
                      <div className="mb-8">
                         <div
                            className={cn(
-                              "",
-                              "grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-x-3 auto-rows-[1px] h-full"
+                              "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-10"
                            )}
                         >
                            {pagesToRender?.map((page) => (
                               <Fragment key={page.next}>
                                  {page.results.map((artwork: Artwork) => (
-                                    <MasonryItem key={artwork.id} artwork={artwork}>
+                                    <div key={artwork.id}>
                                        {artworkCard ? (
                                           artworkCard(artwork)
                                        ) : (
                                           <ArtworkCard
-                                             variant="masonry"
-                                             className="inline-block w-full h-auto"
+                                             className="w-full"
                                              artwork={artwork}
                                           />
                                        )}
-                                    </MasonryItem>
+                                    </div>
                                  ))}
                               </Fragment>
                            ))}
                         </div>
+                     </div>
 
-                        {/* Infinite scroll sentinel */}
-                        {hasNextPage &&
-                           !isFetchingNextPage &&
-                           pagesToRender?.[0]?.results?.length > 0 && (
-                              <div
-                                 ref={loadMoreRef}
-                                 className="flex justify-center my-8 text-sm font-bold uppercase tracking-widest text-muted-foreground/50 animate-pulse"
-                              >
-                                 Load More
-                              </div>
-                           )}
-
-                        {isFetchingNextPage && (
-                           <div className="flex justify-center my-8 text-sm font-medium text-muted-foreground">
-                              Discovering more masterpieces...
+                     {/* Infinite scroll sentinel */}
+                     {hasNextPage &&
+                        !isFetchingNextPage &&
+                        pagesToRender?.[0]?.results?.length > 0 && (
+                           <div
+                              ref={loadMoreRef}
+                              className="flex justify-center my-8 text-sm font-bold uppercase tracking-widest text-muted-foreground/50 animate-pulse"
+                           >
+                              Load More
                            </div>
                         )}
 
-                        {!hasNextPage &&
-                           !isFetchingNextPage &&
-                           pagesToRender?.[0]?.results?.length > 0 && (
-                              <div className="flex justify-center my-8 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/30">
-                                 End of Collection
-                              </div>
-                           )}
-                     </div>
+                     {isFetchingNextPage && (
+                        <div className="flex justify-center my-8 text-sm font-medium text-muted-foreground">
+                           Discovering more masterpieces...
+                        </div>
+                     )}
+
+                     {!hasNextPage &&
+                        !isFetchingNextPage &&
+                        pagesToRender?.[0]?.results?.length > 0 && (
+                           <div className="flex justify-center my-8 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/30">
+                              End of Collection
+                           </div>
+                        )}
                   </div>
                </div>
             </div>

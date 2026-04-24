@@ -97,14 +97,16 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   src={getImage(artwork.image)}
                   alt={artwork.title}
                   title={artwork.title}
-                  containerStyle={{
+                  containerStyle={variant === "masonry" ? {
                      aspectRatio: `auto ${artwork.original_width} / ${artwork.original_height}`,
+                  } : {
+                     aspectRatio: '3/4'
                   }}
-                  width={artwork.original_width}
-                  height={artwork.original_height}
+                  width={variant === "masonry" ? artwork.original_width : undefined}
+                  height={variant === "masonry" ? artwork.original_height : undefined}
                   containerClassName={cn(
-                     "w-full object-cover h-auto cursor-pointer select-none border rounded-md overflow-hidden",
-                     variant === "default" && "h-[240px] min-w-[115px]"
+                     "w-full object-cover cursor-pointer select-none border rounded-md overflow-hidden",
+                     variant === "default" ? "h-[280px] md:h-[320px]" : "h-auto"
                   )}
                   sizes={variant === "masonry" ? masonrySizes : defaultSizes}
                   onClick={() =>

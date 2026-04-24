@@ -82,8 +82,7 @@ const RelatedArtworkListContainer = ({ artwork }: { artwork: Artwork }) => {
             artworkCard={(artwork: Artwork) => {
                return (
                   <ArtworkCard
-                     variant="masonry"
-                     className="inline-block w-full h-auto"
+                     className="w-full"
                      artwork={artwork}
                   />
                );

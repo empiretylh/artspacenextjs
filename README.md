@@ -41,7 +41,7 @@ Validated in `src/config/env.ts`.
 ## 📦 Features & Docs
 - **Authentication**: Backend JWT + Firebase Synchronization. [Auth Guide](./src/features/auth/README.md).
 - **Real-time Chat**: Powered by Firebase Firestore. [Firebase Guide](./docs/firebase.md).
-- **Artwork Engine**: Masonry catalogs and complex submission forms. [Artwork Guide](./src/features/artwork/README.md).
+- **Artwork Engine**: Grid catalogs and complex submission forms. [Artwork Guide](./src/features/artwork/README.md).
 - **Ecommerce**: Orders, tracking, and checkout flows. [Orders Guide](./src/features/orders/README.md).
 
 ## 📊 Analytics

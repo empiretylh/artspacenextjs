@@ -1,6 +1,6 @@
 import { keepPreviousData } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
-import MasonryItem from "@/components/app/masonry-item";
+import ArtworkCard from "@/components/app/artwork-card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useGetArtworksInfinite } from "@/features/service/artspace/get-artworks";
@@ -25,15 +25,10 @@ const ArtworksList = () => {
 
    return (
       <div>
-         {/* <div className="grid grid-cols-[repeat(auto-fill,1fr)] gap-x-2 auto-rows-[1px]">
-            {artworks.map((artwork) => {
-               return <MasonryItem key={artwork.id} artwork={artwork} />;
-            })}
-         </div> */}
          <div
             className={cn(
                data && data?.pages[0].results.length > 0
-                  ? "grid grid-cols-[repeat(auto-fill,1fr)] gap-x-2 auto-rows-[1px]"
+                  ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
                   : "h-[500px]"
             )}
          >
@@ -53,7 +48,7 @@ const ArtworksList = () => {
                         <>
                            {page.results.map((artwork) => {
                               return (
-                                 <MasonryItem
+                                 <ArtworkCard
                                     key={artwork.id}
                                     artwork={artwork}
                                  />

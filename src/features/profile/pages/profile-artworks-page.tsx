@@ -25,13 +25,13 @@ const ControlledArtworkCard: React.FC<ControlledArtworkCardProps> = ({
    artwork,
 }) => {
    return (
-      <div className="relative group inline-block break-inside-avoid mb-4 max-w-sm w-full">
+      <div className="relative group w-full">
          <div className="lg:hidden absolute z-10 inset-0 bg-gradient-to-b rounded-md from-black/40 via-transparent to-transparent" />
          {/* Hover Buttons */}
          <ArtworkCard
             publicCard={false}
-            variant="masonry"
-            className="inline-block w-full h-auto"
+
+            className="w-full"
             artwork={artwork}
          />
          <div className="absolute top-2 right-2 z-10 flex space-x-2 opacity-100 lg:opacity-0 group-hover:lg:opacity-100 transition-opacity">
