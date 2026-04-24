@@ -266,7 +266,7 @@ const ArtworksPageView = ({
                      <div className="mb-8">
                         <div
                            className={cn(
-                              "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-10"
+                              "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-6 md:gap-y-10"
                            )}
                         >
                            {pagesToRender?.map((page) => (

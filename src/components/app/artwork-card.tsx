@@ -106,7 +106,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   height={variant === "masonry" ? artwork.original_height : undefined}
                   containerClassName={cn(
                      "w-full object-cover cursor-pointer select-none rounded-md overflow-hidden",
-                     variant === "default" ? "h-[280px] md:h-[320px]" : "h-auto"
+                     variant === "default" ? "aspect-[3/4] h-auto md:h-[320px]" : "h-auto"
                   )}
                   sizes={variant === "masonry" ? masonrySizes : defaultSizes}
                   onClick={() =>

@@ -167,7 +167,7 @@ const ProfileOverviewPage = () => {
                      <img
                         src={getImage(image.image)}
                         alt={image.description || "Featured photo"}
-                        className="w-full aspect-[4/5] object-cover rounded-2xl border"
+                        className="w-full aspect-[4/5] object-cover rounded-sm border"
                      />
 
                      <input
