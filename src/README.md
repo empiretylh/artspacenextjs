@@ -14,7 +14,7 @@ The project follows a "Feature-Sliced" inspired architecture:
 2.  **`features/` (The Muscles)**:
     - Vertical slices of the application (e.g., `auth`, `artist`, `artwork`, `chat`).
     - Contains feature-specific UI, logic, and API mutations.
-    - [src/features/chat/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/chat/README.md): Real-time messaging engine.
+    - [src/features/chat/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/chat/README.md): Real-time messaging engine with Push Notifications.
 
 3.  **`components/` (The Skin)**:
     - Shared UI atoms and molecules (Shadcn UI).
@@ -25,6 +25,7 @@ The project follows a "Feature-Sliced" inspired architecture:
 ## 🛠️ The Support System
 - **`service/`**: Part of `features/`. The centralized API implementation for the entire app.
 - **`firebase/`**: [firebase/README.md](file:///d:/data/learning/work/real-work/art-space-next/firebase/README.md) Firestore Security Rules and Indices.
+- **`notifications/`**: Firebase Cloud Messaging (FCM) with dynamic Service Worker handler.
 - **`lib/`**: Generic utilities, the axios `api` client, and analytics.
 - **`config/`**: Global environment validation and React Query key management.
 - **`types/`**: Global Typescript models (User, Artwork, etc.).

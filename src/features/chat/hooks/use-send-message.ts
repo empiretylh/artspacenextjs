@@ -95,6 +95,34 @@ export const useSendMessage = (conversationId: string | null) => {
                   unreadCount: newUnreadCount
                }, { merge: true });
             });
+
+            // Trigger Notification
+            if (recipient?.id) {
+               fetch('/api/chat/notify', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                     recipientId: recipient.id,
+                     senderName: name,
+                     conversationId: targetId
+                  })
+               }).catch(err => console.error("Notification trigger failed:", err));
+            } else if (targetId) {
+               // Fallback: Get recipient from conversation participants
+               const participants = targetId.replace('one-on-one-', '').split('-');
+               const otherId = participants.find(p => p !== String(user.id));
+               if (otherId) {
+                  fetch('/api/chat/notify', {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify({
+                        recipientId: otherId,
+                        senderName: name,
+                        conversationId: targetId
+                     })
+                  }).catch(err => console.error("Notification trigger failed:", err));
+               }
+            }
          }
 
          return targetId;

@@ -93,6 +93,30 @@ erDiagram
     - **Resilience**: Uses a `Timestamp` based model. The recipient validates the age of the indicator (clears after 5s), ensuring no "stuck" indicators if a user disconnects abruptly.
     - **Auto-stop**: Automatically clears the status after 3 seconds of inactivity or upon sending a message.
 
+## 🔔 Push Notifications (FCM)
+
+The application implements a cross-platform push notification system using **Firebase Cloud Messaging (FCM)**.
+
+### 🏗️ Architecture (API Bridge)
+
+To maintain a zero-cost deployment (avoiding Firebase Blaze plan requirements for Cloud Functions), notifications are triggered via a **Next.js API Bridge**:
+1. **Message Sent**: `useSendMessage` hook persists the message to Firestore.
+2. **API Trigger**: A background `fetch` is sent to `/api/chat/notify`.
+3. **Admin SDK**: The API route uses the `firebase-admin` SDK to securely send notifications to all registered devices of the recipient.
+
+### 🛠️ Implementation Details
+
+- **Data-Only Payloads**: We use "Data-Only" FCM payloads. This prevents the browser from showing generic notifications and gives our **Service Worker** full control over how the notification looks (with app branding and correct navigation).
+- **Dynamic Service Worker**: The Service Worker is served via a dynamic Route Handler (`src/app/firebase-messaging-sw.js/route.ts`). This allows us to inject environment variables (`FIREBASE_API_KEY`, etc.) at runtime without hardcoding them in the `public/` folder.
+- **Token Sync**: The `useFcm` hook manages browser permissions and automatically synchronizes FCM tokens to the user's Firestore document under `/users/{uid}/fcmTokens`.
+- **Self-Healing**: Invalid or expired tokens are automatically detected and pruned by the API route to ensure delivery efficiency.
+
+### 📍 Navigation & UI
+
+- **Deep Linking**: Notifications are interactive. Clicking a background notification automatically navigates the user to the correct conversation thread (`/chats?id=...`) and focuses the browser tab.
+- **Foreground Toasts**: If the user is actively using the app, push notifications are suppressed in favor of high-performance **Sonner Toasts** for a less intrusive experience.
+- **Sidebar Indicator**: The "Messages" navigation item in the sidebar features a **pulsing red indicator** (`useUnreadCount`) that appears globally whenever the user has unread messages, even if they aren't on the chat page.
+
 ## 🧩 Global Mini-Chat Widget
 
 The application features a floating **Mini-Chat Widget** (`MiniChat`) that persists across all protected dashboard routes, allowing users to communicate without leaving their current page.
@@ -115,7 +139,7 @@ Global chat state is centralized in `src/features/chat/store.ts` using **Zustand
 ## 🎨 UI & UX Patterns
 
 - **Conversation Discovery**: High-speed local search implemented in the `ChatList` header using a togglable `Input` field. It filters by participant names in real-time.
-- **Visual Anchoring**: The chat list uses `flex-col-reverse` to natively anchor the scroll to the bottom. This ensures that new messages appear at the bottom without requiring manual programmatic scrolling.
+- **Visual Anchoring**: The chat list uses `flex-col-reverse` to natively anchor the scroll to the bottom. This ensures that any new messages appear at the bottom without requiring manual programmatic scrolling.
 - **Message Bubbles**: Uses a modern rounded design (`rounded-2xl`) with directional "tails" (`rounded-tr-none` for sender, `rounded-tl-none` for receiver) to provide clear visual orientation.
 - **Vertical Rhythm**: A `gap-y-3` is maintained between messages in the `ChatMessages` container to improve readability and prevent visual clutter.
 - **Smart Loading**: During pagination, the chat list stays mounted. This prevents scroll position resets and ensures a flicker-free experience when loading older messages.

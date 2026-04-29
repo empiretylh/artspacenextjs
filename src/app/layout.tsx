@@ -25,6 +25,8 @@ export const metadata: Metadata = {
   description: "Social Media and E-commerce Platform.",
 };
 
+import { FcmManager } from "@/features/chat/components/fcm-manager";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -39,6 +41,7 @@ export default async function RootLayout({
         <GoogleAnalytics debugMode={env.NODE_ENV === "development"} gaId={env.GA_ID as string} />
         <AppProvider>
           <AuthInitializer />
+          <FcmManager />
           <ScrollToTop />
           {children}
         </AppProvider>
