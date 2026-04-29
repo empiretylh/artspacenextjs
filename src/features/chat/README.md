@@ -116,6 +116,9 @@ To maintain a zero-cost deployment (avoiding Firebase Blaze plan requirements fo
 - **Deep Linking**: Notifications are interactive. Clicking a background notification automatically navigates the user to the correct conversation thread (`/chats?id=...`) and focuses the browser tab.
 - **Foreground Toasts**: If the user is actively using the app, push notifications are suppressed in favor of high-performance **Sonner Toasts** for a less intrusive experience.
 - **Sidebar Indicator**: The "Messages" navigation item in the sidebar features a **pulsing red indicator** (`useUnreadCount`) that appears globally whenever the user has unread messages, even if they aren't on the chat page.
+- **PWA App Badging**: The system implements the **W3C Badging API** to show a numeric count on the application icon (mobile home screen or desktop taskbar). 
+    - **Sync Logic**: `useUnreadCount` automatically synchronizes the Firestore unread count to the app badge when the app is active.
+    - **Background Updates**: The Service Worker updates the badge dynamically when a background message arrives, ensuring the badge remains accurate even if the app is closed.
 
 ## 🧩 Global Mini-Chat Widget
 

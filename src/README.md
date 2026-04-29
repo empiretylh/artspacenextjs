@@ -7,9 +7,9 @@
 The project follows a "Feature-Sliced" inspired architecture:
 
 1.  **`app/` (The Shell)**: 
-    - Next.js App Router.
-    - Purely responsible for routing, layouts, and composing feature-level components.
-    - **NO heavy business logic** should live here.
+    - Next.js App Router (Client & Server Components).
+    - Responsible for routing, layouts, and composing feature-level components.
+    - **Note**: The numbering (1, 2, 3) below represents the architectural hierarchy, not a sequence.
 
 2.  **`features/` (The Muscles)**:
     - Vertical slices of the application (e.g., `auth`, `artist`, `artwork`, `chat`).
@@ -25,7 +25,7 @@ The project follows a "Feature-Sliced" inspired architecture:
 ## 🛠️ The Support System
 - **`service/`**: Part of `features/`. The centralized API implementation for the entire app.
 - **`firebase/`**: [firebase/README.md](file:///d:/data/learning/work/real-work/art-space-next/firebase/README.md) Firestore Security Rules and Indices.
-- **`notifications/`**: Firebase Cloud Messaging (FCM) with dynamic Service Worker handler.
+- **`notifications`**: Integrated FCM system using a Next.js API Bridge (`/api/chat/notify`) and dynamic Service Worker.
 - **`lib/`**: Generic utilities, the axios `api` client, and analytics.
 - **`config/`**: Global environment validation and React Query key management.
 - **`types/`**: Global Typescript models (User, Artwork, etc.).

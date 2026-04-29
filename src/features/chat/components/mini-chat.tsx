@@ -47,7 +47,7 @@ export const MiniChat = () => {
   }, 0);
 
   return (
-    <div className="fixed bottom-1 right-6 z-50 flex flex-col items-end gap-4">
+    <div className="fixed bottom-3 right-3 z-50 flex flex-col items-end gap-4">
       <AnimatePresence>
         {isOpen && !isMinimized && (
           <motion.div

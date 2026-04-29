@@ -34,6 +34,11 @@ messaging.onBackgroundMessage((payload) => {
     renotify: true,
   };
 
+  // Update app badge
+  if (data.unreadCount && 'setAppBadge' in navigator) {
+    navigator.setAppBadge(parseInt(data.unreadCount));
+  }
+
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 

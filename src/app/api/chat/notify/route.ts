@@ -9,16 +9,29 @@ export async function POST(req: NextRequest) {
          return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
       }
 
-      // 1. Get recipient tokens
+      // 1. Get recipient tokens and unread count
       const userDoc = await adminDb.collection('users').doc(String(recipientId)).get();
       const userData = userDoc.data();
       const tokens = userData?.fcmTokens as string[] | undefined;
+
+      // Calculate total unread count for badging
+      const conversationsSnap = await adminDb
+         .collection('conversations')
+         .where('participants', 'array-contains', String(recipientId))
+         .get();
+
+      let totalUnread = 0;
+      const recipientIdStr = String(recipientId);
+      conversationsSnap.forEach(doc => {
+         const data = doc.data();
+         totalUnread += (data.unreadCount?.[recipientIdStr] || 0);
+      });
 
       if (!tokens || tokens.length === 0) {
          return NextResponse.json({ success: true, message: 'No tokens found' });
       }
 
-      // 2. Prepare payload (Data-only for manual control in Service Worker)
+      // 2. Prepare payload
       const payload = {
          data: {
             type: 'chat_message',
@@ -26,6 +39,7 @@ export async function POST(req: NextRequest) {
             body: `You have a new message from ${senderName}`,
             conversationId: String(conversationId),
             senderName: String(senderName),
+            unreadCount: String(totalUnread),
          },
       };
 

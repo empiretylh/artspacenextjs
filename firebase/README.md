@@ -40,6 +40,7 @@ Ensure your `.env` contains the following keys (prefixed with `NEXT_PUBLIC_FIREB
 - `STORAGE_BUCKET`
 - `MESSAGING_SENDER_ID`
 - `APP_ID`
+- `VAPID_KEY` (Used for FCM browser subscription)
 
 ### Emulator (Optional)
 Currently, development is done against the live Firebase development project. If you switch to Emulators, update the initialization logic in `src/lib/firebase.ts`.
