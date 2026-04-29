@@ -54,14 +54,15 @@ erDiagram
 ```
 
 ### Directory Structure
-- `components/`: UI components including the window, list, input, and messages.
+- `components/`: UI components including the window, list, input, messages, and the global `mini-chat.tsx`.
 - `hooks/`: Specialized listeners for conversations, messages, and typing indicators.
 - `pages/`: The top-level composition page.
 - `types.ts`: Domain-specific types for messages and conversations.
+- `store.ts`: Global state management for the mini-chat widget.
 
 ## 🔃 Data Flow
 
-1. **Initiation**: Chats can be initiated by navigating to `/chats?userId=[id]&userType=[type]`.
+1. **Initiation**: Chats can be initiated by navigating to `/chats?userId=[id]&userType=[type]` or via the global `useChatStore`.
 2. **Lazy Creation**: Conversations are only saved to Firestore when the first message is sent.
 3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore. 
     - **Optimization**: These listeners now call `unsubscribe()` when the browser tab is hidden and re-sync automatically upon focus. This significantly reduces Firestore read billing for background tabs.
@@ -92,6 +93,24 @@ erDiagram
     - **Resilience**: Uses a `Timestamp` based model. The recipient validates the age of the indicator (clears after 5s), ensuring no "stuck" indicators if a user disconnects abruptly.
     - **Auto-stop**: Automatically clears the status after 3 seconds of inactivity or upon sending a message.
 
+## 🧩 Global Mini-Chat Widget
+
+The application features a floating **Mini-Chat Widget** (`MiniChat`) that persists across all protected dashboard routes, allowing users to communicate without leaving their current page.
+
+- **Drill-Down Navigation**: Supports a multi-chat flow where users can navigate between a global conversation list and individual chat windows within the same widget.
+- **Smart Visibility**: The widget automatically hides itself when the user is on the main `/chats` page to avoid UI redundancy.
+- **Responsive Design**: Uses a glassmorphism aesthetic with `backdrop-blur`. It implements a dynamic `max-height` constraint (`calc(100vh - 100px)`) to ensure the control buttons (close/minimize) remain accessible on small viewports.
+- **Adaptive Variant**: Components like `ChatHeader` and `ChatWindow` detect the `mini` variant to adjust their layout (e.g., adding a "Back" button to return to the list).
+
+## 📦 State Management (Zustand)
+
+Global chat state is centralized in `src/features/chat/store.ts` using **Zustand**.
+
+- **Persistence**: The state (active conversation, visibility, minimized status) is persisted in `localStorage` using the `persist` middleware. This allows chat windows to remain open and active even after a page refresh.
+- **Atomic Actions**:
+    - `openConversation(id)`: Immediately switches the widget to a specific chat and maximizes it.
+    - `setShowList(true)`: Triggers the drill-down "Back" behavior to show the conversation list.
+    - `closeChat()`: Resets the state and hides the widget.
 
 ## 🎨 UI & UX Patterns
 

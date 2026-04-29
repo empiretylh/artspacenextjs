@@ -8,6 +8,7 @@ import { ChatMessages } from "./chat-messages";
 import { ChatInput } from "./chat-input";
 import { useConversations } from "../hooks/use-conversations";
 import { useAuth } from "@/features/auth/store";
+import { useChatStore } from "../store";
 import { Loader2, User as UserIcon, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserQueryOptions } from "@/features/service/artspace/get-user";
@@ -32,13 +33,25 @@ import Link from "next/link";
 import { paths } from "@/config/paths";
 
 type Props = {
-   conversationId: string | null;
+   conversationId?: string | null;
    recipientId?: string | null;
    userType?: UserRouteType | null;
    onBack: () => void;
+   variant?: "default" | "mini";
 };
 
-export const ChatWindow = ({ conversationId, recipientId, userType = "artists", onBack }: Props) => {
+export const ChatWindow = ({ 
+   conversationId: propConversationId, 
+   recipientId: propRecipientId, 
+   userType = "artists", 
+   onBack,
+   variant = "default" 
+}: Props) => {
+   const { activeConversationId: storeConvId, pendingRecipientId: storeRecipId } = useChatStore();
+   
+   const conversationId = propConversationId !== undefined ? propConversationId : storeConvId;
+   const recipientId = propRecipientId !== undefined ? propRecipientId : storeRecipId;
+   
    const { user: currentUser } = useAuth();
    const { conversations } = useConversations();
    const { markAsRead } = useMarkRead();
@@ -106,6 +119,7 @@ export const ChatWindow = ({ conversationId, recipientId, userType = "artists", 
                user={finalUser} 
                onBack={onBack}
                onClick={() => setIsProfileOpen(true)}
+               variant={variant}
             />
          )}
          

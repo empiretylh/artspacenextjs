@@ -7,6 +7,7 @@ import { ChatList } from "./chat-list";
 import { ChatWindow } from "./chat-window";
 import { useConversations } from "../hooks/use-conversations";
 import { useAuth } from "@/features/auth/store";
+import { useChatStore } from "../store";
 import { UserRouteType } from "@/features/service/artspace/get-users";
 
 export const ChatLayout = () => {
@@ -15,8 +16,12 @@ export const ChatLayout = () => {
    const { user: currentUser } = useAuth();
    const { conversations, loading: conversationsLoading } = useConversations();
    
-   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
-   const [pendingRecipientId, setPendingRecipientId] = useState<string | null>(null);
+   const { 
+      activeConversationId, 
+      pendingRecipientId, 
+      setActiveConversationId, 
+      setPendingRecipientId 
+   } = useChatStore();
 
    const userIdParam = searchParams.get("userId");
    const userTypeParam = searchParams.get("userType") as UserRouteType | null;
@@ -31,12 +36,10 @@ export const ChatLayout = () => {
 
       if (existingConv) {
          setActiveConversationId(existingConv.id);
-         setPendingRecipientId(null);
       } else {
-         setActiveConversationId(null);
          setPendingRecipientId(userIdParam);
       }
-   }, [userIdParam, conversations, conversationsLoading, currentUser]);
+   }, [userIdParam, conversations, conversationsLoading, currentUser, setActiveConversationId, setPendingRecipientId]);
 
    return (
       <div className="relative flex h-[calc(100vh-12rem)] w-full overflow-hidden rounded-lg border bg-card">
@@ -54,7 +57,6 @@ export const ChatLayout = () => {
                activeId={activeConversationId}
                onSelect={(id) => {
                   setActiveConversationId(id);
-                  setPendingRecipientId(null);
                   if (userIdParam) router.replace("/chats");
                }}
             />
@@ -73,7 +75,6 @@ export const ChatLayout = () => {
                userType={userTypeParam}
                onBack={() => {
                   setActiveConversationId(null);
-                  setPendingRecipientId(null);
                   if (userIdParam) router.replace("/chats");
                }}
             />

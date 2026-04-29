@@ -14,22 +14,37 @@ type Props = {
    user: ChatUser;
    onBack: () => void;
    onClick?: () => void;
+   variant?: "default" | "mini";
 };
 
-export const ChatHeader = ({ conversationId, user, onBack, onClick }: Props) => {
+export const ChatHeader = ({ 
+   conversationId, 
+   user, 
+   onBack, 
+   onClick,
+   variant = "default"
+}: Props) => {
    const { status, isOnline } = useUserStatus(user.id);
    const { isOtherTyping } = useTypingIndicator(conversationId);
    
    return (
-      <div className="flex items-center gap-3 border-b p-4">
-         <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={onBack}
-         >
-            <ArrowLeft className="h-4 w-4" />
-         </Button>
+      <div className={cn(
+         "flex items-center gap-3 border-b",
+         variant === "mini" ? "p-3" : "p-4"
+      )}>
+         {onBack && (
+            <Button
+               variant="ghost"
+               size="icon"
+               className={cn(
+                  "h-8 w-8",
+                  variant === "default" && "md:hidden"
+               )}
+               onClick={onBack}
+            >
+               <ArrowLeft className="h-4 w-4" />
+            </Button>
+         )}
  
          <div 
             onClick={onClick}
