@@ -74,10 +74,10 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    // if (!artwork.original_width || !artwork.original_height) return null
 
    return (
-      <div style={style} className={cn("group relative w-full bg-card rounded-sm overflow-hidden transition-all duration-500", className)}>
+      <div style={style} className={cn("group relative w-full bg-card overflow-hidden transition-all duration-500", className)}>
          {/* Image + Hover Buttons */}
 
-         <div className="relative aspect-square overflow-hidden cursor-pointer">
+         <div className="relative aspect-square overflow-hidden rounded-sm cursor-pointer">
             {artwork.status !== "AVAILABLE" && (
                <div className="absolute top-3 left-3 z-20 pointer-events-none">
                   <Badge variant="secondary" className="bg-white/90 backdrop-blur-md text-black border-none text-[10px] font-black px-2 py-0.5 rounded-sm shadow-sm">
@@ -87,7 +87,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   </Badge>
                </div>
             )}
-            <div className="absolute inset-0 z-10 bg-black/0 transition-colors duration-300" />
+            <div className="absolute inset-0 z-10 bg-black/0 transition-colors duration-300 md:group-hover:bg-black/30" />
 
             <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
                <AppImage
@@ -102,7 +102,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   width={variant === "masonry" ? artwork.original_width : undefined}
                   height={variant === "masonry" ? artwork.original_height : undefined}
                   containerClassName={cn(
-                     "w-full h-full object-cover select-none transition-transform duration-700",
+                     "w-full h-full object-cover select-none transition-transform duration-700 md:group-hover:scale-105",
                      variant === "default" ? "aspect-square" : "h-auto"
                   )}
                   sizes={variant === "masonry" ? masonrySizes : defaultSizes}
@@ -111,7 +111,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
 
             {/* Actions */}
             {publicCard && !pure && (
-               <div className="absolute bottom-3 right-3 z-20 flex gap-2 transition-opacity duration-300">
+               <div className="absolute bottom-3 right-3 z-20 flex gap-2 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100">
                   <Button
                      size="icon"
                      className="h-8 w-8 rounded-full bg-white/90 backdrop-blur-md border border-black/5 hover:bg-white text-black shadow-sm"
