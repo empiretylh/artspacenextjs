@@ -71,28 +71,25 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
       ecommerceAnalytics.select_item(source, snakeToNormal(source), [item], source);
    }
 
-   if (!artwork.original_width || !artwork.original_height) return null
+   // if (!artwork.original_width || !artwork.original_height) return null
 
    return (
-      <div style={style} className={cn("relative w-full", className)}>
+      <div style={style} className={cn("group relative w-full bg-card rounded-sm overflow-hidden transition-all duration-500", className)}>
          {/* Image + Hover Buttons */}
 
-         <div className="relative group rounded-md overflow-hidden cursor-pointer">
+         <div className="relative aspect-square overflow-hidden cursor-pointer">
             {artwork.status !== "AVAILABLE" && (
-               <div className="absolute top-2 left-2 z-20 pointer-events-none">
-                  <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-black border-none text-[10px] font-bold px-1.5 py-0.5 rounded-sm">
-                     {artwork.status === "SOLD" ? "SOLD" : 
-                      artwork.status === "SOLD_OUT" ? "SOLD OUT" : 
-                      artwork.status === "NOT_FOR_SALE" ? "NOT FOR SALE" : artwork.status}
+               <div className="absolute top-3 left-3 z-20 pointer-events-none">
+                  <Badge variant="secondary" className="bg-white/90 backdrop-blur-md text-black border-none text-[10px] font-black px-2 py-0.5 rounded-sm shadow-sm">
+                     {artwork.status === "SOLD" ? "SOLD" :
+                        artwork.status === "SOLD_OUT" ? "SOLD OUT" :
+                           artwork.status === "NOT_FOR_SALE" ? "NOT FOR SALE" : artwork.status}
                   </Badge>
                </div>
             )}
-            <div className="lg:hidden absolute z-10 inset-0 bg-gradient-to-b rounded-md from-black/40 via-transparent to-transparent" />
+            <div className="absolute inset-0 z-10 bg-black/0 transition-colors duration-300" />
+
             <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
-               <div
-                  title={artwork.title}
-                  className="w-full h-full z-10 group-hover:bg-black/40 absolute transition-colors duration-200"
-               ></div>
                <AppImage
                   src={getImage(artwork.image)}
                   alt={artwork.title}
@@ -100,84 +97,27 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   containerStyle={variant === "masonry" ? {
                      aspectRatio: `auto ${artwork.original_width} / ${artwork.original_height}`,
                   } : {
-                     aspectRatio: '3/4'
+                     aspectRatio: '1/1'
                   }}
                   width={variant === "masonry" ? artwork.original_width : undefined}
                   height={variant === "masonry" ? artwork.original_height : undefined}
                   containerClassName={cn(
-                     "w-full object-cover cursor-pointer select-none rounded-md overflow-hidden",
-                     variant === "default" ? "aspect-[3/4] h-auto md:h-[320px]" : "h-auto"
+                     "w-full h-full object-cover select-none transition-transform duration-700",
+                     variant === "default" ? "aspect-square" : "h-auto"
                   )}
                   sizes={variant === "masonry" ? masonrySizes : defaultSizes}
-                  onClick={() =>
-                     router.push(paths.artworks.detail.getHref(artwork.id))
-                  }
                />
             </Link>
-            {/* Hover Buttons */}
-            {publicCard && !pure && (
-               <div className="absolute inset-x-0 top-2 z-10 flex justify-between px-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  {/* Collection Popover */}
-                  <Popover>
-                     <PopoverTrigger asChild>
-                        <Button size="icon" className="text-white" variant="ghost" disabled>
-                           <Plus size={16} />
-                        </Button>
-                     </PopoverTrigger>
-                     <PopoverContent
-                        side="bottom"
-                        className="w-48 p-2 space-y-2"
-                     >
-                        <p className="text-xs font-medium text-muted-foreground">
-                           Save to collection
-                        </p>
-                        <div className="space-y-1 max-h-40 overflow-y-auto">
-                           {collections.map((col) => {
-                              const checked = col.items.includes(artwork.id);
-                              return (
-                                 <Button
-                                    key={col.id}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="w-full justify-start gap-2"
-                                    onClick={() => toggleCollection(col.id)}
-                                 >
-                                    {checked ? (
-                                       <CheckSquare size={16} />
-                                    ) : (
-                                       <Square size={16} />
-                                    )}
-                                    <span className="text-sm">{col.name}</span>
-                                 </Button>
-                              );
-                           })}
-                        </div>
-                        <Button
-                           variant="link"
-                           size="sm"
-                           className="flex items-center gap-1"
-                           onClick={createCollection}
-                        >
-                           <Plus size={14} /> New Collection
-                        </Button>
-                     </PopoverContent>
-                  </Popover>
 
-                  {/* Like Button */}
+            {/* Actions */}
+            {publicCard && !pure && (
+               <div className="absolute bottom-3 right-3 z-20 flex gap-2 transition-opacity duration-300">
                   <Button
                      size="icon"
-                     variant="ghost"
+                     className="h-8 w-8 rounded-full bg-white/90 backdrop-blur-md border border-black/5 hover:bg-white text-black shadow-sm"
                      onClick={handleLike}
-                  // disabled={isMutating}
-                  // asChild
                   >
-                     <Heart
-                        size={12}
-                        className={cn(
-                           "hover:fill-red-400 text-red-400",
-                           isLiked ? "fill-red-400" : "text-red-400 "
-                        )}
-                     />
+                     <Heart size={14} className={cn(isLiked && "fill-red-500 text-red-500")} />
                   </Button>
                </div>
             )}
@@ -185,37 +125,44 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
 
          {/* Artwork Info */}
          {!pure && (
-            <div className="p-2 space-y-1">
-               <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
-                  <h3 className="font-semibold hover:underline font-display text-sm truncate">
-                     {artwork.title}
-                  </h3>
-               </Link>
+            <div className="pt-3 space-y-1.5">
+               <div className="space-y-0">
+                  <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
+                     <h3 className="font-bold text-sm hover:text-primary transition-colors font-display line-clamp-1 leading-tight">
+                        {artwork.title}
+                     </h3>
+                  </Link>
+                  <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider">
+                     {artwork.artist_name}
+                  </p>
+               </div>
 
-               <p className="text-xs text-muted-foreground truncate">
-                  {artwork.dimensions}
-               </p>
-
-               {artwork.category_name && (
-                  <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">
-                     {artwork.category_name}
+               <div className="flex items-center gap-1.5 flex-wrap">
+                  {artwork.category_name && (
+                     <span className="text-[9px] font-bold text-primary/80 bg-primary/5 border border-primary/10 px-1.5 py-0.5 rounded-full">
+                        {artwork.category_name}
+                     </span>
+                  )}
+                  <span className="text-[9px] text-muted-foreground">
+                     {artwork.dimensions}
                   </span>
-               )}
+               </div>
 
                {!artwork.hide_price && (
-                  <div className="flex justify-between items-center pt-2 text-sm">
-                     <span className="font-bold text-foreground">
-                        <Price currency={artwork.currency} price={artwork.price} uniform size="xs" />
+                  <div className="flex justify-between items-center pt-0.5">
+                     <span className="font-black text-base text-foreground tracking-tight">
+                        <Price currency={artwork.currency} price={artwork.price} uniform size="sm" />
                      </span>
                   </div>
                )}
                {artwork.hide_price && (
                   <Button
                      size="sm"
+                     variant="secondary"
                      disabled
-                     className="block w-full mt-1 !py-1 bg-primary/30 hover:bg-primary/40 text-primary text-xs"
+                     className="w-full mt-2 text-[10px] font-bold uppercase tracking-widest h-8"
                   >
-                     Request for price
+                     Inquiry Only
                   </Button>
                )}
             </div>
