@@ -74,7 +74,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    // if (!artwork.original_width || !artwork.original_height) return null
 
    return (
-      <div style={style} className={cn("group relative w-full bg-card overflow-hidden transition-all duration-500", className)}>
+      <div style={style} className={cn("group relative w-full overflow-hidden transition-all duration-500", className)}>
          {/* Image + Hover Buttons */}
 
          <div className="relative aspect-square overflow-hidden rounded-sm cursor-pointer">

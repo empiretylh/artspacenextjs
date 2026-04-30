@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
@@ -14,6 +14,7 @@ type Props = {
 
 export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) => {
    const [currentIndex, setCurrentIndex] = useState(initialIndex);
+   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
    // Sync currentIndex with initialIndex when lightbox opens
    useEffect(() => {
@@ -21,6 +22,20 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
          setCurrentIndex(initialIndex);
       }
    }, [isOpen, initialIndex]);
+
+   // Scroll active thumbnail into view
+   useEffect(() => {
+      if (isOpen && scrollContainerRef.current) {
+         const activeChild = scrollContainerRef.current.children[currentIndex] as HTMLElement;
+         if (activeChild) {
+            activeChild.scrollIntoView({
+               behavior: "smooth",
+               block: "nearest",
+               inline: "center",
+            });
+         }
+      }
+   }, [currentIndex, isOpen]);
 
    // Handle keyboard navigation
    useEffect(() => {
@@ -46,7 +61,10 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
 
    return (
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-         <DialogContent className="max-w-[100vw] h-[100vh] p-0 gap-0 bg-black/95 border-none flex flex-col items-center justify-center sm:rounded-none">
+         <DialogContent 
+            showCloseButton={false}
+            className="max-w-[100vw] h-[100vh] p-0 gap-0 bg-black/95 border-none flex flex-col items-center justify-center sm:rounded-none"
+         >
             {/* Header / Controls */}
             <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-50 bg-gradient-to-b from-black/50 to-transparent">
                <div className="text-white text-sm font-medium">
@@ -100,9 +118,12 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
                </div>
             )}
             
-            {/* Thumbnails (Optional, but nice) */}
+            {/* Thumbnails */}
             {urls.length > 1 && (
-               <div className="absolute bottom-6 flex gap-2 px-4 overflow-x-auto overflow-y-hidden max-w-full no-scrollbar scroll-smooth">
+               <div 
+                  ref={scrollContainerRef}
+                  className="absolute bottom-6 flex gap-2 px-4 pb-2 overflow-x-auto overflow-y-hidden max-w-full scroll-smooth custom-scrollbar"
+               >
                   {urls.map((url, i) => (
                      <button
                         key={url}

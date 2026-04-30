@@ -21,7 +21,7 @@ export const EventWideCard: React.FC<EventWideCardProps> = ({ event, sizes }) =>
       : null;
 
    return (
-      <div className="group overflow-hidden h-full rounded-sm w-full bg-card transition-all duration-300">
+      <div className="group overflow-hidden h-full rounded-sm w-full transition-all duration-300">
          {/* Cover */}
          <Link to={paths.events.detail.getHref(event.slug)}>
             <div className="relative h-40 md:h-48 w-full overflow-hidden">
@@ -33,7 +33,7 @@ export const EventWideCard: React.FC<EventWideCardProps> = ({ event, sizes }) =>
                   className="object-cover transition-transform duration-500"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 transition-opacity" />
-               
+
                {/* Event Type Badge */}
                <div className="absolute top-3 left-3">
                   <Badge className="bg-white/90 backdrop-blur-md text-black border-none text-[10px] font-black px-2 py-0.5 rounded-sm shadow-sm">
