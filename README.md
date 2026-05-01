@@ -14,6 +14,7 @@ To ensure consistent development and AI-efficiency, please refer to:
 - **Tailwind CSS 4** + Radix UI
 - **TanStack Query** (Data Fetching), **Zustand** (Session State)
 - **Zod** (Validation), **React Hook Form** (Form Logic)
+- **Nextjs Toploader** (Navigation Progress)
 
 ## 🚀 Getting Started
 1. Install dependencies: `npm install`
