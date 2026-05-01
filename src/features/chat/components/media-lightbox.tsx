@@ -110,7 +110,7 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
          <DialogContent
             showCloseButton={false}
-            className="max-w-[100vw] h-[100vh] p-0 gap-0 bg-black/60 backdrop-blur-xl border-none flex flex-col items-center justify-center sm:rounded-none overflow-hidden"
+            className="!w-[100vw] !max-w-[100vw] h-[100vh] p-0 gap-0 bg-black/60 backdrop-blur-xl border-none flex flex-col items-center justify-center rounded-none overflow-hidden"
          >
             {/* Header / Controls */}
             <AnimatePresence>
@@ -142,7 +142,7 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
             </AnimatePresence>
 
             {/* Main Image Area */}
-            <div className="relative w-full h-full flex items-center justify-center p-4 sm:p-12 sm:px-32 group">
+            <div className="relative w-full h-full flex items-center justify-center group">
                {/* Navigation Arrows (Desktop) */}
                <AnimatePresence>
                   {showControls && urls.length > 1 && (
@@ -183,7 +183,7 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
                   )}
                </AnimatePresence>
 
-               <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+               <div className="relative aspect-square w-[60%] h-[60%] mb-2 flex items-center justify-center overflow-hidden">
                   <AnimatePresence initial={false} mode="wait">
                      <motion.img
                         key={currentIndex}
@@ -236,14 +236,14 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
                                     }}
                                     className={cn(
                                        "relative w-14 h-14 rounded-lg overflow-hidden transition-all shrink-0 border-2",
-                                       i === currentIndex 
-                                          ? "border-primary scale-110 shadow-[0_0_15px_rgba(0,63,29,0.5)] z-10" 
+                                       i === currentIndex
+                                          ? "border-primary scale-110 shadow-[0_0_15px_rgba(0,63,29,0.5)] z-10"
                                           : "border-white/10 opacity-40 hover:opacity-100 hover:scale-105"
                                     )}
                                  >
                                     <img src={getImage(url)} className="w-full h-full object-cover pointer-events-none" alt="" />
                                     {i === currentIndex && (
-                                       <motion.div 
+                                       <motion.div
                                           layoutId="active-thumb-overlay"
                                           className="absolute inset-0 bg-primary/20 pointer-events-none"
                                        />
