@@ -151,8 +151,11 @@ Global chat state is centralized in `src/features/chat/store.ts` using **Zustand
     - **Smart Grid**: Automatically adapts its layout based on the image count (1, 2, 3, or 4+ images). Uses a custom collage layout for 3-image batches to highlight the first piece.
     - **Overflow Logic**: Batches larger than 4 images display a blurred **"+X"** overlay on the 4th thumbnail to maintain a compact vertical rhythm.
 - **Media Lightbox Viewer**:
-    - **Experience**: Clicking any gallery image opens a full-screen, high-resolution viewer with a dark overlay.
-    - **Navigation**: Supports keyboard arrows (Left/Right/Esc), mobile tap zones, and a persistent thumbnail strip for rapid navigation within a batch.
+    *   **Premium Experience**: Clicking any gallery image opens an immersive, high-resolution viewer using **glassmorphism** (`backdrop-blur-xl`) and a dynamic background overlay.
+    *   **Auto-Hide UI**: Controls (navigation, header, thumbnails) automatically fade after 3 seconds of inactivity to provide a distraction-free viewing experience.
+    *   **Navigation**: Supports keyboard arrows (Left/Right/Esc), responsive on-screen buttons (visible on mobile), and invisible side-tap zones.
+    *   **Thumbnail Strip**: Integrated with **shadcn ScrollArea** for high-performance horizontal scrolling with a synchronized "auto-scroll" behavior that centers the active image.
+    *   **Performance**: Optimized with hardware-accelerated `opacity` and `scale` transitions via `framer-motion`, removing heavy filters for zero-lag interaction.
 - **Unread Awareness**: 
     - Unread conversations are visually anchored in the `ChatList` using **bold text** for the participant name and the **Primary color** for the last message snippet.
     - A count badge indicates precisely how many messages are waiting.

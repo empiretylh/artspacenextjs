@@ -172,18 +172,21 @@
 
 @utility custom-scrollbar {
   &::-webkit-scrollbar {
-    height: 4px;
-    width: 4px;
+    height: 6px;
+    width: 6px;
   }
   &::-webkit-scrollbar-track {
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: oklch(1 0 0 / 20%);
+    background: oklch(1 0 0 / 40%);
     border-radius: 10px;
+    border: 1px solid transparent;
+    background-clip: padding-box;
   }
   &::-webkit-scrollbar-thumb:hover {
-    background: oklch(1 0 0 / 40%);
+    background: oklch(1 0 0 / 60%);
+    background-clip: padding-box;
   }
 }
 
