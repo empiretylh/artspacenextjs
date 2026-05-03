@@ -53,3 +53,4 @@ Google Analytics is wired via `@next/third-parties`. Standardized tracking is im
 1. Always check [AGENTS.md](./AGENTS.md) before starting a task.
 2. Update the relevant feature `README.md` if you change its architecture.
 3. Run `npm run lint` before opening a PR.
+ 
