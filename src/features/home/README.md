@@ -17,9 +17,10 @@ To ensure a premium feel and high information density, all home page carousels f
     - **Events**: Mobile (`1.2`), Tablet (`2.2`), Desktop (`2.8` - `3.5`).
 - **Performance**: `watchSlidesProgress={true}` is enabled for accurate snapping.
 
-### 2. Layout Patterns
-- **Bleed Effect**: On mobile, sliders use negative horizontal margins (`-mx-4`) and matching internal padding (`!px-4`) to break through the layout container, providing an edge-to-edge feel.
-- **Minimalist Cards**: Cards on the Home page are stripped of borders, shadows, and hover transitions to keep the focus entirely on the art content.
+### 3. ScrollArea Compatibility
+To maintain custom scrollbars via `ScrollArea`, the global `ScrollContainer` wraps all home content. 
+> [!WARNING]
+> **Layout Constraint**: Radix UI's `ScrollArea` forces a `display: table` wrapper on the internal viewport. This **breaks Swiper's width calculations**. All instances of `ScrollArea` wrapping home carousels must include the override class: `[&>[data-slot=scroll-area-viewport]>div]:!block`.
 
 ## 📂 Key Files
 - [featured-artworks-section.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/featured-artworks-section.tsx): Implementation of the dense artwork slider.

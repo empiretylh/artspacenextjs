@@ -7,6 +7,7 @@ import Footer from './footer'
 import { analyticSourceFromPathname, scrollAnalytics } from '@/lib/analytics'
 import { usePathname } from 'next/navigation'
 import { SourceProvider } from '@/lib/analytics-source'
+import { ScrollArea } from '../ui/scroll-area'
 
 const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
 
@@ -44,19 +45,21 @@ const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <div ref={ref} id="scroll-container" className="h-screen flex justify-between flex-col overflow-y-auto" style={{
-      scrollbarGutter: "stable"
-    }}>
+    <ScrollArea 
+      viewportRef={ref}
+      viewportId="scroll-container"
+      className='h-screen overflow-y-auto [&>[data-slot=scroll-area-viewport]>div]:!block'
+    >
       <SourceProvider value={{ source }}>
-        <div>
+        <div className="min-h-full flex flex-col justify-between">
           <SiteHeader />
           <MainOutlet>
             {children}
           </MainOutlet>
+          <Footer />
         </div>
-        <Footer />
       </SourceProvider>
-    </div>
+    </ScrollArea>
   )
 }
 
