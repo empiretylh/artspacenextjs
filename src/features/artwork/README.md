@@ -33,6 +33,15 @@ All artwork displays must follow the "Editorial Minimalist" standard:
 - **Labels**: UI labels for status enums should use Title Case (e.g., "Available") rather than database ALL_CAPS.
 - **Sidebar**: The [filter-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/filter-sidebar.tsx) handles mutual exclusivity for status and performs advanced style/genre lookups.
 
+### 2. Social Sharing & Dynamic Open Graph Cards
+To guarantee premium presentation on platforms like Facebook, LinkedIn, Twitter/X, and Slack, the artwork detail routes use a dynamic Edge-rendered Open Graph generator:
+- **Renderer**: Built using Next.js's native `ImageResponse` with Satori for server-rendered HTML/CSS as high-fidelity images.
+- **Canvas Size**: Outputs exactly `1200x630` pixels (optimal 1.91:1 aspect ratio) for social sharing.
+- **Aesthetic Layout**:
+  - **Left Gallery Frame (55%)**: Centered frame featuring the artwork with `object-fit: contain` to preserve the source aspect ratio and prevent distortion or cropping.
+  - **Right Info Placard (45%)**: Sleek typography containing the artwork title, artist name, medium, dimensions, year, and price (or status-specific indicators). Includes status indicator badges with distinct colors matching visual models.
+- **Unified API Route**: Located at [route.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/app/api/og/route.tsx) which is called with a dynamic artwork ID query parameter (e.g., `/api/og?id=[id]`) to inject crisp, high-fidelity sharing preview images into the page SEO metadata.
+
 ## 📊 Model Enums
 | Property | Valid Values |
 | :--- | :--- |
@@ -47,3 +56,4 @@ All artwork displays must follow the "Editorial Minimalist" standard:
 - [artwork-create-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-create-form.tsx): The 300+ line form handling multi-step artwork entry.
 - [artwork-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/artwork-card.tsx): The primary UI card used in the responsive grid layout.
 - [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The detail view info card used on the artwork page.
+- [route.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/app/api/og/route.tsx): Unified, dynamic, high-fidelity Open Graph image generator API.
