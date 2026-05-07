@@ -1,13 +1,13 @@
 # Home (features/home): The Entry Experience
 
 > [!IMPORTANT]
-> **AI MODELS**: The Home page is the high-traffic entry point. It uses a "Bleed & Peek" layout strategy for carousels to encourage exploration while maintaining a clean, minimalist aesthetic.
+> **AI MODELS**: The Home page is the high-traffic entry point. It uses a "Bleed & Peek" layout strategy for carousels to encourage exploration while maintaining a clean, minimalist aesthetic. To maintain butter-smooth mobile performance, sections below the fold are lazily loaded client-side and use layout-matched skeletons to completely eliminate layout shift.
 
 ## 🚀 Directory Structure
-- **`components/`**: Layout-heavy sections (e.g., `FeaturedArtworksSection`, `FeaturedEventsSection`).
-- **`pages/`**: The root landing page composition.
+- **`components/`**: Layout-heavy sections and matching loading skeletons (e.g., `FeaturedArtworksSection`, `FeaturedArtworksSectionSkeleton`).
+- **`pages/`**: The root landing page composition (`index.tsx`).
 
-## 🏗️ Technical Logic: The "Bleed & Peek" Carousel
+## 🏗️ Technical Logic: Performance & UX Optimization
 
 ### 1. Swiper Configuration
 To ensure a premium feel and high information density, all home page carousels follow these rules:
@@ -15,9 +15,20 @@ To ensure a premium feel and high information density, all home page carousels f
 - **Responsiveness**: Using numeric `slidesPerView` to create a "peek" effect (showing a partial next card) without dynamic width recalculation glitches.
     - **Artworks**: Mobile (`2.2`), Tablet (`3.2`), Desktop (`4.2` - `5.2`).
     - **Events**: Mobile (`1.2`), Tablet (`2.2`), Desktop (`2.8` - `3.5`).
-- **Performance**: `watchSlidesProgress={true}` is enabled for accurate snapping.
+- **Touch Responsiveness**: `watchSlidesProgress={true}` and `touchStartPreventDefault={false}` are enabled across all sliders to prevent touch event blocking on low-end mobile devices.
 
-### 3. ScrollArea Compatibility
+### 2. Client-Side Lazy Loading (`SectionLazyLoader`)
+To minimize initial page payload and reduce TTFB, only essential above-the-fold content is loaded eagerly. Below-the-fold sections are wrapped in `SectionLazyLoader` to defer rendering and fetching until the section approaches the viewport.
+
+### 3. Layout-Matched Skeletons (Zero CLS)
+To prevent Cumulative Layout Shift (CLS) when lazy-loaded sliders mount:
+- **Exact Width Calculations**: Skeletons use the exact same layout-matched responsive width percentages and gap structures calculated directly from the real Swiper `slidesPerView` values:
+  - **Artists**: `w-[calc((100%-16px)/3)]` on mobile up to `2xl:w-[calc((100%-40px)/6)]`.
+  - **Events**: `w-[calc((100%-12px)/1.2)]` on mobile up to `xl:w-[calc((100%-60px)/3.5)]`.
+  - **Artworks**: `w-[calc((100%-12px)/2.2)]` on mobile up to `xl:w-[calc((100%-100px)/5.2)]`.
+- **Card Metrics**: Skeleton sub-components (avatar circles, titles, badges, and margins) are pixel-for-pixel matched to the real card elements (`UserSmallCard`, `ArtworkCard`, etc.).
+
+### 4. ScrollArea Compatibility
 To maintain custom scrollbars via `ScrollArea`, the global `ScrollContainer` wraps all home content. 
 > [!WARNING]
 > **Layout Constraint**: Radix UI's `ScrollArea` forces a `display: table` wrapper on the internal viewport. This **breaks Swiper's width calculations**. All instances of `ScrollArea` wrapping home carousels must include the override class: `[&>[data-slot=scroll-area-viewport]>div]:!block`.
@@ -25,3 +36,5 @@ To maintain custom scrollbars via `ScrollArea`, the global `ScrollContainer` wra
 ## 📂 Key Files
 - [featured-artworks-section.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/featured-artworks-section.tsx): Implementation of the dense artwork slider.
 - [featured-events-section.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/featured-events-section.tsx): Implementation of the wide event preview slider.
+- [section-lazy-loader.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/section-lazy-loader.tsx): IntersectionObserver lazy loading wrapper.
+

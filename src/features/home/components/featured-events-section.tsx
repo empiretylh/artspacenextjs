@@ -16,6 +16,7 @@ export const FeaturedEventsSection = () => {
    const eventsQuery = useQuery({
       queryKey: queryKeys.event.list({ limit: 6 }), // Increased limit for better slider experience
       queryFn: () => getEvents({ limit: 6 }),
+      staleTime: 1000 * 60 * 5, // 5 minutes
    })
 
    const featuredEvents = eventsQuery.data?.results ?? [];
@@ -58,11 +59,12 @@ export const FeaturedEventsSection = () => {
                slidesPerView={1.2}
                slidesPerGroup={1}
                spaceBetween={12}
+               watchSlidesProgress
+               touchStartPreventDefault={false}
                navigation={{
                   prevEl: ".swiper-event-prev",
                   nextEl: ".swiper-event-next",
                }}
-               watchSlidesProgress={true}
                breakpoints={{
                   640: { slidesPerView: 2.2, spaceBetween: 16 },
                   1024: { slidesPerView: 2.8, spaceBetween: 20 },

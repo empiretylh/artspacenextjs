@@ -16,6 +16,7 @@ export const FeaturedCollectorsSlider = () => {
    const collectorsQuery = useQuery({
       queryKey: queryKeys.collector.list({ limit: 10 }),
       queryFn: () => getCollectors({ limit: 10 }),
+      staleTime: 1000 * 60 * 5, // 5 minutes
    });
 
    const featuredCollectors = collectorsQuery.data?.results ?? [];
@@ -111,9 +112,8 @@ export const FeaturedCollectorsSlider = () => {
                modules={[Navigation]}
                slidesPerView="auto"
                spaceBetween={8}
-               // onInit={(swiper) => {
-               //    swiperRef.current = swiper;
-               // }}
+               watchSlidesProgress
+               touchStartPreventDefault={false}
                navigation={{
                   nextEl: ".swiper-collector-button-next-custom",
                   prevEl: ".swiper-collector-button-prev-custom",

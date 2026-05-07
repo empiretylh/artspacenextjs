@@ -111,6 +111,8 @@ export const FeaturedArtistsSlider = () => {
                modules={[Navigation]}
                slidesPerView={3}
                spaceBetween={8}
+               watchSlidesProgress
+               touchStartPreventDefault={false}
                // onInit={(swiper) => {
                //    swiperRef.current = swiper;
                // }}

@@ -80,7 +80,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
          <div className="relative aspect-square overflow-hidden rounded-sm cursor-pointer">
             {artwork.status !== "AVAILABLE" && (
                <div className="absolute top-3 left-3 z-20 pointer-events-none">
-                  <Badge variant="secondary" className="bg-white/90 backdrop-blur-md text-black border-none text-[10px] font-black px-2 py-0.5 rounded-sm shadow-sm">
+                  <Badge variant="secondary" className="bg-white/90 md:backdrop-blur-md text-black border-none text-[10px] font-black px-2 py-0.5 rounded-sm shadow-sm">
                      {artwork.status === "SOLD" ? "SOLD" :
                         artwork.status === "SOLD_OUT" ? "SOLD OUT" :
                            artwork.status === "NOT_FOR_SALE" ? "NOT FOR SALE" : artwork.status}
@@ -114,7 +114,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                <div className="absolute bottom-3 right-3 z-20 flex gap-2 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100">
                   <Button
                      size="icon"
-                     className="h-8 w-8 rounded-full bg-white/90 backdrop-blur-md border border-black/5 hover:bg-white text-black shadow-sm"
+                     className="h-8 w-8 rounded-full bg-white/90 md:backdrop-blur-md border border-black/5 hover:bg-white text-black shadow-sm"
                      onClick={handleLike}
                   >
                      <Heart size={14} className={cn(isLiked && "fill-red-500 text-red-500")} />
