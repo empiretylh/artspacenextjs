@@ -87,9 +87,9 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   </Badge>
                </div>
             )}
-            <div className="absolute inset-0 z-10 bg-black/0 transition-colors duration-300 md:group-hover:bg-black/30" />
+            <div className="absolute inset-0 z-10 bg-black/0 transition-colors duration-300 md:group-hover:bg-black/30 pointer-events-none" />
 
-            <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
+            <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick} className="block w-full h-full">
                <AppImage
                   src={getImage(artwork.image)}
                   alt={artwork.title}
