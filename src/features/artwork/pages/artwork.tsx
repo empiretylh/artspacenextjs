@@ -38,7 +38,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
 
    return (
       <section aria-labelledby="artwork-title">
-         <h1 id="artwork-title" className="text-2xl font-medium mb-2">
+         <h1 id="artwork-title" className="text-2xl font-medium mb-4 md:mb-6">
             {artwork.title}
          </h1>
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
@@ -46,7 +46,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
             <section className="lg:col-span-2 space-y-6" aria-label="Artwork details">
                {/* <ArtworkImageCarousel images={[artwork.image]} /> */}
 
-               <div className="relative border p-2 rounded-sm">
+               <div className="relative border p-2 rounded-lg">
                   <ArtworkImage artwork={artwork} />
                   <div className="flex justify-center absolute top-2 right-2">
                      {/* <ReportButton
