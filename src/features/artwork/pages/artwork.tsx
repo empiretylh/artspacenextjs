@@ -46,18 +46,16 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
             <section className="lg:col-span-2 space-y-6" aria-label="Artwork details">
                {/* <ArtworkImageCarousel images={[artwork.image]} /> */}
 
-               <Card className="h-100 relative">
-                  <CardContent>
-                     <ArtworkImage artwork={artwork} />
-                     <div className="flex justify-center absolute top-2 right-2">
-                        {/* <ReportButton
+               <div className="relative border p-2 rounded-sm">
+                  <ArtworkImage artwork={artwork} />
+                  <div className="flex justify-center absolute top-2 right-2">
+                     {/* <ReportButton
                            itemId={artwork.id}
                            reportType="artwork"
                         /> */}
-                        <ArtworkDetailMore artwork={artwork} />
-                     </div>
-                  </CardContent>
-               </Card>
+                     <ArtworkDetailMore artwork={artwork} />
+                  </div>
+               </div>
 
                <ArtworkCharacteristicsCard
                   title={artwork.title}

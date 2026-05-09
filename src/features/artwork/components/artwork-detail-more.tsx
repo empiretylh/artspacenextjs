@@ -13,7 +13,7 @@ const ArtworkDetailMore = ({ artwork }: { artwork: Artwork }) => {
    return (
       <Popover>
          <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="outline" size="icon">
                <MoreVertical />
             </Button>
          </PopoverTrigger>
