@@ -31,7 +31,8 @@ All artwork displays must follow the "Editorial Minimalist" standard:
     - **Inactive**: `bg-white`, `border-2 border-muted/70`, `shadow-sm`.
     - **Active**: `bg-primary`, `text-primary-foreground`.
 - **Labels**: UI labels for status enums should use Title Case (e.g., "Available") rather than database ALL_CAPS.
-- **Sidebar**: The [filter-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/filter-sidebar.tsx) handles mutual exclusivity for status and performs advanced style/genre lookups.
+- **Sidebar**: The [filter-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/filter-sidebar.tsx) handles responsive sheet layouts, mutual exclusivity for status, and dynamically fetches **Art Genres** and **Art Styles** to mirror the horizontal row.
+- **Price Filter**: Handles user-friendly unchecking of selected preset ranges, dynamic state resetting, and launches in a default "Any Price" state ($0 - $10,000) to keep URLs clean until explicitly filtered.
 
 ### 2. Social Sharing & Dynamic Open Graph Cards
 To guarantee premium presentation on platforms like Facebook, LinkedIn, Twitter/X, and Slack, the artwork detail routes use a dynamic Edge-rendered Open Graph generator:

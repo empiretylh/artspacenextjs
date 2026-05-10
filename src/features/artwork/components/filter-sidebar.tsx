@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FilterIcon, XIcon } from "lucide-react";
+import { FilterIcon } from "lucide-react";
 import { FilterSection } from "./filter-section";
 import { filterOptions } from "@/mocks";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,9 +16,10 @@ import {
    SheetDescription,
    SheetHeader,
    SheetTitle,
-   SheetClose,
 } from "@/components/ui/sheet";
 import { useGetCategories } from "@/features/service/artspace/get-categories";
+import { useGetGenres } from "@/features/service/artspace/get-genres";
+import { useGetStyles } from "@/features/service/artspace/get-styles";
 
 interface FilterSidebarProps {
    filters: ColumnFiltersState;
@@ -36,13 +37,21 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
    const [openSections, setOpenSections] = useState({
       price: true,
       category: true,
+      genre: true,
       style: true,
       year: true,
       status: true,
       medium: true,
    });
+   
    const categoryQuery = useGetCategories();
    const categories = categoryQuery.data?.data || [];
+
+   const genreQuery = useGetGenres();
+   const genres = genreQuery.data?.data || [];
+
+   const styleQuery = useGetStyles();
+   const styles = styleQuery.data?.data || [];
 
    const toggleSection = (section: keyof typeof openSections) => {
       setOpenSections((prev) => ({
@@ -77,21 +86,21 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
    ) => {
       setFilters((prev) => {
          if (checked) {
-            const without = prev.filter((f) => {
-               if (f.id === id) return false;
-               return true;
-            });
+            const without = prev.filter((f) => f.id !== id);
+            if (value === "0-10000") {
+               return without;
+            }
             return [...without, { id, value }];
          } else {
-            return prev.filter((f) => !(f.id === id && f.value === value));
+            return prev.filter((f) => f.id !== id);
          }
       });
    };
 
    return (
       <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-         <SheetContent className="w-full sm:max-w-md p-0 border-none bg-background shadow-2xl">
-            <SheetHeader className="p-6 border-b border-border/50">
+         <SheetContent className="w-full sm:max-w-md p-0 border-none bg-background shadow-2xl flex flex-col h-full">
+            <SheetHeader className="p-6 border-b border-border/50 flex-none">
                <div className="flex items-center justify-between">
                   <div className="space-y-1">
                      <SheetTitle className="text-2xl font-bold tracking-tight flex items-center gap-2.5">
@@ -105,8 +114,8 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                </div>
             </SheetHeader>
 
-            <ScrollArea className="h-[calc(100vh-200px)] px-6">
-               <div className="">
+            <ScrollArea className="flex-grow h-0 px-6">
+               <div className="flex flex-col gap-2">
                   {/* Price Filter */}
                   <FilterSection
                      title="Value Range"
@@ -200,11 +209,83 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         ))}
                      </div>
                   </FilterSection>
+
+                  {/* Genre Filter */}
+                  <FilterSection
+                     title="Art Genres"
+                     isOpen={openSections.genre}
+                     onToggle={() => toggleSection("genre")}
+                  >
+                     <div className="grid grid-cols-1 gap-y-4 pt-1">
+                        {genres.map((genre) => (
+                           <div className="flex items-center gap-3 group cursor-pointer" key={genre.slug}>
+                              <Checkbox
+                                 id={`genre-${genre.slug}`}
+                                 checked={filters.some(
+                                    (f) =>
+                                       f.id === "genre" &&
+                                       String(f.value) === String(genre.slug)
+                                 )}
+                                 onCheckedChange={(value) =>
+                                    handleFilterChange(
+                                       "genre",
+                                       genre.slug,
+                                       !!value
+                                    )
+                                 }
+                                 className="size-5 rounded-md border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                              />
+                              <Label
+                                 htmlFor={`genre-${genre.slug}`}
+                                 className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors"
+                              >
+                                 {genre.name}
+                              </Label>
+                           </div>
+                        ))}
+                     </div>
+                  </FilterSection>
+
+                  {/* Style Filter */}
+                  <FilterSection
+                     title="Art Styles"
+                     isOpen={openSections.style}
+                     onToggle={() => toggleSection("style")}
+                  >
+                     <div className="grid grid-cols-1 gap-y-4 pt-1">
+                        {styles.map((style) => (
+                           <div className="flex items-center gap-3 group cursor-pointer" key={style.slug}>
+                              <Checkbox
+                                 id={`style-${style.slug}`}
+                                 checked={filters.some(
+                                    (f) =>
+                                       f.id === "style" &&
+                                       String(f.value) === String(style.slug)
+                                 )}
+                                 onCheckedChange={(value) =>
+                                    handleFilterChange(
+                                       "style",
+                                       style.slug,
+                                       !!value
+                                    )
+                                 }
+                                 className="size-5 rounded-md border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                              />
+                              <Label
+                                 htmlFor={`style-${style.slug}`}
+                                 className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors"
+                              >
+                                 {style.name}
+                              </Label>
+                           </div>
+                        ))}
+                     </div>
+                  </FilterSection>
                </div>
                <div className="h-10" /> {/* Extra padding at bottom for scroll */}
             </ScrollArea>
 
-            <div className="p-6 border-t border-border/50 bg-background/80 backdrop-blur-md absolute bottom-0 w-full flex gap-3">
+            <div className="p-6 border-t border-border/50 bg-background/80 backdrop-blur-md flex-none flex gap-3">
                <Button
                   className="flex-1 rounded-full h-12 font-bold shadow-lg shadow-primary/20"
                   onClick={() => setIsSidebarOpen(false)}
