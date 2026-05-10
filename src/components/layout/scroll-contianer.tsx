@@ -9,10 +9,18 @@ import { usePathname } from 'next/navigation'
 import { SourceProvider } from '@/lib/analytics-source'
 import { ScrollArea } from '../ui/scroll-area'
 
+
 const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const dimensionsRef = useRef({ scrollHeight: 0, clientHeight: 0 });
   const pathname = usePathname()
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsTouchDevice(window.matchMedia("(pointer: coarse)").matches);
+    }
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -46,6 +54,7 @@ const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
       if (ticking) return;
 
       ticking = true;
+
       requestAnimationFrame(() => {
         const { scrollHeight, clientHeight } = dimensionsRef.current;
 
@@ -79,9 +88,30 @@ const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
       el.removeEventListener("scroll", onScroll);
       resizeObserver.disconnect();
     };
-  }, [pathname]);
+  }, [pathname, isTouchDevice]);
 
   const source = analyticSourceFromPathname(pathname);
+
+  if (isTouchDevice) {
+    return (
+      <div
+        ref={ref}
+        id="scroll-container"
+        className="h-screen overflow-y-auto scroll-smooth select-none"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        <SourceProvider value={{ source }}>
+          <div className="min-h-full flex flex-col justify-between">
+            <SiteHeader />
+            <MainOutlet>
+              {children}
+            </MainOutlet>
+            <Footer />
+          </div>
+        </SourceProvider>
+      </div>
+    );
+  }
 
   return (
     <ScrollArea
@@ -103,3 +133,4 @@ const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
 }
 
 export default ScrollContainer
+

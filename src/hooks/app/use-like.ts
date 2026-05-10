@@ -20,7 +20,7 @@ export function useLike({
    debounceMs = 300,
 }: UseLikeOptions) {
    const router = useRouter();
-   const { user } = useAuth();
+   const user = useAuth((state) => state.user);
    const { source } = useSource();
    const likeMutation = useLikeArtwork({
       mutationConfig: {

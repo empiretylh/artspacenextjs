@@ -3,12 +3,8 @@ import { paths } from "@/config/paths";
 import { cn, getImage, snakeToNormal } from "@/lib/utils";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Heart, Plus, Square, CheckSquare } from "lucide-react";
-import {
-   Popover,
-   PopoverContent,
-   PopoverTrigger,
-} from "@/components/ui/popover";
+import { Heart } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Artwork } from "@/types";
@@ -171,4 +167,17 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    );
 };
 
-export default ArtworkCard;
+export default React.memo(ArtworkCard, (prevProps, nextProps) => {
+   return (
+      prevProps.artwork.id === nextProps.artwork.id &&
+      prevProps.artwork.is_liked === nextProps.artwork.is_liked &&
+      prevProps.artwork.status === nextProps.artwork.status &&
+      prevProps.artwork.price === nextProps.artwork.price &&
+      prevProps.artwork.title === nextProps.artwork.title &&
+      prevProps.artwork.image === nextProps.artwork.image &&
+      prevProps.className === nextProps.className &&
+      prevProps.variant === nextProps.variant &&
+      prevProps.publicCard === nextProps.publicCard &&
+      prevProps.pure === nextProps.pure
+   );
+});

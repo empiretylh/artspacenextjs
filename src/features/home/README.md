@@ -29,9 +29,10 @@ To prevent Cumulative Layout Shift (CLS) when lazy-loaded sliders mount:
 - **Card Metrics**: Skeleton sub-components (avatar circles, titles, badges, and margins) are pixel-for-pixel matched to the real card elements (`UserSmallCard`, `ArtworkCard`, etc.).
 
 ### 4. ScrollArea Compatibility
-To maintain custom scrollbars via `ScrollArea`, the global `ScrollContainer` wraps all home content. 
+To maintain custom scrollbars on desktop via `ScrollArea`, the global `ScrollContainer` wraps all home content. On touch-enabled devices (e.g., mobile/tablet), the container dynamically swaps to a native fallback with momentum touch-scrolling (`-webkit-overflow-scrolling: touch`) to ensure butter-smooth frame rates.
+
 > [!WARNING]
-> **Layout Constraint**: Radix UI's `ScrollArea` forces a `display: table` wrapper on the internal viewport. This **breaks Swiper's width calculations**. All instances of `ScrollArea` wrapping home carousels must include the override class: `[&>[data-slot=scroll-area-viewport]>div]:!block`.
+> **Layout Constraint**: When running on desktop, Radix UI's `ScrollArea` forces a `display: table` wrapper on the internal viewport. This **breaks Swiper's width calculations**. All instances of `ScrollArea` wrapping home carousels must include the override class: `[&>[data-slot=scroll-area-viewport]>div]:!block`.
 
 ## 📂 Key Files
 - [featured-artworks-section.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/featured-artworks-section.tsx): Implementation of the dense artwork slider.
