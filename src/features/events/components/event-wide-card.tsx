@@ -36,7 +36,7 @@ export const EventWideCard: React.FC<EventWideCardProps> = ({ event, sizes }) =>
 
                {/* Event Type Badge */}
                <div className="absolute top-3 left-3">
-                  <Badge className="bg-white/90 backdrop-blur-md text-black border-none text-[10px] font-black px-2 py-0.5 rounded-sm shadow-sm">
+                  <Badge className="bg-white/90 text-black border-none text-[10px] font-black px-2 py-0.5 rounded-sm shadow-sm">
                      {event.event_type}
                   </Badge>
                </div>
@@ -45,7 +45,7 @@ export const EventWideCard: React.FC<EventWideCardProps> = ({ event, sizes }) =>
                   <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
                      <div className="text-white">
                         <p className="text-[10px] font-medium opacity-80 uppercase tracking-wider">Date</p>
-                        <p className="text-xs font-bold bg-white/10 backdrop-blur-sm px-2 py-1 rounded-sm border border-white/10">
+                        <p className="text-xs font-bold bg-black/60 px-2 py-1 rounded-sm border border-white/10">
                            {startDate} - {endDate}
                         </p>
                      </div>

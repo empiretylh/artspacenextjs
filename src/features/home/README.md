@@ -31,6 +31,12 @@ To prevent Cumulative Layout Shift (CLS) when lazy-loaded sliders mount:
 ### 4. ScrollArea Compatibility
 To maintain custom scrollbars on desktop via `ScrollArea`, the global `ScrollContainer` wraps all home content. On touch-enabled devices (e.g., mobile/tablet), the container dynamically swaps to a native fallback with momentum touch-scrolling (`-webkit-overflow-scrolling: touch`) to ensure butter-smooth frame rates.
 
+### 5. Mobile GPU Constraints (No Backdrop-Blur/Blend-Modes in Grids)
+To guarantee high scroll frame rates (60fps) on mid-to-low-end mobile devices (e.g., Helio G99-class processors):
+- **Avoid Glassmorphism**: Do not use `backdrop-filter: blur()` (e.g., `backdrop-blur-md`) on elements inside repeating grids or lists (like `GenresList`, `CategoriesList`, and `StylesList`). This causes expensive browser read-back layers.
+- **Avoid CSS Blend Modes**: Never use class combinations like `bg-blend-color-burn` on grid cards, as they disable hardware acceleration on mobile Chromium browsers and force laggy software repaints.
+- **Sleek Alternative**: Fall back to simple semi-transparent dark backgrounds (e.g., `bg-black/60`) paired with fine borders (`border-white/10`) to retain a premium feel with zero rendering overhead.
+
 > [!WARNING]
 > **Layout Constraint**: When running on desktop, Radix UI's `ScrollArea` forces a `display: table` wrapper on the internal viewport. This **breaks Swiper's width calculations**. All instances of `ScrollArea` wrapping home carousels must include the override class: `[&>[data-slot=scroll-area-viewport]>div]:!block`.
 
