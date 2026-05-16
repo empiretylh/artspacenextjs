@@ -26,7 +26,8 @@ All artwork displays must follow the "Editorial Minimalist" standard:
     - **Ratios**: Default cards use a strictly 1:1 `aspect-square` for consistency.
     - **Corners**: Use `rounded-sm` for a sharp, premium feel.
     - **Density**: Minimal padding (`p-3`), no borders, and no shadows unless explicitly in "Masonry" mode.
-    - **Visibility**: Overlaid actions (like the heart button) use high-contrast backgrounds (`bg-white/90`) for legibility on any image.
+    - **Visibility**: Overlaid actions (like the heart button) are styled for visibility (e.g., red color). On mobile, a top shadow overlay is used instead of a solid background button.
+    - **Status**: Status badges (SOLD, NOT FOR SALE, etc.) are omitted from the card to maintain a clean, minimal aesthetic.
 - **High-Gravity Pills (Filters)**:
     - **Inactive**: `bg-white`, `border-2 border-muted/70`, `shadow-sm`.
     - **Active**: `bg-primary`, `text-primary-foreground`.

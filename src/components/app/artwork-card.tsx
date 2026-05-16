@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import type { Artwork } from "@/types";
 import Link from "../common/link";
 import { useLike } from "@/hooks/app/use-like";
@@ -74,15 +73,9 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
          {/* Image + Hover Buttons */}
 
          <div className="relative aspect-square overflow-hidden rounded-sm cursor-pointer">
-            {artwork.status !== "AVAILABLE" && (
-               <div className="absolute top-3 left-3 z-20 pointer-events-none">
-                  <Badge variant="secondary" className="bg-white/90 md:backdrop-blur-md text-black border-none text-[10px] font-black px-2 py-0.5 rounded-sm shadow-sm">
-                     {artwork.status === "SOLD" ? "SOLD" :
-                        artwork.status === "SOLD_OUT" ? "SOLD OUT" :
-                           artwork.status === "NOT_FOR_SALE" ? "NOT FOR SALE" : artwork.status}
-                  </Badge>
-               </div>
-            )}
+            {/* Mobile top shadow overlay */}
+            <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-black/50 to-transparent z-10 md:hidden pointer-events-none" />
+            
             <div className="absolute inset-0 z-10 bg-black/0 transition-colors duration-300 md:group-hover:bg-black/30 pointer-events-none" />
 
             <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick} className="block w-full h-full">
@@ -107,15 +100,12 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
 
             {/* Actions */}
             {publicCard && !pure && (
-               <div className="absolute bottom-3 right-3 z-20 flex gap-2 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100">
-                  <Button
-                     size="icon"
-                     className="h-8 w-8 rounded-full bg-white/90 md:backdrop-blur-md border border-black/5 hover:bg-white text-black shadow-sm"
-                     onClick={handleLike}
-                  >
-                     <Heart size={14} className={cn(isLiked && "fill-red-500 text-red-500")} />
-                  </Button>
-               </div>
+               <button
+                  className="absolute top-3 right-3 z-20 text-red-500 hover:text-red-600 focus:outline-none md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"
+                  onClick={handleLike}
+               >
+                  <Heart size={20} className={cn(isLiked ? "fill-red-500" : "fill-none")} />
+               </button>
             )}
          </div>
 
