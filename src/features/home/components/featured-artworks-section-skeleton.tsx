@@ -22,13 +22,13 @@ export const FeaturedArtworksSectionSkeleton = () => {
          </div>
 
          {/* Horizontal Scroll / Swiper skeleton */}
-         <div className="flex gap-4 overflow-x-auto pb-4">
+         <div className="flex gap-4 overflow-hidden px-4 md:px-0">
             {skeletonCards.map((_, index) => (
-               <div key={index} className="flex-shrink-0 w-[180px]">
-                  <Skeleton className="h-[240px] w-full rounded-2xl mb-2" />{" "}
+               <div key={index} className="flex-shrink-0 w-[140px] md:w-[180px]">
+                  <Skeleton className="aspect-square w-full rounded-sm mb-2" />{" "}
                   {/* Artwork image */}
-                  <Skeleton className="h-4 w-3/4 rounded mb-1" /> {/* Title */}
-                  <Skeleton className="h-3 w-1/2 rounded" />{" "}
+                  <Skeleton className="h-4 w-3/4 rounded-sm mb-1" /> {/* Title */}
+                  <Skeleton className="h-3 w-1/2 rounded-sm" />{" "}
                   {/* Artist/Category */}
                </div>
             ))}

@@ -18,12 +18,18 @@
     - **Owner Routing**: UI components use the `getUserRouteType` utility to dynamically route links to the correct owner profile (Artist, Gallery, or Collector) based on `current_owner_display.user_type`.
     - **Image**: Though the frontend handles arrays, the backend currently expects the first image as a single string.
 
-### 2. Filtering & Discovery
-- **Editorial Minimalist Aesthetic**: All gallery filters must follow the "High-Gravity Pill" standard:
+## 🏗️ Technical Logic: Visual Standards
+
+### 1. Card & Gallery Aesthetic
+All artwork displays must follow the "Editorial Minimalist" standard:
+- **Compact Card Standard**: 
+    - **Ratios**: Default cards use a strictly 1:1 `aspect-square` for consistency.
+    - **Corners**: Use `rounded-sm` for a sharp, premium feel.
+    - **Density**: Minimal padding (`p-3`), no borders, and no shadows unless explicitly in "Masonry" mode.
+    - **Visibility**: Overlaid actions (like the heart button) use high-contrast backgrounds (`bg-white/90`) for legibility on any image.
+- **High-Gravity Pills (Filters)**:
     - **Inactive**: `bg-white`, `border-2 border-muted/70`, `shadow-sm`.
     - **Active**: `bg-primary`, `text-primary-foreground`.
-- **Status Filter Logic**: The `status` filter (`AVAILABLE`, `SOLD`, etc.) is strictly **single-select**. Selecting a new status replaces the existing one in the URL state.
-- **Quick Actions**: The "Available" pill acts as a high-visibility toggle for the `AVAILABLE` status.
 - **Labels**: UI labels for status enums should use Title Case (e.g., "Available") rather than database ALL_CAPS.
 - **Sidebar**: The [filter-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/filter-sidebar.tsx) handles mutual exclusivity for status and performs advanced style/genre lookups.
 
@@ -39,4 +45,5 @@
 
 ## 📂 Key Files
 - [artwork-create-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-create-form.tsx): The 300+ line form handling multi-step artwork entry.
-- [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The primary UI card used in the masonry layout.
+- [artwork-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/artwork-card.tsx): The primary UI card used in the responsive grid layout.
+- [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The detail view info card used on the artwork page.

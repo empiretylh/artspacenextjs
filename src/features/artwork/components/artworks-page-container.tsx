@@ -162,8 +162,7 @@ export default function ArtworksPageContainer() {
       <ArtworksPageView
          artworkCard={(artwork: Artwork) => (
             <ArtworkCard
-               variant="masonry"
-               className="inline-block w-full h-auto"
+               className="w-full"
                artwork={artwork}
             />
          )}

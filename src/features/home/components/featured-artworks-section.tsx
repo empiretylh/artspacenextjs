@@ -26,107 +26,61 @@ export const FeaturedArtworksSection = () => {
    }
 
    return (
-      <section>
-         <div className="flex justify-between items-end mb-4">
+      <section className="space-y-6">
+         <div className="flex justify-between items-center">
             <div>
-               <SectionTitle>Artworks</SectionTitle>
+               <SectionTitle>Featured Artworks</SectionTitle>
+               <p className="text-sm text-muted-foreground mt-1">Handpicked pieces from our top artists</p>
             </div>
-            <Link to={paths.artworks.path}>
-               <Button variant="ghost" className="flex">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
-               </Button>
-            </Link>
-         </div>
-         <div className="flex gap-2 mb-4">
-            <Button
-               variant="outline"
-               className="swiper-button-prev-custom"
-            // onClick={() => swiperRef.current?.slideNext()}
-            >
-               <ChevronLeft />
-            </Button>
-            <Button
-               variant="outline"
-               className="swiper-button-next-custom"
-            // onClick={() => swiperRef.current?.slideNext()}
-            >
-               <ChevronRight />
-            </Button>
+            <div className="flex gap-2">
+               <Link to={paths.artworks.path}>
+                  <Button variant="link" className="hidden md:flex text-primary">
+                     View All <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+               </Link>
+               <div className="flex gap-1">
+                  <Button variant="outline" size="icon" className="h-8 w-8 rounded-full swiper-artwork-prev">
+                     <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8 rounded-full swiper-artwork-next">
+                     <ChevronRight className="h-4 w-4" />
+                  </Button>
+               </div>
+            </div>
          </div>
 
-         {/* Horizontal Scroll Area */}
-         {/* <Carousel
-            opts={{
-               align: "start",
-            }}
-            className="w-full"
-         >
-            <CarouselContent className="-ml-4 justify-between">
-               {featuredArtworks.map((artwork) => (
-                  <CarouselItem
-                     key={artwork.id}
-                     className="pl-4 md:basis-1/2 lg:basis-1/4"
-                  >
-                     <div
-                        onClick={() =>
-                           router.push(paths.artworks.detail.getHref(artwork.id))
-                        }
-                        className="cursor-pointer border transition-transform duration-300 overflow-hidden"
-                     >
-                        <img
-                           src={getImage(artwork.image)}
-                           alt={artwork.title}
-                           className="min-w-[115px] h-[240px] mx-auto"
-                        />
-                        <div className="space-y-1 p-2">
-                           <div className="flex justify-between items-start">
-                              <h3 className="font-semibold truncate">
-                                 {artwork.title}
-                              </h3>
-                              <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full whitespace-nowrap">
-                                 {artwork.category_name}
-                              </span>
-                           </div>
-                           <p className="text-sm text-muted-foreground">
-                              by {artwork.artist_name}
-                           </p>
-                           <div className="flex justify-between items-center pt-2">
-                              <span className="font-bold text-foreground">
-                                 ${artwork.price.toLocaleString()}
-                              </span>
-                           </div>
-                        </div>
-                     </div>
-                  </CarouselItem>
-               ))}
-            </CarouselContent>
-
-            <div className="flex justify-center gap-3 pt-4">
-               <CarouselPrevious className="relative static translate-y-0" />
-               <CarouselNext className="relative static translate-y-0" />
-            </div>
-         </Carousel> */}
-
-         <div className="ml-[50%] md:ml-auto translate-x-[-50%] md:translate-x-0 w-screen md:w-full overflow-hidden pl-4">
+         <div className="-mx-4 md:mx-0 overflow-hidden">
             <Swiper
                modules={[Navigation]}
-               slidesPerView="auto"
-               spaceBetween={16}
-               // onInit={(swiper) => {
-               //    swiperRef.current = swiper;
-               // }}
+               slidesPerView={2.2}
+               slidesPerGroup={1}
+               spaceBetween={12}
                navigation={{
-                  nextEl: ".swiper-button-next-custom",
-                  prevEl: ".swiper-button-prev-custom",
+                  nextEl: ".swiper-artwork-next",
+                  prevEl: ".swiper-artwork-prev",
                }}
-               className="!overflow-visible"
+               className="!px-4 md:!px-0 !overflow-visible"
+               watchSlidesProgress={true}
+               breakpoints={{
+                  640: { slidesPerView: 3.2, spaceBetween: 16 },
+                  1024: { slidesPerView: 4.2, spaceBetween: 20 },
+                  1280: { slidesPerView: 5.2, spaceBetween: 24 },
+               }}
             >
                {featuredArtworks.map((artwork) => (
-                  <SwiperSlide key={artwork.id} className="!w-auto">
-                     <ArtworkCard artwork={artwork} />
+                  <SwiperSlide key={artwork.id}>
+                     <ArtworkCard artwork={artwork} className="h-full" />
                   </SwiperSlide>
                ))}
             </Swiper>
+         </div>
+
+         <div className="md:hidden px-4">
+            <Link to={paths.artworks.path}>
+               <Button variant="outline" className="w-full">
+                  Explore All Artworks
+               </Button>
+            </Link>
          </div>
       </section>
    );

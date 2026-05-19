@@ -25,6 +25,9 @@ export const metadata: Metadata = {
   description: "Social Media and E-commerce Platform.",
 };
 
+import { FcmManager } from "@/features/chat/components/fcm-manager";
+import NextTopLoader from "nextjs-toploader";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -35,10 +38,22 @@ export default async function RootLayout({
       <body
         className={`${outfitSans.variable} ${spaceGrotesk.variable} antialiased`}
       >
+        <NextTopLoader
+          color="var(--primary)"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px var(--primary),0 0 5px var(--primary)"
+        />
         {/* <GoogleTagManager gtmId={env.GTM_ID as string} /> */}
         <GoogleAnalytics debugMode={env.NODE_ENV === "development"} gaId={env.GA_ID as string} />
         <AppProvider>
           <AuthInitializer />
+          <FcmManager />
           <ScrollToTop />
           {children}
         </AppProvider>

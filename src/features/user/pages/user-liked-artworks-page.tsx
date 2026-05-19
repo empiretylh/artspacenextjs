@@ -17,11 +17,11 @@ const ControlledArtworkCard: React.FC<ControlledArtworkCardProps> = ({
    artwork,
 }) => {
    return (
-      <div className="relative group inline-block break-inside-avoid mb-4 max-w-sm w-full">
+      <div className="relative group w-full">
          {/* Hover Buttons */}
          <ArtworkCard
-            variant="masonry"
-            className="inline-block w-full h-auto"
+
+            className="w-full"
             artwork={artwork}
          />
       </div>

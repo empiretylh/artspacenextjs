@@ -24,7 +24,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
          router.push(paths.auth.login.getHref())
          return;
       }
-      
+
       // Tracking: Begin Checkout
       ecommerceAnalytics.beginCheckout(
          artwork.currency.code || "MMK",
@@ -90,7 +90,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                      disabled
                      className="w-full text-base rounded-md font-medium font-display bg-primary/15 text-primary hover:bg-primary/30"
                   >
-                     Request for price
+                     Ask for collect
                   </Button>
                )}
             </div>
@@ -102,10 +102,10 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   onClick={handleOrder}
                   className="w-full text-base rounded-md font-medium font-display bg-primary text-primary-foreground"
                >
-                  {artwork.status === "AVAILABLE" ? "Order Now" :
+                  {artwork.status === "AVAILABLE" ? "Collect Now" :
                      artwork.status === "SOLD" ? "Sold" :
                         artwork.status === "SOLD_OUT" ? "Sold Out" :
-                           artwork.status === "NOT_FOR_SALE" ? "Not For Sale" : "Order Now"}
+                           artwork.status === "NOT_FOR_SALE" ? "Not For Sale" : "Collect Now"}
                </Button>
 
                <Button

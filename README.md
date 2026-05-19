@@ -14,6 +14,7 @@ To ensure consistent development and AI-efficiency, please refer to:
 - **Tailwind CSS 4** + Radix UI
 - **TanStack Query** (Data Fetching), **Zustand** (Session State)
 - **Zod** (Validation), **React Hook Form** (Form Logic)
+- **Nextjs Toploader** (Navigation Progress)
 
 ## 🚀 Getting Started
 1. Install dependencies: `npm install`
@@ -41,7 +42,7 @@ Validated in `src/config/env.ts`.
 ## 📦 Features & Docs
 - **Authentication**: Backend JWT + Firebase Synchronization. [Auth Guide](./src/features/auth/README.md).
 - **Real-time Chat**: Powered by Firebase Firestore. [Firebase Guide](./docs/firebase.md).
-- **Artwork Engine**: Masonry catalogs and complex submission forms. [Artwork Guide](./src/features/artwork/README.md).
+- **Artwork Engine**: Grid catalogs and complex submission forms. [Artwork Guide](./src/features/artwork/README.md).
 - **Ecommerce**: Orders, tracking, and checkout flows. [Orders Guide](./src/features/orders/README.md).
 
 ## 📊 Analytics
@@ -52,3 +53,4 @@ Google Analytics is wired via `@next/third-parties`. Standardized tracking is im
 1. Always check [AGENTS.md](./AGENTS.md) before starting a task.
 2. Update the relevant feature `README.md` if you change its architecture.
 3. Run `npm run lint` before opening a PR.
+ 

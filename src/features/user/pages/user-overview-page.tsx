@@ -59,12 +59,12 @@ const UserOverviewPage = () => {
                   </li>
                </ul>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-col-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                {user.profile.features_photos?.map((image) => (
                   <figure key={image.id} className="relative">
                      <img
                         src={getImage(image.image)}
-                        className="rounded-2xl w-full border h-[400px]"
+                        className="rounded-2xl w-full border aspect-[4/5] object-cover"
                         alt={image.description || "Featured photo"}
                      />
                   </figure>

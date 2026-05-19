@@ -9,10 +9,12 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
+import { useDocumentVisibility } from "@/hooks/use-document-visibility";
 import type { Message } from "../types";
 
 export const useMessages = (conversationId: string | null) => {
    const { user } = useAuth();
+   const isVisible = useDocumentVisibility();
    const [messages, setMessages] = useState<Message[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<Error | null>(null);
@@ -24,6 +26,11 @@ export const useMessages = (conversationId: string | null) => {
       if (!conversationId || !db || !auth?.currentUser) {
          setMessages([]);
          setLoading(false);
+         return;
+      }
+
+      // 2. Pause if not visible
+      if (!isVisible) {
          return;
       }
 
@@ -39,26 +46,44 @@ export const useMessages = (conversationId: string | null) => {
       const unsubscribe = onSnapshot(
          q,
          (snapshot: QuerySnapshot) => {
-            const msgs = snapshot.docs.map((doc) => ({
-               id: doc.id,
-               ...doc.data(),
-            })) as Message[];
+               const msgs = snapshot.docs.map((doc) => {
+                  const data = doc.data();
+                  const message = {
+                     id: doc.id,
+                     type: data.type || 'text',
+                     ...data,
+                  } as any;
+
+                  // Grouped images normalization
+                  if (message.type === 'image' && !message.mediaUrls) {
+                     message.mediaUrls = message.mediaUrl ? [message.mediaUrl] : [];
+                  }
+
+                  return message as Message;
+               });
             
             setMessages(msgs);
             setHasMore(msgs.length === limitAmount);
             setError(null);
             setLoading(false);
+            if (process.env.NODE_ENV === "development") {
+               console.log(`Chat: Messages listener active for ${conversationId}`, msgs.length);
+            }
          },
          (err) => {
             console.error("Error fetching messages:", err);
-            // Handle permission error specifically if needed
             setError(err);
             setLoading(false);
          }
       );
 
-      return () => unsubscribe();
-   }, [conversationId, auth?.currentUser?.uid, limitAmount, db]);
+      return () => {
+         unsubscribe();
+         if (process.env.NODE_ENV === "development") {
+            console.log(`Chat: Messages listener unsubscribed for ${conversationId}`);
+         }
+      };
+   }, [conversationId, auth?.currentUser?.uid, limitAmount, db, isVisible]);
 
    const loadMore = () => {
       if (hasMore && !loading) {

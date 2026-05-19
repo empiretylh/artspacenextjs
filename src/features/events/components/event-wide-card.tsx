@@ -21,49 +21,60 @@ export const EventWideCard: React.FC<EventWideCardProps> = ({ event, sizes }) =>
       : null;
 
    return (
-      <div className="overflow-hidden border h-full rounded-lg w-full">
+      <div className="group overflow-hidden h-full rounded-sm w-full transition-all duration-300">
          {/* Cover */}
          <Link to={paths.events.detail.getHref(event.slug)}>
-            <div className="relative h-48 w-full">
+            <div className="relative h-40 md:h-48 w-full overflow-hidden">
                <AppImage
                   src={getImage(event.cover_photo)}
                   alt={event.title}
-                  fill // Required for absolute positioning in the h-48 container
-                  // If mobile: full width. If desktop: likely part of a 2 or 3 column grid.
+                  fill
                   sizes={sizes || "100vw"}
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500"
                />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 transition-opacity" />
+
+               {/* Event Type Badge */}
+               <div className="absolute top-3 left-3">
+                  <Badge className="bg-white/90 backdrop-blur-md text-black border-none text-[10px] font-black px-2 py-0.5 rounded-sm shadow-sm">
+                     {event.event_type}
+                  </Badge>
+               </div>
+
                {startDate && endDate && (
-                  <div className="absolute bottom-2 left-2 text-white text-sm font-medium bg-black/30 px-2 py-1 rounded">
-                     {startDate} - {endDate}
+                  <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
+                     <div className="text-white">
+                        <p className="text-[10px] font-medium opacity-80 uppercase tracking-wider">Date</p>
+                        <p className="text-xs font-bold bg-white/10 backdrop-blur-sm px-2 py-1 rounded-sm border border-white/10">
+                           {startDate} - {endDate}
+                        </p>
+                     </div>
                   </div>
                )}
             </div>
          </Link>
 
          {/* Info */}
-         <div className="p-4 flex flex-col gap-2">
+         <div className="pt-3 flex flex-col gap-1.5">
             <Link to={paths.events.detail.getHref(event.slug)}>
-               <h3 className="text-lg font-semibold truncate hover:underline">
+               <h3 className="text-lg font-bold font-display tracking-tight group-hover:text-primary transition-colors line-clamp-1">
                   {event.title}
                </h3>
             </Link>
 
-            <div className="flex items-center gap-2 flex-wrap">
-               <Badge className="">{event.event_type}</Badge>
-            </div>
-
             {event.artists.length > 0 && (
-               <p className="text-sm text-muted-foreground truncate">
-                  {event.artists
-                     .slice(0, 2)
-                     .map((a) => `${a.first_name} ${a.last_name}`)
-                     .join(", ")}
-                  {event.artists.length > 2
-                     ? ` +${event.artists.length - 2}`
-                     : ""}
-               </p>
+               <div className="flex flex-col gap-1">
+                  <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">Artists</p>
+                  <p className="text-sm text-foreground/80 truncate">
+                     {event.artists
+                        .slice(0, 3)
+                        .map((a) => `${a.first_name} ${a.last_name}`)
+                        .join(", ")}
+                     {event.artists.length > 3
+                        ? ` +${event.artists.length - 3}`
+                        : ""}
+                  </p>
+               </div>
             )}
          </div>
       </div>

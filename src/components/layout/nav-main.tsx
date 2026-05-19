@@ -24,6 +24,7 @@ import Layers2Icon from "../icons/layers-2-icon";
 import ShoppingCartIcon from "../icons/shopping-cart-icon";
 import { ClipboardPenLineIcon, HomeIcon } from "lucide-react";
 import { useAuth } from "@/features/auth/store";
+import { useUnreadCount } from "@/features/chat/hooks/use-unread-count";
 
 
 const data = {
@@ -104,6 +105,7 @@ export function NavMain() {
    const { setOpenMobile } = useSidebar();
    const router = useRouter();
    const { user } = useAuth();
+   const { hasUnread } = useUnreadCount();
 
    const isActive = (url: string) => {
       return pathname === url;
@@ -153,7 +155,12 @@ export function NavMain() {
                                     "pointer-events-none opacity-50"
                                  )}
                               >
-                                 {item.icon && <item.icon />}
+                                 <div className="relative">
+                                    {item.icon && <item.icon />}
+                                    {item.title === "messages" && hasUnread && (
+                                       <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2 shrink-0 animate-pulse rounded-full bg-red-500 border-2 border-white dark:border-zinc-950" />
+                                    )}
+                                 </div>
                                  <span className="capitalize">{item.title}</span>
                               </Link>
                            </SidebarMenuButton>

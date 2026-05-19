@@ -51,3 +51,6 @@ node_modules/
 /playwright/.auth/
 
 .agent
+
+# graphify
+/graphify-out/

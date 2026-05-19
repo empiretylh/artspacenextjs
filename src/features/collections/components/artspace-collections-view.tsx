@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from "react";
 
 
 import { cn } from "@/lib/utils";
-import MasonryItem from "../../../components/app/masonry-item";
+
 import type { Artwork } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import ArtworkCard from "@/components/app/artwork-card";
@@ -63,27 +63,23 @@ const ArtspaceCollectionsView = ({
                   <div
                      className={cn(
                         "",
-                        "grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-x-2 auto-rows-[1px] h-full"
+                        "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 h-full"
                      )}
                   >
                      {pagesToRender?.map((page) => (
                         <Fragment key={page.next}>
                            {page.results.map(
                               (artwork: { id: number; artwork: Artwork }) => (
-                                 <MasonryItem
-                                    key={artwork.id}
-                                    artwork={artwork.artwork}
-                                 >
+                                 <Fragment key={artwork.id}>
                                     {artworkCard ? (
                                        artworkCard(artwork.artwork)
                                     ) : (
                                        <ArtworkCard
-                                          variant="masonry"
-                                          className="inline-block w-full h-auto"
+                                          className="w-full"
                                           artwork={artwork.artwork}
                                        />
                                     )}
-                                 </MasonryItem>
+                                 </Fragment>
                               )
                            )}
                         </Fragment>

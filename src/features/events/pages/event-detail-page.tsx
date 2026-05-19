@@ -1,7 +1,7 @@
 'use client'
 import ArtworkCard from "@/components/app/artwork-card";
 import InterestEventButton from "@/components/app/interest-button";
-import MasonryItem from "@/components/app/masonry-item";
+
 import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import { ShareButton } from "@/components/common/share-button";
@@ -175,23 +175,15 @@ export default function EventDetailPage() {
                         <ScrollArea className="h-[500px]">
                            <div
                               className={cn(
-                                 "grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-x-2 auto-rows-[1px]"
+                                 "grid grid-cols-2 sm:grid-cols-3 gap-4"
                               )}
                            >
                               {event.artworks.map((artwork) => (
-                                 <MasonryItem
+                                 <ArtworkCard
                                     key={artwork.id}
                                     artwork={artwork}
                                     pure
-                                 >
-                                    <ArtworkCard
-                                       variant="masonry"
-                                       className="inline-block w-full h-auto"
-                                       artwork={artwork}
-                                       pure
-                                    />
-
-                                 </MasonryItem>
+                                 />
                               ))}
                            </div>
                         </ScrollArea>

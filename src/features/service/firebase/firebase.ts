@@ -5,9 +5,8 @@ import { getApps, initializeApp } from "firebase/app";
 // Import Firebase Authentication module to handle user authentication
 
 import { getAuth } from "firebase/auth";
-
-// Import Firestore module to interact with the Firebase database
 import { getFirestore } from "firebase/firestore";
+import { getMessaging } from "firebase/messaging";
 
 // Firebase configuration object containing keys and identifiers for the project
 const firebaseConfig = {
@@ -28,4 +27,5 @@ const app = isEnabled && getApps().length === 0 ? initializeApp(firebaseConfig) 
 
 export const auth = isEnabled ? getAuth(app) : null;
 export const db = isEnabled ? getFirestore(app) : null;
+export const messaging = isEnabled && typeof window !== "undefined" ? getMessaging(app) : null;
 export { isEnabled };

@@ -39,7 +39,7 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
               {children}
             </ThemeProvider>
           </GlobalProvider>
-          <ReactQueryDevtools initialIsOpen={false} />
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
       </ErrorBoundary>
     </GoogleOAuthProvider>

@@ -161,13 +161,13 @@ const ProfileOverviewPage = () => {
                </Button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                {featuredPhotos?.map((image) => (
                   <figure key={image.id} className="relative">
                      <img
                         src={getImage(image.image)}
                         alt={image.description || "Featured photo"}
-                        className="w-full aspect-[4/5] object-cover rounded-2xl border"
+                        className="w-full aspect-[4/5] object-cover rounded-sm border"
                      />
 
                      <input

@@ -8,6 +8,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
+import { useDocumentVisibility } from "@/hooks/use-document-visibility";
 import type { Conversation } from "../types";
 
 const TYPING_TIMEOUT = 3000; // 3 seconds of silence stops typing
@@ -16,13 +17,17 @@ const THROTTLE_INTERVAL = 2000; // Only update Firestore once every 2 seconds
 
 export const useTypingIndicator = (conversationId: string | null) => {
    const { user } = useAuth();
+   const isVisible = useDocumentVisibility();
    const [isOtherTyping, setIsOtherTyping] = useState(false);
    const lastUpdateRef = useRef<number>(0);
    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
    // 1. Recipient side: Listen to the conversation document
    useEffect(() => {
-      if (!conversationId || !db || !user?.id) return;
+      if (!conversationId || !db || !user?.id || !isVisible) {
+         setIsOtherTyping(false);
+         return;
+      }
 
       const convRef = doc(db, "conversations", conversationId);
       const unsubscribe = onSnapshot(convRef, (snapshot) => {
@@ -47,7 +52,7 @@ export const useTypingIndicator = (conversationId: string | null) => {
       });
 
       return () => unsubscribe();
-   }, [conversationId, user?.id]);
+   }, [conversationId, user?.id, isVisible]);
 
    // 2. Sender side: Function to update my typing status
    const setTyping = async (typing: boolean) => {

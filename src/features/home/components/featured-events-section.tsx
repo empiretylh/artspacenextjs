@@ -7,19 +7,21 @@ import { queryKeys } from "@/config/query-keys";
 import { EventWideCard } from "@/features/events/components/event-wide-card";
 import { getEvents } from "@/features/service/artspace/get-events";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight } from "lucide-react";
-import { FeaturedCollectorsSectionSkeleton } from "./featured-collectors-section-skeleton";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { FeaturedEventsSectionSkeleton } from "./featured-events-section-skeleton";
 
 export const FeaturedEventsSection = () => {
    const eventsQuery = useQuery({
-      queryKey: queryKeys.event.list({ limit: 3 }),
-      queryFn: () => getEvents({ limit: 3 }),
+      queryKey: queryKeys.event.list({ limit: 6 }), // Increased limit for better slider experience
+      queryFn: () => getEvents({ limit: 6 }),
    })
 
    const featuredEvents = eventsQuery.data?.results ?? [];
 
    if (eventsQuery.isLoading) {
-      return <FeaturedCollectorsSectionSkeleton />;
+      return <FeaturedEventsSectionSkeleton />;
    }
 
    if (featuredEvents.length === 0) {
@@ -27,23 +29,61 @@ export const FeaturedEventsSection = () => {
    }
 
    return (
-      <section>
-         <div className="flex justify-between items-end mb-4">
+      <section className="space-y-6">
+         <div className="flex justify-between items-center">
             <div>
-               <SectionTitle>Events</SectionTitle>
+               <SectionTitle>Featured Events</SectionTitle>
+               <p className="text-sm text-muted-foreground mt-1">Discover latest art exhibitions and events</p>
             </div>
+            <div className="flex gap-2">
+               <Link to={paths.events.path}>
+                  <Button variant="link" className="hidden md:flex text-primary">
+                     View All <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+               </Link>
+               <div className="flex gap-1">
+                  <Button variant="outline" size="icon" className="h-8 w-8 rounded-full swiper-event-prev">
+                     <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8 rounded-full swiper-event-next">
+                     <ChevronRight className="h-4 w-4" />
+                  </Button>
+               </div>
+            </div>
+         </div>
+
+         <div className="-mx-4 md:mx-0 overflow-hidden">
+            <Swiper
+               modules={[Navigation]}
+               slidesPerView={1.2}
+               slidesPerGroup={1}
+               spaceBetween={12}
+               navigation={{
+                  prevEl: ".swiper-event-prev",
+                  nextEl: ".swiper-event-next",
+               }}
+               watchSlidesProgress={true}
+               breakpoints={{
+                  640: { slidesPerView: 2.2, spaceBetween: 16 },
+                  1024: { slidesPerView: 2.8, spaceBetween: 20 },
+                  1280: { slidesPerView: 3.5, spaceBetween: 24 },
+               }}
+               className="!px-4 md:!px-0 !overflow-visible"
+            >
+               {featuredEvents.map((event) => (
+                  <SwiperSlide key={event.id}>
+                     <EventWideCard event={event} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px" />
+                  </SwiperSlide>
+               ))}
+            </Swiper>
+         </div>
+
+         <div className="md:hidden px-4">
             <Link to={paths.events.path}>
-               <Button variant="ghost" className="flex">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
+               <Button variant="outline" className="w-full">
+                  View All Events
                </Button>
             </Link>
-         </div>
-         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-2">
-            {featuredEvents.map((event) => (
-               <div className="shrink-0" key={event.id}>
-                  <EventWideCard event={event} key={event.id} sizes="(max-width: 1024px) 100vw, (max-width: 1536px) 50vw, 600px" />
-               </div>
-            ))}
          </div>
       </section>
    );
