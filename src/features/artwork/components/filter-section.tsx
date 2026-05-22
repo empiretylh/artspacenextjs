@@ -12,7 +12,7 @@ export const FilterSection = ({ title, children, isOpen, onToggle }: any) => (
          />
       </button>
       <div
-         className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-96 mt-4" : "max-h-0"}`}
+         className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[1000px] mt-4" : "max-h-0"}`}
       >
          <div className="space-y-3">{children}</div>
       </div>

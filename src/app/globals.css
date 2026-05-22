@@ -14,6 +14,7 @@
 @theme {
   --breakpoint-xs: 24rem;
   --breakpoint-3xl: 1920px;
+  --breakpoint-4xl: 2560px;
 }
 
 @theme inline {
@@ -56,9 +57,9 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-success: var(--success);
   --color-info: var(--color-blue-500);
-  --font-display: "Space Grotesk", sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-noto-myanmar), "Space Grotesk", sans-serif;
   /* --font-sans: 'Poppins', 'ui-sans-serif', 'system-ui'; */
-  --font-sans: "Outfit", sans-serif;
+  --font-sans: var(--font-outfit-sans), var(--font-noto-myanmar), "Outfit", sans-serif;
   --spacing: 0.25rem;
 }
 
@@ -154,6 +155,23 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    font-size-adjust: 0.48;
+    line-height: 1.8;
+  }
+
+  /* Form elements do not inherit body font properties by default in browsers */
+  input,
+  textarea,
+  button,
+  select {
+    font-family: inherit;
+    font-size-adjust: inherit;
+  }
+
+  /* Provide safe line height for text entry to avoid clipping top/bottom diacritics */
+  input,
+  textarea {
+    line-height: 1.5;
   }
 }
 
@@ -165,6 +183,7 @@
 @utility no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -175,22 +194,26 @@
     height: 6px;
     width: 6px;
   }
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
+
   &::-webkit-scrollbar-thumb {
     background: oklch(1 0 0 / 40%);
     border-radius: 10px;
     border: 1px solid transparent;
     background-clip: padding-box;
   }
+
   &::-webkit-scrollbar-thumb:hover {
     background: oklch(1 0 0 / 60%);
     background-clip: padding-box;
   }
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 

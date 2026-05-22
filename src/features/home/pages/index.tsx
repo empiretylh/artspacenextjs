@@ -5,6 +5,12 @@ import { FeaturedEventsSection } from "../components/featured-events-section";
 import { FeaturedCollectorsSlider } from "../components/featured-collectors-slider";
 import { FeaturedGalleriesSlider } from "../components/featured-galleries-slider";
 import { FeaturedArtistsSlider } from "../components/featured-artists-slider";
+import { SectionLazyLoader } from "../components/section-lazy-loader";
+import { FeaturedArtistsSectionSkeleton } from "../components/featured-artists-section-skeleton";
+import { FeaturedEventsSectionSkeleton } from "../components/featured-events-section-skeleton";
+import { FeaturedArtworksSectionSkeleton } from "../components/featured-artworks-section-skeleton";
+import { FeaturedGalleriesSectionSkeleton } from "../components/featured-galleries-section-skeleton";
+import { FeaturedCollectorsSectionSkeleton } from "../components/featured-collectors-section-skeleton";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getEvents } from "@/features/service/artspace/get-events";
 import { queryKeys } from "@/config/query-keys";
@@ -19,30 +25,8 @@ import BannerSliderContainer from "../components/banner-slider-container";
 export default async function HomePage() {
    const queryClient = getQueryClient();
 
-   await queryClient.prefetchQuery({
-      queryKey: queryKeys.event.list({ limit: 3 }),
-      queryFn: () => getEvents({ limit: 3 }),
-   });
-
-   await queryClient.prefetchQuery({
-      queryKey: queryKeys.artwork.list({ limit: 10 }),
-      queryFn: () => getArtworks({ limit: 10 }),
-   });
-
-   await queryClient.prefetchQuery({
-      queryKey: queryKeys.artist.list({ limit: 10 }),
-      queryFn: () => getArtists({ limit: 10 }),
-   });
-
-   await queryClient.prefetchQuery({
-      queryKey: queryKeys.gallery.list({ limit: 10 }),
-      queryFn: () => getGalleries({ limit: 10 }),
-   });
-
-   await queryClient.prefetchQuery({
-      queryKey: queryKeys.collector.list({ limit: 10 }),
-      queryFn: () => getCollectors({ limit: 10 }),
-   });
+   // Prefetch only essential content
+   // (Artworks, Artists, Events, etc. will be fetched on the client side with skeletons)
 
    return (
       <div className="space-y-9">
@@ -51,11 +35,25 @@ export default async function HomePage() {
          <GenreSection />
          <CategoryAndStyleSection />
          <HydrationBoundary state={dehydrate(queryClient)}>
-            <FeaturedArtistsSlider />
-            <FeaturedEventsSection />
-            <FeaturedArtworksSection />
-            <FeaturedGalleriesSlider />
-            <FeaturedCollectorsSlider />
+            <SectionLazyLoader skeleton={<FeaturedArtistsSectionSkeleton />}>
+               <FeaturedArtistsSlider />
+            </SectionLazyLoader>
+
+            <SectionLazyLoader skeleton={<FeaturedEventsSectionSkeleton />}>
+               <FeaturedEventsSection />
+            </SectionLazyLoader>
+
+            <SectionLazyLoader skeleton={<FeaturedArtworksSectionSkeleton />}>
+               <FeaturedArtworksSection />
+            </SectionLazyLoader>
+
+            <SectionLazyLoader skeleton={<FeaturedGalleriesSectionSkeleton />}>
+               <FeaturedGalleriesSlider />
+            </SectionLazyLoader>
+
+            <SectionLazyLoader skeleton={<FeaturedCollectorsSectionSkeleton />}>
+               <FeaturedCollectorsSlider />
+            </SectionLazyLoader>
          </HydrationBoundary>
          {/* <FeaturedCollectorsSection /> */}
       </div >

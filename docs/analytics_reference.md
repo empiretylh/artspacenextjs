@@ -154,7 +154,7 @@ Triggered when a user clicks a share button for any content.
 - `item_name` *(string)*: Name/Title of the shared entity.
 - `content_type` *(string)*: Type of content. Values: `'artwork' | 'user' | 'event'`.
 - `user_type` *(string)*: (Optional) The type of user being shared if `content_type` is `'user'` (e.g., `'artist'`).
-- `method` *(string)*: The sharing channel used (e.g., `'facebook'`, `'x'`, `'copy_link'`).
+- `method` *(string)*: The sharing channel used (e.g., `'facebook'`, `'x'`, `'copy_link'`, `'native'` for the system's native share drawer).
 - `source` *(string)*: e.g., `'artwork_detail'`, `'profile_page'`.
 
 ### `content_scroll`

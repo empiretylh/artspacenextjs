@@ -45,9 +45,9 @@ export function SiteHeader() {
                   <Button
                      onClick={handleMobileSearchClose}
                      variant="ghost"
-                     className="h-8 w-8 p-0"
+                     className="h-10 w-10 p-0"
                   >
-                     <ArrowLeft className="h-4 w-4" />
+                     <ArrowLeft className="size-6" />
                   </Button>
                   <Suspense fallback={<InputWithLeftSelectSkeleton />}>
                      <InputWithLeftSelect className="flex-1" />
@@ -66,7 +66,7 @@ export function SiteHeader() {
                   {/* Search Input on Desktop */}
                   <div className={cn(
                      "hidden md:flex fixed left-(--sidebar-width) lg:left-1/2 lg:-translate-x-1/2",
-                   )}>
+                  )}>
                      <Suspense fallback={<InputWithLeftSelectSkeleton />}>
                         <InputWithLeftSelect />
                      </Suspense>
@@ -79,10 +79,10 @@ export function SiteHeader() {
                         onClick={handleMobileSearchOpen}
                         variant="ghost"
                         size="icon"
-                        className="p-0 md:hidden"
+                        className="h-10 w-10 p-0 md:hidden"
                         data-testid="open-search"
                      >
-                        <Search />
+                        <Search className="size-6" />
                      </Button>
 
                      <Button
@@ -134,8 +134,10 @@ export function SiteHeader() {
                         )}
                      >
                         <DropdownMenu>
-                           <DropdownMenuTrigger>
-                              <MoreVerticalIcon />
+                           <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-10 w-10 p-0">
+                                 <MoreVerticalIcon className="size-6" />
+                              </Button>
                            </DropdownMenuTrigger>
                            <DropdownMenuContent>
                               {isLoggedIn && (
@@ -176,14 +178,12 @@ export function SiteHeader() {
                                     </span>
                                  </div>
                               </DropdownMenuItem>
-                              <ThemeSwitcher className="w-full" />
+                              {/* <ThemeSwitcher className="w-full" /> */}
                            </DropdownMenuContent>
                         </DropdownMenu>
                      </div>
 
-                     <div className="hidden lg:block">
-                        <ThemeSwitcher />
-                     </div>
+                     <ThemeSwitcher />
                   </div>
                </div>
             )}

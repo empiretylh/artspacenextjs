@@ -16,6 +16,7 @@ export const FeaturedGalleriesSlider = () => {
    const galleriesQuery = useQuery({
       queryKey: queryKeys.gallery.list({ limit: 10 }),
       queryFn: () => getGalleries({ limit: 10 }),
+      staleTime: 1000 * 60 * 5, // 5 minutes
    })
 
    const featuredGalleries = galleriesQuery.data?.results ?? [];
@@ -111,6 +112,8 @@ export const FeaturedGalleriesSlider = () => {
                modules={[Navigation]}
                slidesPerView="auto"
                spaceBetween={8}
+               watchSlidesProgress
+               touchStartPreventDefault={false}
                // onInit={(swiper) => {
                //    swiperRef.current = swiper;
                // }}

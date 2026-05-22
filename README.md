@@ -15,6 +15,7 @@ To ensure consistent development and AI-efficiency, please refer to:
 - **TanStack Query** (Data Fetching), **Zustand** (Session State)
 - **Zod** (Validation), **React Hook Form** (Form Logic)
 - **Nextjs Toploader** (Navigation Progress)
+- **Myanmar Language Font Support**: Seamless integration of `Noto_Sans_Myanmar` via `next/font/google` as a dynamic fallback, with global visual-scale balancing (`font-size-adjust`) and line-height collision prevention applied to the layout and form elements.
 
 ## 🚀 Getting Started
 1. Install dependencies: `npm install`

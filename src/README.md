@@ -9,7 +9,7 @@ The project follows a "Feature-Sliced" inspired architecture:
 1.  **`app/` (The Shell)**: 
     - Next.js App Router (Client & Server Components).
     - Responsible for routing, layouts, and composing feature-level components.
-    - Includes global layout enhancements (e.g., `NextTopLoader` for navigation progress).
+    - Includes global layout enhancements (e.g., `NextTopLoader` for navigation progress and a custom `ScrollArea` for aesthetic global scrolling).
     - **Note**: The numbering (1, 2, 3) below represents the architectural hierarchy, not a sequence.
 
 2.  **`features/` (The Muscles)**:

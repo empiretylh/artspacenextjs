@@ -36,7 +36,7 @@ export default function ArtworkImage({ artwork }: { artwork: Artwork }) {
          <div ref={mainImage} className="w-full">
             <Image
                ref={mainImage as unknown as React.RefObject<HTMLImageElement>}
-               className="select-none flex justify-center mb-4 [&_img]:hover:cursor-zoom-in w-full h-75 [&_img]:object-contain [&_img]:h-75 [&_img]:w-auto"
+               className="select-none flex justify-center [&_img]:hover:cursor-zoom-in w-full h-75 [&_img]:object-contain [&_img]:h-75 [&_img]:w-auto"
                src={getImage(artwork.image)}
                alt={`${artwork.title} artwork image`}
             />

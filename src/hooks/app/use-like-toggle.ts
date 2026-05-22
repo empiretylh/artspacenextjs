@@ -18,7 +18,7 @@ export function useLikeToggle({
    debounceMs = 300,
 }: UseLikeToggleOptions) {
    const router = useRouter();
-   const { user } = useAuth();
+   const user = useAuth((state) => state.user);
    const likeMutation = useLikeArtworkToggle(); // custom mutation hook
 
    const { mutate } = likeMutation;

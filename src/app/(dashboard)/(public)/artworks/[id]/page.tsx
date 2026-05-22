@@ -6,7 +6,7 @@ import ArtworkDetailPage from "@/features/artwork/pages/artwork";
 import { getArtwork } from "@/features/service/artspace/get-artwork";
 import { getArtworksOg } from "@/features/service/artspace/get-artworks";
 import { getQueryClient } from "@/lib/get-query-client";
-import { getImage } from "@/lib/utils";
+
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Metadata } from "next";
 import { cache } from "react";
@@ -33,7 +33,8 @@ export async function generateMetadata(
   // fetch post information
   const data = await getCachedArtwork(id);
   const canonical = `${env.APP_URL}/artworks/${id}`;
-  const ogImage = getImage(data.image);
+  // const ogImageUrl = `${env.APP_URL}/artworks/${id}/opengraph-image`;
+  const ogImageUrl = `${env.APP_URL}/api/og?id=${id}`;
 
   return {
     title: data.title,
@@ -61,7 +62,7 @@ export async function generateMetadata(
       siteName: "Myanmar Art Space",
       images: [
         {
-          url: ogImage,
+          url: ogImageUrl,
           width: 1200,
           height: 630,
           alt: `${data.title} - Myanmar Art Space`,
@@ -72,7 +73,7 @@ export async function generateMetadata(
       card: "summary_large_image",
       title: data.title,
       description: data.description,
-      images: [ogImage],
+      images: [ogImageUrl],
     }
   }
 }

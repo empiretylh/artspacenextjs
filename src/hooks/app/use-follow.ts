@@ -20,7 +20,7 @@ export function useFollow({
 }) {
    const router = useRouter();
    const { source } = useSource();
-   const { user } = useAuth();
+   const user = useAuth((state) => state.user);
    const followUserMutation = useFollowUser({
       mutationConfig: {
          onSuccess: () => {

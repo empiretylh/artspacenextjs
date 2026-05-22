@@ -50,7 +50,7 @@ export const StylesList = () => {
                         className="object-cover rounded-2xl transform transition-transform duration-300 hover:scale-105"
                      />
 
-                     <div className="absolute left-2 bottom-2 right-2 flex items-end p-2 bg-blend-color-burn bg-white/25 rounded-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-sm border border-white/30">
+                     <div className="absolute left-2 bottom-2 right-2 flex items-end p-2 bg-black/60 border border-white/10 rounded-xl">
                         <h1 className="text-sm font-semibold truncate text-white">
                            {style.style.name}
                         </h1>

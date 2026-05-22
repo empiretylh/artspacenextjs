@@ -1,7 +1,7 @@
 const ShoppingCartIcon = ({
    size = 24,
    color = "currentColor",
-   strokeWidth = 1.5,
+   strokeWidth = 1,
    ...props
 }) => (
    <svg
@@ -10,6 +10,7 @@ const ShoppingCartIcon = ({
       height={size}
       viewBox="0 0 24 24"
       fill="none"
+      {...props}
    >
       <path
          d="M2 2H3.74001C4.82001 2 5.67 2.93 5.58 4L4.75 13.96C4.61 15.59 5.89999 16.99 7.53999 16.99H18.19C19.63 16.99 20.89 15.81 21 14.38L21.54 6.88C21.66 5.22 20.4 3.87 18.73 3.87H5.82001"

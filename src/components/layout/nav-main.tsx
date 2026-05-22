@@ -156,7 +156,7 @@ export function NavMain() {
                                  )}
                               >
                                  <div className="relative">
-                                    {item.icon && <item.icon />}
+                                    {item.icon && <item.icon className="w-4 h-4" />}
                                     {item.title === "messages" && hasUnread && (
                                        <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2 shrink-0 animate-pulse rounded-full bg-red-500 border-2 border-white dark:border-zinc-950" />
                                     )}

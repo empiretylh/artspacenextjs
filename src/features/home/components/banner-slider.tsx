@@ -6,6 +6,7 @@ import { getImage } from "@/lib/utils"
 import Link from "next/link"
 import { Autoplay, Pagination } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 type Banner = {
   id: number
@@ -27,6 +28,7 @@ type SwiperStyle = React.CSSProperties & {
 };
 
 export default function BannerSlider({ banners }: Props) {
+  const isMobile = useIsMobile();
   const activeBanners = banners
     .filter((b) => b.is_active)
     .sort((a, b) => a.id - b.id)
@@ -34,7 +36,7 @@ export default function BannerSlider({ banners }: Props) {
   if (!activeBanners.length) return null
 
   return (
-    <section className="rounded-lg relative shadow-xl md:shadow-none aspect-2/1 md:aspect-8/3">
+    <section className="rounded-lg relative shadow-xl md:shadow-none aspect-2/1 md:aspect-8/3 overflow-hidden">
       <Swiper
         modules={[Autoplay, Pagination]}
         autoplay={{ delay: 15000, disableOnInteraction: false }}
@@ -44,50 +46,34 @@ export default function BannerSlider({ banners }: Props) {
           "--swiper-pagination-bullet-inactive-color": "#999999",
         } as SwiperStyle}
         loop
+        watchSlidesProgress
         className="w-full h-full"
       >
-        {activeBanners.map((banner) => (
+        {activeBanners.map((banner, index) => (
           <SwiperSlide key={banner.id}>
             <Link href={banner.link} target="_blank">
               <div className="relative h-full w-full aspect-2/1 md:aspect-8/3">
-                {/* Desktop Image */}
-                <div className="hidden md:block h-full w-full">
-                  <AppImage
-                    src={banner.image_desktop ? getImage(banner.image_desktop) : getImage(banner.image)}
-                    alt={banner.title}
-                    fill
-                    preload
-                    sizes="100vw"
-                    className="object-cover"
-                  />
-                </div>
-
-                {/* Mobile Image */}
-                <div className="block md:hidden h-full w-full">
+                {isMobile ? (
+                  /* Mobile Image */
                   <AppImage
                     src={banner.image_mobile ? getImage(banner.image_mobile) : getImage(banner.image)}
                     alt={banner.title}
                     fill
-                    preload
+                    priority={index === 0}
                     sizes="100vw"
                     className="object-cover"
                   />
-                </div>
-
-                {/* Overlay */}
-                {/* <div className="absolute inset-0 bg-black/30" /> */}
-
-                {/* Content */}
-                {/* <div className="absolute inset-0 flex items-center justify-center text-center">
-                  <div className="space-y-4 px-4">
-                    <h1 className="text-3xl md:text-5xl font-bold text-white">
-                      {banner.title}
-                    </h1>
-                    <Button size="lg" className="rounded-full">
-                      Explore Now
-                    </Button>
-                  </div>
-                </div> */}
+                ) : (
+                  /* Desktop Image */
+                  <AppImage
+                    src={banner.image_desktop ? getImage(banner.image_desktop) : getImage(banner.image)}
+                    alt={banner.title}
+                    fill
+                    priority={index === 0}
+                    sizes="100vw"
+                    className="object-cover"
+                  />
+                )}
               </div>
             </Link>
           </SwiperSlide>

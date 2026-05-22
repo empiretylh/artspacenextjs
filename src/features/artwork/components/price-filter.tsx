@@ -40,7 +40,7 @@ export const PriceFilter: React.FC<Props> = ({
             return [min, max];
          }
       }
-      return [0, 5000];
+      return [0, 10000];
    }, [lastPriceFilter]);
 
    const [sliderValue, setSliderValue] =
@@ -53,7 +53,11 @@ export const PriceFilter: React.FC<Props> = ({
     * (does NOT trigger filter updates)
     */
    useEffect(() => {
-      if (!lastPriceFilter?.value) return;
+      if (!lastPriceFilter?.value) {
+         setSliderValue([0, 10000]);
+         setSelectedRadio(null);
+         return;
+      }
 
       const [min, max] = lastPriceFilter.value
          .toString()
@@ -86,6 +90,10 @@ export const PriceFilter: React.FC<Props> = ({
 
       if (lastPriceFilter?.value === value) return;
 
+      // If no filter is active and the slider is at the default [0, 10000],
+      // do not unnecessarily add price_range=0-10000 to the URL search params.
+      if (!lastPriceFilter?.value && value === "0-10000") return;
+
       if (debounceRef.current) clearTimeout(debounceRef.current);
 
       debounceRef.current = setTimeout(() => {
@@ -105,22 +113,31 @@ export const PriceFilter: React.FC<Props> = ({
    }, []);
 
    return (
-      <div className="flex flex-col gap-4 py-2">
+      <div className="flex flex-col gap-5 py-2">
          {/* Preset ranges */}
-         <div className="flex flex-col gap-2">
+         <div className="flex flex-col gap-4">
             {filterOptions.priceRanges.map((range) => {
                const value = `${range.min}-${range.max}`;
 
                return (
-                  <div key={range.label} className="flex gap-3">
+                  <div key={range.label} className="flex items-center gap-3 group cursor-pointer">
                      <Checkbox
                         id={`price-${range.label}`}
                         checked={selectedRadio === value}
                         onCheckedChange={(checked) => {
-                           if (checked) setSelectedRadio(value);
+                           if (checked) {
+                              setSelectedRadio(value);
+                           } else {
+                              setSelectedRadio(null);
+                              handleFilterChange("price_range", value, false);
+                           }
                         }}
+                        className="size-5 rounded-md border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                      />
-                     <Label htmlFor={`price-${range.label}`}>
+                     <Label
+                        htmlFor={`price-${range.label}`}
+                        className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors"
+                     >
                         {range.label}
                      </Label>
                   </div>
@@ -129,10 +146,10 @@ export const PriceFilter: React.FC<Props> = ({
          </div>
 
          {/* Slider */}
-         <div className="flex flex-col gap-2">
-            <div className="flex justify-between text-sm">
-               <Label>Min: ${sliderValue[0]}</Label>
-               <Label>Max: ${sliderValue[1]}</Label>
+         <div className="flex flex-col gap-3 pt-2">
+            <div className="flex justify-between text-xs font-bold text-muted-foreground/80 uppercase tracking-wider">
+               <Label className="text-xs font-bold cursor-default">Min: ${sliderValue[0]}</Label>
+               <Label className="text-xs font-bold cursor-default">Max: ${sliderValue[1]}</Label>
             </div>
 
             <Slider

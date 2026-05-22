@@ -2,7 +2,7 @@ import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { AuthInitializer } from "@/features/auth/auth-initializer";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
-import { Outfit, Space_Grotesk } from "next/font/google";
+import { Outfit, Space_Grotesk, Noto_Sans_Myanmar } from "next/font/google";
 import "./globals.css";
 import AppProvider from "./providers";
 import { env } from "@/config/env";
@@ -15,6 +15,12 @@ const outfitSans = Outfit({
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
+})
+
+const notoMyanmar = Noto_Sans_Myanmar({
+  variable: "--font-noto-myanmar",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  subsets: ["myanmar"],
 })
 
 export const metadata: Metadata = {
@@ -36,7 +42,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${outfitSans.variable} ${spaceGrotesk.variable} antialiased`}
+        className={`${outfitSans.variable} ${spaceGrotesk.variable} ${notoMyanmar.variable} antialiased`}
       >
         <NextTopLoader
           color="var(--primary)"

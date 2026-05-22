@@ -52,6 +52,15 @@ export function ShareButton({
    variant = "ghost",
 }: ShareButtonProps) {
    const [copied, setCopied] = React.useState(false);
+   const [isShareSupported, setIsShareSupported] = React.useState(false);
+
+   const { source } = useSource();
+
+   React.useEffect(() => {
+      if (typeof navigator !== "undefined" && !!navigator.share) {
+         setIsShareSupported(true);
+      }
+   }, []);
 
    const encodedUrl = encodeURIComponent(url);
    const encodedTitle = encodeURIComponent(title);
@@ -81,10 +90,34 @@ export function ShareButton({
       setTimeout(() => setCopied(false), 2000);
    };
 
-   const { source } = useSource();
-
    const handleShareClick = (name: string) => {
       shareAnalytics.share({ source, content_type, item_id, item_name, user_type, method: name.toLowerCase() })
+   }
+
+   const handleNativeShare = async () => {
+      try {
+         await navigator.share({
+            title: title || item_name,
+            text: title ? `${title} - ${item_name}` : item_name,
+            url: url,
+         });
+         shareAnalytics.share({ source, content_type, item_id, item_name, user_type, method: 'native' });
+      } catch (error) {
+         console.log("Native share error or cancelled", error);
+      }
+   };
+
+   if (isShareSupported) {
+      return (
+         <Button 
+            variant={variant} 
+            size={size} 
+            className={className}
+            onClick={handleNativeShare}
+         >
+            {textButton ? "Share" : <ShareIcon className="h-4 w-4" />}
+         </Button>
+      );
    }
 
    return (

@@ -16,7 +16,7 @@ export const FeaturedArtworksSection = () => {
    const artworksQuery = useQuery({
       queryKey: queryKeys.artwork.list({ limit: 10 }),
       queryFn: () => getArtworks({ limit: 10 }),
-      refetchOnMount: "always",
+      staleTime: 1000 * 60 * 5, // 5 minutes
    })
 
    const featuredArtworks = artworksQuery.data?.results ?? [];
@@ -55,12 +55,13 @@ export const FeaturedArtworksSection = () => {
                slidesPerView={2.2}
                slidesPerGroup={1}
                spaceBetween={12}
+               watchSlidesProgress
+               touchStartPreventDefault={false}
                navigation={{
                   nextEl: ".swiper-artwork-next",
                   prevEl: ".swiper-artwork-prev",
                }}
                className="!px-4 md:!px-0 !overflow-visible"
-               watchSlidesProgress={true}
                breakpoints={{
                   640: { slidesPerView: 3.2, spaceBetween: 16 },
                   1024: { slidesPerView: 4.2, spaceBetween: 20 },
