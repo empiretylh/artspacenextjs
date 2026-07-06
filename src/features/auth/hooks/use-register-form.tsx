@@ -14,7 +14,7 @@ import { useAuth } from "../store";
 import type { CredentialResponse } from "@react-oauth/google";
 import type { User } from "@/types";
 
-const myanmarPhoneRegex = /^(?:\+?95|0)9(?:2|3|4|5|6|7|8|9)\d{7,9}$/;
+const myanmarPhoneRegex = /^(?:\+?95|0)9(?:2|3|4|5|6|7|8|9)\d{6,8}$/;
 
 // 🧠 Validation schema (unchanged)
 export const registerSchema = z

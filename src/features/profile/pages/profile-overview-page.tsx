@@ -95,9 +95,9 @@ const ProfileOverviewPage = () => {
 
    return (
       <section className="w-full" aria-labelledby="profile-overview-title">
-         <div className="space-y-6 col-span-3 md:col-span-2">
+         <div className="space-y-8 col-span-3 md:col-span-2">
             <div>
-               <h2 id="profile-overview-title" className="text-lg font-semibold mb-3">
+               <h2 id="profile-overview-title" className="text-2xl font-bold font-display mb-4">
                   About the profile
                </h2>
                <p className="text-base">
@@ -106,7 +106,7 @@ const ProfileOverviewPage = () => {
             </div>
 
             <div>
-               <h3 className="text-lg font-semibold mb-3">Summary</h3>
+               <h3 className="text-2xl font-bold font-display mb-4">Summary</h3>
 
                <div className="grid grid-cols-1 gap-4 text-sm font-normal" role="list">
                   <div className="flex gap-2 items-center" role="listitem">

@@ -78,7 +78,7 @@ const Footer = () => {
             {/* Navigation sections */}
             {Object.keys(navlinks).map((section) => (
                <div key={section} className="space-y-3">
-                  <h3 className="text-base font-semibold text-foreground">
+                  <h3 className="text-base font-bold font-display text-foreground">
                      {section}
                   </h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
@@ -123,7 +123,7 @@ const Footer = () => {
             {/* Subscribe */}
             <div className="flex flex-col gap-6">
                <div className="space-y-3">
-                  <h3 className="text-base font-semibold capitalize">
+                  <h3 className="text-base font-bold font-display capitalize">
                      Subscribe
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">

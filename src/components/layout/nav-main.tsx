@@ -151,6 +151,7 @@ export function NavMain() {
                                     router.push(item.url);
                                  }}
                                  className={cn(
+                                    "transition-transform duration-200 ease-out hover:translate-x-1",
                                     (item.disabled || ((item.title === "order" && !user)) || (item.title === "messages" && !user)) &&
                                     "pointer-events-none opacity-50"
                                  )}

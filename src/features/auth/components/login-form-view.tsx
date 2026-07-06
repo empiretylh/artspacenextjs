@@ -8,6 +8,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -39,11 +40,11 @@ export default function LoginFormView({
 }: Props) {
   return (
     <div>
-      <p className="text-center text-lg font-semibold text-foreground mb-2">
+      <h1 className="text-center text-xl font-bold font-display text-foreground mb-2">
         Welcome Back
-      </p>
+      </h1>
       <p className="text-center text-muted-foreground mb-6 text-sm">
-        Please sign in to your account
+        Sign in to connect with artists and explore collections
       </p>
 
       {/* Session expired message (shown after redirect) */}
@@ -68,8 +69,9 @@ export default function LoginFormView({
             name="email"
             render={({ field }) => (
               <FormItem>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Email Address</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="Email address" {...field} />
+                  <Input type="email" placeholder="e.g. name@example.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -82,23 +84,24 @@ export default function LoginFormView({
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormControl>
-                  <div className="relative">
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Password</FormLabel>
+                <div className="relative">
+                  <FormControl>
                     <Input
                       type={showPassword ? "text" : "password"}
-                      placeholder="Password"
+                      placeholder="••••••••"
                       {...field}
                       className="pr-10"
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </FormControl>
+                  </FormControl>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -107,7 +110,7 @@ export default function LoginFormView({
           <Field>
             <Button
               type="submit"
-              className="w-full"
+              className="w-full mt-2"
               disabled={loading || form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? "Signing in..." : "Sign In"}

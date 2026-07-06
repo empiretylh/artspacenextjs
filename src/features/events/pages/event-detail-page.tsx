@@ -62,7 +62,7 @@ export default function EventDetailPage() {
    return (
       <div className="pb-24 sm:pb-16">
          {/* Hero */}
-         <div className="relative h-[400px] w-screen md:w-full ml-[50%] translate-x-[-50%] md:aspect-8/3">
+         <div className="relative w-screen md:w-full ml-[50%] translate-x-[-50%] aspect-video max-h-[480px]">
             <AppImage
                src={getImage(event.cover_photo)}
                alt={event.title}
@@ -86,7 +86,7 @@ export default function EventDetailPage() {
                      />
                      <div className="flex flex-col gap-1">
                         <div className="flex gap-2 items-end mb-2">
-                           <h1 className="text-2xl sm:text-3xl font-semibold text-white leading-tight">
+                           <h1 className="text-2xl sm:text-3xl font-bold font-display text-white leading-tight">
                               {event.title}
                            </h1>
                            <ShareButton content_type="event" item_id={String(event.id)} item_name={event.title} className="text-white" />
@@ -127,7 +127,7 @@ export default function EventDetailPage() {
             <div className="lg:col-span-2 space-y-8">
                <Card>
                   <CardContent>
-                     <h2 className="text-base sm:text-lg mb-2 font-semibold">
+                     <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
                         About
                      </h2>
                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
@@ -138,7 +138,7 @@ export default function EventDetailPage() {
 
                <Card>
                   <CardContent>
-                     <h2 className="text-base sm:text-lg mb-2 font-semibold">
+                     <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
                         Artists
                      </h2>
 
@@ -167,7 +167,7 @@ export default function EventDetailPage() {
 
                <Card>
                   <CardContent>
-                     <h2 className="text-base sm:text-lg mb-2 font-semibold">
+                     <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
                         Artworks
                      </h2>
 
@@ -182,8 +182,7 @@ export default function EventDetailPage() {
                                  <ArtworkCard
                                     key={artwork.id}
                                     artwork={artwork}
-                                    pure
-                                 />
+                                  />
                               ))}
                            </div>
                         </ScrollArea>
@@ -197,7 +196,7 @@ export default function EventDetailPage() {
 
                <Card>
                   <CardContent>
-                     <h2 className="text-base sm:text-lg mb-2 font-semibold">
+                     <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
                         Images
                      </h2>
 

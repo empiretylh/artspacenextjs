@@ -63,8 +63,8 @@ const EventsPageView = ({
                {/* <FilterRow filters={filters} setFilters={setFilters} /> */}
 
                {!titleOff && (
-                  <div className="flex items-center justify-between">
-                     <h1 className="text-2xl font-bold">Events</h1>
+                  <div className="flex items-center justify-between mb-6">
+                     <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight">Events</h1>
                   </div>
                )}
 

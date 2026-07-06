@@ -1,7 +1,7 @@
 "use client";
 
 import { Command as CommandPrimitive, useCommandState } from "cmdk";
-import { XIcon } from "lucide-react";
+import { XIcon, ChevronDown } from "lucide-react";
 import * as React from "react";
 import { useEffect } from "react";
 
@@ -463,7 +463,7 @@ const MultipleSelector = ({
                      "cursor-text": !disabled && selected.length !== 0,
                      "p-1": selected.length !== 0,
                   },
-                  !hideClearAllButton && "pe-9",
+                  (!hideClearAllButton && !disabled && selected.length > 0) ? "pe-14" : "pe-9",
                   className
                )}
                onClick={() => {
@@ -560,7 +560,7 @@ const MultipleSelector = ({
                   <button
                      aria-label="Clear all"
                      className={cn(
-                        "absolute end-0 top-0 flex size-9 items-center justify-center rounded-md border border-transparent text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                        "absolute end-8 top-1/2 -translate-y-1/2 flex size-6 items-center justify-center rounded-md border border-transparent text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
                         (hideClearAllButton ||
                            disabled ||
                            selected.length < 1 ||
@@ -574,8 +574,11 @@ const MultipleSelector = ({
                      }}
                      type="button"
                   >
-                     <XIcon aria-hidden="true" size={16} />
+                     <XIcon aria-hidden="true" size={14} />
                   </button>
+                  <div className="absolute end-3 top-1/2 -translate-y-1/2 flex size-4 items-center justify-center pointer-events-none select-none text-muted-foreground/60">
+                     <ChevronDown aria-hidden="true" size={16} />
+                  </div>
                </div>
             </div>
             <div className="relative">

@@ -136,7 +136,7 @@ export const ArtworkCreateForm = ({
          hide_price: false,
          description: "",
          dimensions: "",
-         price: 1,
+         price: undefined,
          currency: "MMK",
          visibility: "PRIVATE",
          are_u_owner: true,
@@ -523,7 +523,7 @@ export const ArtworkCreateForm = ({
                                     <FormControl>
                                        <Input
                                           type="number"
-                                          placeholder="e.g., 5000"
+                                          placeholder="Enter Artwork Price"
                                           min={1}
                                           step={1}
                                           {...field}

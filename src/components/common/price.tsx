@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"; // your cn helper
 type PriceSize = "xs" | "sm" | "md" | "lg";
 
 const styles = {
-  wrap: "inline-flex items-baseline gap-1",
+  wrap: "inline-flex items-baseline",
   currency: "text-muted-foreground",
   fraction: "text-muted-foreground",
   value: "",
@@ -59,6 +59,7 @@ export default function Price({
               key={key}
               className={cn(
                 uniform ? s.value : cn(styles.currency, s.currency),
+                "mr-0.5",
                 currencyClassName
               )}
             >

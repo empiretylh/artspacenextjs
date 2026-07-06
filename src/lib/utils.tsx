@@ -284,7 +284,7 @@ const defaultGetPriceArgs = {
 };
 
 export const getPriceParts = (
-   { currency, price }: { currency: Currency; price: string | number } = defaultGetPriceArgs
+   { currency, price }: { currency?: Currency; price: string | number } = defaultGetPriceArgs
 ) => {
    const numericPrice =
       typeof price === "string" ? Number(price) : price;
@@ -293,13 +293,13 @@ export const getPriceParts = (
       return null;
    }
 
-   const normalizedCurrency = (currency.code || "USD").toUpperCase();
+   const normalizedCurrency = (currency?.code || "USD").toUpperCase();
    const finalCurrency =
       normalizedCurrency === "MMK" || normalizedCurrency === "USD"
          ? normalizedCurrency
          : "USD";
 
-   const fractionDigits = finalCurrency === "MMK" ? 0 : 2;
+   const fractionDigits = 0;
 
    const formatter = new Intl.NumberFormat("en-US", {
       style: "currency",

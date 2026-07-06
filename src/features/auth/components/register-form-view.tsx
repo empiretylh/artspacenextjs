@@ -8,6 +8,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -50,9 +51,12 @@ export default function RegisterFormView({
 }: Props) {
   return (
     <div className="">
-      <h1 className="text-center text-lg font-semibold text-foreground mb-2">
-        Sign Up
+      <h1 className="text-center text-xl font-bold font-display text-foreground mb-2">
+        Join Myanmar Art Space
       </h1>
+      <p className="text-center text-muted-foreground mb-6 text-sm">
+        Create an account to support local artists and collect art
+      </p>
 
       <Form {...form}>
         <form
@@ -67,9 +71,10 @@ export default function RegisterFormView({
             name="email"
             render={({ field, fieldState }) => (
               <FormItem>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Email Address *</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Email address *"
+                    placeholder="e.g. name@example.com"
                     type="email"
                     inputMode="email"
                     autoComplete="email"
@@ -92,9 +97,10 @@ export default function RegisterFormView({
             name="first_name"
             render={({ field, fieldState }) => (
               <FormItem>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">First Name *</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="First Name *"
+                    placeholder="e.g. John"
                     autoComplete="given-name"
                     aria-label="First name"
                     aria-invalid={!!fieldState.error}
@@ -112,9 +118,10 @@ export default function RegisterFormView({
             name="last_name"
             render={({ field, fieldState }) => (
               <FormItem>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Last Name</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Last Name"
+                    placeholder="e.g. Doe"
                     autoComplete="family-name"
                     aria-label="Last name"
                     aria-invalid={!!fieldState.error}
@@ -132,6 +139,7 @@ export default function RegisterFormView({
             name="user_type"
             render={({ field, fieldState }) => (
               <FormItem>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Account Type *</FormLabel>
                 <FormControl>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger
@@ -139,7 +147,7 @@ export default function RegisterFormView({
                       aria-label="User type"
                       aria-invalid={!!fieldState.error}
                     >
-                      <SelectValue placeholder="Select User Type" />
+                      <SelectValue placeholder="Select Account Type" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="BUYER">Default</SelectItem>
@@ -160,9 +168,10 @@ export default function RegisterFormView({
             name="phone"
             render={({ field, fieldState }) => (
               <FormItem>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Phone Number *</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Phone *"
+                    placeholder="e.g. 09xxxxxxxxx"
                     type="tel"
                     inputMode="tel"
                     autoComplete="tel"
@@ -182,29 +191,30 @@ export default function RegisterFormView({
             name="password"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormControl>
-                  <div className="relative">
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Password *</FormLabel>
+                <div className="relative">
+                  <FormControl>
                     <Input
                       title={field.name}
                       type={showPassword ? "text" : "password"}
-                      placeholder="Password *"
+                      placeholder="••••••••"
                       autoComplete="new-password"
                       aria-label="Password"
                       aria-invalid={!!fieldState.error}
                       {...field}
                       className="pr-10"
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                      aria-pressed={showPassword}
-                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </FormControl>
+                  </FormControl>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
+                    className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -216,38 +226,39 @@ export default function RegisterFormView({
             name="password_confirmation"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormControl>
-                  <div className="relative">
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Confirm Password *</FormLabel>
+                <div className="relative">
+                  <FormControl>
                     <Input
                       type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm Password *"
+                      placeholder="••••••••"
                       autoComplete="new-password"
                       aria-label="Confirm password"
                       aria-invalid={!!fieldState.error}
                       {...field}
                       className="pr-10"
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      aria-label={
-                        showConfirmPassword
-                          ? "Hide confirm password"
-                          : "Show confirm password"
-                      }
-                      aria-pressed={showConfirmPassword}
-                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
-                    >
-                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </FormControl>
+                  </FormControl>
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={
+                      showConfirmPassword
+                        ? "Hide confirm password"
+                        : "Show confirm password"
+                    }
+                    aria-pressed={showConfirmPassword}
+                    className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
+                  >
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full mt-2" disabled={loading}>
             {loading ? "Loading..." : "Sign up"}
           </Button>
 

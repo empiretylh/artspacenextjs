@@ -57,7 +57,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-success: var(--success);
   --color-info: var(--color-blue-500);
-  --font-display: var(--font-space-grotesk), var(--font-noto-myanmar), "Space Grotesk", sans-serif;
+  --font-display: var(--font-fraunces), var(--font-noto-myanmar), "Fraunces", serif;
   /* --font-sans: 'Poppins', 'ui-sans-serif', 'system-ui'; */
   --font-sans: var(--font-outfit-sans), var(--font-noto-myanmar), "Outfit", sans-serif;
   --spacing: 0.25rem;

@@ -131,8 +131,8 @@ const ArtworksPageView = ({
                   <div className="space-y-4 px-1">
                      {(isLoading) && <Skeleton className="h-9 w-64 rounded-xl" />}
                      {!isLoading && (
-                        <div className="flex items-center justify-between mb-2">
-                           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+                        <div className="flex items-center justify-between mb-6">
+                           <h1 className="text-3xl font-bold font-display tracking-tight text-foreground">
                               {title ?? "Artworks"}
                            </h1>
                         </div>
@@ -193,7 +193,8 @@ const ArtworksPageView = ({
                         </div>
                      )}
 
-                     <div className="flex gap-3 items-center justify-end py-1">
+                     {(options.enableSorting || options.enableFilters) && (
+<div className="flex gap-3 items-center justify-end py-1">
                         {options.enableSorting && (
                            <div className="inline-flex gap-3 items-center">
                               <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -249,6 +250,7 @@ const ArtworksPageView = ({
                            </Button>
                         )}
                      </div>
+)}
 
                      <div>
                         {pagesToRender?.[0]?.results?.length <= 0 &&

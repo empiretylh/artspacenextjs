@@ -100,9 +100,9 @@ export default function ProfileCard({ user }: { user: User }) {
                      <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs px-1 py-2 rounded-lg"
+                        className="text-xs px-3 py-2 rounded-lg"
                      >
-                        Send Message
+                        Message
                      </Button>
                   </Link>
                )}
