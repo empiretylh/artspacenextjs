@@ -9,7 +9,8 @@ import {
    ArrowLeft,
    Bell,
    MoreVerticalIcon,
-   Search
+   Search,
+   Plus
 } from "lucide-react";
 import { Suspense, useState } from "react";
 import { InputWithLeftSelectSkeleton } from "../app/input-with-left-select-skeleton";
@@ -62,9 +63,9 @@ export function SiteHeader() {
             ) : (
                <div className="flex w-full items-center justify-between gap-2">
                   {/* Left Section (Logo + Sidebar Trigger) */}
-                  <div className="flex gap-2 items-center md:hidden">
-                     <SidebarTrigger className="-ml-1" />
-                     <Link to={"/"} className="uppercase font-display font-bold text-sm">
+                  <div className="flex gap-2 items-center md:hidden min-w-0">
+                     <SidebarTrigger className="-ml-1 shrink-0" />
+                     <Link to={"/"} className="uppercase font-display font-bold text-sm whitespace-nowrap truncate max-w-[150px] xs:max-w-none">
                         {t("title")}
                      </Link>
                   </div>
@@ -145,16 +146,17 @@ export function SiteHeader() {
                                  <MoreVerticalIcon className="size-6" />
                               </Button>
                            </DropdownMenuTrigger>
-                           <DropdownMenuContent>
+                           <DropdownMenuContent align="end" className="w-56">
                               {isLoggedIn && (
-                                 <Button
+                                 <DropdownMenuItem
                                     onClick={() =>
                                        setIsArtworkCreateModalOpen(true)
                                     }
-                                    className={cn("w-full h-8", isMy ? "xl:hidden" : "lg:hidden")}
+                                    className={cn("cursor-pointer flex items-center gap-2", isMy ? "xl:hidden" : "lg:hidden")}
                                  >
-                                    {t("create")}
-                                 </Button>
+                                    <Plus className="h-4 w-4 text-muted-foreground" />
+                                    <span>{t("create")}</span>
+                                 </DropdownMenuItem>
                               )}
                               {!isLoggedIn && (
                                  <>
@@ -176,21 +178,33 @@ export function SiteHeader() {
                                     </DropdownMenuItem>
                                  </>
                               )}
-                              <DropdownMenuItem className="lg:hidden focus:text-primary-foreground">
-                                 <div className="flex justify-between w-full items-center">
-                                    <Bell className="h-4 w-4" />
-                                    <span className="text-xs text-primary-foreground! p-1 w-5 h-5 flex items-center justify-center bg-primary rounded-full">
-                                       0
-                                    </span>
+                              <DropdownMenuItem className={cn("cursor-pointer flex justify-between items-center focus:text-accent-foreground", isMy ? "xl:hidden" : "lg:hidden")}>
+                                 <div className="flex items-center gap-2">
+                                    <Bell className="h-4 w-4 text-muted-foreground" />
+                                    <span>{t("notifications")}</span>
                                  </div>
+                                 <span className="text-xs font-semibold px-2 py-0.5 bg-primary/10 text-primary rounded-full">
+                                    0
+                                 </span>
                               </DropdownMenuItem>
-                              {/* <ThemeSwitcher className="w-full" /> */}
-                           </DropdownMenuContent>
+                               <div className="md:hidden p-2 border-t mt-2 space-y-2">
+                                  <div className="flex justify-between items-center gap-4 px-2 py-1.5">
+                                     <span className="text-xs font-medium text-muted-foreground">Language</span>
+                                     <LanguageSwitcher />
+                                  </div>
+                                  <div className="flex justify-between items-center gap-4 px-2 py-1.5">
+                                     <span className="text-xs font-medium text-muted-foreground">Theme</span>
+                                     <ThemeSwitcher />
+                                  </div>
+                               </div>
+                            </DropdownMenuContent>
                         </DropdownMenu>
                      </div>
  
-                     <LanguageSwitcher />
-                     <ThemeSwitcher />
+                     <div className="hidden md:flex items-center gap-2">
+                        <LanguageSwitcher />
+                        <ThemeSwitcher />
+                     </div>
                   </div>
                </div>
             )}

@@ -127,80 +127,81 @@ const ProfileLayoutView = ({
                   className="object-cover rounded-md"
                />
             </button>
+         </div>
 
-            <div className="absolute left-1/2 bottom-0 translate-x-[-50%] translate-y-[70%] text-center w-full px-4">
-               {/* ✅ Avatar click-to-open */}
-               <button
-                  ref={avatarButtonRef}
-                  tabIndex={0}
-                  aria-label="Open profile picture"
-                  onClick={() => setIsAvatarOpen(true)}
-                  className="mx-auto relative aspect-square w-[120px] sm:w-[150px] rounded-full border border-white overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
-               >
-                  <AppImage
-                     src={avatarSrc}
-                     alt={`${fullName} profile picture`}
-                     width={150}
-                     height={150}
-                     sizes="150px"
-                     className="object-cover"
+         {/* Profile details container in normal flow */}
+         <div className="text-center w-full px-4 -mt-16 sm:-mt-20 relative z-10">
+            {/* ✅ Avatar click-to-open */}
+            <button
+               ref={avatarButtonRef}
+               tabIndex={0}
+               aria-label="Open profile picture"
+               onClick={() => setIsAvatarOpen(true)}
+               className="mx-auto relative aspect-square w-[120px] sm:w-[150px] rounded-full border-4 border-background overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+            >
+               <AppImage
+                  src={avatarSrc}
+                  alt={`${fullName} profile picture`}
+                  width={150}
+                  height={150}
+                  sizes="150px"
+                  className="object-cover"
+               />
+            </button>
+
+            <div className="mt-3 space-y-1">
+               <div className="flex items-center justify-center gap-2">
+                  <h1 className="font-display text-lg sm:text-xl">{fullName}</h1>
+                  {user?.user_type && getUserIcon()}
+               </div>
+
+               <p className="text-sm text-muted-foreground">{user?.email}</p>
+               <p className="text-sm max-w-md mx-auto whitespace-pre-wrap">{user?.profile.bio || "No bio"}</p>
+
+               <div className="mt-3 flex justify-center items-center gap-2">
+                  <ShareButton
+                     content_type={"user"}
+                     user_type={user.user_type}
+                     item_id={String(user?.id)}
+                     item_name={String(fullName)}
+                     url={
+                        typeof window !== "undefined"
+                           ? `${window.location.origin}${paths[userType].detail.getHref(
+                              String(user?.id)
+                           )}`
+                           : undefined
+                     }
                   />
-               </button>
 
-               <div className="mt-3 space-y-1">
-                  <div className="flex items-center justify-center gap-2">
-                     <h1 className="font-display text-lg sm:text-xl">{fullName}</h1>
-                     {user?.user_type && getUserIcon()}
-                  </div>
+                  {variant !== "profile" && (
+                     <>
+                        {user && (
+                           <FollowButton
+                              size="default"
+                              loading={followStatusQuery.isLoading}
+                              userId={String(user.id)}
+                              userType={user.user_type}
+                              following={followStatusQuery.data || false}
+                           />
+                        )}
+                        {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
+                           <Link to={`${paths.chats.path}?userId=${user.id}&userType=${userType}`}>
+                              <Button variant="outline">
+                                 Send Message
+                              </Button>
+                           </Link>
+                        )}
+                     </>
+                  )}
 
-                  <p className="text-sm text-muted-foreground">{user?.email}</p>
-                  <p className="text-sm max-w-md mx-auto">{user?.profile.bio || "No bio"}</p>
-
-                  <div className="mt-3 flex justify-center items-center gap-2">
-                     <ShareButton
-                        content_type={"user"}
-                        user_type={user.user_type}
-                        item_id={String(user?.id)}
-                        item_name={String(fullName)}
-                        url={
-                           typeof window !== "undefined"
-                              ? `${window.location.origin}${paths[userType].detail.getHref(
-                                 String(user?.id)
-                              )}`
-                              : undefined
-                        }
-                     />
-
-                     {variant !== "profile" && (
-                        <>
-                           {user && (
-                              <FollowButton
-                                 size="default"
-                                 loading={followStatusQuery.isLoading}
-                                 userId={String(user.id)}
-                                 userType={user.user_type}
-                                 following={followStatusQuery.data || false}
-                              />
-                           )}
-                           {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
-                              <Link to={`${paths.chats.path}?userId=${user.id}&userType=${userType}`}>
-                                 <Button variant="outline">
-                                    Send Message
-                                 </Button>
-                              </Link>
-                           )}
-                        </>
-                     )}
-
-                     {user && String(user.id) !== String(authUser?.id) && (
-                        <ProfileActions user={user} blocked={blockStatusQuery.data} />
-                     )}
-                  </div>
+                  {user && String(user.id) !== String(authUser?.id) && (
+                     <ProfileActions user={user} blocked={blockStatusQuery.data} />
+                  )}
                </div>
             </div>
          </div>
 
-         <div className="container pt-[180px] sm:pt-[200px]">
+         <div className="container mt-1 sm:mt-2">
             <ScrollArea className="w-full">
                <div className="flex justify-center my-2">
                   <div className="inline-flex gap-4 text-sm md:text-base border-b whitespace-nowrap">
