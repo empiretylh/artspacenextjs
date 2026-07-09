@@ -32,7 +32,7 @@ export function LanguageSwitcher() {
                variant="outline"
                size="sm"
                className={cn(
-                  "h-9 px-3 gap-2 rounded-full border border-input bg-background hover:bg-accent hover:text-accent-foreground text-xs font-semibold transition-all shadow-xs shrink-0 select-none cursor-pointer",
+                  "h-8 px-3 gap-2 rounded-full border border-input bg-background hover:bg-accent hover:text-accent-foreground text-xs font-semibold transition-all shadow-xs shrink-0 select-none cursor-pointer",
                   isPending && "opacity-50 pointer-events-none"
                )}
                disabled={isPending}
@@ -46,7 +46,7 @@ export function LanguageSwitcher() {
             <DropdownMenuItem
                onClick={() => onSelectChange("en")}
                className={cn(
-                  "flex items-center justify-between cursor-pointer font-medium text-xs transition-colors",
+                  "flex items-center justify-between cursor-pointer font-medium text-sm transition-colors",
                   locale === "en" && "bg-primary/10 text-primary hover:bg-primary/20"
                )}
             >
@@ -58,7 +58,7 @@ export function LanguageSwitcher() {
             <DropdownMenuItem
                onClick={() => onSelectChange("my")}
                className={cn(
-                  "flex items-center justify-between cursor-pointer font-medium text-xs transition-colors",
+                  "flex items-center justify-between cursor-pointer font-medium text-sm transition-colors",
                   locale === "my" && "bg-primary/10 text-primary hover:bg-primary/20"
                )}
             >

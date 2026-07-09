@@ -19,7 +19,7 @@ import CollectionIcon from "@/components/icons/collection-icon";
 import HeartIcon from "@/components/icons/heart-icon";
 import OverviewIcon from "@/components/icons/overview-icon";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
-import { ClipboardPenLineIcon } from "lucide-react";
+import { ClipboardPenLineIcon, Settings } from "lucide-react";
 import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
 import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
 import { UserRouteType } from "@/features/service/artspace/get-users";
@@ -173,6 +173,15 @@ const ProfileLayoutView = ({
                            : undefined
                      }
                   />
+
+                  {variant === "profile" && (
+                     <Link to={paths.settings.path}>
+                        <Button variant="outline" className="rounded-full gap-1.5 h-8 px-3 text-xs font-semibold">
+                           <Settings className="h-3.5 w-3.5 text-muted-foreground" />
+                           <span>Edit Profile</span>
+                        </Button>
+                     </Link>
+                  )}
 
                   {variant !== "profile" && (
                      <>

@@ -122,13 +122,13 @@ export function SiteHeader() {
                               to={paths.auth.login.path}
                               className={cn(isMy ? "hidden 2xl:inline-flex" : "hidden xl:inline-flex")}
                            >
-                              <Button className=" h-8">{t("signIn")}</Button>
+                              <Button className="rounded-full h-8">{t("signIn")}</Button>
                            </Link>
                            <Link
                               to={paths.auth.register.path}
                               className={cn(isMy ? "hidden 2xl:inline-flex" : "hidden xl:inline-flex")}
                            >
-                              <Button variant="outline" className=" h-8">
+                              <Button variant="outline" className="rounded-full h-8">
                                  {t("joinNow")}
                               </Button>
                            </Link>
