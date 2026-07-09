@@ -17,6 +17,7 @@ import { InputWithLeftSelect } from "../app/input-with-left-seletct";
 import { ProfileDropdown } from "../app/profile-dropdown";
 import Link from "../common/link";
 import { ThemeSwitcher } from "../theme-switcher";
+import { LanguageSwitcher } from "./language-switcher";
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -25,8 +26,13 @@ import {
 } from "../ui/dropdown-menu";
 import { SidebarTrigger } from "../ui/sidebar";
 import { SourceProvider } from "@/lib/analytics-source";
+import { useTranslations, useLocale } from "next-intl";
 
 export function SiteHeader() {
+   const t = useTranslations("Header");
+   const locale = useLocale();
+   const isMy = locale === "my";
+
    const [isArtworkCreateModalOpen, setIsArtworkCreateModalOpen] =
       useState(false);
    const { items } = useCartStore();
@@ -59,10 +65,10 @@ export function SiteHeader() {
                   <div className="flex gap-2 items-center md:hidden">
                      <SidebarTrigger className="-ml-1" />
                      <Link to={"/"} className="uppercase font-display font-bold text-sm">
-                        Myanmar Art Space
+                        {t("title")}
                      </Link>
                   </div>
-
+ 
                   {/* Search Input on Desktop */}
                   <div className={cn(
                      "hidden md:flex fixed left-(--sidebar-width) lg:left-1/2 lg:-translate-x-1/2",
@@ -71,7 +77,7 @@ export function SiteHeader() {
                         <InputWithLeftSelect />
                      </Suspense>
                   </div>
-
+ 
                   {/* Right Section */}
                   <div className="flex items-center justify-end gap-2 ml-auto">
                      {/* Mobile Search Icon */}
@@ -84,7 +90,7 @@ export function SiteHeader() {
                      >
                         <Search className="size-6" />
                      </Button>
-
+ 
                      <Button
                         variant="ghost"
                         className="h-8 w-8 p-0 relative hidden lg:flex"
@@ -94,43 +100,43 @@ export function SiteHeader() {
                         </span>
                         <Bell className="h-4 w-4" />
                      </Button>
-
+ 
                      {isLoggedIn && (
                         <Button
                            onClick={() => setIsArtworkCreateModalOpen(true)}
-                           className="hidden lg:inline-flex h-8"
+                           className={cn(isMy ? "hidden xl:inline-flex h-8" : "hidden lg:inline-flex h-8")}
                         >
-                           Create
+                           {t("create")}
                         </Button>
                      )}
-
+ 
                      {/* Auth Buttons / Profile */}
                      {!isLoggedIn ? (
                         <>
                            <Link
                               to={paths.auth.login.path}
-                              className="hidden xl:inline-flex"
+                              className={cn(isMy ? "hidden 2xl:inline-flex" : "hidden xl:inline-flex")}
                            >
-                              <Button className=" h-8">Sign In</Button>
+                              <Button className=" h-8">{t("signIn")}</Button>
                            </Link>
                            <Link
                               to={paths.auth.register.path}
-                              className="hidden xl:inline-flex"
+                              className={cn(isMy ? "hidden 2xl:inline-flex" : "hidden xl:inline-flex")}
                            >
                               <Button variant="outline" className=" h-8">
-                                 Join Now
+                                 {t("joinNow")}
                               </Button>
                            </Link>
                         </>
                      ) : (
                         <ProfileDropdown />
                      )}
-
+ 
                      <div
                         className={cn(
                            "flex items-center",
-                           isLoggedIn && "lg:hidden",
-                           !isLoggedIn && "xl:hidden"
+                           isLoggedIn && (isMy ? "xl:hidden" : "lg:hidden"),
+                           !isLoggedIn && (isMy ? "2xl:hidden" : "xl:hidden")
                         )}
                      >
                         <DropdownMenu>
@@ -145,9 +151,9 @@ export function SiteHeader() {
                                     onClick={() =>
                                        setIsArtworkCreateModalOpen(true)
                                     }
-                                    className="w-full lg:hidden h-8"
+                                    className={cn("w-full h-8", isMy ? "xl:hidden" : "lg:hidden")}
                                  >
-                                    Create
+                                    {t("create")}
                                  </Button>
                               )}
                               {!isLoggedIn && (
@@ -157,7 +163,7 @@ export function SiteHeader() {
                                           className="w-full"
                                           to={paths.auth.login.path}
                                        >
-                                          Sign In
+                                          {t("signIn")}
                                        </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>
@@ -165,7 +171,7 @@ export function SiteHeader() {
                                           className="w-full"
                                           to={paths.auth.register.path}
                                        >
-                                          Join Now
+                                          {t("joinNow")}
                                        </Link>
                                     </DropdownMenuItem>
                                  </>
@@ -182,7 +188,8 @@ export function SiteHeader() {
                            </DropdownMenuContent>
                         </DropdownMenu>
                      </div>
-
+ 
+                     <LanguageSwitcher />
                      <ThemeSwitcher />
                   </div>
                </div>

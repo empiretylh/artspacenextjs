@@ -21,9 +21,11 @@ import {
 import AppSidebarFooter from "./app-sidbar-footer";
 import AppImage from "@/components/common/app-image";
 import { PanelLeftIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
    const { open, toggleSidebar } = useSidebar()
+   const t = useTranslations("Header");
 
    return (
       <Sidebar collapsible="icon" className="h-auto" {...props}>
@@ -60,7 +62,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                               open ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 pointer-events-none hidden"
                            )}
                         >
-                           Myanmar Art Space
+                           {t("title")}
                         </Link>
                      </div>
                   </SidebarMenuButton>

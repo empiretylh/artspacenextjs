@@ -1,5 +1,42 @@
 {
   "Common": {
     "title": "Myanmar Art Space"
+  },
+  "Header": {
+    "title": "Myanmar Art Space",
+    "create": "Create",
+    "signIn": "Sign In",
+    "joinNow": "Join Now"
+  },
+  "Navigation": {
+    "home": "Home",
+    "artwork": "Artwork",
+    "artist": "Artist",
+    "collectors": "Collectors",
+    "gallery": "Gallery",
+    "event": "Event",
+    "messages": "Messages",
+    "order": "Order"
+  },
+  "Footer": {
+    "explore": "Explore",
+    "aboutUs": "About Us",
+    "arcade": "Arcade",
+    "press": "Press",
+    "help": "Help",
+    "helpCenter": "Help Center",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "subscribe": "Subscribe",
+    "stayUpdated": "Stay updated with our latest collections.",
+    "emailPlaceholder": "Your email",
+    "copyright": "Myanmar Art Space",
+    "subscribedSuccess": "Subscribed to newsletter successfully",
+    "success": "Success",
+    "reachOut": "Reach out to the right team. Here is our contact list:",
+    "supportTeam": "Support Team",
+    "salesTeam": "Sales Team",
+    "marketingTeam": "Marketing Team",
+    "close": "Close"
   }
 }
