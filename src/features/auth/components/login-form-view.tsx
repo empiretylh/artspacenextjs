@@ -16,6 +16,7 @@ import { paths } from "@/config/paths";
 import { Eye, EyeOff } from "lucide-react";
 import type { UseFormReturn } from "react-hook-form";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
+import { useTranslations } from "next-intl";
 
 import type { LoginFormValues } from "../hooks/use-login-form";
 
@@ -38,19 +39,21 @@ export default function LoginFormView({
   reason,
   handleGoogleSuccess,
 }: Props) {
+  const t = useTranslations("Auth.login");
+
   return (
     <div>
       <h1 className="text-center text-xl font-bold font-display text-foreground mb-2">
-        Welcome Back
+        {t("welcomeBack")}
       </h1>
       <p className="text-center text-muted-foreground mb-6 text-sm">
-        Sign in to connect with artists and explore collections
+        {t("subtitle")}
       </p>
 
       {/* Session expired message (shown after redirect) */}
       {reason === "session_expired" && !form.formState.errors.root && (
         <div className="p-3 text-center border flex items-center justify-center mb-3 rounded text-sm border-info/50 text-info/70">
-          Your session expired. Please sign in again to continue.
+          {t("sessionExpired")}
         </div>
       )}
 
@@ -69,9 +72,9 @@ export default function LoginFormView({
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Email Address</FormLabel>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("emailLabel")}</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="e.g. name@example.com" {...field} />
+                  <Input type="email" placeholder={t("emailPlaceholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,7 +87,7 @@ export default function LoginFormView({
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Password</FormLabel>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("passwordLabel")}</FormLabel>
                 <div className="relative">
                   <FormControl>
                     <Input
@@ -113,7 +116,7 @@ export default function LoginFormView({
               className="w-full mt-2"
               disabled={loading || form.formState.isSubmitting}
             >
-              {form.formState.isSubmitting ? "Signing in..." : "Sign In"}
+              {form.formState.isSubmitting ? t("signingIn") : t("signIn")}
             </Button>
 
             <div className="relative my-4">
@@ -122,7 +125,7 @@ export default function LoginFormView({
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  {t("orContinue")}
                 </span>
               </div>
             </div>
@@ -141,8 +144,8 @@ export default function LoginFormView({
             </div>
 
             <FieldDescription className="text-center">
-              Don&apos;t have an account?{" "}
-              <Link to={paths.auth.register.path}>Sign up</Link>
+              {t("dontHaveAccount")}{" "}
+              <Link to={paths.auth.register.path}>{t("signUp")}</Link>
             </FieldDescription>
           </Field>
         </form>

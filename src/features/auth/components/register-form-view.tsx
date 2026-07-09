@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Eye, EyeOff } from "lucide-react";
 import type { UseFormReturn } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 import { paths } from "@/config/paths";
 import type { RegisterFormValues } from "../hooks/use-register-form";
@@ -49,13 +50,15 @@ export default function RegisterFormView({
   setShowConfirmPassword,
   handleGoogleSuccess,
 }: Props) {
+  const t = useTranslations("Auth.register");
+
   return (
     <div className="">
       <h1 className="text-center text-xl font-bold font-display text-foreground mb-2">
-        Join Myanmar Art Space
+        {t("joinTitle")}
       </h1>
       <p className="text-center text-muted-foreground mb-6 text-sm">
-        Create an account to support local artists and collect art
+        {t("subtitle")}
       </p>
 
       <Form {...form}>
@@ -71,10 +74,10 @@ export default function RegisterFormView({
             name="email"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Email Address *</FormLabel>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("emailLabel")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="e.g. name@example.com"
+                    placeholder={t("emailPlaceholder")}
                     type="email"
                     inputMode="email"
                     autoComplete="email"
@@ -97,10 +100,10 @@ export default function RegisterFormView({
             name="first_name"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">First Name *</FormLabel>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("firstNameLabel")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="e.g. John"
+                    placeholder={t("firstNamePlaceholder")}
                     autoComplete="given-name"
                     aria-label="First name"
                     aria-invalid={!!fieldState.error}
@@ -118,10 +121,10 @@ export default function RegisterFormView({
             name="last_name"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Last Name</FormLabel>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("lastNameLabel")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="e.g. Doe"
+                    placeholder={t("lastNamePlaceholder")}
                     autoComplete="family-name"
                     aria-label="Last name"
                     aria-invalid={!!fieldState.error}
@@ -139,7 +142,7 @@ export default function RegisterFormView({
             name="user_type"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Account Type *</FormLabel>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("accountTypeLabel")}</FormLabel>
                 <FormControl>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger
@@ -147,13 +150,13 @@ export default function RegisterFormView({
                       aria-label="User type"
                       aria-invalid={!!fieldState.error}
                     >
-                      <SelectValue placeholder="Select Account Type" />
+                      <SelectValue placeholder={t("selectAccountType")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="BUYER">Default</SelectItem>
-                      <SelectItem value="COLLECTOR">Collector</SelectItem>
-                      <SelectItem value="GALLERY">Gallery</SelectItem>
-                      <SelectItem value="ARTIST">Artist</SelectItem>
+                      <SelectItem value="BUYER">{t("defaultAccount")}</SelectItem>
+                      <SelectItem value="COLLECTOR">{t("collector")}</SelectItem>
+                      <SelectItem value="GALLERY">{t("gallery")}</SelectItem>
+                      <SelectItem value="ARTIST">{t("artist")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -168,10 +171,10 @@ export default function RegisterFormView({
             name="phone"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Phone Number *</FormLabel>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("phoneLabel")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="e.g. 09xxxxxxxxx"
+                    placeholder={t("phonePlaceholder")}
                     type="tel"
                     inputMode="tel"
                     autoComplete="tel"
@@ -191,7 +194,7 @@ export default function RegisterFormView({
             name="password"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Password *</FormLabel>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("passwordLabel")}</FormLabel>
                 <div className="relative">
                   <FormControl>
                     <Input
@@ -226,7 +229,7 @@ export default function RegisterFormView({
             name="password_confirmation"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Confirm Password *</FormLabel>
+                <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("confirmPasswordLabel")}</FormLabel>
                 <div className="relative">
                   <FormControl>
                     <Input
@@ -259,7 +262,7 @@ export default function RegisterFormView({
           />
 
           <Button type="submit" className="w-full mt-2" disabled={loading}>
-            {loading ? "Loading..." : "Sign up"}
+            {loading ? t("loading") : t("signUp")}
           </Button>
 
           <div className="relative my-4">
@@ -268,7 +271,7 @@ export default function RegisterFormView({
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
+                {t("orContinue")}
               </span>
             </div>
           </div>
@@ -287,8 +290,8 @@ export default function RegisterFormView({
           </div>
 
           <FieldDescription className="px-6 text-center">
-            Already have an account?{" "}
-            <Link to={paths.auth.login.path}>Sign in</Link>
+            {t("alreadyHaveAccount")}{" "}
+            <Link to={paths.auth.login.path}>{t("signIn")}</Link>
           </FieldDescription>
         </form>
       </Form>

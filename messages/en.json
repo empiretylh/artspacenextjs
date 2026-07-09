@@ -38,5 +38,69 @@
     "salesTeam": "Sales Team",
     "marketingTeam": "Marketing Team",
     "close": "Close"
+  },
+  "Auth": {
+    "login": {
+      "welcomeBack": "Welcome Back",
+      "subtitle": "Sign in to connect with artists and explore collections",
+      "sessionExpired": "Your session expired. Please sign in again to continue.",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "e.g. name@example.com",
+      "passwordLabel": "Password",
+      "signingIn": "Signing in...",
+      "signIn": "Sign In",
+      "orContinue": "Or continue with",
+      "dontHaveAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "register": {
+      "joinTitle": "Join Myanmar Art Space",
+      "subtitle": "Create an account to support local artists and collect art",
+      "emailLabel": "Email Address *",
+      "emailPlaceholder": "e.g. name@example.com",
+      "firstNameLabel": "First Name *",
+      "firstNamePlaceholder": "e.g. John",
+      "lastNameLabel": "Last Name",
+      "lastNamePlaceholder": "e.g. Doe",
+      "accountTypeLabel": "Account Type *",
+      "selectAccountType": "Select Account Type",
+      "defaultAccount": "Default",
+      "collector": "Collector",
+      "gallery": "Gallery",
+      "artist": "Artist",
+      "phoneLabel": "Phone Number *",
+      "phonePlaceholder": "e.g. 09xxxxxxxxx",
+      "passwordLabel": "Password *",
+      "confirmPasswordLabel": "Confirm Password *",
+      "loading": "Loading...",
+      "signUp": "Sign up",
+      "orContinue": "Or continue with",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    }
+  },
+  "Artwork": {
+    "detail": {
+      "askForCollect": "Ask for collect",
+      "collectNow": "Collect Now",
+      "sold": "Sold",
+      "soldOut": "Sold Out",
+      "notForSale": "Not For Sale",
+      "saveForLater": "Save for Later",
+      "needHelp": "Need Help?",
+      "securePayment": "Secure payment methods: card, bank",
+      "freeReturns": "Free and easy 14 days returns",
+      "characteristicsTitle": "Characteristics of the Painting \"{title}\"",
+      "yearOfCreation": "Year of Creation",
+      "dimensions": "Dimensions",
+      "medium": "Medium",
+      "currentOwner": "Current owner",
+      "artist": "Artist",
+      "category": "Category",
+      "styles": "Styles"
+    }
+  },
+  "Artist": {
+    "featuredArtists": "Featured Artists"
   }
 }
