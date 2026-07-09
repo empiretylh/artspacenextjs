@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "../store/cart-store";
 import { getImage } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export function CartItem({ item }: { item: any }) {
    const { removeFromCart } = useCartStore();
+   const t = useTranslations("Cart");
 
    return (
       <div className="flex items-center justify-between border-b py-4">
@@ -28,7 +30,7 @@ export function CartItem({ item }: { item: any }) {
                className="mt-2"
                onClick={() => removeFromCart(item.id)}
             >
-               Remove
+               {t("remove")}
             </Button>
          </div>
       </div>

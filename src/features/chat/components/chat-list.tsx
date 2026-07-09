@@ -8,17 +8,19 @@ import { Loader2, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/store";
+import { useTranslations } from "next-intl";
 
 type Props = {
    activeId: string | null;
    onSelect: (id: string) => void;
-};
+ };
 
 export const ChatList = ({ activeId, onSelect }: Props) => {
    const { conversations, loading } = useConversations();
    const { user: currentUser } = useAuth();
    const [searchQuery, setSearchQuery] = useState("");
    const [isSearching, setIsSearching] = useState(false);
+   const t = useTranslations("Chat");
 
    const filteredConversations = useMemo(() => {
       if (!searchQuery.trim()) return conversations;
@@ -49,7 +51,7 @@ export const ChatList = ({ activeId, onSelect }: Props) => {
             <div className="flex items-center justify-between h-10">
                {!isSearching ? (
                   <>
-                     <h2 className="text-sm font-semibold">Messages</h2>
+                     <h2 className="text-sm font-semibold">{t("messages")}</h2>
                      <Button 
                         variant="ghost" 
                         size="icon" 
@@ -64,7 +66,7 @@ export const ChatList = ({ activeId, onSelect }: Props) => {
                      <div className="relative flex-1">
                         <Input
                            autoFocus
-                           placeholder="Search messages..."
+                           placeholder={t("searchPlaceholder")}
                            value={searchQuery}
                            onChange={(e) => setSearchQuery(e.target.value)}
                            className="h-8 pr-8 text-xs"
@@ -84,7 +86,7 @@ export const ChatList = ({ activeId, onSelect }: Props) => {
                         className="h-8 px-2 text-xs"
                         onClick={toggleSearch}
                      >
-                        Cancel
+                        {t("cancel")}
                      </Button>
                   </div>
                )}
@@ -98,7 +100,7 @@ export const ChatList = ({ activeId, onSelect }: Props) => {
                </div>
             ) : filteredConversations.length === 0 ? (
                <div className="p-8 text-center text-xs text-muted-foreground">
-                  {searchQuery ? "No results found." : "No conversations yet."}
+                  {searchQuery ? t("noResults") : t("noConversations")}
                </div>
             ) : (
                filteredConversations.map((conv) => (

@@ -17,6 +17,7 @@ import { cn, getDate, getImage } from "@/lib/utils";
 import { format } from "date-fns";
 import { notFound, useParams } from "next/navigation";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 const typeColorMap: Record<string, string> = {
    Solo: "bg-indigo-100 text-indigo-700",
@@ -25,6 +26,7 @@ const typeColorMap: Record<string, string> = {
 };
 
 export default function EventDetailPage() {
+   const t = useTranslations("Events");
    const { slug } = useParams<{ slug: string }>();
 
    const eventQuery = useGetEvent({
@@ -106,7 +108,7 @@ export default function EventDetailPage() {
 
                         {event.interest_count > 0 && (
                            <span className="text-white/90 text-xs">
-                              Interested by {event.interest_count}
+                              {t("interestedBy", { count: event.interest_count })}
                            </span>
                         )}
                      </div>
@@ -128,7 +130,7 @@ export default function EventDetailPage() {
                <Card>
                   <CardContent>
                      <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
-                        About
+                        {t("about")}
                      </h2>
                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                         {event.about}
@@ -139,7 +141,7 @@ export default function EventDetailPage() {
                <Card>
                   <CardContent>
                      <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
-                        Artists
+                        {t("artists")}
                      </h2>
 
                      <div className="flex flex-wrap gap-2">
@@ -158,7 +160,7 @@ export default function EventDetailPage() {
                            ))
                         ) : (
                            <p className="text-sm text-muted-foreground">
-                              No artists listed.
+                              {t("noArtists")}
                            </p>
                         )}
                      </div>
@@ -168,7 +170,7 @@ export default function EventDetailPage() {
                <Card>
                   <CardContent>
                      <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
-                        Artworks
+                        {t("artworks")}
                      </h2>
 
                      {event.artworks.length > 0 ? (
@@ -188,7 +190,7 @@ export default function EventDetailPage() {
                         </ScrollArea>
                      ) : (
                         <p className="text-sm text-muted-foreground">
-                           No artworks available.
+                           {t("noArtworks")}
                         </p>
                      )}
                   </CardContent>
@@ -197,7 +199,7 @@ export default function EventDetailPage() {
                <Card>
                   <CardContent>
                      <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
-                        Images
+                        {t("images")}
                      </h2>
 
                      {event.images.length > 0 ? (
@@ -219,7 +221,7 @@ export default function EventDetailPage() {
                         </div>
                      ) : (
                         <p className="text-sm text-muted-foreground">
-                           No images available.
+                           {t("noImages")}
                         </p>
                      )}
                   </CardContent>

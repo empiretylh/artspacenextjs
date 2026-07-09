@@ -12,6 +12,7 @@ import { UnblockUserDialog } from "@/components/app/unblock-user-dialog";
 import UnblockUserListCard from "@/components/app/unblock-user-list-card";
 import { Input } from "@/components/ui/input";
 import BlockedUsersListSkeleton from "./blocked-users-list-skeleton";
+import { useTranslations } from "next-intl";
 
 interface Props {
    title?: string;
@@ -45,6 +46,7 @@ const BlockedUsersListView = ({
 }: Props) => {
    const [isUnblockModalOpen, setIsUnblockModalOpen] = useState(false);
    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+   const t = useTranslations("Settings");
 
    return (
       <>
@@ -52,7 +54,7 @@ const BlockedUsersListView = ({
             <Input
                onChange={(e) => onSearchChange?.(e.target.value)}
                className="w-full max-w-md mx-auto"
-               placeholder="Search by name"
+               placeholder={t("searchByName")}
             />
          </div>
          <div className="flex-grow transition-all duration-300">
@@ -63,7 +65,7 @@ const BlockedUsersListView = ({
                   {filters.length > 0 &&
                      filters.some((f) => f.id !== "price_range") && (
                         <>
-                           <span className="inline-block mr-2">SearchBy:</span>
+                           <span className="inline-block mr-2">{t("searchBy")}</span>
                            <div className="inline-flex flex-wrap gap-2 mb-4">
                               {filters
                                  .filter((f) => f.id !== "price_range")
@@ -115,7 +117,7 @@ const BlockedUsersListView = ({
                                                 onClick={() => {
                                                    setSelectedUser(blockedUser);
                                                    setIsUnblockModalOpen(true);
-                                                }}
+                                                 }}
                                              />
                                           )
                                        )}
@@ -131,10 +133,10 @@ const BlockedUsersListView = ({
                                     }
                                  >
                                     {isFetchingNextPage
-                                       ? "Loading more..."
+                                       ? t("loadingMore")
                                        : hasNextPage
-                                         ? "Load More"
-                                         : "Nothing more to load"}
+                                         ? t("loadMore")
+                                         : t("nothingMore")}
                                  </Button>
                               </div>
                            </>

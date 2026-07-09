@@ -10,11 +10,14 @@ import {
 import { ProfileMedia } from "./components/profile-media";
 import { paths } from "@/config/paths";
 import Link from "@/components/common/link";
+import { useTranslations } from "next-intl";
 
 const SettingsPage = () => {
+   const t = useTranslations("Settings");
+
    return (
       <div className="space-y-4 mb-4">
-         <h1 className="text-xl font-bold capitalize font-display">Settings</h1>
+         <h1 className="text-xl font-bold capitalize font-display">{t("title")}</h1>
          <div>
             <Card>
                <CardContent>
@@ -25,81 +28,20 @@ const SettingsPage = () => {
          <div>
             <Card>
                <CardHeader>
-                  <CardTitle>Profile</CardTitle>
-                  <CardDescription>Update your profile</CardDescription>
+                  <CardTitle>{t("profile")}</CardTitle>
+                  <CardDescription>{t("updateProfile")}</CardDescription>
                </CardHeader>
                <CardContent>
                   <ProfileEditForm onUpdateSuccess={() => { }} />
                </CardContent>
             </Card>
          </div>
-         {/* <div>
-            <Card>
-               <CardHeader>
-                  <CardTitle className="font-bold text-lg">General</CardTitle>
-               </CardHeader>
-               <CardContent>
-                  <div className="space-y-4">
-                     <Item variant="default" className="w-full p-0">
-                        <ItemContent>
-                           <ItemTitle className="font-bold">
-                              Enable Notifications
-                           </ItemTitle>
-                           <ItemDescription>
-                              Receive email notifications
-                           </ItemDescription>
-                        </ItemContent>
-                        <ItemActions>
-                           <Switch id="airplane-mode" />
-                        </ItemActions>
-                     </Item>
-                     <Item variant="default" className="w-full p-0">
-                        <ItemContent>
-                           <ItemTitle className="font-bold">
-                              Dark Mode
-                           </ItemTitle>
-                           <ItemDescription>Enable dark theme</ItemDescription>
-                        </ItemContent>
-                        <ItemActions>
-                           <Switch id="airplane-mode" />
-                        </ItemActions>
-                     </Item>
-                     <Item variant="default" className="w-full p-0">
-                        <ItemContent>
-                           <ItemTitle className="font-bold">
-                              Auto-Update
-                           </ItemTitle>
-                           <ItemDescription>
-                              Automatically update the app
-                           </ItemDescription>
-                        </ItemContent>
-                        <ItemActions>
-                           <Switch id="airplane-mode" />
-                        </ItemActions>
-                     </Item>
-                     <Item variant="default" className="w-full p-0">
-                        <ItemContent>
-                           <ItemTitle className="font-bold">
-                              Location Services
-                           </ItemTitle>
-                           <ItemDescription>
-                              Allow access to location.
-                           </ItemDescription>
-                        </ItemContent>
-                        <ItemActions>
-                           <Switch id="airplane-mode" />
-                        </ItemActions>
-                     </Item>
-                  </div>
-               </CardContent>
-            </Card>
-         </div> */}
          <div>
             <Card>
                <CardHeader>
-                  <CardTitle>Privacy & Safety</CardTitle>
+                  <CardTitle>{t("privacySafety")}</CardTitle>
                   <CardDescription>
-                     Manage your privacy and safety settings
+                     {t("managePrivacySafety")}
                   </CardDescription>
                </CardHeader>
                <CardContent>
@@ -111,7 +53,7 @@ const SettingsPage = () => {
                            }
                            className="hover:text-primary"
                         >
-                           Blocked User List
+                           {t("blockedUserList")}
                         </Link>
                      </li>
                      <li className="text-sm p-2">
@@ -119,7 +61,7 @@ const SettingsPage = () => {
                            to={"https://api.myanmarartspace.net/api/v1/users/delete-account/"}
                            className="underline hover:text-primary"
                         >
-                           Delete Account
+                           {t("deleteAccount")}
                         </Link>
                      </li>
                   </ul>

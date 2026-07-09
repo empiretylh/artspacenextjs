@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useNotifications } from "@/components/ui/notifications";
 import { handleFormError } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
+import { useTranslations } from "next-intl";
 
 // import { useGetProfile } from "../api/get-profile";
 import {
@@ -40,6 +41,7 @@ export default function ProfileEditForm({
    onUpdateSuccess,
 }: Readonly<ProfileEditFormProps>) {
    const { addNotification } = useNotifications();
+   const t = useTranslations("Settings");
 
    // Fetch profile data
    const profileQuery = useGetProfile();
@@ -65,8 +67,8 @@ export default function ProfileEditForm({
          onSuccess: () => {
             addNotification({
                type: "success",
-               title: "Success",
-               message: "Profile updated successfully",
+               title: t("success"),
+               message: t("profileUpdated"),
             });
             userAnalytics.edit(String(profile?.id), 'settings_page');
             onUpdateSuccess();
@@ -97,11 +99,11 @@ export default function ProfileEditForm({
                   name="first_name"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel>First Name</FormLabel>
+                        <FormLabel>{t("firstName")}</FormLabel>
                         <FormControl>
-                           <Input placeholder="Enter first name" {...field} />
+                           <Input placeholder={t("enterFirstName")} {...field} />
                         </FormControl>
-                        <FormDescription>Your given name.</FormDescription>
+                        <FormDescription>{t("firstNameDesc")}</FormDescription>
                         <FormMessage />
                      </FormItem>
                   )}
@@ -112,11 +114,11 @@ export default function ProfileEditForm({
                   name="last_name"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel>Last Name</FormLabel>
+                        <FormLabel>{t("lastName")}</FormLabel>
                         <FormControl>
-                           <Input placeholder="Enter last name" {...field} />
+                           <Input placeholder={t("enterLastName")} {...field} />
                         </FormControl>
-                        <FormDescription>Your family name.</FormDescription>
+                        <FormDescription>{t("lastNameDesc")}</FormDescription>
                         <FormMessage />
                      </FormItem>
                   )}
@@ -128,16 +130,16 @@ export default function ProfileEditForm({
                name="bio"
                render={({ field }) => (
                   <FormItem>
-                     <FormLabel>Bio</FormLabel>
+                     <FormLabel>{t("bio")}</FormLabel>
                      <FormControl>
                         <Textarea
-                           placeholder="Short biography of yourself..."
+                           placeholder={t("bioPlaceholder")}
                            className="min-h-32 resize-y"
                            {...field}
                         />
                      </FormControl>
                      <FormDescription>
-                        A short biography of yourself.
+                        {t("bioDesc")}
                      </FormDescription>
                      <FormMessage />
                   </FormItem>
@@ -149,16 +151,16 @@ export default function ProfileEditForm({
                name="about"
                render={({ field }) => (
                   <FormItem>
-                     <FormLabel>About</FormLabel>
+                     <FormLabel>{t("about")}</FormLabel>
                      <FormControl>
                         <Textarea
-                           placeholder="Tell something about yourself..."
+                           placeholder={t("aboutPlaceholder")}
                            className="min-h-32 resize-y"
                            {...field}
                         />
                      </FormControl>
                      <FormDescription>
-                        A short description about who you are.
+                        {t("aboutDesc")}
                      </FormDescription>
                      <FormMessage />
                   </FormItem>
@@ -170,7 +172,7 @@ export default function ProfileEditForm({
                name="website"
                render={({ field }) => (
                   <FormItem>
-                     <FormLabel>Website</FormLabel>
+                     <FormLabel>{t("website")}</FormLabel>
                      <FormControl>
                         <Input
                            placeholder="https://yourwebsite.com"
@@ -187,9 +189,9 @@ export default function ProfileEditForm({
                render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm">
                      <div className="space-y-0.5">
-                        <FormLabel>Show Email on Public Profile</FormLabel>
+                        <FormLabel>{t("showEmail")}</FormLabel>
                         <FormDescription>
-                           Toggle whether your primary email address is visible on your public profile.
+                           {t("showEmailDesc")}
                         </FormDescription>
                      </div>
                      <FormControl>
@@ -203,10 +205,10 @@ export default function ProfileEditForm({
             />
             <div className="border-t py-4 space-x-2">
                <Button type="submit" disabled={updateProfileMutation.isPending}>
-                  Save
+                  {t("save")}
                </Button>
                <Button type="button" variant="outline">
-                  Cancel
+                  {t("cancel")}
                </Button>
             </div>
          </form>
