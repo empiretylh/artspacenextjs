@@ -4,7 +4,6 @@ import type { Artwork, Category } from "@/types";
 import { useTranslations } from "next-intl";
 
 interface ArtworkCharacteristicsProps {
-   title: string;
    year: number;
    dimensions: string;
    medium: string;
@@ -20,7 +19,6 @@ interface ArtworkCharacteristicsProps {
 }
 
 export function ArtworkCharacteristicsCard({
-   title,
    year,
    dimensions,
    medium,
@@ -38,8 +36,8 @@ export function ArtworkCharacteristicsCard({
 
    return (
       <div>
-         <h2 className="font-bold text-lg mb-2">
-            {t("characteristicsTitle", { title })}
+         <h2 className="font-bold text-xl mb-2 font-display">
+            {t("characteristicsTitle")}
          </h2>
          <dl className="space-y-2 text-sm">
             <div className="flex border-b border-border gap-2 py-2">

@@ -90,7 +90,7 @@
       "needHelp": "အကူအညီ လိုအပ်ပါသလား?",
       "securePayment": "လုံခြုံသော ငွေပေးချေမှုစနစ်များ- ကတ်၊ ဘဏ်",
       "freeReturns": "၁၄ ရက်အတွင်း အခမဲ့ လွယ်ကူစွာ ပြန်ပေးနိုင်ပါသည်",
-      "characteristicsTitle": "\"{title}\" ပန်းချီကား၏ အချက်အလက်များ",
+      "characteristicsTitle": "ပန်းချီကား၏ အချက်အလက်များ",
       "yearOfCreation": "ဖန်တီးခဲ့သည့်နှစ်",
       "dimensions": "အရွယ်အစား",
       "medium": "အသုံးပြုသည့် မီဒီယံ",
@@ -101,7 +101,7 @@
     }
   },
   "Artist": {
-    "featuredArtists": "လူကြိုက်များသော အနုပညာရှင်များ"
+    "featuredArtists": "Featured Artists"
   },
   "Cart": {
     "title": "သင့်စျေးခြင်း",

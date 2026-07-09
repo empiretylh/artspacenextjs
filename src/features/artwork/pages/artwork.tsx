@@ -38,7 +38,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
 
    return (
       <section aria-labelledby="artwork-title">
-         <h1 id="artwork-title" className="text-2xl font-medium mb-4 md:mb-6">
+         <h1 id="artwork-title" className="text-2xl font-medium mb-4 md:mb-6 font-display">
             {artwork.title}
          </h1>
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
@@ -58,7 +58,6 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                </div>
 
                <ArtworkCharacteristicsCard
-                  title={artwork.title}
                   year={artwork.year}
                   styles={artwork.artwork_styles}
                   dimensions={artwork.dimensions || "N/A"}
@@ -72,7 +71,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                {artwork.search_keywords &&
                   artwork.search_keywords.length > 0 && (
                      <>
-                        <h2 className="font-bold text-lg mb-2">Keywords</h2>
+                        <h2 className="font-bold text-xl mb-2 font-display">Keywords</h2>
                         <div className="space-x-2 space-y-2" aria-label="Artwork keywords">
                            {artwork.search_keywords.map((kw) => (
                               <Button
@@ -89,7 +88,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
 
                {/* Mobile Description */}
                <section aria-labelledby="artwork-description">
-                  <h2 id="artwork-description" className="font-bold text-lg mb-2">
+                  <h2 id="artwork-description" className="font-bold text-xl mb-2 font-display">
                      Description
                   </h2>
                   <p className="text-base text-foreground/80">

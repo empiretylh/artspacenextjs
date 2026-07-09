@@ -218,19 +218,19 @@ const ArtworksPageView = ({
                                  >
                                     <SelectValue placeholder="Sort by" />
                                  </SelectTrigger>
-                                 <SelectContent className="rounded-2xl border-none shadow-2xl p-2 min-w-[200px]">
+                                 <SelectContent className="rounded-xl border-none shadow-2xl p-1.5 min-w-[180px]">
                                     <SelectGroup>
-                                       <SelectLabel className="px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Ordering</SelectLabel>
-                                       <SelectItem value="created_at-desc" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                                       <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Ordering</SelectLabel>
+                                       <SelectItem value="created_at-desc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
                                           Date: Newest
                                        </SelectItem>
-                                       <SelectItem value="created_at-asc" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                                       <SelectItem value="created_at-asc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
                                           Date: Oldest
                                        </SelectItem>
-                                       <SelectItem value="price-desc" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                                       <SelectItem value="price-desc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
                                           Price: High to Low
                                        </SelectItem>
-                                       <SelectItem value="price-asc" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                                       <SelectItem value="price-asc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
                                           Price: Low to High
                                        </SelectItem>
                                     </SelectGroup>
