@@ -11,7 +11,8 @@ import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { paths } from "@/config/paths";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/routing";
 import { InputWithLeftSelectSkeleton } from "./input-with-left-select-skeleton";
 import { searchAnalytics } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
@@ -74,6 +75,8 @@ function InputWithLeftSelect({
       if (matched) setSelectedOption(matched[0]);
       setSearch(searchParam);
    }, [pathname, searchParam]);
+
+   // If not mounted yet, return a placeholder with the EXACT same height/width
 
    // If not mounted yet, return a placeholder with the EXACT same height/width
    // to reserve the space and prevent layout shift.

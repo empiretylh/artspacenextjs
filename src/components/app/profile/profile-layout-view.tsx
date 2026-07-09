@@ -9,7 +9,8 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useAuth } from "@/features/auth/store";
 import { cn, getImage, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
-import { redirect, usePathname } from "next/navigation";
+import { redirect } from "next/navigation";
+import { usePathname } from "@/i18n/routing";
 import FollowButton from "../follow-button";
 import { ProfileActions } from "./profile-actions";
 import ArtworksIcon from "@/components/icons/artworks-icon";
@@ -210,8 +211,8 @@ const ProfileLayoutView = ({
                            key={link.href}
                            to={link.href}
                            className={cn(
-                              "py-2 px-2 flex flex-col items-center gap-2",
-                              isActive(link.href) ? "text-primary border-b border-black" : "",
+                              "py-2 px-2 flex flex-col items-center gap-2 font-display",
+                              isActive(link.href) ? "text-primary border-b-2 border-primary font-bold" : "border-b-2 border-transparent font-medium",
                               link.disabled && "pointer-events-none opacity-50"
                            )}
                         >

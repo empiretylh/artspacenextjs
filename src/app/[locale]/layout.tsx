@@ -2,7 +2,7 @@ import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { AuthInitializer } from "@/features/auth/auth-initializer";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
-import { Outfit, Fraunces, Noto_Sans_Myanmar } from "next/font/google";
+import { Outfit, Fraunces, Noto_Sans_Myanmar, Noto_Serif_Myanmar } from "next/font/google";
 import "@/app/globals.css";
 import AppProvider from "./providers";
 import { env } from "@/config/env";
@@ -25,6 +25,12 @@ const fraunces = Fraunces({
 
 const notoMyanmar = Noto_Sans_Myanmar({
   variable: "--font-noto-myanmar",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  subsets: ["myanmar"],
+})
+
+const notoSerifMyanmar = Noto_Serif_Myanmar({
+  variable: "--font-noto-serif-myanmar",
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["myanmar"],
 })
@@ -64,7 +70,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${outfitSans.variable} ${fraunces.variable} ${notoMyanmar.variable} antialiased`}
+        className={`${outfitSans.variable} ${fraunces.variable} ${notoMyanmar.variable} ${notoSerifMyanmar.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
           <NextTopLoader

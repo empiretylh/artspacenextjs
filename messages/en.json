@@ -104,6 +104,9 @@
   "Artist": {
     "featuredArtists": "Featured Artists"
   },
+  "Gallery": {
+    "featuredGalleries": "Featured Galleries"
+  },
   "Cart": {
     "title": "Your Cart",
     "empty": "Your cart is empty.",
@@ -202,5 +205,17 @@
     "searchBy": "SearchBy:",
     "blockedUsersTitle": "Blocked Users",
     "blockedUsersDesc": "You will not see content from users you’ve blocked. You can unblock them at any time."
+  },
+  "Home": {
+    "shopByGenre": "Shop Paintings by Genre",
+    "shopByCategoryAndStyle": "Shop Paintings by Category And Style",
+    "artists": "Artists",
+    "featuredEvents": "Featured Events",
+    "featuredEventsSubtitle": "Discover latest art exhibitions and events",
+    "featuredArtworks": "Featured Artworks",
+    "featuredArtworksSubtitle": "Handpicked pieces from our top artists",
+    "galleries": "Galleries",
+    "collectors": "Collectors",
+    "viewAll": "View All"
   }
 }

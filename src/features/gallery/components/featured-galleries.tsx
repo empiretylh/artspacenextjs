@@ -4,8 +4,10 @@ import { useGetUsers } from "@/features/service/artspace/get-users";
 import UserListItem from "../../../components/app/user-list-item";
 import UserListItemSkeleton from "../../../components/app/user-list-item-skeleton";
 import { SourceProvider } from "@/lib/analytics-source";
+import { useTranslations } from "next-intl";
 
 const FeaturedGalleries = () => {
+   const t = useTranslations("Gallery");
    const galleryQuery = useGetUsers({
       userType: "galleries",
       limit: 4,
@@ -22,7 +24,7 @@ const FeaturedGalleries = () => {
    return (
       <div>
          <h2 className="font-display text-xl font-bold mb-2">
-            Featured Galleries
+            {t("featuredGalleries")}
          </h2>
 
          <SourceProvider value={{ source: "sidebar" }}>

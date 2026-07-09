@@ -105,9 +105,13 @@ export function SiteHeader() {
                      {isLoggedIn && (
                         <Button
                            onClick={() => setIsArtworkCreateModalOpen(true)}
-                           className={cn(isMy ? "hidden xl:inline-flex h-8" : "hidden lg:inline-flex h-8")}
+                           className={cn(
+                              "rounded-full font-semibold transition-all duration-300 hover:scale-105 active:scale-95 shadow-xs flex items-center gap-1.5 select-none cursor-pointer",
+                              isMy ? "hidden xl:inline-flex h-9 px-4" : "hidden lg:inline-flex h-9 px-4"
+                           )}
                         >
-                           {t("create")}
+                           <Plus className="h-4 w-4 shrink-0" />
+                           <span>{t("create")}</span>
                         </Button>
                      )}
  

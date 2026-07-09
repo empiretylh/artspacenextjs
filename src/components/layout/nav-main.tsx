@@ -104,7 +104,8 @@ const data = {
 export function NavMain() {
    const t = useTranslations("Navigation");
    const pathname = usePathname();
-   const { setOpenMobile } = useSidebar();
+   const { setOpenMobile, state } = useSidebar();
+   const isCollapsed = state === "collapsed";
    const router = useRouter();
    const { user } = useAuth();
    const { hasUnread } = useUnreadCount();
@@ -131,9 +132,10 @@ export function NavMain() {
                         <SidebarMenuItem key={item.title}>
                            <SidebarMenuButton
                               asChild
+                              size="lg"
                               className={cn(
-                                 "hover:bg-primary/16 hover:text-primary active:bg-primary/16 active:text-primary",
-                                 active && "bg-primary/16 text-primary"
+                                 "hover:bg-primary/16 hover:text-primary active:bg-primary/16 active:text-primary font-display rounded-full",
+                                 active && "bg-primary/16 text-primary font-bold"
                               )}
                               tooltip={t(item.title as any)}
                            >
@@ -150,18 +152,20 @@ export function NavMain() {
                                     router.push(item.url);
                                  }}
                                  className={cn(
-                                    "transition-transform duration-200 ease-out hover:translate-x-1",
+                                    isCollapsed 
+                                       ? "flex items-center justify-center w-full h-full" 
+                                       : "transition-transform duration-200 ease-out hover:translate-x-1 flex items-center gap-3 w-full",
                                     (item.disabled || ((item.title === "order" && !user)) || (item.title === "messages" && !user)) &&
                                     "pointer-events-none opacity-50"
                                  )}
                               >
-                                 <div className="relative">
-                                    {item.icon && <item.icon className="w-4 h-4" />}
+                                 <div className="relative flex items-center justify-center shrink-0">
+                                    {item.icon && <item.icon className={cn(isCollapsed ? "w-4 h-4" : "w-5 h-5")} />}
                                     {item.title === "messages" && hasUnread && (
                                        <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2 shrink-0 animate-pulse rounded-full bg-red-500 border-2 border-white dark:border-zinc-950" />
                                     )}
                                  </div>
-                                 <span>{t(item.title as any)}</span>
+                                 {!isCollapsed && <span className="text-base">{t(item.title as any)}</span>}
                               </Link>
                            </SidebarMenuButton>
                         </SidebarMenuItem>
