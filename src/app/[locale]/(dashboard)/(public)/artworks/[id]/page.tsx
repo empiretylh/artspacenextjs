@@ -6,6 +6,8 @@ import ArtworkDetailPage from "@/features/artwork/pages/artwork";
 import { getArtwork } from "@/features/service/artspace/get-artwork";
 import { getArtworksOg } from "@/features/service/artspace/get-artworks";
 import { getQueryClient } from "@/lib/get-query-client";
+import { setRequestLocale } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Metadata } from "next";
@@ -14,15 +16,18 @@ import { cache } from "react";
 export async function generateStaticParams() {
   const artworks = await getArtworksOg({ limit: 10 })
 
-  return artworks.results.map((artwork) => ({
-    id: artwork.id,
-  }))
+  return routing.locales.flatMap((locale) =>
+    artworks.results.map((artwork) => ({
+      locale,
+      id: artwork.id,
+    }))
+  )
 }
 
 const getCachedArtwork = cache((id: string) => getArtwork({ artworkId: id }))
 
 type Props = {
-  params: Promise<{ id: string }>
+  params: Promise<{ locale: string; id: string }>
 }
 
 export async function generateMetadata(
@@ -81,9 +86,10 @@ export async function generateMetadata(
 const ArtworkDetailRoute = async ({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ locale: string; id: string }>
 }) => {
-  const { id } = await params;
+  const { locale, id } = await params;
+  setRequestLocale(locale);
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({

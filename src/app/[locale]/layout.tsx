@@ -7,7 +7,7 @@ import "@/app/globals.css";
 import AppProvider from "./providers";
 import { env } from "@/config/env";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { FcmManager } from "@/features/chat/components/fcm-manager";
@@ -37,6 +37,10 @@ export const metadata: Metadata = {
   description: "Social Media and E-commerce Platform.",
 };
 
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
 export default async function RootLayout({
   children,
   params,
@@ -50,6 +54,9 @@ export default async function RootLayout({
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
+
+  // Enable static rendering
+  setRequestLocale(locale);
 
   // Retrieve translation messages for this request
   const messages = await getMessages();

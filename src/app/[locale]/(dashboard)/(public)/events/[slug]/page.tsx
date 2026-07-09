@@ -10,19 +10,24 @@ import { getImage } from "@/lib/utils";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Metadata } from "next";
 import { cache } from "react";
+import { setRequestLocale } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 
 export async function generateStaticParams() {
   const events = await getEvents({ limit: 10 })
 
-  return events.results.map((event) => ({
-    slug: event.slug,
-  }))
+  return routing.locales.flatMap((locale) =>
+    events.results.map((event) => ({
+      locale,
+      slug: event.slug,
+    }))
+  )
 }
 
 const getCachedEvent = cache((slug: string) => getEvent({ eventSlug: slug }))
 
 type Props = {
-  params: Promise<{ slug: string }>
+  params: Promise<{ locale: string; slug: string }>
 }
 
 export async function generateMetadata(
@@ -80,9 +85,10 @@ export async function generateMetadata(
 const EventDetailRoute = async ({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ locale: string; slug: string }>
 }) => {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({
