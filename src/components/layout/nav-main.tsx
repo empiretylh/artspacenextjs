@@ -132,9 +132,8 @@ export function NavMain() {
                         <SidebarMenuItem key={item.title}>
                            <SidebarMenuButton
                               asChild
-                              size="lg"
                               className={cn(
-                                 "hover:bg-primary/16 hover:text-primary active:bg-primary/16 active:text-primary font-display rounded-full",
+                                 "hover:bg-primary/16 hover:text-primary active:bg-primary/16 active:text-primary rounded-xl h-10 px-3",
                                  active && "bg-primary/16 text-primary font-bold"
                               )}
                               tooltip={t(item.title as any)}
@@ -160,12 +159,12 @@ export function NavMain() {
                                  )}
                               >
                                  <div className="relative flex items-center justify-center shrink-0">
-                                    {item.icon && <item.icon className={cn(isCollapsed ? "w-4 h-4" : "w-5 h-5")} />}
+                                    {item.icon && <item.icon className="w-4 h-4" />}
                                     {item.title === "messages" && hasUnread && (
                                        <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2 shrink-0 animate-pulse rounded-full bg-red-500 border-2 border-white dark:border-zinc-950" />
                                     )}
                                  </div>
-                                 {!isCollapsed && <span className="text-base">{t(item.title as any)}</span>}
+                                 {!isCollapsed && <span className="text-sm">{t(item.title as any)}</span>}
                               </Link>
                            </SidebarMenuButton>
                         </SidebarMenuItem>

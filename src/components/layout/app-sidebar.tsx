@@ -34,12 +34,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                <SidebarMenuItem>
                   <SidebarMenuButton
                      asChild
-                     className="data-[slot=sidebar-menu-button]:!p-1.5 justify-start p-0 rounded-full"
+                     className="data-[slot=sidebar-menu-button]:!p-1.5 justify-start p-0 rounded-xl"
                   >
                      <div className="flex items-center justify-start w-full overflow-hidden">
                         <button
                            onClick={toggleSidebar}
-                           className="relative group flex items-center justify-center size-12 -ml-3.5 rounded-full hover:bg-sidebar-accent transition-colors cursor-pointer shrink-0"
+                           className="relative group flex items-center justify-center size-12 -ml-3.5 rounded-xl hover:bg-sidebar-accent transition-colors cursor-pointer shrink-0"
                            aria-label="Toggle Sidebar"
                         >
                            {/* Logo (Default) */}
