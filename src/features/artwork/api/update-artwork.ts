@@ -20,6 +20,7 @@ export const updateArtInputSchema = z
       title: z.string().min(2).optional(),
       description: z.string().optional(),
       dimensions: z.string().min(3).optional(),
+      medium: z.string().min(1, "Medium cannot be empty").optional(),
 
       artist: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
       artist_name: z.string().optional(),
@@ -102,6 +103,7 @@ const transformUpdatePayload = (data: UpdateArtInput) => {
    if (data.title !== undefined) payload.title = data.title;
    if (data.description !== undefined) payload.description = data.description;
    if (data.dimensions !== undefined) payload.dimensions = data.dimensions;
+   if (data.medium !== undefined) payload.medium = data.medium;
    if (data.price !== undefined) payload.price = data.price;
    if (data.year !== undefined) payload.year = data.year;
    if (data.status !== undefined) payload.status = data.status;
