@@ -217,5 +217,18 @@
     "galleries": "Galleries",
     "collectors": "Collectors",
     "viewAll": "View All"
+  },
+  "Search": {
+    "title": "Search Results",
+    "all": "All Results",
+    "artworks": "Artworks",
+    "artists": "Artists",
+    "galleries": "Galleries",
+    "collectors": "Collectors",
+    "buyers": "Buyers",
+    "noResults": "No results found for \"{query}\"",
+    "searchPrompt": "Type something to search...",
+    "resultsCount": "Found {count} results",
+    "viewProfile": "View Profile"
   }
 }

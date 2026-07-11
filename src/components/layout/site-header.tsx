@@ -72,7 +72,7 @@ export function SiteHeader() {
  
                   {/* Search Input on Desktop */}
                   <div className={cn(
-                     "hidden md:flex fixed left-(--sidebar-width) lg:left-1/2 lg:-translate-x-1/2",
+                     "hidden lg:flex fixed left-(--sidebar-width) lg:left-1/2 lg:-translate-x-1/2",
                   )}>
                      <Suspense fallback={<InputWithLeftSelectSkeleton />}>
                         <InputWithLeftSelect />
@@ -86,7 +86,7 @@ export function SiteHeader() {
                         onClick={handleMobileSearchOpen}
                         variant="ghost"
                         size="icon"
-                        className="h-10 w-10 p-0 md:hidden"
+                        className="h-10 w-10 p-0 lg:hidden"
                         data-testid="open-search"
                      >
                         <Search className="size-6" />
