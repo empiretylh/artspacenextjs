@@ -31,42 +31,44 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
       <button
          onClick={onClick}
          className={cn(
-            "flex w-full items-center gap-3 border-b px-4 py-3 text-left transition-colors",
-            isActive ? "bg-muted" : "hover:bg-muted/50"
+            "flex w-full items-center gap-2.5 border-b border-border py-2 pr-4 text-left transition-all duration-200",
+            isActive 
+               ? "bg-muted/65 border-l-[3px] border-primary pl-[13px]" 
+               : "hover:bg-muted/40 border-l-[3px] border-transparent pl-[13px]"
          )}
       >
          <div className="relative">
-            <Avatar>
+            <Avatar className="border border-border/60">
                <AvatarImage src={getImage(otherUser.avatar)} alt={otherUser.name} />
-               <AvatarFallback>{otherUser.name[0]}</AvatarFallback>
+               <AvatarFallback className="font-display font-bold bg-primary/5 text-primary text-xs">{otherUser.name[0]}</AvatarFallback>
             </Avatar>
             <span 
                className={cn(
                   "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background",
-                  isOnline ? "bg-green-500" : "bg-gray-400"
+                  isOnline ? "bg-success" : "bg-muted-foreground/30"
                )} 
             />
          </div>
-
+ 
          <div className="min-w-0 flex-1">
             <p className={cn(
-               "truncate text-sm font-medium",
-               unreadCount > 0 && "text-foreground font-semibold"
+               "truncate text-sm font-bold font-display tracking-tight text-foreground/90",
+               unreadCount > 0 && "text-foreground font-extrabold"
             )}>
                {otherUser.name}
             </p>
             <p className={cn(
-               "truncate text-xs text-muted-foreground",
+               "truncate text-xs text-muted-foreground/80 mt-0.5",
                unreadCount > 0 && "text-primary font-medium"
             )}>
                {conversation.lastMessage || "No messages yet"}
             </p>
          </div>
-
+ 
          {unreadCount > 0 && (
             <Badge 
                variant="default" 
-               className="h-5 min-w-[20px] justify-center px-1 text-[10px]"
+               className="h-5 min-w-[20px] justify-center px-1 text-[10px] bg-primary text-primary-foreground hover:bg-primary rounded-full font-semibold border-none shadow-none"
             >
                {unreadCount}
             </Badge>

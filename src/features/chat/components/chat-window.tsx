@@ -30,7 +30,6 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getImage, getUserRouteType } from "@/lib/utils";
 import Link from "next/link";
-import { paths } from "@/config/paths";
 import { useTranslations } from "next-intl";
 
 type Props = {
@@ -182,62 +181,62 @@ export const ChatWindow = ({
                         </div>
                      </div>
 
-                     <div className="mt-14 px-6 space-y-6">
-                        {/* Name & Title */}
-                        <div>
-                           <div className="flex items-center gap-2">
-                              <h3 className="text-2xl font-bold">{finalUser?.name}</h3>
-                              {userProfile?.user_type && (
-                                 <Badge variant="secondary" className="capitalize">
-                                    {userProfile.user_type.toLowerCase()}
-                                 </Badge>
-                              )}
-                           </div>
-                           <p className="text-muted-foreground text-sm">
-                              {userProfile?.email}
-                           </p>
-                        </div>
+                      <div className="mt-14 px-6 space-y-6">
+                         {/* Name & Title */}
+                         <div>
+                            <div className="flex items-center gap-2">
+                               <h3 className="text-2xl font-bold font-display tracking-tight text-foreground">{finalUser?.name}</h3>
+                               {userProfile?.user_type && (
+                                  <Badge variant="secondary" className="capitalize rounded-full border border-border text-xs px-3 py-0.5">
+                                     {userProfile.user_type.toLowerCase()}
+                                  </Badge>
+                               )}
+                            </div>
+                            <p className="text-muted-foreground text-xs font-sans mt-1">
+                               {userProfile?.email}
+                            </p>
+                         </div>
 
-                        {/* Bio/About */}
-                        {userProfile?.profile?.about && (
-                           <div className="space-y-2">
-                              <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/70">{t("about")}</h4>
-                              <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">
-                                 {userProfile.profile.about}
-                              </p>
-                           </div>
-                        )}
+                         {/* Bio/About */}
+                         {userProfile?.profile?.about && (
+                            <div className="space-y-2">
+                               <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70 font-sans">{t("about")}</h4>
+                               <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/90 font-sans">
+                                  {userProfile.profile.about}
+                               </p>
+                            </div>
+                         )}
 
-                        {/* Gallery Preview */}
-                        {userProfile?.profile?.features_photos && userProfile.profile.features_photos.length > 0 && (
-                           <div className="space-y-3">
-                              <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/70">{t("featuredWorks")}</h4>
-                              <div className="grid grid-cols-2 gap-2">
-                                 {userProfile.profile.features_photos.slice(0, 4).map((p: any) => (
-                                    <div key={p.id} className="aspect-square rounded-md overflow-hidden bg-muted group relative">
-                                       <img 
-                                          src={getImage(p.image)} 
-                                          alt="Featured" 
-                                          className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                                       />
-                                    </div>
-                                 ))}
-                              </div>
-                           </div>
-                        )}
+                         {/* Gallery Preview */}
+                         {userProfile?.profile?.features_photos && userProfile.profile.features_photos.length > 0 && (
+                            <div className="space-y-3">
+                               <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70 font-sans">{t("featuredWorks")}</h4>
+                               <div className="grid grid-cols-2 gap-2">
+                                  {userProfile.profile.features_photos.slice(0, 4).map((p: any) => (
+                                     <div key={p.id} className="aspect-square rounded-xl overflow-hidden bg-muted border border-border/50 group relative">
+                                        <img 
+                                           src={getImage(p.image)} 
+                                           alt="Featured" 
+                                           className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                                        />
+                                     </div>
+                                  ))}
+                               </div>
+                            </div>
+                         )}
 
-                        {/* Full Profile Action */}
-                        {userProfile?.user_type !== "BUYER" && (
-                           <div className="pt-4">
-                              <Button asChild className="w-full gap-2" variant="default">
-                                 <Link href={profileUrl}>
-                                    {t("viewFullProfile")}
-                                    <ExternalLink className="h-4 w-4" />
-                                 </Link>
-                              </Button>
-                           </div>
-                        )}
-                     </div>
+                         {/* Full Profile Action */}
+                         {userProfile?.user_type !== "BUYER" && (
+                            <div className="pt-4">
+                               <Button asChild className="w-full gap-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold uppercase tracking-wider h-10" variant="default">
+                                  <Link href={profileUrl}>
+                                     {t("viewFullProfile")}
+                                     <ExternalLink className="h-4 w-4" />
+                                  </Link>
+                               </Button>
+                            </div>
+                         )}
+                      </div>
                   </div>
                </ScrollArea>
             </SheetContent>

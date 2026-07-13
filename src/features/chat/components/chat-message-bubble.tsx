@@ -79,7 +79,7 @@ export const ChatMessageBubble = ({ message, isMine }: Props) => {
    const [activeIndex, setActiveIndex] = useState(0);
 
    const dateLabel = message.createdAt?.toDate?.() 
-      ? format(message.createdAt.toDate(), "HH:mm")
+      ? format(message.createdAt.toDate(), "h:mm a")
       : "Sending...";
       
    const handleImageClick = (index: number) => {
@@ -90,11 +90,11 @@ export const ChatMessageBubble = ({ message, isMine }: Props) => {
    return (
       <div
          className={cn(
-            "flex max-w-[80%] flex-col rounded-2xl shadow-sm",
+            "flex max-w-[80%] flex-col rounded-2xl shadow-xs border",
             isMine 
-               ? "ml-auto bg-primary text-primary-foreground rounded-tr-none mr-1" 
-               : "bg-muted rounded-tl-none mr-auto ml-1",
-            message.type === 'image' ? "p-1.5" : "px-4 py-2"
+               ? "ml-auto bg-primary text-primary-foreground border-primary/10 rounded-tr-none mr-1" 
+               : "bg-muted/30 text-foreground border-border rounded-tl-none mr-auto ml-1",
+            message.type === 'image' ? "p-1.5" : "px-3 py-1.5"
          )}
       >
          {message.type === 'image' ? (
@@ -105,21 +105,21 @@ export const ChatMessageBubble = ({ message, isMine }: Props) => {
                   onImageClick={handleImageClick}
                />
                {message.content && message.content !== "Sent images" && message.content !== "Sent an image" && (
-                  <p className="px-3 pt-2 pb-1 text-sm whitespace-pre-wrap break-words leading-relaxed">
+                  <p className="px-3 pt-2 pb-1 text-sm whitespace-pre-wrap break-words leading-relaxed font-sans">
                      {message.content}
                   </p>
                )}
             </div>
          ) : (
-            <p className="whitespace-pre-wrap break-words leading-relaxed px-4 py-2">
+            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed font-sans">
                {message.content}
             </p>
          )}
          
          <span className={cn(
-            "mt-1 text-[10px] opacity-60",
+            "mt-0.5 text-[10px] opacity-70 font-sans tracking-wide",
             message.type === 'image' ? "px-2 pb-1" : "",
-            isMine ? "text-right" : "text-left"
+            isMine ? "text-right text-primary-foreground/80" : "text-left text-muted-foreground"
          )}>
             {dateLabel}
          </span>

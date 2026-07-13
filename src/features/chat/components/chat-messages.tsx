@@ -44,7 +44,7 @@ export const ChatMessages = ({ messages, hasMore, onLoadMore, loading }: Props) 
    return (
       <div 
          ref={scrollContainerRef}
-         className="flex flex-1 flex-col-reverse overflow-y-auto p-4 gap-y-3"
+         className="flex flex-1 flex-col-reverse overflow-y-auto p-3 gap-y-2"
       >
          {/* 
             Native scroll behavior with flex-col-reverse:

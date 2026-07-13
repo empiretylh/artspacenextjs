@@ -29,15 +29,15 @@ export const ChatHeader = ({
    
    return (
       <div className={cn(
-         "flex items-center gap-3 border-b",
-         variant === "mini" ? "p-3" : "p-4"
+         "flex items-center gap-3 border-b border-border bg-background",
+         variant === "mini" ? "p-3" : "py-2.5 px-4"
       )}>
          {onBack && (
             <Button
                variant="ghost"
                size="icon"
                className={cn(
-                  "h-8 w-8",
+                  "h-8 w-8 rounded-full text-muted-foreground hover:text-foreground",
                   variant === "default" && "md:hidden"
                )}
                onClick={onBack}
@@ -49,26 +49,26 @@ export const ChatHeader = ({
          <div 
             onClick={onClick}
             className={cn(
-               "flex items-center gap-3 px-2 py-1 rounded-lg transition-colors",
+               "flex items-center gap-3 px-2 py-1 rounded-xl transition-colors",
                onClick && "hover:bg-muted/50 cursor-pointer active:bg-muted"
             )}
          >
             <div className="relative">
-               <Avatar>
+               <Avatar className="border border-border/60">
                   <AvatarImage src={getImage(user.avatar)} alt={user.name} />
-                  <AvatarFallback>{user.name[0]}</AvatarFallback>
+                  <AvatarFallback className="font-display font-bold bg-primary/5 text-primary text-xs">{user.name[0]}</AvatarFallback>
                </Avatar>
                <span 
                   className={cn(
-                     "absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background",
-                     isOnline ? "bg-green-500" : "bg-gray-400"
+                     "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background",
+                     isOnline ? "bg-success" : "bg-muted-foreground/30"
                   )} 
                />
             </div>
     
             <div>
-               <p className="text-sm font-medium">{user.name}</p>
-               <p className="text-xs text-muted-foreground">
+               <p className="text-sm font-bold font-display tracking-tight text-foreground">{user.name}</p>
+               <p className="text-xs text-muted-foreground/80 mt-0.5">
                   {isOtherTyping ? (
                      <span className="text-primary font-medium animate-pulse">Typing...</span>
                   ) : (

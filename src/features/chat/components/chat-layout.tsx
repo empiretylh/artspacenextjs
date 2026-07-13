@@ -1,7 +1,7 @@
 // components/chat/chat-layout.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChatList } from "./chat-list";
 import { ChatWindow } from "./chat-window";
@@ -42,7 +42,7 @@ export const ChatLayout = () => {
    }, [userIdParam, conversations, conversationsLoading, currentUser, setActiveConversationId, setPendingRecipientId]);
 
    return (
-      <div className="relative flex h-[calc(100vh-12rem)] w-full overflow-hidden rounded-lg border bg-card">
+      <div className="relative flex h-[calc(100vh-12rem)] w-full overflow-hidden rounded-xl border border-border bg-background shadow-sm">
          {/* Chat List */}
          <div
             className={`

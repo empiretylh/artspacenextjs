@@ -47,15 +47,15 @@ export const ChatList = ({ activeId, onSelect }: Props) => {
 
    return (
       <div className="flex h-full flex-col">
-         <div className="border-b px-4 py-2">
+         <div className="border-b border-border px-4 py-1.5 bg-muted/5">
             <div className="flex items-center justify-between h-10">
                {!isSearching ? (
                   <>
-                     <h2 className="text-sm font-semibold">{t("messages")}</h2>
+                     <h2 className="text-base font-bold font-display tracking-tight text-foreground">{t("messages")}</h2>
                      <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-8 w-8"
+                        className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
                         onClick={toggleSearch}
                      >
                         <Search className="h-4 w-4" />
@@ -69,12 +69,12 @@ export const ChatList = ({ activeId, onSelect }: Props) => {
                            placeholder={t("searchPlaceholder")}
                            value={searchQuery}
                            onChange={(e) => setSearchQuery(e.target.value)}
-                           className="h-8 pr-8 text-xs"
+                           className="h-8 pl-4 pr-8 text-xs rounded-full focus-visible:ring-primary border-border bg-background"
                         />
                         {searchQuery && (
                            <button
                               onClick={() => setSearchQuery("")}
-                              className="absolute right-2 top-1/2 -translate-y-1/2"
+                              className="absolute right-3 top-1/2 -translate-y-1/2"
                            >
                               <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                            </button>
@@ -83,7 +83,7 @@ export const ChatList = ({ activeId, onSelect }: Props) => {
                      <Button 
                         variant="ghost" 
                         size="sm" 
-                        className="h-8 px-2 text-xs"
+                        className="h-8 px-3 text-xs rounded-full"
                         onClick={toggleSearch}
                      >
                         {t("cancel")}

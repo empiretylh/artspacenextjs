@@ -99,8 +99,9 @@ To display varying image dimensions fetched from the API (such as event banners 
 
 ## 💬 5. Interaction & Rich Aesthetics
 
-### Persisted Mini-Chat Widget
-- Uses a glassmorphism shell (`backdrop-blur bg-background/80`).
+### Persisted Mini-Chat Widget & Chat Feature
+- **Rounded Visual Rhythm**: Unlike the sharp catalog frames (`rounded-sm`), the Chat UI utilizes a softer, conversational structure. Main chat layouts, popups, inputs, and message bubbles prefer `rounded-xl` to `rounded-2xl`, while triggers, search bars, and buttons use `rounded-full` for a fluid, organic look.
+- **Persisted Mini-Chat Widget**: Uses a glassmorphism rounded shell (`rounded-2xl border bg-background/80 backdrop-blur-md`).
 - State (active chat thread, maximized/minimized) is persisted in `localStorage` via Zustand to avoid disruption during page transitions.
 - Responsive height limit of `calc(100vh - 100px)` ensures that controls stay within bounds on small screens.
 
