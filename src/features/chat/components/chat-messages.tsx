@@ -4,7 +4,7 @@
 import { useEffect, useRef } from "react";
 import { ChatMessageBubble } from "./chat-message-bubble";
 import { useAuth } from "@/features/auth/store";
-import type { Message } from "../types";
+import type { Message, ChatUser } from "../types";
 import { Loader2 } from "lucide-react";
 
 type Props = {
@@ -13,9 +13,10 @@ type Props = {
    hasMore: boolean;
    onLoadMore: () => void;
    loading: boolean;
+   participantDetails?: Record<string, ChatUser>;
 };
 
-export const ChatMessages = ({ messages, hasMore, onLoadMore, loading }: Props) => {
+export const ChatMessages = ({ conversationId, messages, hasMore, onLoadMore, loading, participantDetails }: Props) => {
    const { user } = useAuth();
    const scrollContainerRef = useRef<HTMLDivElement | null>(null);
    const topSentinelRef = useRef<HTMLDivElement | null>(null);
@@ -61,6 +62,8 @@ export const ChatMessages = ({ messages, hasMore, onLoadMore, loading }: Props) 
                key={msg.id}
                message={msg}
                isMine={msg.senderId === String(user?.id)}
+               conversationId={conversationId}
+               participantDetails={participantDetails}
             />
          ))}
 

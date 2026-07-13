@@ -28,6 +28,7 @@ interface BaseMessage {
    id: string;
    senderId: string;
    createdAt: Timestamp;
+   reactions?: Record<string, string>;
 }
 
 interface TextMessage {

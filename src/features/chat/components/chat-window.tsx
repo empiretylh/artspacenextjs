@@ -91,6 +91,15 @@ export const ChatWindow = ({
       userType || "artists"
    );
 
+   const participantDetails = activeConversation?.participantDetails || (finalRecipientId && finalUser ? {
+      [String(currentUser?.id)]: {
+         id: String(currentUser?.id),
+         name: `${currentUser?.first_name || ""} ${currentUser?.last_name || ""}`.trim() || currentUser?.email || "You",
+         avatar: currentUser?.profile?.profile_picture || null
+      },
+      [finalRecipientId]: finalUser
+   } : undefined);
+
    const currentUnreadCount = activeConversation?.unreadCount?.[String(currentUser?.id)] || 0;
 
    // Mark as read when conversation becomes active or messages arrive
@@ -136,6 +145,7 @@ export const ChatWindow = ({
                   hasMore={hasMore} 
                   onLoadMore={loadMore} 
                   loading={messagesLoading}
+                  participantDetails={participantDetails}
                />
             )}
          </div>
