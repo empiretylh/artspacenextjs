@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Send, Image as ImageIcon, Loader2, X } from "lucide-react";
 import { useTypingIndicator } from "../hooks/use-typing-indicator";
 import { useImageUpload } from "@/features/service/artspace/image-upload";
+import { useTranslations } from "next-intl";
 import {
    Dialog,
    DialogContent,
@@ -24,6 +25,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
    const [caption, setCaption] = useState("");
    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+   const t = useTranslations("Chat");
    
    const fileInputRef = useRef<HTMLInputElement>(null);
    const { setTyping } = useTypingIndicator(conversationId);
@@ -55,7 +57,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
       const totalPotential = selectedFiles.length + incomingFiles.length;
       
       if (totalPotential > MAX_IMAGES) {
-         setError(`You can only send up to ${MAX_IMAGES} images at once.`);
+         setError(t("maxImagesError", { max: MAX_IMAGES }));
       } else {
          setError(null);
       }
@@ -150,7 +152,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
                   setValue(e.target.value);
                   setTyping(true);
                }}
-               placeholder="Type a message..."
+               placeholder={t("typeMessagePlaceholder")}
                rows={1}
                className="resize-none"
                onKeyDown={(e) => {
@@ -170,7 +172,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
          <Dialog open={isPreviewOpen} onOpenChange={(open) => !open && handleCancelPreview()}>
             <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0">
                <DialogHeader className="p-4 border-b shrink-0">
-                  <DialogTitle>Preview {selectedFiles.length} Image{selectedFiles.length > 1 ? 's' : ''}</DialogTitle>
+                  <DialogTitle>{t("previewImages", { count: selectedFiles.length, plural: selectedFiles.length > 1 ? 's' : '' })}</DialogTitle>
                </DialogHeader>
 
                <div className="flex-1 overflow-y-auto bg-muted/20 min-h-[200px]">
@@ -198,9 +200,9 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
                            className="w-32 h-32 shrink-0 rounded-lg border-2 border-dashed border-muted-foreground/20 hover:border-muted-foreground/40 hover:bg-muted/50 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground"
                         >
                            <ImageIcon className="h-6 w-6" />
-                           <span className="text-xs font-medium">Add More</span>
+                           <span className="text-xs font-medium">{t("addMore")}</span>
                         </button>
-                     )}
+                      )}
                   </div>
                </div>
 
@@ -215,7 +217,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
                   <Textarea
                      value={caption}
                      onChange={(e) => setCaption(e.target.value)}
-                     placeholder="Add a message..."
+                     placeholder={t("addMessagePlaceholder")}
                      className="resize-none min-h-[80px]"
                      rows={3}
                      autoFocus
@@ -223,16 +225,16 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
                   
                   <DialogFooter className="flex flex-row justify-end gap-2">
                      <Button variant="ghost" onClick={handleCancelPreview} disabled={isUploading}>
-                        Cancel
+                        {t("cancel")}
                      </Button>
                      <Button onClick={handleConfirmSend} disabled={isUploading} className="min-w-[100px]">
                         {isUploading ? (
                            <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Sending...
+                              {t("sending")}
                            </>
                         ) : (
-                           "Send"
+                           t("send")
                         )}
                      </Button>
                   </DialogFooter>

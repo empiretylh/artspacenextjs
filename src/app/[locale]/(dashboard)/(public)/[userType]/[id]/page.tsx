@@ -6,6 +6,8 @@ import { getCachedUser } from "@/features/service/artspace/get-user";
 import { getUsersOg, UserRouteType } from "@/features/service/artspace/get-users";
 import { getImage, getUserRouteType } from "@/lib/utils";
 import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 
 export async function generateStaticParams() {
   const artists = await getUsersOg("artists", { limit: 10 })
@@ -15,14 +17,17 @@ export async function generateStaticParams() {
 
   const allUsers = [...artists.results, ...galleries.results, ...collectors.results];
 
-  return allUsers.map((user) => ({
-    userType: getUserRouteType(user.user_type),
-    id: String(user.id),
-  }))
+  return routing.locales.flatMap((locale) =>
+    allUsers.map((user) => ({
+      locale,
+      userType: getUserRouteType(user.user_type),
+      id: String(user.id),
+    }))
+  )
 }
 
 type Props = {
-  params: Promise<{ userType: UserRouteType, id: string }>
+  params: Promise<{ locale: string; userType: UserRouteType; id: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -86,7 +91,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const UserDetailRoute = async () => {
+const UserDetailRoute = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) => {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return <UserOverviewPage />
 };
 

@@ -111,32 +111,38 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
 
          {/* Artwork Info */}
          {!pure && (
-            <div className="pt-3 space-y-1.5">
-               <div className="space-y-0">
+            <div className="pt-3 space-y-1">
+               <div className="space-y-0.5">
                   <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
                      <h3 className="font-bold text-sm hover:text-primary transition-colors font-display line-clamp-1">
                         {artwork.title}
                      </h3>
                   </Link>
-                  <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider">
-                     {artwork.artist_name}
-                  </p>
+                  {artwork.artist_name && (
+                     <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider">
+                        {artwork.artist_name}
+                     </p>
+                  )}
                </div>
 
-               <div className="flex items-center gap-1.5 flex-wrap">
-                  {artwork.category_name && (
-                     <span className="text-[9px] font-bold text-primary/80 bg-primary/5 border border-primary/10 px-1.5 py-0.5 rounded-full">
-                        {artwork.category_name}
-                     </span>
-                  )}
-                  <span className="text-[9px] text-muted-foreground">
-                     {artwork.dimensions}
-                  </span>
-               </div>
+               {(artwork.category_name || artwork.dimensions) && (
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                     {artwork.category_name && (
+                        <span className="text-[9px] font-bold text-primary/80 bg-primary/5 border border-primary/10 px-1.5 py-0.5 rounded-full">
+                           {artwork.category_name}
+                        </span>
+                     )}
+                     {artwork.dimensions && (
+                        <span className="text-[9px] text-muted-foreground">
+                           {artwork.dimensions}
+                        </span>
+                     )}
+                  </div>
+               )}
 
                {!artwork.hide_price && (
                   <div className="flex justify-between items-center pt-0.5">
-                     <span className="font-black text-base text-foreground tracking-tight">
+                     <span className="font-semibold text-sm text-foreground">
                         <Price currency={artwork.currency} price={artwork.price} uniform size="sm" />
                      </span>
                   </div>

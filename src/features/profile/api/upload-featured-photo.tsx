@@ -9,6 +9,7 @@ import type { AxiosResponse } from "axios";
 import { generateFormdata } from "@/lib/utils";
 import { getProfileQueryOptions } from "./get-profile";
 import { getFeaturedPhotosQueryOptions } from "./get-featured-photos";
+import { queryKeys } from "@/config/query-keys";
 
 // ✅ Define schema (can reuse createArtInputSchema)
 export const uploadFeaturedPhotoInputSchema = z.object({
@@ -47,6 +48,12 @@ export const useUploadFeaturedPhoto = ({
          });
          queryClient.invalidateQueries({
             queryKey: getFeaturedPhotosQueryOptions().queryKey,
+         });
+         queryClient.invalidateQueries({
+            queryKey: queryKeys.user.all,
+         });
+         queryClient.invalidateQueries({
+            queryKey: queryKeys.artist.all,
          });
          onSuccess?.(...args);
       },

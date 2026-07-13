@@ -9,7 +9,8 @@ import {
    ArrowLeft,
    Bell,
    MoreVerticalIcon,
-   Search
+   Search,
+   Plus
 } from "lucide-react";
 import { Suspense, useState } from "react";
 import { InputWithLeftSelectSkeleton } from "../app/input-with-left-select-skeleton";
@@ -17,6 +18,7 @@ import { InputWithLeftSelect } from "../app/input-with-left-seletct";
 import { ProfileDropdown } from "../app/profile-dropdown";
 import Link from "../common/link";
 import { ThemeSwitcher } from "../theme-switcher";
+import { LanguageSwitcher } from "./language-switcher";
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -25,8 +27,13 @@ import {
 } from "../ui/dropdown-menu";
 import { SidebarTrigger } from "../ui/sidebar";
 import { SourceProvider } from "@/lib/analytics-source";
+import { useTranslations, useLocale } from "next-intl";
 
 export function SiteHeader() {
+   const t = useTranslations("Header");
+   const locale = useLocale();
+   const isMy = locale === "my";
+
    const [isArtworkCreateModalOpen, setIsArtworkCreateModalOpen] =
       useState(false);
    const { items } = useCartStore();
@@ -56,22 +63,22 @@ export function SiteHeader() {
             ) : (
                <div className="flex w-full items-center justify-between gap-2">
                   {/* Left Section (Logo + Sidebar Trigger) */}
-                  <div className="flex gap-2 items-center md:hidden">
-                     <SidebarTrigger className="-ml-1" />
-                     <Link to={"/"} className="uppercase font-display font-bold text-sm">
-                        Myanmar Art Space
+                  <div className="flex gap-2 items-center md:hidden min-w-0">
+                     <SidebarTrigger className="-ml-1 shrink-0" />
+                     <Link to={"/"} className="uppercase font-display font-bold text-sm whitespace-nowrap truncate max-w-[150px] xs:max-w-none">
+                        {t("title")}
                      </Link>
                   </div>
-
+ 
                   {/* Search Input on Desktop */}
                   <div className={cn(
-                     "hidden md:flex fixed left-(--sidebar-width) lg:left-1/2 lg:-translate-x-1/2",
+                     "hidden lg:flex fixed left-(--sidebar-width) lg:left-1/2 lg:-translate-x-1/2",
                   )}>
                      <Suspense fallback={<InputWithLeftSelectSkeleton />}>
                         <InputWithLeftSelect />
                      </Suspense>
                   </div>
-
+ 
                   {/* Right Section */}
                   <div className="flex items-center justify-end gap-2 ml-auto">
                      {/* Mobile Search Icon */}
@@ -79,12 +86,12 @@ export function SiteHeader() {
                         onClick={handleMobileSearchOpen}
                         variant="ghost"
                         size="icon"
-                        className="h-10 w-10 p-0 md:hidden"
+                        className="h-10 w-10 p-0 lg:hidden"
                         data-testid="open-search"
                      >
                         <Search className="size-6" />
                      </Button>
-
+ 
                      <Button
                         variant="ghost"
                         className="h-8 w-8 p-0 relative hidden lg:flex"
@@ -94,43 +101,47 @@ export function SiteHeader() {
                         </span>
                         <Bell className="h-4 w-4" />
                      </Button>
-
+ 
                      {isLoggedIn && (
                         <Button
                            onClick={() => setIsArtworkCreateModalOpen(true)}
-                           className="hidden lg:inline-flex h-8"
+                           className={cn(
+                              "rounded-full font-semibold transition-all duration-300 hover:scale-105 active:scale-95 shadow-xs flex items-center gap-1.5 select-none cursor-pointer",
+                              isMy ? "hidden xl:inline-flex h-9 px-4" : "hidden lg:inline-flex h-9 px-4"
+                           )}
                         >
-                           Create
+                           <Plus className="h-4 w-4 shrink-0" />
+                           <span>{t("create")}</span>
                         </Button>
                      )}
-
+ 
                      {/* Auth Buttons / Profile */}
                      {!isLoggedIn ? (
                         <>
                            <Link
                               to={paths.auth.login.path}
-                              className="hidden xl:inline-flex"
+                              className={cn(isMy ? "hidden 2xl:inline-flex" : "hidden xl:inline-flex")}
                            >
-                              <Button className=" h-8">Sign In</Button>
+                              <Button className="rounded-full h-8">{t("signIn")}</Button>
                            </Link>
                            <Link
                               to={paths.auth.register.path}
-                              className="hidden xl:inline-flex"
+                              className={cn(isMy ? "hidden 2xl:inline-flex" : "hidden xl:inline-flex")}
                            >
-                              <Button variant="outline" className=" h-8">
-                                 Join Now
+                              <Button variant="outline" className="rounded-full h-8">
+                                 {t("joinNow")}
                               </Button>
                            </Link>
                         </>
                      ) : (
                         <ProfileDropdown />
                      )}
-
+ 
                      <div
                         className={cn(
                            "flex items-center",
-                           isLoggedIn && "lg:hidden",
-                           !isLoggedIn && "xl:hidden"
+                           isLoggedIn && (isMy ? "xl:hidden" : "lg:hidden"),
+                           !isLoggedIn && (isMy ? "2xl:hidden" : "xl:hidden")
                         )}
                      >
                         <DropdownMenu>
@@ -139,16 +150,17 @@ export function SiteHeader() {
                                  <MoreVerticalIcon className="size-6" />
                               </Button>
                            </DropdownMenuTrigger>
-                           <DropdownMenuContent>
+                           <DropdownMenuContent align="end" className="w-56">
                               {isLoggedIn && (
-                                 <Button
+                                 <DropdownMenuItem
                                     onClick={() =>
                                        setIsArtworkCreateModalOpen(true)
                                     }
-                                    className="w-full lg:hidden h-8"
+                                    className={cn("cursor-pointer flex items-center gap-2", isMy ? "xl:hidden" : "lg:hidden")}
                                  >
-                                    Create
-                                 </Button>
+                                    <Plus className="h-4 w-4 text-muted-foreground" />
+                                    <span>{t("create")}</span>
+                                 </DropdownMenuItem>
                               )}
                               {!isLoggedIn && (
                                  <>
@@ -157,7 +169,7 @@ export function SiteHeader() {
                                           className="w-full"
                                           to={paths.auth.login.path}
                                        >
-                                          Sign In
+                                          {t("signIn")}
                                        </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>
@@ -165,25 +177,38 @@ export function SiteHeader() {
                                           className="w-full"
                                           to={paths.auth.register.path}
                                        >
-                                          Join Now
+                                          {t("joinNow")}
                                        </Link>
                                     </DropdownMenuItem>
                                  </>
                               )}
-                              <DropdownMenuItem className="lg:hidden focus:text-primary-foreground">
-                                 <div className="flex justify-between w-full items-center">
-                                    <Bell className="h-4 w-4" />
-                                    <span className="text-xs text-primary-foreground! p-1 w-5 h-5 flex items-center justify-center bg-primary rounded-full">
-                                       0
-                                    </span>
+                              <DropdownMenuItem className={cn("cursor-pointer flex justify-between items-center focus:text-accent-foreground", isMy ? "xl:hidden" : "lg:hidden")}>
+                                 <div className="flex items-center gap-2">
+                                    <Bell className="h-4 w-4 text-muted-foreground" />
+                                    <span>{t("notifications")}</span>
                                  </div>
+                                 <span className="text-xs font-semibold px-2 py-0.5 bg-primary/10 text-primary rounded-full">
+                                    0
+                                 </span>
                               </DropdownMenuItem>
-                              {/* <ThemeSwitcher className="w-full" /> */}
-                           </DropdownMenuContent>
+                               <div className="md:hidden p-2 border-t mt-2 space-y-2">
+                                  <div className="flex justify-between items-center gap-4 px-2 py-1.5">
+                                     <span className="text-xs font-medium text-muted-foreground">Language</span>
+                                     <LanguageSwitcher />
+                                  </div>
+                                  <div className="flex justify-between items-center gap-4 px-2 py-1.5">
+                                     <span className="text-xs font-medium text-muted-foreground">Theme</span>
+                                     <ThemeSwitcher />
+                                  </div>
+                               </div>
+                            </DropdownMenuContent>
                         </DropdownMenu>
                      </div>
-
-                     <ThemeSwitcher />
+ 
+                     <div className="hidden md:flex items-center gap-2">
+                        <LanguageSwitcher />
+                        <ThemeSwitcher />
+                     </div>
                   </div>
                </div>
             )}

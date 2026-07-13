@@ -53,7 +53,7 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
    }
 
    // High-Contrast Premium pill styles
-   const activeFilterClass = "bg-primary text-primary-foreground hover:bg-primary/95 hover:text-primary-foreground shadow-md ring-1 ring-primary/20 scale-[1.02] transition-transform";
+   const activeFilterClass = "bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground hover:bg-primary/95 dark:hover:bg-primary/95 hover:text-primary-foreground shadow-md ring-1 ring-primary/20 scale-[1.02] transition-transform";
    const inactiveFilterClass = "bg-background border-2 border-muted/70 shadow-sm hover:!border-primary/30 hover:bg-muted/10 transition-all";
 
    return (
@@ -94,15 +94,15 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
                         <SelectValue placeholder="Status" />
                      </SelectTrigger>
 
-                     <SelectContent className="rounded-2xl border-none shadow-2xl p-2 min-w-[200px]">
+                     <SelectContent className="rounded-xl border-none shadow-2xl p-1.5 min-w-[180px]">
                         <SelectGroup>
-                           <SelectLabel className="px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Search Status</SelectLabel>
-                           <SelectItem value="ALL" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">All Statuses</SelectItem>
+                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Search Status</SelectLabel>
+                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">All Statuses</SelectItem>
                            {["AVAILABLE", "SOLD", "NOT_FOR_SALE", "SOLD_OUT"].map((s) => (
                               <SelectItem
                                  key={s}
                                  value={s}
-                                 className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5"
+                                 className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5"
                               >
                                  {s === "AVAILABLE" ? "Available" :
                                     s === "SOLD" ? "Sold" :
@@ -130,12 +130,12 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
                         <SelectValue placeholder="Category" />
                      </SelectTrigger>
 
-                     <SelectContent className="rounded-2xl border-none shadow-2xl p-2 min-w-[220px]">
+                     <SelectContent className="rounded-xl border-none shadow-2xl p-1.5 min-w-[200px]">
                         <SelectGroup>
-                           <SelectLabel className="px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Categories</SelectLabel>
-                           <SelectItem value="ALL" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">All Categories</SelectItem>
+                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Categories</SelectLabel>
+                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">All Categories</SelectItem>
                            {categories.map((c: any) => (
-                              <SelectItem key={c.id} value={c.slug} className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                              <SelectItem key={c.id} value={c.slug} className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
                                  {c.name}
                               </SelectItem>
                            ))}
@@ -159,12 +159,12 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
                         <SelectValue placeholder="Genre" />
                      </SelectTrigger>
 
-                     <SelectContent className="rounded-2xl border-none shadow-2xl p-2 min-w-[200px]">
+                     <SelectContent className="rounded-xl border-none shadow-2xl p-1.5 min-w-[180px]">
                         <SelectGroup>
-                           <SelectLabel className="px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Genres</SelectLabel>
-                           <SelectItem value="ALL" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">All Genres</SelectItem>
+                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Genres</SelectLabel>
+                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">All Genres</SelectItem>
                            {genres.map((g: any) => (
-                              <SelectItem key={g.id} value={g.slug} className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                              <SelectItem key={g.id} value={g.slug} className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
                                  {g.name}
                               </SelectItem>
                            ))}
@@ -188,12 +188,12 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
                         <SelectValue placeholder="Style" />
                      </SelectTrigger>
 
-                     <SelectContent className="rounded-2xl border-none shadow-2xl p-2 min-w-[200px]">
+                     <SelectContent className="rounded-xl border-none shadow-2xl p-1.5 min-w-[180px]">
                         <SelectGroup>
-                           <SelectLabel className="px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Styles</SelectLabel>
-                           <SelectItem value="ALL" className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">All Styles</SelectItem>
+                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Styles</SelectLabel>
+                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">All Styles</SelectItem>
                            {styles.map((s: any) => (
-                              <SelectItem key={s.id} value={s.slug} className="rounded-xl focus:bg-primary focus:text-primary-foreground cursor-pointer py-2.5">
+                              <SelectItem key={s.id} value={s.slug} className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
                                  {s.name}
                               </SelectItem>
                            ))}

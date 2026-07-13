@@ -5,9 +5,11 @@ import { getHomeCategories } from "@/features/service/artspace/get-home-categori
 import { getHomeStyles } from "@/features/service/artspace/get-home-styles";
 import { getQueryClient } from "@/lib/get-query-client";
 import CategoryAndStyleTab from "./category-and-style-tab";
+import { getTranslations } from "next-intl/server";
 
 export const CategoryAndStyleSection = async () => {
    const queryClient = getQueryClient();
+   const t = await getTranslations("Home");
 
    await queryClient.prefetchQuery({
       queryKey: queryKeys.category.home.list({ limit: 12 }),
@@ -22,7 +24,7 @@ export const CategoryAndStyleSection = async () => {
    return (
       <section>
          <div className="mb-4">
-            <SectionTitle>Shop Paintings by Category And Style</SectionTitle>
+            <SectionTitle>{t("shopByCategoryAndStyle")}</SectionTitle>
          </div>
          <HydrationBoundary state={dehydrate(queryClient)}>
             <CategoryAndStyleTab />

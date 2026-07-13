@@ -17,6 +17,7 @@ import { cn, getDate, getImage } from "@/lib/utils";
 import { format } from "date-fns";
 import { notFound, useParams } from "next/navigation";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 const typeColorMap: Record<string, string> = {
    Solo: "bg-indigo-100 text-indigo-700",
@@ -25,6 +26,7 @@ const typeColorMap: Record<string, string> = {
 };
 
 export default function EventDetailPage() {
+   const t = useTranslations("Events");
    const { slug } = useParams<{ slug: string }>();
 
    const eventQuery = useGetEvent({
@@ -62,7 +64,7 @@ export default function EventDetailPage() {
    return (
       <div className="pb-24 sm:pb-16">
          {/* Hero */}
-         <div className="relative h-[400px] w-screen md:w-full ml-[50%] translate-x-[-50%] md:aspect-8/3">
+         <div className="relative w-screen md:w-full ml-[50%] translate-x-[-50%] aspect-video max-h-[480px]">
             <AppImage
                src={getImage(event.cover_photo)}
                alt={event.title}
@@ -86,7 +88,7 @@ export default function EventDetailPage() {
                      />
                      <div className="flex flex-col gap-1">
                         <div className="flex gap-2 items-end mb-2">
-                           <h1 className="text-2xl sm:text-3xl font-semibold text-white leading-tight">
+                           <h1 className="text-2xl sm:text-3xl font-bold font-display text-white leading-tight">
                               {event.title}
                            </h1>
                            <ShareButton content_type="event" item_id={String(event.id)} item_name={event.title} className="text-white" />
@@ -106,7 +108,7 @@ export default function EventDetailPage() {
 
                         {event.interest_count > 0 && (
                            <span className="text-white/90 text-xs">
-                              Interested by {event.interest_count}
+                              {t("interestedBy", { count: event.interest_count })}
                            </span>
                         )}
                      </div>
@@ -127,8 +129,8 @@ export default function EventDetailPage() {
             <div className="lg:col-span-2 space-y-8">
                <Card>
                   <CardContent>
-                     <h2 className="text-base sm:text-lg mb-2 font-semibold">
-                        About
+                     <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
+                        {t("about")}
                      </h2>
                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                         {event.about}
@@ -138,8 +140,8 @@ export default function EventDetailPage() {
 
                <Card>
                   <CardContent>
-                     <h2 className="text-base sm:text-lg mb-2 font-semibold">
-                        Artists
+                     <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
+                        {t("artists")}
                      </h2>
 
                      <div className="flex flex-wrap gap-2">
@@ -158,7 +160,7 @@ export default function EventDetailPage() {
                            ))
                         ) : (
                            <p className="text-sm text-muted-foreground">
-                              No artists listed.
+                              {t("noArtists")}
                            </p>
                         )}
                      </div>
@@ -167,8 +169,8 @@ export default function EventDetailPage() {
 
                <Card>
                   <CardContent>
-                     <h2 className="text-base sm:text-lg mb-2 font-semibold">
-                        Artworks
+                     <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
+                        {t("artworks")}
                      </h2>
 
                      {event.artworks.length > 0 ? (
@@ -182,14 +184,13 @@ export default function EventDetailPage() {
                                  <ArtworkCard
                                     key={artwork.id}
                                     artwork={artwork}
-                                    pure
-                                 />
+                                  />
                               ))}
                            </div>
                         </ScrollArea>
                      ) : (
                         <p className="text-sm text-muted-foreground">
-                           No artworks available.
+                           {t("noArtworks")}
                         </p>
                      )}
                   </CardContent>
@@ -197,8 +198,8 @@ export default function EventDetailPage() {
 
                <Card>
                   <CardContent>
-                     <h2 className="text-base sm:text-lg mb-2 font-semibold">
-                        Images
+                     <h2 className="text-base sm:text-lg mb-2 font-bold font-display">
+                        {t("images")}
                      </h2>
 
                      {event.images.length > 0 ? (
@@ -220,7 +221,7 @@ export default function EventDetailPage() {
                         </div>
                      ) : (
                         <p className="text-sm text-muted-foreground">
-                           No images available.
+                           {t("noImages")}
                         </p>
                      )}
                   </CardContent>

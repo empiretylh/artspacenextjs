@@ -15,42 +15,47 @@ import {
 import { paths } from "@/config/paths";
 import { useSubscribeEmail } from "@/features/service/artspace/subscribe-email";
 import { useNotifications } from "../ui/notifications";
-
-const navlinks: Record<
-   string,
-   Array<{ title: string; href?: string; link?: string }>
-> = {
-   Explore: [
-      { title: "About Us", link: "/about-us.html" },
-      { title: "Arcade", href: paths.collections.path },
-      { title: "Press", href: "#" },
-   ],
-   Help: [
-      { title: "Help Center", href: "#" },
-      { title: "Terms of Service", link: "/terms-of-service.html" },
-      { title: "Privacy Policy", link: "/privacy-and-policy.html" },
-   ],
-};
-
-// Dummy contacts for modal
-const contactList = [
-   {
-      name: "Support Team",
-      email: "support@example.com",
-      phone: "123-456-7890",
-   },
-   { name: "Sales Team", email: "sales@example.com", phone: "234-567-8901" },
-   {
-      name: "Marketing Team",
-      email: "marketing@example.com",
-      phone: "345-678-9012",
-   },
-];
+import { useTranslations } from "next-intl";
 
 const Footer = () => {
+   const t = useTranslations("Footer");
    const [isHelpOpen, setIsHelpOpen] = useState(false);
    const [email, setEmail] = useState("");
    const { addNotification } = useNotifications();
+
+   const navlinks: Record<
+      string,
+      Array<{ title: string; href?: string; link?: string }>
+   > = {
+      [t("explore")]: [
+         { title: t("aboutUs"), link: "/about-us.html" },
+         { title: t("arcade"), href: paths.collections.path },
+         { title: t("press"), href: "#" },
+      ],
+      [t("help")]: [
+         { title: t("helpCenter"), href: "#" },
+         { title: t("termsOfService"), link: "/terms-of-service.html" },
+         { title: t("privacyPolicy"), link: "/privacy-and-policy.html" },
+      ],
+   };
+
+   const contactList = [
+      {
+         name: t("supportTeam"),
+         email: "support@example.com",
+         phone: "123-456-7890",
+      },
+      {
+         name: t("salesTeam"),
+         email: "sales@example.com",
+         phone: "234-567-8901"
+      },
+      {
+         name: t("marketingTeam"),
+         email: "marketing@example.com",
+         phone: "345-678-9012",
+      },
+   ];
 
    const subscribeEmailMutation = useSubscribeEmail({
       mutationConfig: {
@@ -58,8 +63,8 @@ const Footer = () => {
             setEmail("");
             addNotification({
                type: "success",
-               title: "Success",
-               message: "Subscribed to newsletter successfully",
+               title: t("success"),
+               message: t("subscribedSuccess"),
             });
          },
       },
@@ -68,7 +73,6 @@ const Footer = () => {
    const onSubscribeClick = () => {
       if (email === "") return;
       if (email.includes("@") === false) return;
-      // alert(email);
       subscribeEmailMutation.mutate({ email });
    };
 
@@ -78,7 +82,7 @@ const Footer = () => {
             {/* Navigation sections */}
             {Object.keys(navlinks).map((section) => (
                <div key={section} className="space-y-3">
-                  <h3 className="text-base font-semibold text-foreground">
+                  <h3 className="text-base font-bold font-display text-foreground">
                      {section}
                   </h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
@@ -86,7 +90,7 @@ const Footer = () => {
                         if (item.href) {
                            return (
                               <li key={"footer" + item.title}>
-                                 {item.title === "Help Center" ? (
+                                 {item.title === t("helpCenter") ? (
                                     <button
                                        type="button"
                                        onClick={() => setIsHelpOpen(true)}
@@ -97,7 +101,6 @@ const Footer = () => {
                                  ) : (
                                     <Link
                                        to={item.href}
-                                       // hrefLang={item.href}
                                        className="hover:text-primary transition-colors"
                                     >
                                        {item.title}
@@ -123,11 +126,11 @@ const Footer = () => {
             {/* Subscribe */}
             <div className="flex flex-col gap-6">
                <div className="space-y-3">
-                  <h3 className="text-base font-semibold capitalize">
-                     Subscribe
+                  <h3 className="text-base font-bold font-display capitalize">
+                     {t("subscribe")}
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                     Stay updated with our latest collections.
+                     {t("stayUpdated")}
                   </p>
                </div>
 
@@ -143,7 +146,7 @@ const Footer = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         type="email"
-                        placeholder="Your email"
+                        placeholder={t("emailPlaceholder")}
                         aria-label="Email address"
                         className="rounded-3xl bg-muted w-full"
                      />
@@ -154,23 +157,23 @@ const Footer = () => {
                         loading={subscribeEmailMutation.isPending}
                         className="rounded-3xl whitespace-nowrap w-full sm:w-auto"
                      >
-                        Subscribe
+                        {t("subscribe")}
                      </Button>
                   </div>
                </form>
             </div>
          </div>
          <p className="text-center text-sm w-full mb-4">
-            &copy; {new Date().getFullYear()} Myanmar Art Space.
+            &copy; {new Date().getFullYear()} {t("copyright")}.
          </p>
 
          {/* Help Center Modal */}
          <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
             <DialogContent className="max-w-xs sm:max-w-md rounded-lg">
                <DialogHeader>
-                  <DialogTitle>Help Center</DialogTitle>
+                  <DialogTitle>{t("helpCenter")}</DialogTitle>
                   <DialogDescription>
-                     Reach out to the right team. Here is our contact list:
+                     {t("reachOut")}
                   </DialogDescription>
                </DialogHeader>
 
@@ -179,7 +182,7 @@ const Footer = () => {
                      <li
                         key={contact.name}
                         className="border rounded-lg p-4 hover:bg-primary/5 transition"
-                     >
+                      >
                         <p className="font-semibold">{contact.name}</p>
                         <p className="text-sm text-muted-foreground">
                            {contact.email}
@@ -193,7 +196,7 @@ const Footer = () => {
 
                <div className="mt-6 flex justify-center">
                   <DialogClose asChild>
-                     <Button variant="outline">Close</Button>
+                     <Button variant="outline">{t("close")}</Button>
                   </DialogClose>
                </div>
             </DialogContent>

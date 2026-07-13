@@ -37,7 +37,7 @@ export const EventSmallCard: React.FC<EventSmallCardProps> = ({ event, sizes }) 
 
          <div className="p-3 flex flex-col gap-1">
             <Link to={paths.events.detail.getHref(event.slug)}>
-               <h3 className="text-lg font-semibold truncate">{event.title}</h3>
+               <h3 className="text-lg font-bold font-display tracking-tight truncate hover:text-primary transition-colors">{event.title}</h3>
             </Link>
 
             <div className="flex items-center gap-2 flex-wrap">

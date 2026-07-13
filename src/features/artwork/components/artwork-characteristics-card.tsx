@@ -1,9 +1,9 @@
 import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
 import type { Artwork, Category } from "@/types";
+import { useTranslations } from "next-intl";
 
 interface ArtworkCharacteristicsProps {
-   title: string;
    year: number;
    dimensions: string;
    medium: string;
@@ -19,7 +19,6 @@ interface ArtworkCharacteristicsProps {
 }
 
 export function ArtworkCharacteristicsCard({
-   title,
    year,
    dimensions,
    medium,
@@ -33,39 +32,41 @@ export function ArtworkCharacteristicsCard({
    category,
    currentOwner = "N/A",
 }: ArtworkCharacteristicsProps) {
+   const t = useTranslations("Artwork.detail");
+
    return (
       <div>
-         <h2 className="font-bold text-lg mb-2">
-            Characteristics of the Painting "{title}"{" "}
+         <h2 className="font-bold text-xl mb-2 font-display">
+            {t("characteristicsTitle")}
          </h2>
          <dl className="space-y-2 text-sm">
             <div className="flex border-b border-border gap-2 py-2">
-               <dt className="w-1/2">Year of Creation</dt>
+               <dt className="w-1/2">{t("yearOfCreation")}</dt>
                <dd className="font-medium">{year}</dd>
             </div>
 
             <div className="flex border-b border-border gap-2 py-2">
-               <dt className="w-1/2">Dimensions</dt>
+               <dt className="w-1/2">{t("dimensions")}</dt>
                <dd className="font-medium">{dimensions}</dd>
             </div>
 
             <div className="flex border-b border-border gap-2 py-2">
-               <dt className="w-1/2">Medium</dt>
+               <dt className="w-1/2">{t("medium")}</dt>
                <dd className="font-medium">{medium}</dd>
             </div>
 
             <div className="flex border-b border-border gap-2 py-2">
-               <dt className="w-1/2">Current owner</dt>
+               <dt className="w-1/2">{t("currentOwner")}</dt>
                <dd className="font-medium">{currentOwner ?? "N/A"}</dd>
             </div>
 
             <div className="flex border-b border-border gap-2 py-2">
-               <dt className="w-1/2">Artist</dt>
+               <dt className="w-1/2">{t("artist")}</dt>
                <dd className="font-medium">{artistName ?? "N/A"}</dd>
             </div>
 
             <div className="flex border-b gap-2 py-2">
-               <dt className="w-1/2">Category</dt>
+               <dt className="w-1/2">{t("category")}</dt>
                <dd className="font-medium">
                   <Link
                      to={paths.artworks.path + `?category=${category?.slug}`}
@@ -78,7 +79,7 @@ export function ArtworkCharacteristicsCard({
 
             {styles && (
                <div className="flex gap-2 py-2">
-                  <dt className="w-1/2">Styles</dt>
+                  <dt className="w-1/2">{t("styles")}</dt>
                   <dd className="font-medium">
                      {styles?.map((style, index) => (
                         <Link
@@ -92,31 +93,6 @@ export function ArtworkCharacteristicsCard({
                   </dd>
                </div>
             )}
-            {/* 
-               <div className="flex justify-between border-b border-border pb-1">
-                  <dt className="text-muted-foreground">Type of Art</dt>
-                  <dd className="font-medium">{typeOfArt}</dd>
-               </div>
-
-               <div className="flex justify-between border-b border-border pb-1">
-                  <dt className="text-muted-foreground">Style</dt>
-                  <dd className="font-medium">{style}</dd>
-               </div>
-
-               <div className="flex justify-between border-b border-border pb-1">
-                  <dt className="text-muted-foreground">Genre</dt>
-                  <dd className="font-medium">{genre}</dd>
-               </div>
-
-               <div className="flex justify-between border-b border-border pb-1">
-                  <dt className="text-muted-foreground">Materials</dt>
-                  <dd className="font-medium">{materials}</dd>
-               </div>
-
-               <div className="flex justify-between">
-                  <dt className="text-muted-foreground">Packaging</dt>
-                  <dd className="font-medium">{packaging}</dd>
-               </div> */}
          </dl>
       </div>
    );

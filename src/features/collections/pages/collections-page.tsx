@@ -5,7 +5,7 @@ export default function CollectionsPage() {
       <section className="container mx-auto px-4 py-8 space-y-12">
          {/* Page Header */}
          <header className="space-y-2">
-            <h1 className="text-3xl font-bold">Arcade</h1>
+            <h1 className="text-3xl font-bold font-display tracking-tight">Arcade</h1>
             <p className="text-muted-foreground">
                Curated selections from artists and editors
             </p>

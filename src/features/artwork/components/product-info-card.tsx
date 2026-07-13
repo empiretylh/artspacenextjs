@@ -13,11 +13,13 @@ import type { Artwork } from "@/types";
 import { useRouter } from "next/navigation";
 import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
+import { useTranslations } from "next-intl";
 
 export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
    const router = useRouter();
    const { user } = useAuth();
    const { source } = useSource();
+   const t = useTranslations("Artwork.detail");
 
    const handleOrder = () => {
       if (!user) {
@@ -90,7 +92,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                      disabled
                      className="w-full text-base rounded-md font-medium font-display bg-primary/15 text-primary hover:bg-primary/30"
                   >
-                     Ask for collect
+                     {t("askForCollect")}
                   </Button>
                )}
             </div>
@@ -102,10 +104,10 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   onClick={handleOrder}
                   className="w-full text-base rounded-md font-medium font-display bg-primary text-primary-foreground"
                >
-                  {artwork.status === "AVAILABLE" ? "Collect Now" :
-                     artwork.status === "SOLD" ? "Sold" :
-                        artwork.status === "SOLD_OUT" ? "Sold Out" :
-                           artwork.status === "NOT_FOR_SALE" ? "Not For Sale" : "Collect Now"}
+                  {artwork.status === "AVAILABLE" ? t("collectNow") :
+                     artwork.status === "SOLD" ? t("sold") :
+                        artwork.status === "SOLD_OUT" ? t("soldOut") :
+                           artwork.status === "NOT_FOR_SALE" ? t("notForSale") : t("collectNow")}
                </Button>
 
                <Button
@@ -113,7 +115,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   variant="outline"
                   className="w-full text-base rounded-md font-medium font-display border-2 border-border text-foreground/80"
                >
-                  Save for Later
+                  {t("saveForLater")}
                </Button>
 
                <Button
@@ -121,7 +123,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   variant="outline"
                   className="w-full text-base rounded-md font-medium font-display border-2 border-border text-foreground/80"
                >
-                  Need Help?
+                  {t("needHelp")}
                </Button>
             </div>
 
@@ -141,14 +143,14 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   <span className="text-primary">
                      <SecureIcon />
                   </span>
-                  <p className="text-xs">Secure payment methods: card, bank</p>
+                  <p className="text-xs">{t("securePayment")}</p>
                </div>
 
                <div className="flex items-center space-x-3 md:space-x-4">
                   <span className="text-primary">
                      <DeliverIcon />
                   </span>
-                  <p className="text-xs">Free and easy 14 days returns</p>
+                  <p className="text-xs">{t("freeReturns")}</p>
                </div>
             </div>
          </CardContent>

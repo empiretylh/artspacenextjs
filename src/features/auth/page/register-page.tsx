@@ -24,8 +24,8 @@ const RegisterPage = () => {
             />
          </Link>
          <div className="w-full max-w-sm">
-            <Card>
-               <CardContent>
+            <Card className="py-6 md:py-8">
+               <CardContent className="px-6 md:px-8">
                   <RegisterForm />
                </CardContent>
             </Card>

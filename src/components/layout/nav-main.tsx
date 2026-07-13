@@ -12,9 +12,10 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import Link from "../common/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/routing";
 import React from "react";
 import { paths } from "@/config/paths";
+import { useTranslations } from "next-intl";
 import SmileysIcon from "../icons/smileys-icon";
 import ArtworksIcon from "../icons/artworks-icon";
 import ArtistsIcon from "../icons/artists-icon";
@@ -101,8 +102,10 @@ const data = {
 };
 
 export function NavMain() {
+   const t = useTranslations("Navigation");
    const pathname = usePathname();
-   const { setOpenMobile } = useSidebar();
+   const { setOpenMobile, state } = useSidebar();
+   const isCollapsed = state === "collapsed";
    const router = useRouter();
    const { user } = useAuth();
    const { hasUnread } = useUnreadCount();
@@ -130,13 +133,10 @@ export function NavMain() {
                            <SidebarMenuButton
                               asChild
                               className={cn(
-                                 "hover:bg-primary/16 hover:text-primary active:bg-primary/16 active:text-primary",
-                                 active && "bg-primary/16 text-primary"
+                                 "hover:bg-primary/16 hover:text-primary active:bg-primary/16 active:text-primary rounded-xl h-10 px-3",
+                                 active && "bg-primary/16 text-primary font-bold"
                               )}
-                              tooltip={
-                                 item.title.at(0)?.toUpperCase() +
-                                 item.title.slice(1)
-                              }
+                              tooltip={t(item.title as any)}
                            >
                               <Link
                                  to={item.url}
@@ -151,17 +151,20 @@ export function NavMain() {
                                     router.push(item.url);
                                  }}
                                  className={cn(
+                                    isCollapsed 
+                                       ? "flex items-center justify-center w-full h-full" 
+                                       : "transition-transform duration-200 ease-out hover:translate-x-1 flex items-center gap-3 w-full",
                                     (item.disabled || ((item.title === "order" && !user)) || (item.title === "messages" && !user)) &&
                                     "pointer-events-none opacity-50"
                                  )}
                               >
-                                 <div className="relative">
+                                 <div className="relative flex items-center justify-center shrink-0">
                                     {item.icon && <item.icon className="w-4 h-4" />}
                                     {item.title === "messages" && hasUnread && (
                                        <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2 shrink-0 animate-pulse rounded-full bg-red-500 border-2 border-white dark:border-zinc-950" />
                                     )}
                                  </div>
-                                 <span className="capitalize">{item.title}</span>
+                                 {!isCollapsed && <span className="text-sm">{t(item.title as any)}</span>}
                               </Link>
                            </SidebarMenuButton>
                         </SidebarMenuItem>

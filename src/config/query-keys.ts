@@ -310,4 +310,12 @@ export const queryKeys = {
 
       detail: (id: string) => ["galleries", "detail", id],
    },
+
+   /* =======================
+    * GLOBAL SEARCH
+    * ======================= */
+   globalSearch: {
+      list: (query: string, limit?: number, topN?: number) =>
+         ["global-search", query, limit, topN],
+   },
 };

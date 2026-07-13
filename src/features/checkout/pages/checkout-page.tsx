@@ -10,19 +10,21 @@ import { useCartStore } from "@/features/cart/store/cart-store";
 import { useNotifications } from "@/components/ui/notifications";
 import { CreditCard, Truck } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useTranslations } from "next-intl";
 
 export default function CheckoutPage() {
    const { items, getTotal } = useCartStore();
    const createOrder = useCreateOrder();
    const { addNotification } = useNotifications();
    const [shippingAddress, setShippingAddress] = useState("");
+   const t = useTranslations("Checkout");
 
    const handlePlaceOrder = () => {
       if (items.length === 0) {
          addNotification({
             type: "error",
-            title: "Cart is empty",
-            message: "Add items before checkout.",
+            title: t("cartEmptyTitle"),
+            message: t("cartEmptyMessage"),
          });
          return;
       }
@@ -30,8 +32,8 @@ export default function CheckoutPage() {
       if (!shippingAddress.trim()) {
          addNotification({
             type: "error",
-            title: "Missing address",
-            message: "Please enter a shipping address.",
+            title: t("missingAddressTitle"),
+            message: t("missingAddressMessage"),
          });
          return;
       }
@@ -53,15 +55,15 @@ export default function CheckoutPage() {
             onSuccess: () => {
                addNotification({
                   type: "success",
-                  title: "Order created",
-                  message: "Your order has been placed!",
+                  title: t("orderCreatedTitle"),
+                  message: t("orderCreatedMessage"),
                });
             },
             onError: () => {
                addNotification({
                   type: "error",
-                  title: "Error",
-                  message: "Something went wrong creating the order.",
+                  title: t("errorTitle"),
+                  message: t("errorMessage"),
                });
             },
          }
@@ -70,7 +72,7 @@ export default function CheckoutPage() {
 
    return (
       <div>
-         <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+         <h1 className="text-2xl font-bold mb-6">{t("title")}</h1>
 
          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Shipping Info */}
@@ -78,22 +80,22 @@ export default function CheckoutPage() {
                <Card>
                   <CardHeader>
                      <CardTitle className="flex items-center gap-2">
-                        <Truck className="h-5 w-5" /> Shipping Address
+                        <Truck className="h-5 w-5" /> {t("shippingAddress")}
                      </CardTitle>
                   </CardHeader>
                   <CardContent className="grid gap-4">
                      <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                           <Label htmlFor="first-name">First name</Label>
+                           <Label htmlFor="first-name">{t("firstName")}</Label>
                            <Input id="first-name" placeholder="John" />
                         </div>
                         <div className="space-y-2">
-                           <Label htmlFor="last-name">Last name</Label>
+                           <Label htmlFor="last-name">{t("lastName")}</Label>
                            <Input id="last-name" placeholder="Doe" />
                         </div>
                      </div>
                      <div className="space-y-2">
-                        <Label htmlFor="address">Address</Label>
+                        <Label htmlFor="address">{t("address")}</Label>
                         <Input id="address" placeholder="123 Art Street" />
                      </div>
                   </CardContent>
@@ -102,7 +104,7 @@ export default function CheckoutPage() {
                <Card>
                   <CardHeader>
                      <CardTitle className="flex items-center gap-2">
-                        <CreditCard className="h-5 w-5" /> Payment Method
+                        <CreditCard className="h-5 w-5" /> {t("paymentMethod")}
                      </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -113,7 +115,7 @@ export default function CheckoutPage() {
                         >
                            <div className="flex items-center gap-4">
                               <RadioGroupItem value="card" id="card" />
-                              <span>Credit Card</span>
+                              <span>{t("creditCard")}</span>
                            </div>
                         </Label>
                         <Label
@@ -122,7 +124,7 @@ export default function CheckoutPage() {
                         >
                            <div className="flex items-center gap-4">
                               <RadioGroupItem value="paypal" id="paypal" />
-                              <span>PayPal</span>
+                              <span>{t("paypal")}</span>
                            </div>
                         </Label>
                      </RadioGroup>
@@ -134,11 +136,11 @@ export default function CheckoutPage() {
             <div className="lg:col-span-5 space-y-4">
                <Card>
                   <CardHeader>
-                     <CardTitle>Order Summary</CardTitle>
+                     <CardTitle>{t("orderSummary")}</CardTitle>
                   </CardHeader>
                   <CardContent>
                      <div>{items.length === 0 ? (
-                        <p className="text-muted-foreground">No items in cart.</p>
+                        <p className="text-muted-foreground">{t("noItems")}</p>
                      ) : (
                         <div className="space-y-3">
                            {items.map((item) => (
@@ -149,19 +151,19 @@ export default function CheckoutPage() {
                                  <div>
                                     <p className="font-medium">{item.title}</p>
                                     <p className="text-sm text-muted-foreground">
-                                       Qty: {item.quantity}
+                                       {t("qty", { count: item.quantity })}
                                     </p>
                                  </div>
                                  <p>
                                     $
                                     {(Number(item.price) * item.quantity).toFixed(
                                        2
-                                    )}
+                                     )}
                                  </p>
                               </div>
                            ))}
                            <div className="flex items-center justify-between font-semibold">
-                              <p>Total</p>
+                              <p>{t("total")}</p>
                               <p>${getTotal().toFixed(2)}</p>
                            </div>
                         </div>
@@ -174,7 +176,7 @@ export default function CheckoutPage() {
                   disabled={createOrder.isPending || items.length === 0}
                   className="w-full"
                >
-                  {createOrder.isPending ? "Placing Order..." : "Place Order"}
+                  {createOrder.isPending ? t("placingOrder") : t("placeOrder")}
                </Button>
             </div>
          </div>

@@ -11,8 +11,10 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedCollectorsSectionSkeleton } from "./featured-collectors-section-skeleton";
+import { useTranslations } from "next-intl";
 
 export const FeaturedCollectorsSlider = () => {
+   const t = useTranslations("Home");
    const collectorsQuery = useQuery({
       queryKey: queryKeys.collector.list({ limit: 10 }),
       queryFn: () => getCollectors({ limit: 10 }),
@@ -29,11 +31,11 @@ export const FeaturedCollectorsSlider = () => {
       <section>
          <div className="flex justify-between items-end mb-4">
             <div>
-               <SectionTitle>Collectors</SectionTitle>
+               <SectionTitle>{t("collectors")}</SectionTitle>
             </div>
             <Link to={paths.collectors.path}>
                <Button variant="ghost" className="flex">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                  {t("viewAll")} <ArrowRight className="ml-2 h-4 w-4" />
                </Button>
             </Link>
          </div>

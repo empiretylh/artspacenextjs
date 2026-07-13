@@ -31,6 +31,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getImage, getUserRouteType } from "@/lib/utils";
 import Link from "next/link";
 import { paths } from "@/config/paths";
+import { useTranslations } from "next-intl";
 
 type Props = {
    conversationId?: string | null;
@@ -47,6 +48,7 @@ export const ChatWindow = ({
    onBack,
    variant = "default" 
 }: Props) => {
+   const t = useTranslations("Chat");
    const { activeConversationId: storeConvId, pendingRecipientId: storeRecipId } = useChatStore();
    
    const conversationId = propConversationId !== undefined ? propConversationId : storeConvId;
@@ -102,7 +104,7 @@ export const ChatWindow = ({
    if (!conversationId && !recipientId) {
       return (
          <div className="flex flex-1 items-center justify-center text-muted-foreground">
-            Select a conversation
+            {t("selectConversation")}
          </div>
       );
    }
@@ -123,7 +125,7 @@ export const ChatWindow = ({
             />
          )}
          
-         <div className="flex-1 min-h-0 flex flex-col">
+         <div className="flex-grow min-h-0 flex flex-col">
             {messagesLoading && messages.length === 0 ? (
                <div className="flex h-full items-center justify-center">
                   <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/40" />
@@ -141,7 +143,7 @@ export const ChatWindow = ({
 
          {isBlocked ? (
             <div className="p-4 bg-muted/30 border-t text-center text-sm text-muted-foreground italic">
-               You cannot message this user.
+               {t("blockedWarning")}
             </div>
          ) : (
             <ChatInput 
@@ -156,9 +158,9 @@ export const ChatWindow = ({
          <Sheet open={isProfileOpen} onOpenChange={setIsProfileOpen}>
             <SheetContent side="right" className="w-full sm:max-w-md p-0 gap-0">
                <SheetHeader className="sr-only">
-                  <SheetTitle>{finalUser?.name || "User Profile"} Preview</SheetTitle>
+                  <SheetTitle>{t("profilePreviewTitle", { name: finalUser?.name || "User Profile" })}</SheetTitle>
                   <SheetDescription>
-                     View basic information and featured works of {finalUser?.name || "this user"}.
+                     {t("profilePreviewDescription", { name: finalUser?.name || "this user" })}
                   </SheetDescription>
                </SheetHeader>
                <ScrollArea className="h-full">
@@ -199,7 +201,7 @@ export const ChatWindow = ({
                         {/* Bio/About */}
                         {userProfile?.profile?.about && (
                            <div className="space-y-2">
-                              <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/70">About</h4>
+                              <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/70">{t("about")}</h4>
                               <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">
                                  {userProfile.profile.about}
                               </p>
@@ -209,7 +211,7 @@ export const ChatWindow = ({
                         {/* Gallery Preview */}
                         {userProfile?.profile?.features_photos && userProfile.profile.features_photos.length > 0 && (
                            <div className="space-y-3">
-                              <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/70">Featured Works</h4>
+                              <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/70">{t("featuredWorks")}</h4>
                               <div className="grid grid-cols-2 gap-2">
                                  {userProfile.profile.features_photos.slice(0, 4).map((p: any) => (
                                     <div key={p.id} className="aspect-square rounded-md overflow-hidden bg-muted group relative">
@@ -229,7 +231,7 @@ export const ChatWindow = ({
                            <div className="pt-4">
                               <Button asChild className="w-full gap-2" variant="default">
                                  <Link href={profileUrl}>
-                                    View Full Profile
+                                    {t("viewFullProfile")}
                                     <ExternalLink className="h-4 w-4" />
                                  </Link>
                               </Button>

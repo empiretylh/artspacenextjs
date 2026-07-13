@@ -136,7 +136,8 @@ export const ArtworkCreateForm = ({
          hide_price: false,
          description: "",
          dimensions: "",
-         price: 1,
+         medium: "",
+         price: undefined,
          currency: "MMK",
          visibility: "PRIVATE",
          are_u_owner: true,
@@ -206,6 +207,26 @@ export const ArtworkCreateForm = ({
                               <FormControl>
                                  <Input
                                     placeholder="e.g., 44 x 56 cm"
+                                    {...field}
+                                 />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     {/* Medium */}
+                     <FormField
+                        control={form.control}
+                        name="medium"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>
+                                 Medium <RequiredAsterisk />
+                              </FormLabel>
+                              <FormControl>
+                                 <Input
+                                    placeholder="e.g., Oil on canvas, Acrylic, Digital, etc."
                                     {...field}
                                  />
                               </FormControl>
@@ -523,7 +544,7 @@ export const ArtworkCreateForm = ({
                                     <FormControl>
                                        <Input
                                           type="number"
-                                          placeholder="e.g., 5000"
+                                          placeholder="Enter Artwork Price"
                                           min={1}
                                           step={1}
                                           {...field}

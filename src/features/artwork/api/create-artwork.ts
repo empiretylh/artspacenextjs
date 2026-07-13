@@ -19,6 +19,7 @@ export const createArtInputSchema = z
       title: z.string().min(2, "Title must be at least 2 characters."),
       description: z.string().optional(),
       dimensions: z.string().min(3, "Dimension must be at least 3 characters."),
+      medium: z.string().min(1, "Medium is required."),
       price: z.number().min(1, "Price must be include.").optional(),
       year: z.number().min(1900).max(new Date().getFullYear()),
       status: z.enum(["AVAILABLE", "SOLD", "NOT_FOR_SALE", "SOLD_OUT"]),

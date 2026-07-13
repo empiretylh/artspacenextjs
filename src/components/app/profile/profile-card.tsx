@@ -67,7 +67,7 @@ export default function ProfileCard({ user }: { user: User }) {
                <div className="text-center px-2 mb-2 w-full">
                   <div className="flex items-center justify-center gap-1/2 mb-2">
                      <Link to={getUserLink(user, authUser!)}>
-                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-20 lg:max-w-32.5">
+                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-20 lg:max-w-32.5 font-display tracking-tight">
                            {fullName}
                         </h2>
                      </Link>
@@ -100,9 +100,9 @@ export default function ProfileCard({ user }: { user: User }) {
                      <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs px-1 py-2 rounded-lg"
+                        className="text-xs px-3 py-2 rounded-lg"
                      >
-                        Send Message
+                        Message
                      </Button>
                   </Link>
                )}

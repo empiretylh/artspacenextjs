@@ -11,8 +11,10 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtistsSectionSkeleton } from "./featured-artists-section-skeleton";
+import { useTranslations } from "next-intl";
 
 export const FeaturedArtistsSlider = () => {
+   const t = useTranslations("Home");
    const artistsQuery = useQuery({
       queryKey: queryKeys.artist.list({ limit: 10 }),
       queryFn: () => getArtists({ limit: 10 }),
@@ -29,11 +31,11 @@ export const FeaturedArtistsSlider = () => {
       <section>
          <div className="flex justify-between items-end mb-4">
             <div>
-               <SectionTitle>Artists</SectionTitle>
+               <SectionTitle>{t("artists")}</SectionTitle>
             </div>
             <Link to={paths.artists.path}>
                <Button variant="ghost" className="flex">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                  {t("viewAll")} <ArrowRight className="ml-2 h-4 w-4" />
                </Button>
             </Link>
          </div>

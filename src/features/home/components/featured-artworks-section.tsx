@@ -11,8 +11,10 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtworksSectionSkeleton } from "./featured-artworks-section-skeleton";
+import { useTranslations } from "next-intl";
 
 export const FeaturedArtworksSection = () => {
+   const t = useTranslations("Home");
    const artworksQuery = useQuery({
       queryKey: queryKeys.artwork.list({ limit: 10 }),
       queryFn: () => getArtworks({ limit: 10 }),
@@ -29,13 +31,13 @@ export const FeaturedArtworksSection = () => {
       <section className="space-y-6">
          <div className="flex justify-between items-center">
             <div>
-               <SectionTitle>Featured Artworks</SectionTitle>
-               <p className="text-sm text-muted-foreground mt-1">Handpicked pieces from our top artists</p>
+               <SectionTitle>{t("featuredArtworks")}</SectionTitle>
+               <p className="text-sm text-muted-foreground mt-1">{t("featuredArtworksSubtitle")}</p>
             </div>
             <div className="flex gap-2">
                <Link to={paths.artworks.path}>
                   <Button variant="link" className="hidden md:flex text-primary">
-                     View All <ArrowRight className="ml-2 h-4 w-4" />
+                     {t("viewAll")} <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                </Link>
                <div className="flex gap-1">

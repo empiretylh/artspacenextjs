@@ -8,7 +8,7 @@ interface AppImageProps extends ImageProps {
 }
 
 const AppImage = ({ src, alt, containerStyle, containerClassName, withoutContainer = false, className, ...props }: AppImageProps) => {
-  if (withoutContainer) return <Image src={src} alt={alt} {...props} />;
+  if (withoutContainer) return <Image src={src} alt={alt} className={className} {...props} />;
 
   return (
     <div style={containerStyle} className={cn("w-full h-full", !props.width && ("relative"), containerClassName)}>

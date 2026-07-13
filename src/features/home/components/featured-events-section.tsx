@@ -11,8 +11,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { FeaturedEventsSectionSkeleton } from "./featured-events-section-skeleton";
+import { useTranslations } from "next-intl";
 
 export const FeaturedEventsSection = () => {
+   const t = useTranslations("Home");
    const eventsQuery = useQuery({
       queryKey: queryKeys.event.list({ limit: 6 }), // Increased limit for better slider experience
       queryFn: () => getEvents({ limit: 6 }),
@@ -33,13 +35,13 @@ export const FeaturedEventsSection = () => {
       <section className="space-y-6">
          <div className="flex justify-between items-center">
             <div>
-               <SectionTitle>Featured Events</SectionTitle>
-               <p className="text-sm text-muted-foreground mt-1">Discover latest art exhibitions and events</p>
+               <SectionTitle>{t("featuredEvents")}</SectionTitle>
+               <p className="text-sm text-muted-foreground mt-1">{t("featuredEventsSubtitle")}</p>
             </div>
             <div className="flex gap-2">
                <Link to={paths.events.path}>
                   <Button variant="link" className="hidden md:flex text-primary">
-                     View All <ArrowRight className="ml-2 h-4 w-4" />
+                     {t("viewAll")} <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                </Link>
                <div className="flex gap-1">

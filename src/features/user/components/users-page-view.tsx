@@ -86,10 +86,10 @@ const UsersPageView = ({
             <div className="transition-all duration-300 w-full space-y-3">
                {/* <FilterRow filters={filters} setFilters={setFilters} /> */}
 
-               <div className="flex items-center justify-between">
+               <div className="flex items-center justify-between mb-6">
                   <h1
                      id="users-title"
-                     className="text-xl font-bold capitalize"
+                     className="text-2xl sm:text-3xl font-bold font-display tracking-tight capitalize"
                   >
                      {title}
                   </h1>

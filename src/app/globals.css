@@ -57,7 +57,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-success: var(--success);
   --color-info: var(--color-blue-500);
-  --font-display: var(--font-space-grotesk), var(--font-noto-myanmar), "Space Grotesk", sans-serif;
+  --font-display: var(--font-fraunces), var(--font-noto-serif-myanmar), "Fraunces", serif;
   /* --font-sans: 'Poppins', 'ui-sans-serif', 'system-ui'; */
   --font-sans: var(--font-outfit-sans), var(--font-noto-myanmar), "Outfit", sans-serif;
   --spacing: 0.25rem;
@@ -109,9 +109,9 @@
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.17 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(0.17 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: #FBBF24;
   /* A vibrant blue */
@@ -215,6 +215,21 @@
 html,
 body {
   height: 100%;
+}
+
+/* Burmese Global Line Height Adjustment */
+html[lang="my"],
+html[lang="my"] body {
+  line-height: 1.6;
+}
+
+html[lang="my"] h1,
+html[lang="my"] h2,
+html[lang="my"] h3,
+html[lang="my"] h4,
+html[lang="my"] h5,
+html[lang="my"] h6 {
+  line-height: 1.6;
 }
 
 /* body[data-scroll-locked] [data-slot="sidebar-inset"] {

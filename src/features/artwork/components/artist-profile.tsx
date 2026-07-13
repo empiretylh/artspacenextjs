@@ -17,32 +17,34 @@ import {
 
 export function ArtistProfile({ artist }: { artist: User }) {
    return (
-      <div className="bg-primary/15 p-4 rounded-lg">
+      <div className="border border-border/80 bg-card/65 dark:bg-card backdrop-blur-md p-6 rounded-xl shadow-xs space-y-6 transition-all duration-300 hover:shadow-sm">
          {/* Header */}
-         <h2 className="font-bold text-lg mb-2">About the artist</h2>
+         <h2 className="text-xl font-semibold font-display tracking-tight text-foreground/90">
+            About the Artist
+         </h2>
 
          {/* Artist Info */}
-         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-3">
+         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pb-4 border-b border-border/50">
             {/* Avatar + Name */}
             <div className="flex items-center space-x-4">
                <AppImage
                   src={getImage(artist?.profile?.profile_picture)}
                   alt={artist.first_name + " " + artist.last_name}
-                  width={48}
-                  height={48}
-                  containerClassName="w-12 h-12 rounded-full overflow-hidden"
+                  width={56}
+                  height={56}
+                  containerClassName="w-14 h-14 rounded-full overflow-hidden ring-2 ring-primary/10 shadow-xs"
                   className="object-cover"
                />
 
-               <div>
+               <div className="space-y-1">
                   <Link to={paths.artists.detail.getHref(String(artist.id))}>
-                     <p className="flex items-center gap-2 font-semibold hover:underline text-sm">
+                     <p className="flex items-center gap-1.5 font-bold hover:underline text-base text-foreground transition-colors">
                         {artist.first_name + " " + artist.last_name}
                         <span>{getUserIcon(artist.user_type)}</span>
                      </p>
                   </Link>
                   {artist.profile?.show_email && (
-                     <p className="text-xs text-muted-foreground">
+                     <p className="text-xs text-muted-foreground/85 font-medium">
                         {artist.email}
                      </p>
                   )}
@@ -50,18 +52,18 @@ export function ArtistProfile({ artist }: { artist: User }) {
             </div>
 
             {/* Actions */}
-            <div className="flex space-x-2">
+            <div className="flex items-center space-x-2">
                <FollowButton
                   size={"default"}
                   following={artist.profile.is_following}
                   userId={String(artist.id)}
                   userType={artist.user_type}
-                  className="rounded-lg"
+                  className="rounded-lg font-medium shadow-xs transition-transform duration-200 active:scale-95"
                />
 
                {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
                   <Link to={`${paths.chats.path}?userId=${artist.id}&userType=${artist.user_type === 'ARTIST' ? 'artists' : artist.user_type === 'GALLERY' ? 'galleries' : 'collectors'}`}>
-                     <Button variant="outline" className="rounded-lg">
+                     <Button variant="outline" className="rounded-lg font-medium shadow-xs transition-transform duration-200 active:scale-95">
                         Send Message
                      </Button>
                   </Link>
@@ -70,60 +72,76 @@ export function ArtistProfile({ artist }: { artist: User }) {
          </div>
 
          {/* Description */}
-         <p className="text-sm sm:text-base leading-relaxed mb-3 text-foreground">
-            {artist.profile.about || "No about yet"}
-         </p>
+         <div className="space-y-2">
+            {artist.profile.about ? (
+               <p className="text-sm leading-relaxed text-foreground/80 pl-4 border-l-2 border-primary/30 py-1">
+                  {artist.profile.about}
+               </p>
+            ) : (
+               <p className="text-sm leading-relaxed text-muted-foreground/60 italic pl-4 border-l-2 border-border/40 py-1">
+                  No introduction available.
+               </p>
+            )}
+         </div>
 
          {/* Summary */}
+         <div className="space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">
+               Summary
+            </h3>
 
-         <Card className="p-3 rounded-md">
-            <CardHeader className="p-0">
-               <h3 className="font-bold text-lg">Summary</h3>
-            </CardHeader>
-            <CardContent className="p-0">
-               <ul className="space-y-4 sm:space-y-5" aria-label="Artist summary">
-                  {/* Fine Art Type */}
-                  <li className="flex items-center space-x-3 sm:space-x-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" aria-label="Artist summary">
+               {/* Fine Art Type */}
+               <div className="flex items-center space-x-3 p-3.5 rounded-xl bg-muted/30 border border-border/40 transition-colors hover:bg-muted/40">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
                      <Hand className="w-4 h-4" />
-                     <p className="text-xs text-foreground">
-                        Kind of Fine Art{" "}
-                        <span className="text-muted-foreground">
-                           Digital Impressionism
-                        </span>
-                     </p>
-                  </li>
+                  </div>
+                  <div>
+                     <p className="text-xs text-muted-foreground font-medium">Kind of Fine Art</p>
+                     <p className="text-sm font-semibold text-foreground">Digital Impressionism</p>
+                  </div>
+               </div>
 
-                  {/* Community Member */}
-                  <li className="flex items-center flex-wrap gap-3 sm:gap-4">
+               {/* Community Member */}
+               <div className="flex items-center space-x-3 p-3.5 rounded-xl bg-muted/30 border border-border/40 transition-colors hover:bg-muted/40">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
                      <Medal className="w-4 h-4" />
-                     <p className="text-xs text-foreground">Community Member </p>
-                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary">
-                        <CheckCircle2 className="w-4 h-4 mr-1" /> Verified
+                  </div>
+                  <div className="flex-1 flex items-center justify-between gap-2">
+                     <p className="text-xs text-muted-foreground font-medium">Community Member</p>
+                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/25">
+                        <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Verified
                      </span>
-                  </li>
+                  </div>
+               </div>
 
-                  {/* Custom Orders */}
-                  <li className="flex items-center flex-wrap gap-3 sm:gap-4">
+               {/* Custom Orders */}
+               <div className="flex items-center space-x-3 p-3.5 rounded-xl bg-muted/30 border border-border/40 transition-colors hover:bg-muted/40">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
                      <Sparkles className="w-4 h-4" />
-                     <p className="text-xs text-foreground">Custom Orders </p>
-                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary">
-                        <CheckCircle2 className="w-4 h-4 mr-1" /> Verified
+                  </div>
+                  <div className="flex-1 flex items-center justify-between gap-2">
+                     <p className="text-xs text-muted-foreground font-medium">Custom Orders</p>
+                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/25">
+                        <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Verified
                      </span>
-                  </li>
+                  </div>
+               </div>
 
-                  {/* Collaborations */}
-                  <li className="flex items-center flex-wrap gap-3 sm:gap-4">
+               {/* Collaborations */}
+               <div className="flex items-center space-x-3 p-3.5 rounded-xl bg-muted/30 border border-border/40 transition-colors hover:bg-muted/40">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
                      <Package className="w-4 h-4" />
-                     <p className="text-xs text-foreground">
-                        Collaboration with Curators{" "}
-                     </p>
-                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary">
-                        <CheckCircle2 className="w-4 h-4 mr-1" /> Available
+                  </div>
+                  <div className="flex-1 flex items-center justify-between gap-2">
+                     <p className="text-xs text-muted-foreground font-medium">Collaboration with Curators</p>
+                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
+                        <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Available
                      </span>
-                  </li>
-               </ul>
-            </CardContent>
-         </Card>
+                  </div>
+               </div>
+            </div>
+         </div>
       </div>
    );
 }

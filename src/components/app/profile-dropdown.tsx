@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
    DropdownMenu,
@@ -43,7 +44,7 @@ export function ProfileDropdown() {
          <DropdownMenuTrigger asChild>
             <Button
                variant="ghost"
-               className="relative border h-10 w-10 md:h-8 md:w-8 rounded-full"
+               className="relative border h-10 w-10 md:h-8 md:w-8 rounded-full transition-transform duration-300 hover:scale-105 active:scale-95 cursor-pointer select-none"
             >
                <Avatar className="h-10 w-10 md:h-8 md:w-8">
                   {user?.profile.profile_picture ? (
@@ -73,37 +74,26 @@ export function ProfileDropdown() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-               {/* <DropdownMenuItem asChild>
-                  <Link to={paths.profile.path}>
-                     Profile
-                     <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                  </Link>
-               </DropdownMenuItem> */}
                <DropdownMenuItem asChild>
-                  <Link to={paths.profile.path}>
-                     Profile
-                     {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
+                  <Link to={paths.profile.path} className="flex items-center gap-2 cursor-pointer w-full">
+                     <User className="h-4 w-4 text-muted-foreground" />
+                     <span>Profile</span>
                   </Link>
                </DropdownMenuItem>
                <DropdownMenuItem asChild>
-                  <Link to={paths.settings.path}>
-                     Settings
-                     {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
+                  <Link to={paths.settings.path} className="flex items-center gap-2 cursor-pointer w-full">
+                     <Settings className="h-4 w-4 text-muted-foreground" />
+                     <span>Settings</span>
                   </Link>
                </DropdownMenuItem>
-               {/* <DropdownMenuItem asChild disabled>
-                  <Link to="/settings">
-                     Settings
-                     <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                  </Link>
-               </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
                onClick={handleLogout}
+               className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
             >
-               Log out
-               {/* <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut> */}
+               <LogOut className="h-4 w-4 text-destructive" />
+               <span>Log out</span>
             </DropdownMenuItem>
          </DropdownMenuContent>
       </DropdownMenu>

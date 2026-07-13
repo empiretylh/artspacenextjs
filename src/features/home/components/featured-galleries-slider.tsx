@@ -11,8 +11,10 @@ import { getGalleries } from "@/features/service/artspace/get-galleries";
 import UserSmallCard from "@/components/app/user-small-card";
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/config/query-keys";
+import { useTranslations } from "next-intl";
 
 export const FeaturedGalleriesSlider = () => {
+   const t = useTranslations("Home");
    const galleriesQuery = useQuery({
       queryKey: queryKeys.gallery.list({ limit: 10 }),
       queryFn: () => getGalleries({ limit: 10 }),
@@ -29,11 +31,11 @@ export const FeaturedGalleriesSlider = () => {
       <section>
          <div className="flex justify-between items-end mb-4">
             <div>
-               <SectionTitle>Galleries</SectionTitle>
+               <SectionTitle>{t("galleries")}</SectionTitle>
             </div>
             <Link to={paths.galleries.path}>
                <Button variant="ghost" className="flex">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                  {t("viewAll")} <ArrowRight className="ml-2 h-4 w-4" />
                </Button>
             </Link>
          </div>

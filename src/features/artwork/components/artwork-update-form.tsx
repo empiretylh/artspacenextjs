@@ -145,6 +145,7 @@ export const ArtworkUpdateForm = ({
          }] : [],
          description: artwork.description ?? "",
          dimensions: artwork.dimensions ?? "",
+         medium: artwork.medium ?? "",
          hide_price: artwork.hide_price ?? false,
          price: artwork.price ? Number(artwork.price) : 1,
          currency: artwork.currency.code ?? "MMK",
@@ -224,6 +225,23 @@ export const ArtworkUpdateForm = ({
                               </FormLabel>
                               <FormControl>
                                  <Input placeholder="44 x 56 cm" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     {/* Medium */}
+                     <FormField
+                        control={form.control}
+                        name="medium"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>
+                                 Medium <RequiredAsterisk />
+                              </FormLabel>
+                              <FormControl>
+                                 <Input placeholder="e.g., Oil on canvas, Acrylic, Digital, etc." {...field} />
                               </FormControl>
                               <FormMessage />
                            </FormItem>
