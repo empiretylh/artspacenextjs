@@ -117,7 +117,7 @@ const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
     <ScrollArea
       viewportRef={ref}
       viewportId="scroll-container"
-      className='h-screen overflow-y-auto [&>[data-slot=scroll-area-viewport]>div]:!block'
+      className='h-screen overflow-hidden [&>[data-slot=scroll-area-viewport]>div]:!block'
     >
       <SourceProvider value={{ source }}>
         <div className="min-h-full flex flex-col justify-between">

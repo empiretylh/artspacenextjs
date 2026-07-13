@@ -20,7 +20,7 @@ export function ProfileActions({ user, blocked }: { user: User, blocked: boolean
             entityId={String(user.id)} />
          <DropdownMenu>
             <DropdownMenuTrigger asChild>
-               <Button ref={reFocusRef} variant="ghost" size="icon">
+               <Button ref={reFocusRef} variant="outline" className="rounded-full h-8 w-8 text-muted-foreground p-0">
                   <MoreVertical className="h-4 w-4" />
                </Button>
             </DropdownMenuTrigger>

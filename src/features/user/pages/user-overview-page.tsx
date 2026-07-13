@@ -16,7 +16,7 @@ const UserOverviewPage = () => {
             <div>
                <h2
                   id="user-overview-title"
-                  className="text-2xl font-bold font-display mb-4"
+                  className="text-lg font-bold font-display mb-4"
                >
                   About the user
                </h2>
@@ -25,7 +25,7 @@ const UserOverviewPage = () => {
                </p>
             </div>
             <div>
-               <h3 className="text-2xl font-bold font-display mb-4">
+               <h3 className="text-lg font-bold font-display mb-4">
                   Summary
                </h3>
                <ul className="space-y-4 text-sm font-normal">

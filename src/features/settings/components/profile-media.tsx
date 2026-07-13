@@ -390,7 +390,7 @@ export const ProfileMedia: React.FC = () => {
             </div>
 
             <div>
-               <h1 className="text-2xl font-semibold">{fullName}</h1>
+               <h1 className="text-2xl font-bold font-display tracking-tight">{fullName}</h1>
                <p className="text-sm text-muted-foreground">{email}</p>
                <div className="inline-flex items-center gap-1 mt-2 px-3 py-1 rounded-full bg-muted text-sm">
                   <UserCircle2 className="w-4 h-4" />
@@ -406,7 +406,7 @@ export const ProfileMedia: React.FC = () => {
                alt="Cover"
                fill
                preload
-               containerClassName="aspect-8/3 rounded-2xl overflow-hidden"
+               containerClassName="aspect-8/3 rounded-xl overflow-hidden"
                className="object-cover"
             />
 

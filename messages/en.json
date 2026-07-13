@@ -176,6 +176,8 @@
   },
   "Settings": {
     "title": "Settings",
+    "profileMedia": "Profile Media",
+    "profileMediaDesc": "Manage your profile picture and cover photo",
     "profile": "Profile",
     "updateProfile": "Update your profile",
     "privacySafety": "Privacy & Safety",

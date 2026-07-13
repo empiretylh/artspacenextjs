@@ -204,10 +204,10 @@ export default function ProfileEditForm({
                )}
             />
             <div className="border-t py-4 space-x-2">
-               <Button type="submit" disabled={updateProfileMutation.isPending}>
+               <Button type="submit" loading={updateProfileMutation.isPending}>
                   {t("save")}
                </Button>
-               <Button type="button" variant="outline">
+               <Button type="button" variant="outline" onClick={() => form.reset()}>
                   {t("cancel")}
                </Button>
             </div>
