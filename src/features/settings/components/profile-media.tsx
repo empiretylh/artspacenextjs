@@ -402,7 +402,7 @@ export const ProfileMedia: React.FC = () => {
          {/* Banner */}
          <div className="relative h-full">
             <AppImage
-               src={cover_photo ? getImage(cover_photo) : "/assets/profile-cover-default.png"}
+               src={cover_photo ? getImage(cover_photo) : "/assets/profile-cover-default.jpg"}
                alt="Cover"
                fill
                preload

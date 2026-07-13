@@ -96,7 +96,7 @@ const ProfileLayoutView = ({
 
    const coverSrc = user?.profile.cover_photo
       ? getImage(user.profile.cover_photo)
-      : "/assets/profile-cover-default.png";
+      : "/assets/profile-cover-default.jpg";
 
    const avatarSrc = user?.profile.profile_picture
       ? getImage(user.profile.profile_picture)
