@@ -4,6 +4,8 @@ export interface ChatUser {
    id: string;
    name: string;
    avatar?: string | null;
+   user_type?: string | null;
+   cover_photo?: string | null;
 }
 
 export interface UserDocument extends ChatUser {

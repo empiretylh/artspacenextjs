@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import type { Message, ChatUser } from "../types";
@@ -7,7 +7,7 @@ import { MediaLightbox } from "./media-lightbox";
 import { Smile } from "lucide-react";
 import { useToggleReaction } from "../hooks/use-toggle-reaction";
 import { MessageReactions } from "./message-reactions";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from "@/components/ui/popover";
 import { useAuth } from "@/features/auth/store";
 
 type Props = {
@@ -88,6 +88,37 @@ export const ChatMessageBubble = ({ message, isMine, conversationId, participant
    const { toggleReaction } = useToggleReaction(conversationId);
    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
    const [activeIndex, setActiveIndex] = useState(0);
+   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+   const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+   const isLongPressRef = useRef(false);
+
+   const handleTouchStart = () => {
+      isLongPressRef.current = false;
+      touchTimeoutRef.current = setTimeout(() => {
+         setIsPopoverOpen(true);
+         isLongPressRef.current = true;
+         if (typeof window !== "undefined" && window.navigator && window.navigator.vibrate) {
+            window.navigator.vibrate(50);
+         }
+      }, 500);
+   };
+
+   const handleTouchEnd = (e: React.TouchEvent) => {
+      if (touchTimeoutRef.current) {
+         clearTimeout(touchTimeoutRef.current);
+      }
+      if (isLongPressRef.current) {
+         e.preventDefault();
+         e.stopPropagation();
+      }
+   };
+
+   const handleTouchMove = () => {
+      if (touchTimeoutRef.current) {
+         clearTimeout(touchTimeoutRef.current);
+      }
+   };
 
    const dateLabel = message.createdAt?.toDate?.() 
       ? format(message.createdAt.toDate(), "h:mm a")
@@ -100,16 +131,31 @@ export const ChatMessageBubble = ({ message, isMine, conversationId, participant
    };
 
    return (
-      <div className={cn("flex w-full items-center gap-1.5", isMine ? "justify-end" : "justify-start")}>
-         {/* Reaction Popover wrapped around Bubble */}
-         <Popover>
+      <div className={cn("flex w-full items-center gap-1.5 group relative", isMine ? "justify-end" : "justify-start")}>
+         {/* Reaction Popover */}
+         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
             <PopoverTrigger asChild>
-               <div
+               <button 
                   className={cn(
-                     "flex max-w-[80%] flex-col rounded-2xl shadow-xs border relative cursor-pointer select-none",
+                     "hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground active:scale-95 cursor-pointer",
+                     isMine ? "order-first" : "order-last"
+                  )}
+                  aria-label="Add reaction"
+               >
+                  <Smile className="h-4 w-4" />
+               </button>
+            </PopoverTrigger>
+
+            <PopoverAnchor asChild>
+               <div
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={handleTouchEnd}
+                  onTouchMove={handleTouchMove}
+                  className={cn(
+                     "flex max-w-[80%] flex-col rounded-2xl shadow-xs border relative select-none",
                      isMine 
-                        ? "bg-primary text-primary-foreground border-primary/10 rounded-tr-none" 
-                        : "bg-muted/30 text-foreground border-border rounded-tl-none",
+                        ? "bg-primary text-primary-foreground border-primary/10 rounded-tr-none order-last" 
+                        : "bg-muted/30 text-foreground border-border rounded-tl-none order-first",
                      message.type === 'image' ? "p-1.5" : "px-3 py-1.5"
                   )}
                >
@@ -147,7 +193,8 @@ export const ChatMessageBubble = ({ message, isMine, conversationId, participant
                      onReact={(emoji) => toggleReaction(message, emoji)} 
                   />
                </div>
-            </PopoverTrigger>
+            </PopoverAnchor>
+
             <PopoverContent 
                side="top" 
                align={isMine ? "end" : "start"} 
@@ -161,9 +208,10 @@ export const ChatMessageBubble = ({ message, isMine, conversationId, participant
                         onClick={(e) => {
                            e.stopPropagation();
                            toggleReaction(message, emoji);
+                           setIsPopoverOpen(false);
                         }}
                         className={cn(
-                           "hover:scale-125 hover:bg-muted active:scale-95 transition-all p-1.5 rounded-full text-base leading-none",
+                           "hover:scale-125 hover:bg-muted active:scale-95 transition-all p-1.5 rounded-full text-base leading-none cursor-pointer",
                            hasReacted && "bg-primary/10"
                         )}
                      >

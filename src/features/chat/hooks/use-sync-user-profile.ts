@@ -14,11 +14,15 @@ export const useSyncUserProfile = () => {
 
       const name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email;
       const avatar = user.profile?.profile_picture || null;
+      const user_type = user.user_type;
+      const cover_photo = user.profile?.cover_photo || null;
 
       const userData: UserDocument = {
          id: userIdStr,
          name,
          avatar,
+         user_type,
+         cover_photo,
          lastSeen: serverTimestamp() as any,
          updatedAt: serverTimestamp() as any,
       };
@@ -45,7 +49,9 @@ export const useSyncUserProfile = () => {
                      [`participantDetails.${userIdStr}`]: {
                         id: userIdStr,
                         name,
-                        avatar
+                        avatar,
+                        user_type,
+                        cover_photo
                      },
                      updatedAt: serverTimestamp()
                   });

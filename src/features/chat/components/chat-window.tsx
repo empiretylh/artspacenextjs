@@ -67,28 +67,43 @@ export const ChatWindow = ({
    );
    const finalRecipientId = recipientId || otherUserId || null;
 
-   // Fetch full recipient data for profile sheet
-   const { data: recipientData, isLoading: recipientLoading } = useQuery({
-      ...getUserQueryOptions(finalRecipientId || "", userType || "artists"),
-      enabled: !!finalRecipientId,
-   });
-
    const displayUser: ChatUser | null = activeConversation && otherUserId 
       ? activeConversation.participantDetails[otherUserId] 
       : null;
 
+   // Try to resolve user type from cached Firestore participant data first to avoid 404 queries
+   const initialUserType = displayUser?.user_type 
+      ? getUserRouteType(displayUser.user_type) 
+      : (userType || "artists");
+
+   // Fetch full recipient data for profile sheet
+   const { data: recipientData, isLoading: recipientLoading } = useQuery({
+      ...getUserQueryOptions(finalRecipientId || "", initialUserType),
+      enabled: !!finalRecipientId,
+   });
+
+   const userProfile = recipientData as any;
+   const resolvedUserType = userProfile 
+      ? getUserRouteType(userProfile.user_type) 
+      : initialUserType;
+
    const recipientUser: ChatUser | null = recipientData ? {
       id: String((recipientData as any).id),
       name: `${(recipientData as any).first_name || ""} ${(recipientData as any).last_name || ""}`.trim() || (recipientData as any).email,
-      avatar: (recipientData as any).profile?.profile_picture || null
+      avatar: (recipientData as any).profile?.profile_picture || null,
+      user_type: (recipientData as any).user_type || null,
+      cover_photo: (recipientData as any).profile?.cover_photo || null,
    } : null;
 
-   const finalUser = displayUser || recipientUser;
+   const finalUser = displayUser ? {
+      ...displayUser,
+      ...(recipientUser || {})
+   } : recipientUser;
 
    const { isBlocked } = useChatSecurity(
       conversationId,
       finalRecipientId, 
-      userType || "artists"
+      resolvedUserType
    );
 
    const participantDetails = activeConversation?.participantDetails || (finalRecipientId && finalUser ? {
@@ -117,8 +132,6 @@ export const ChatWindow = ({
       );
    }
 
-   const userProfile = recipientData as any;
-   const resolvedUserType = userProfile ? getUserRouteType(userProfile.user_type) : (userType || "artists");
    const profileUrl = finalUser ? `/${resolvedUserType}/${finalUser.id}` : "#";
 
    return (
@@ -176,13 +189,13 @@ export const ChatWindow = ({
                   <div className="flex flex-col pb-8">
                      {/* Cover Section */}
                      <div className="h-32 bg-muted relative">
-                        {userProfile?.profile?.cover_photo && (
-                           <img 
-                              src={getImage(userProfile.profile.cover_photo)} 
-                              alt="Cover" 
-                              className="w-full h-full object-cover"
-                           />
-                        )}
+                         {(userProfile?.profile?.cover_photo || finalUser?.cover_photo) && (
+                            <img 
+                               src={getImage(userProfile?.profile?.cover_photo || finalUser?.cover_photo)} 
+                               alt="Cover" 
+                               className="w-full h-full object-cover"
+                            />
+                         )}
                         <div className="absolute -bottom-12 left-6">
                            <Avatar className="h-24 w-24 border-4 border-background shadow-sm">
                               <AvatarImage src={getImage(finalUser?.avatar)} alt={finalUser?.name} />
