@@ -28,14 +28,14 @@ const Footer = () => {
       Array<{ title: string; href?: string; link?: string }>
    > = {
       [t("explore")]: [
-         { title: t("aboutUs"), link: "/about-us.html" },
+         { title: t("aboutUs"), href: paths.aboutUs.path },
          { title: t("arcade"), href: paths.collections.path },
          { title: t("press"), href: "#" },
       ],
       [t("help")]: [
          { title: t("helpCenter"), href: "#" },
-         { title: t("termsOfService"), link: "/terms-of-service.html" },
-         { title: t("privacyPolicy"), link: "/privacy-and-policy.html" },
+         { title: t("termsOfService"), href: paths.termsOfService.path },
+         { title: t("privacyPolicy"), href: paths.privacyPolicy.path },
       ],
    };
 
