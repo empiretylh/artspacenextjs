@@ -31,6 +31,7 @@ interface BaseMessage {
    senderId: string;
    createdAt: Timestamp;
    reactions?: Record<string, string>;
+   mediaReactions?: Record<string, Record<string, string>>;
 }
 
 interface TextMessage {

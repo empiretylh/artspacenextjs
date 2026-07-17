@@ -9,6 +9,7 @@ import { useToggleReaction } from "../hooks/use-toggle-reaction";
 import { MessageReactions } from "./message-reactions";
 import { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from "@/components/ui/popover";
 import { useAuth } from "@/features/auth/store";
+import { ImageReactionsOverlay } from "./image-reactions-overlay";
 
 type Props = {
    message: Message;
@@ -19,14 +20,71 @@ type Props = {
 
 const EMOJIS = ["👍", "❤️", "🥰", "😆", "😮", "😢", "😡"];
 
+const MessageGalleryItem = ({
+   message,
+   url,
+   index,
+   aspectClass,
+   imgClass = "w-full h-full object-cover",
+   onImageClick,
+   toggleReaction,
+   participantDetails
+}: {
+   message: Message;
+   url: string;
+   index: number;
+   aspectClass: string;
+   imgClass?: string;
+   onImageClick: (e: React.MouseEvent, index: number) => void;
+   toggleReaction: (message: Message, emoji: string, imageIndex?: number) => Promise<void>;
+   participantDetails?: Record<string, ChatUser>;
+}) => {
+   const imageReactions = message.mediaReactions?.[String(index)] || {};
+   const hasReactions = Object.keys(imageReactions).length > 0;
+
+   return (
+      <div 
+         className={cn(
+            "relative bg-background/5 overflow-hidden cursor-pointer group/item select-none w-full h-full",
+            aspectClass
+         )}
+         onClick={(e) => onImageClick(e, index)}
+      >
+         <img 
+            src={getImage(url)} 
+            alt={`Gallery ${index + 1}`} 
+            className={imgClass}
+            loading="lazy"
+         />
+
+         {/* Existing Reactions Overlay on the image thumbnail */}
+         {hasReactions && (
+            <div className="absolute bottom-2 left-2 z-10 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+               <ImageReactionsOverlay 
+                  reactions={imageReactions}
+                  participantDetails={participantDetails}
+                  onReact={(emoji) => toggleReaction(message, emoji, index)}
+               />
+            </div>
+         )}
+      </div>
+   );
+};
+
 const MessageGallery = ({ 
+   message,
    urls, 
    caption, 
-   onImageClick 
+   onImageClick,
+   toggleReaction,
+   participantDetails
 }: { 
+   message: Message;
    urls: string[]; 
    caption?: string;
    onImageClick: (e: React.MouseEvent, index: number) => void;
+   toggleReaction: (message: Message, emoji: string, imageIndex?: number) => Promise<void>;
+   participantDetails?: Record<string, ChatUser>;
 }) => {
    const count = urls.length;
    
@@ -34,12 +92,15 @@ const MessageGallery = ({
 
    if (count === 1) {
       return (
-         <img 
-            src={getImage(urls[0])} 
-            alt={caption || "Chat image"} 
-            className="max-h-[400px] w-full object-contain bg-background/5 cursor-pointer hover:opacity-95 transition-opacity"
-            loading="lazy"
-            onClick={(e) => onImageClick(e, 0)}
+         <MessageGalleryItem
+            message={message}
+            url={urls[0]}
+            index={0}
+            aspectClass="max-h-[400px] w-full"
+            imgClass="max-h-[400px] w-full object-contain bg-background/5 cursor-pointer hover:opacity-95 transition-opacity"
+            onImageClick={onImageClick}
+            toggleReaction={toggleReaction}
+            participantDetails={participantDetails}
          />
       );
    }
@@ -60,19 +121,22 @@ const MessageGallery = ({
                <div 
                   key={url} 
                   className={cn(
-                     "relative bg-background/5 overflow-hidden cursor-pointer hover:opacity-90 transition-opacity",
-                     isFirstOfThree ? "col-span-2 aspect-video" : "aspect-square"
+                     "relative bg-background/5 overflow-hidden aspect-square w-full h-full",
+                     isFirstOfThree ? "col-span-2 aspect-video" : ""
                   )}
-                  onClick={(e) => onImageClick(e, i)}
                >
-                  <img 
-                     src={getImage(url)} 
-                     alt={`Gallery ${i + 1}`} 
-                     className="w-full h-full object-cover"
-                     loading="lazy"
+                  <MessageGalleryItem
+                     message={message}
+                     url={url}
+                     index={i}
+                     aspectClass="w-full h-full"
+                     imgClass="w-full h-full object-cover"
+                     onImageClick={onImageClick}
+                     toggleReaction={toggleReaction}
+                     participantDetails={participantDetails}
                   />
                   {i === 3 && remaining > 0 && (
-                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-lg font-semibold backdrop-blur-[2px]">
+                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-lg font-semibold backdrop-blur-[2px] pointer-events-none z-20">
                         +{remaining}
                      </div>
                   )}
@@ -162,9 +226,12 @@ export const ChatMessageBubble = ({ message, isMine, conversationId, participant
                   {message.type === 'image' ? (
                      <div className="flex flex-col overflow-hidden rounded-xl">
                         <MessageGallery 
+                           message={message}
                            urls={message.mediaUrls} 
                            caption={message.content} 
                            onImageClick={handleImageClick}
+                           toggleReaction={toggleReaction}
+                           participantDetails={participantDetails}
                         />
                         {message.content && message.content !== "Sent images" && message.content !== "Sent an image" && (
                            <p className="px-3 pt-2 pb-1 text-sm whitespace-pre-wrap break-words leading-relaxed font-sans">
@@ -190,7 +257,7 @@ export const ChatMessageBubble = ({ message, isMine, conversationId, participant
                      message={message} 
                      participantDetails={participantDetails} 
                      isMine={isMine}
-                     onReact={(emoji) => toggleReaction(message, emoji)} 
+                     onReact={(emoji, imgIdx) => toggleReaction(message, emoji, imgIdx)} 
                   />
                </div>
             </PopoverAnchor>
@@ -224,10 +291,13 @@ export const ChatMessageBubble = ({ message, isMine, conversationId, participant
 
          {message.type === 'image' && (
             <MediaLightbox 
+               message={message}
                urls={message.mediaUrls}
                initialIndex={activeIndex}
                isOpen={isLightboxOpen}
                onClose={() => setIsLightboxOpen(false)}
+               onReact={toggleReaction}
+               participantDetails={participantDetails}
             />
          )}
       </div>
