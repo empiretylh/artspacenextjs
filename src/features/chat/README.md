@@ -162,6 +162,7 @@ Global chat state is centralized in `src/features/chat/store.ts` using **Zustand
     *   **Navigation**: Supports keyboard arrows (Left/Right/Esc), responsive on-screen buttons (visible on mobile), and invisible side-tap zones.
     *   **Thumbnail Strip**: Integrated with **shadcn ScrollArea** for high-performance horizontal scrolling with a synchronized "auto-scroll" behavior that centers the active image.
     *   **Performance**: Optimized with hardware-accelerated `opacity` and `scale` transitions via `framer-motion`, removing heavy filters for zero-lag interaction.
+    *   **Direct Download**: Features a premium download action in the lightbox control bar, falling back to opening in a new tab if direct blob retrieval fails.
 - **Unread Awareness**: 
     - Unread conversations are visually anchored in the `ChatList` using **bold text** for the participant name and the **Primary color** for the last message snippet.
     - A count badge indicates precisely how many messages are waiting.

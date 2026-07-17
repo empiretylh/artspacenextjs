@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Download } from "lucide-react";
 import { getImage } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,7 @@ type Props = {
 export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) => {
    const [currentIndex, setCurrentIndex] = useState(initialIndex);
    const [showControls, setShowControls] = useState(true);
+   const [isDownloading, setIsDownloading] = useState(false);
    const [direction, setDirection] = useState(0); // 1 for next, -1 for prev
    const activeThumbRef = useRef<HTMLButtonElement>(null);
    const controlsTimeoutRef = useRef<NodeJS.Timeout>(null);
@@ -87,6 +88,34 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
       resetControlsTimeout();
    };
 
+   const handleDownload = async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (isDownloading) return;
+      setIsDownloading(true);
+      const url = getImage(urls[currentIndex]);
+      try {
+         const response = await fetch(url);
+         if (!response.ok) throw new Error("Network response was not ok");
+         const blob = await response.blob();
+         const blobUrl = window.URL.createObjectURL(blob);
+         
+         const link = document.createElement("a");
+         link.href = blobUrl;
+         
+         const filename = url.split("/").pop()?.split("?")[0] || "chat-image.jpg";
+         link.download = filename;
+         
+         document.body.appendChild(link);
+         link.click();
+         document.body.removeChild(link);
+         window.URL.revokeObjectURL(blobUrl);
+      } catch {
+         window.open(url, "_blank", "noopener,noreferrer");
+      } finally {
+         setIsDownloading(false);
+      }
+   };
+
    if (!isOpen) return null;
 
    const variants = {
@@ -129,14 +158,30 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
                            </span>
                         </div>
                      </div>
-                     <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onClose}
-                        className="text-white hover:bg-white/20 bg-white/5 backdrop-blur-md rounded-full h-11 w-11 border border-white/10 shadow-xl transition-all hover:scale-110 active:scale-95 pointer-events-auto"
-                     >
-                        <X className="h-6 w-6" />
-                     </Button>
+                     <div className="flex items-center gap-3 pointer-events-auto">
+                        <Button
+                           variant="ghost"
+                           size="icon"
+                           onClick={handleDownload}
+                           disabled={isDownloading}
+                           title="Download image"
+                           className="text-white hover:bg-white/20 bg-white/5 backdrop-blur-md rounded-full h-11 w-11 border border-white/10 shadow-xl transition-all hover:scale-110 active:scale-95 pointer-events-auto"
+                        >
+                           {isDownloading ? (
+                              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                           ) : (
+                              <Download className="h-5 w-5" />
+                           )}
+                        </Button>
+                        <Button
+                           variant="ghost"
+                           size="icon"
+                           onClick={onClose}
+                           className="text-white hover:bg-white/20 bg-white/5 backdrop-blur-md rounded-full h-11 w-11 border border-white/10 shadow-xl transition-all hover:scale-110 active:scale-95 pointer-events-auto"
+                        >
+                           <X className="h-6 w-6" />
+                        </Button>
+                     </div>
                   </motion.div>
                )}
             </AnimatePresence>
