@@ -137,6 +137,9 @@ export const queryKeys = {
       infinite: (params?: QueryKeys) =>
          ["artworks", "infinite", normalizeParams(params)],
 
+      priceFilterOptions: (currency: string) =>
+         ["artworks", "price-filter-options", currency],
+
       collection: {
          list: (params?: QueryKeys) =>
             [
