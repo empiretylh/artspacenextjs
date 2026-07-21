@@ -2,6 +2,7 @@ import { env } from "@/config/env";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import admin from "firebase-admin";
+import { getMinimalUser } from "@/lib/auth";
 
 // Initialize Admin SDK (Ensures it only initializes once)
 const privateKey = env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
@@ -54,7 +55,7 @@ export async function POST(request: Request) {
   // Session data (access token + user) is non-HttpOnly for client-side access
   cookieStore.set("artspace_auth_session", JSON.stringify({
     accessToken: data.access,
-    user: data.user
+    user: getMinimalUser(data.user)
   }), { httpOnly: false });
 
   // 4. Return to frontend
