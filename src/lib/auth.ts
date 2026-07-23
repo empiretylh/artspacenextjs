@@ -19,13 +19,11 @@ export function getMinimalUser(user: any): User | null {
     last_name: user.last_name,
     user_type: user.user_type,
     profile: user.profile ? {
-      bio: user.profile.bio || "",
-      about: user.profile.about || "",
+      bio: "",
+      about: "",
       profile_picture: user.profile.profile_picture || null,
       cover_photo: user.profile.cover_photo || null,
-      website: user.profile.website || "",
       show_email: !!user.profile.show_email,
-      features_photos: [],
       is_following: false,
       isBlocked: false,
     } : {
@@ -33,11 +31,9 @@ export function getMinimalUser(user: any): User | null {
       about: "",
       profile_picture: null,
       cover_photo: null,
-      website: "",
       show_email: false,
-      features_photos: [],
       is_following: false,
       isBlocked: false,
     }
-  };
+  } as unknown as User;
 }
