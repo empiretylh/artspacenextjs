@@ -173,7 +173,7 @@ Global chat state is centralized in `src/features/chat/store.ts` using **Zustand
     - Clicking the `ChatHeader` (participant name or avatar) opens a slide-out **Profile Preview Sheet**.
     - **Purpose**: Allows users to verify biographies, about sections, and featured works without losing conversation context.
     - **Navigation**: Includes a "View Full Profile" button for deep exploration.
-    - **Smart Logic**: The "View Full Profile" link is automatically hidden for **BUYER** account types, as they lack public detail pages, maintaining interface integrity.
+    - **Smart Routing**: The "View Full Profile" link dynamically routes to the appropriate public detail page (e.g. for artists, galleries, collectors, or buyers).
     - **Accessibility**: Implements visually hidden `SheetTitle` and `SheetDescription` to comply with ARIA requirements while maintaining a minimal visual aesthetic.
 
 ## 🔐 Security & Operations

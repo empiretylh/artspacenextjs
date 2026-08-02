@@ -43,7 +43,7 @@ type Props = {
 export const ChatWindow = ({ 
    conversationId: propConversationId, 
    recipientId: propRecipientId, 
-   userType = "artists", 
+   userType = "buyers", 
    onBack,
    variant = "default" 
 }: Props) => {
@@ -74,7 +74,7 @@ export const ChatWindow = ({
    // Try to resolve user type from cached Firestore participant data first to avoid 404 queries
    const initialUserType = displayUser?.user_type 
       ? getUserRouteType(displayUser.user_type) 
-      : (userType || "artists");
+      : (userType || "buyers");
 
    // Fetch full recipient data for profile sheet
    const { data: recipientData, isLoading: recipientLoading } = useQuery({
@@ -215,9 +215,11 @@ export const ChatWindow = ({
                                   </Badge>
                                )}
                             </div>
-                            <p className="text-muted-foreground text-xs font-sans mt-1">
-                               {userProfile?.email}
-                            </p>
+                             {userProfile?.profile?.show_email && userProfile?.email && (
+                                <p className="text-muted-foreground text-xs font-sans mt-1">
+                                   {userProfile.email}
+                                </p>
+                             )}
                          </div>
 
                          {/* Bio/About */}
@@ -249,16 +251,14 @@ export const ChatWindow = ({
                          )}
 
                          {/* Full Profile Action */}
-                         {userProfile?.user_type !== "BUYER" && (
-                            <div className="pt-4">
-                               <Button asChild className="w-full gap-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold uppercase tracking-wider h-10" variant="default">
-                                  <Link href={profileUrl}>
-                                     {t("viewFullProfile")}
-                                     <ExternalLink className="h-4 w-4" />
-                                  </Link>
-                               </Button>
-                            </div>
-                         )}
+                         <div className="pt-4">
+                            <Button asChild className="w-full gap-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold uppercase tracking-wider h-10" variant="default">
+                               <Link href={profileUrl}>
+                                  {t("viewFullProfile")}
+                                  <ExternalLink className="h-4 w-4" />
+                               </Link>
+                            </Button>
+                         </div>
                       </div>
                   </div>
                </ScrollArea>
