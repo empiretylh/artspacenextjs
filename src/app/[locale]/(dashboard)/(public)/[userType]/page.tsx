@@ -38,6 +38,14 @@ const getUserRouteMeta = (userType: UserRouteType): UserRouteMeta => {
         ogAlt: "Collectors - Myanmar Art Space",
         canonical: `${env.APP_URL}/collectors`,
       };
+    case "buyers":
+      return {
+        title: "Buyers",
+        description:
+          "Meet buyers supporting Myanmar Art Space and discover the community behind the collections.",
+        ogAlt: "Buyers - Myanmar Art Space",
+        canonical: `${env.APP_URL}/buyers`,
+      };
     default:
       return {
         title: "Community",

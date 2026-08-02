@@ -151,6 +151,32 @@ export const paths = {
          getHref: (id: string) => `/galleries/${id}/liked-artworks`,
       },
    },
+   buyers: {
+      path: "/buyers",
+      getHref: () => "/buyers",
+      detail: {
+         path: "/buyers/:id",
+         getHref: (id: string) => `/buyers/${id}`,
+      },
+      artworks: {
+         path: "/buyers/:id/artworks",
+         getHref: (id: string) => `/buyers/${id}/artworks`,
+      },
+      collections: {
+         path: "/buyers/:id/collections",
+         getHref: (id: string) => `/buyers/${id}/collections`,
+         disabled: true,
+      },
+      save: {
+         path: "/buyers/:id/save",
+         getHref: (id: string) => `/buyers/${id}/save`,
+         disabled: true,
+      },
+      likedArtworks: {
+         path: "/buyers/:id/liked-artworks",
+         getHref: (id: string) => `/buyers/${id}/liked-artworks`,
+      },
+   },
    chats: {
       path: "/chats",
       getHref: (params?: { userId?: string | number; userType?: string }) => {

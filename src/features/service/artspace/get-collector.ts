@@ -13,7 +13,7 @@ export const getCollector = async ({
 }: {
    collectorId: string;
 }): Promise<ApiResponse<User>> => {
-   const res = await api.get(`/users/collector/${collectorId}`);
+   const res = await api.get(`/users/profile/public/${collectorId}/`);
 
    return res.data;
 };

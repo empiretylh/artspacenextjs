@@ -75,7 +75,7 @@ const ProfileLayoutView = ({
    }, [])
 
    const shouldRedirect =
-      user.id === authUser?.id && variant !== "profile";
+      user && authUser && String(user.id) === String(authUser?.id) && variant !== "profile";
    const enableStatusQueries = !shouldRedirect && variant !== "profile";
 
    const followStatusQuery = useGetUserFollowStatus({

@@ -234,7 +234,7 @@ export function getDirtyValues<T>(dirtyFields: any, allValues: T): Partial<T> {
 }
 
 export const getUserLink = (user: User, authUser: User) => {
-   if (authUser?.id === user.id) {
+   if (authUser && String(authUser.id) === String(user.id)) {
       return paths.profile.path;
    }
 
@@ -245,6 +245,8 @@ export const getUserLink = (user: User, authUser: User) => {
          return paths.collectors.detail.getHref(String(user.id));
       case "GALLERY":
          return paths.galleries.detail.getHref(String(user.id));
+      case "BUYER":
+         return paths.buyers.detail.getHref(String(user.id));
       default:
          return paths.artists.detail.getHref(String(user.id));
    }
@@ -258,6 +260,8 @@ export const getUserRouteType = (entityType: string) => {
          return "collectors";
       case "GALLERY":
          return "galleries";
+      case "BUYER":
+         return "buyers";
       default:
          return "artists";
    }
