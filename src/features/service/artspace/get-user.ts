@@ -16,11 +16,13 @@ export const getUser = async ({
 }: {
   userId: string;
   userType?: UserRouteType;
-}): Promise<ApiResponse<User>> => {
-
-  const res = await api.get(`/users/profile/public/${userId}/`);
-
-  return res.data;
+}): Promise<ApiResponse<User> | undefined> => {
+  try {
+    const res = await api.get(`/users/profile/public/${userId}/`);
+    return res.data;
+  } catch (error) {
+    return undefined;
+  }
 };
 
 export const getUserQueryOptions = (userId: string, userType: UserRouteType) => {
@@ -42,7 +44,7 @@ export const useGetUser = ({ userId, userType, queryConfig }: UseArtistOptions) 
   return useQuery({
     ...getUserQueryOptions(userId, userType),
     ...queryConfig,
-    select: (data) => data.profile.is_following,
+    select: (data) => data?.profile?.is_following,
     enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
   });
 };
