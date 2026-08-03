@@ -3,6 +3,10 @@ export const paths = {
       path: "/",
       getHref: () => "/",
    },
+   home: {
+      path: "/home",
+      getHref: () => "/home",
+   },
    search: {
       path: "/search",
       getHref: () => "/search",

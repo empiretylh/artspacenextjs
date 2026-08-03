@@ -18,7 +18,7 @@ export function ThemeSwitcher({ className }: { className?: string }) {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className={cn("rounded-full border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover:scale-105 active:scale-95 shadow-xs shrink-0 select-none cursor-pointer", className)}>
+        <Button variant="outline" size="icon" className={cn("relative rounded-full border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover:scale-105 active:scale-95 shadow-xs shrink-0 select-none cursor-pointer", className)}>
           <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
           <span className="sr-only">Toggle theme</span>
