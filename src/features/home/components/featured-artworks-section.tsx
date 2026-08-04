@@ -12,6 +12,36 @@ import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedArtworksSectionSkeleton } from "./featured-artworks-section-skeleton";
 import { useTranslations } from "next-intl";
+import { motion } from "framer-motion";
+
+const sectionVariants = {
+   hidden: {},
+   show: {
+      transition: {
+         staggerChildren: 0.15,
+      },
+   },
+} as const;
+
+const titleVariants = {
+   hidden: { opacity: 0, y: 15 },
+   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+} as const;
+
+const contentVariants = {
+   hidden: {},
+   show: {
+      transition: {
+         staggerChildren: 0.06,
+         delayChildren: 0.1,
+      },
+   },
+} as const;
+
+const cardVariants = {
+   hidden: { opacity: 0, y: 15 },
+   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+} as const;
 
 export const FeaturedArtworksSection = () => {
    const t = useTranslations("Home");
@@ -28,8 +58,14 @@ export const FeaturedArtworksSection = () => {
    }
 
    return (
-      <section className="space-y-6">
-         <div className="flex justify-between items-center">
+      <motion.section
+         variants={sectionVariants}
+         initial="hidden"
+         whileInView="show"
+         viewport={{ once: true, margin: "-100px" }}
+         className="space-y-6"
+      >
+         <motion.div variants={titleVariants} className="flex justify-between items-center">
             <div>
                <SectionTitle>{t("featuredArtworks")}</SectionTitle>
                <p className="text-sm text-muted-foreground mt-1">{t("featuredArtworksSubtitle")}</p>
@@ -49,42 +85,47 @@ export const FeaturedArtworksSection = () => {
                   </Button>
                </div>
             </div>
-         </div>
+         </motion.div>
 
-         <div className="-mx-4 md:mx-0 overflow-hidden">
-            <Swiper
-               modules={[Navigation]}
-               slidesPerView={2.2}
-               slidesPerGroup={1}
-               spaceBetween={12}
-               watchSlidesProgress
-               touchStartPreventDefault={false}
-               navigation={{
-                  nextEl: ".swiper-artwork-next",
-                  prevEl: ".swiper-artwork-prev",
-               }}
-               className="!px-4 md:!px-0 !overflow-visible"
-               breakpoints={{
-                  640: { slidesPerView: 3.2, spaceBetween: 16 },
-                  1024: { slidesPerView: 4.2, spaceBetween: 20 },
-                  1280: { slidesPerView: 5.2, spaceBetween: 24 },
-               }}
-            >
-               {featuredArtworks.map((artwork) => (
-                  <SwiperSlide key={artwork.id}>
-                     <ArtworkCard artwork={artwork} className="h-full" />
-                  </SwiperSlide>
-               ))}
-            </Swiper>
-         </div>
+         <motion.div variants={contentVariants}>
+            <div className="-mx-4 md:mx-0 overflow-hidden">
+               <Swiper
+                  modules={[Navigation]}
+                  slidesPerView={2.2}
+                  slidesPerGroup={1}
+                  spaceBetween={12}
+                  watchSlidesProgress
+                  touchStartPreventDefault={false}
+                  navigation={{
+                     nextEl: ".swiper-artwork-next",
+                     prevEl: ".swiper-artwork-prev",
+                  }}
+                  className="!px-4 md:!px-0 !overflow-visible"
+                  breakpoints={{
+                     640: { slidesPerView: 3.2, spaceBetween: 16 },
+                     // md matches tablet
+                     1024: { slidesPerView: 4.2, spaceBetween: 20 },
+                     1280: { slidesPerView: 5.2, spaceBetween: 24 },
+                  }}
+               >
+                  {featuredArtworks.map((artwork) => (
+                     <SwiperSlide key={artwork.id}>
+                        <motion.div variants={cardVariants}>
+                           <ArtworkCard artwork={artwork} className="h-full" />
+                        </motion.div>
+                     </SwiperSlide>
+                  ))}
+               </Swiper>
+            </div>
 
-         <div className="md:hidden px-4">
-            <Link to={paths.artworks.path}>
-               <Button variant="outline" className="w-full">
-                  Explore All Artworks
-               </Button>
-            </Link>
-         </div>
-      </section>
+            <div className="md:hidden px-4 mt-4">
+               <Link to={paths.artworks.path}>
+                  <Button variant="outline" className="w-full">
+                     Explore All Artworks
+                  </Button>
+               </Link>
+            </div>
+         </motion.div>
+      </motion.section>
    );
 };

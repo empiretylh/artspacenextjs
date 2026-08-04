@@ -140,14 +140,13 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   </div>
                )}
 
-               {!artwork.hide_price && (
+               {!(artwork.hide_price || !artwork.price || Number(artwork.price) <= 0) ? (
                   <div className="flex justify-between items-center pt-0.5">
                      <span className="font-semibold text-sm text-foreground">
                         <Price currency={artwork.currency} price={artwork.price} uniform size="sm" />
                      </span>
                   </div>
-               )}
-               {artwork.hide_price && (
+               ) : (
                   <Button
                      size="sm"
                      variant="secondary"

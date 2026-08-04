@@ -12,6 +12,36 @@ import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FeaturedCollectorsSectionSkeleton } from "./featured-collectors-section-skeleton";
 import { useTranslations } from "next-intl";
+import { motion } from "framer-motion";
+
+const sectionVariants = {
+   hidden: {},
+   show: {
+      transition: {
+         staggerChildren: 0.15,
+      },
+   },
+} as const;
+
+const titleVariants = {
+   hidden: { opacity: 0, y: 15 },
+   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+} as const;
+
+const contentVariants = {
+   hidden: {},
+   show: {
+      transition: {
+         staggerChildren: 0.06,
+         delayChildren: 0.1,
+      },
+   },
+} as const;
+
+const cardVariants = {
+   hidden: { opacity: 0, y: 15 },
+   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+} as const;
 
 export const FeaturedCollectorsSlider = () => {
    const t = useTranslations("Home");
@@ -28,8 +58,13 @@ export const FeaturedCollectorsSlider = () => {
    }
 
    return (
-      <section>
-         <div className="flex justify-between items-end mb-4">
+      <motion.section
+         variants={sectionVariants}
+         initial="hidden"
+         whileInView="show"
+         viewport={{ once: true, margin: "-100px" }}
+      >
+         <motion.div variants={titleVariants} className="flex justify-between items-end mb-4">
             <div>
                <SectionTitle>{t("collectors")}</SectionTitle>
             </div>
@@ -38,97 +73,47 @@ export const FeaturedCollectorsSlider = () => {
                   {t("viewAll")} <ArrowRight className="ml-2 h-4 w-4" />
                </Button>
             </Link>
-         </div>
-         <div className="flex gap-2 mb-4">
-            <Button
-               variant="outline"
-               className="swiper-collector-button-prev-custom"
-            // onClick={() => swiperRef.current?.slideNext()}
-            >
-               <ChevronLeft />
-            </Button>
-            <Button
-               variant="outline"
-               className="swiper-collector-button-next-custom"
-            // onClick={() => swiperRef.current?.slideNext()}
-            >
-               <ChevronRight />
-            </Button>
-         </div>
-
-         {/* Horizontal Scroll Area */}
-         {/* <Carousel
-            opts={{
-               align: "start",
-            }}
-            className="w-full"
-         >
-            <CarouselContent className="-ml-4 justify-between">
-               {featuredCollectors.map((collector) => (
-                  <CarouselItem
-                     key={collector.id}
-                     className="pl-4 md:basis-1/2 lg:basis-1/4"
-                  >
-                     <div
-                        onClick={() =>
-                           router.push(paths.collectors.detail.getHref(collector.id))
-                        }
-                        className="cursor-pointer border transition-transform duration-300 overflow-hidden"
-                     >
-                        <img
-                           src={getImage(collector.image)}
-                           alt={collector.title}
-                           className="min-w-[115px] h-[240px] mx-auto"
-                        />
-                        <div className="space-y-1 p-2">
-                           <div className="flex justify-between items-start">
-                              <h3 className="font-semibold truncate">
-                                 {collector.title}
-                              </h3>
-                              <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full whitespace-nowrap">
-                                 {collector.category_name}
-                              </span>
-                           </div>
-                           <p className="text-sm text-muted-foreground">
-                              by {collector.artist_name}
-                           </p>
-                           <div className="flex justify-between items-center pt-2">
-                              <span className="font-bold text-foreground">
-                                 ${collector.price.toLocaleString()}
-                              </span>
-                           </div>
-                        </div>
-                     </div>
-                  </CarouselItem>
-               ))}
-            </CarouselContent>
-
-            <div className="flex justify-center gap-3 pt-4">
-               <CarouselPrevious className="relative static translate-y-0" />
-               <CarouselNext className="relative static translate-y-0" />
+         </motion.div>
+         
+         <motion.div variants={contentVariants}>
+            <div className="flex gap-2 mb-4">
+               <Button
+                  variant="outline"
+                  className="swiper-collector-button-prev-custom"
+               >
+                  <ChevronLeft />
+               </Button>
+               <Button
+                  variant="outline"
+                  className="swiper-collector-button-next-custom"
+               >
+                  <ChevronRight />
+               </Button>
             </div>
-         </Carousel> */}
 
-         <div className="overflow-hidden">
-            <Swiper
-               modules={[Navigation]}
-               slidesPerView="auto"
-               spaceBetween={8}
-               watchSlidesProgress
-               touchStartPreventDefault={false}
-               navigation={{
-                  nextEl: ".swiper-collector-button-next-custom",
-                  prevEl: ".swiper-collector-button-prev-custom",
-               }}
-               className="!overflow-visible"
-            >
-               {featuredCollectors.map((collector) => (
-                  <SwiperSlide key={collector.id} className="!w-auto">
-                     <UserSmallCard user={collector} />
-                  </SwiperSlide>
-               ))}
-            </Swiper>
-         </div>
-      </section>
+            <div className="overflow-hidden">
+               <Swiper
+                  modules={[Navigation]}
+                  slidesPerView="auto"
+                  spaceBetween={8}
+                  watchSlidesProgress
+                  touchStartPreventDefault={false}
+                  navigation={{
+                     nextEl: ".swiper-collector-button-next-custom",
+                     prevEl: ".swiper-collector-button-prev-custom",
+                  }}
+                  className="!overflow-visible"
+               >
+                  {featuredCollectors.map((collector) => (
+                     <SwiperSlide key={collector.id} className="!w-auto">
+                        <motion.div variants={cardVariants}>
+                           <UserSmallCard user={collector} />
+                        </motion.div>
+                     </SwiperSlide>
+                  ))}
+               </Swiper>
+            </div>
+         </motion.div>
+      </motion.section>
    );
 };

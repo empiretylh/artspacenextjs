@@ -84,10 +84,11 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
 
             {/* Price */}
             <div className="mb-6 space-y-2">
-               <p className="text-2xl md:text-3xl font-display text-foreground">
-                  {!artwork.hide_price && <Price currency={artwork.currency} price={artwork.price} />}
-               </p>
-               {artwork.hide_price && (
+               {!(artwork.hide_price || !artwork.price || Number(artwork.price) <= 0) ? (
+                  <p className="text-2xl md:text-3xl font-display text-foreground">
+                     <Price currency={artwork.currency} price={artwork.price} />
+                  </p>
+               ) : (
                   <Button
                      disabled
                      className="w-full text-base rounded-md font-medium font-display bg-primary/15 text-primary hover:bg-primary/30"

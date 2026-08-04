@@ -7,6 +7,23 @@ import { getHomeGenres } from "@/features/service/artspace/get-home-genres";
 import { getImage } from "@/lib/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { GenresListSkeleton } from "./genres-list-skeleton";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+   hidden: { opacity: 0 },
+   show: {
+      opacity: 1,
+      transition: {
+         delayChildren: 0.2,
+         staggerChildren: 0.08,
+      },
+   },
+} as const;
+
+const itemVariants = {
+   hidden: { opacity: 0, y: 15 },
+   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+} as const;
 
 export const GenresList = () => {
    const genresQuery = useSuspenseQuery({
@@ -21,34 +38,41 @@ export const GenresList = () => {
    }
 
    return (
-      <div className="grid grid-cols-2 xl:grid-cols-4 shrink-0 justify-center items-center gap-4 md:gap-6">
+      <motion.div 
+         variants={containerVariants}
+         initial="hidden"
+         whileInView="show"
+         viewport={{ once: true, margin: "-50px" }}
+         className="grid grid-cols-2 xl:grid-cols-4 shrink-0 justify-center items-center gap-4 md:gap-6"
+      >
          {genres.slice(0, 12).map((cat) => (
-            <Link
-               key={cat.genre.slug}
-               to={{
-                  pathname: paths.artworks.path,
-                  search: `?genre=${cat.genre.slug}`,
-               }}
-            >
-               <div className="relative w-full max-w-2xl h-[170px] overflow-hidden rounded-2xl">
-                  {/* Background Image */}
-                  <AppImage
-                     src={getImage(cat.genre.image)}
-                     alt={cat.genre.name}
-                     fill
-                     sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 300px" // [2]
-                     className="object-cover h-[170px] w-full rounded-2xl transform transition-transform duration-300 hover:scale-105"
-                  />
+            <motion.div key={cat.genre.slug} variants={itemVariants}>
+               <Link
+                  to={{
+                     pathname: paths.artworks.path,
+                     search: `?genre=${cat.genre.slug}`,
+                  }}
+               >
+                  <div className="relative w-full max-w-2xl h-[170px] overflow-hidden rounded-2xl">
+                     {/* Background Image */}
+                     <AppImage
+                        src={getImage(cat.genre.image)}
+                        alt={cat.genre.name}
+                        fill
+                        sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 300px" // [2]
+                        className="object-cover h-[170px] w-full rounded-2xl transform transition-transform duration-300 hover:scale-105"
+                     />
 
-                  {/* Overlay Content */}
-                  <div className="absolute left-2 bottom-2 right-2 flex items-end p-2 bg-black/60 border border-white/10 rounded-xl">
-                     <h1 className="text-sm font-semibold truncate text-white">
-                        {cat.genre.name}
-                     </h1>
+                     {/* Overlay Content */}
+                     <div className="absolute left-2 bottom-2 right-2 flex items-end p-2 bg-black/60 border border-white/10 rounded-xl">
+                        <h1 className="text-sm font-semibold truncate text-white">
+                           {cat.genre.name}
+                        </h1>
+                     </div>
                   </div>
-               </div>
-            </Link>
+               </Link>
+            </motion.div>
          ))}
-      </div>
+      </motion.div>
    );
 };

@@ -7,6 +7,7 @@ import Link from "next/link"
 import { Autoplay, Pagination } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { motion } from "framer-motion"
 
 type Banner = {
   id: number
@@ -36,7 +37,12 @@ export default function BannerSlider({ banners }: Props) {
   if (!activeBanners.length) return null
 
   return (
-    <section className="rounded-lg relative shadow-xl md:shadow-none aspect-2/1 md:aspect-8/3 overflow-hidden">
+    <motion.section 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="rounded-lg relative shadow-xl md:shadow-none aspect-2/1 md:aspect-8/3 overflow-hidden"
+    >
       <Swiper
         modules={[Autoplay, Pagination]}
         autoplay={{ delay: 15000, disableOnInteraction: false }}
@@ -79,6 +85,6 @@ export default function BannerSlider({ banners }: Props) {
           </SwiperSlide>
         ))}
       </Swiper>
-    </section>
+    </motion.section>
   )
 }
