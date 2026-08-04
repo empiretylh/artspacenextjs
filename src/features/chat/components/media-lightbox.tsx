@@ -1,25 +1,58 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Download, Smile } from "lucide-react";
 import { getImage } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { useAuth } from "@/features/auth/store";
+import { ImageReactionsOverlay } from "./image-reactions-overlay";
+import type { Message, ChatUser } from "../types";
 
 type Props = {
+   message: Message;
    urls: string[];
    initialIndex: number;
    isOpen: boolean;
    onClose: () => void;
+   onReact: (message: Message, emoji: string, imageIndex?: number) => Promise<void>;
+   participantDetails?: Record<string, ChatUser>;
 };
 
-export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) => {
+const EMOJIS = ["👍", "❤️", "🥰", "😆", "😮", "😢", "😡"];
+
+export const MediaLightbox = ({ 
+   message, 
+   urls, 
+   initialIndex, 
+   isOpen, 
+   onClose,
+   onReact,
+   participantDetails
+}: Props) => {
+   const { user } = useAuth();
    const [currentIndex, setCurrentIndex] = useState(initialIndex);
    const [showControls, setShowControls] = useState(true);
+   const [isDownloading, setIsDownloading] = useState(false);
    const [direction, setDirection] = useState(0); // 1 for next, -1 for prev
    const activeThumbRef = useRef<HTMLButtonElement>(null);
    const controlsTimeoutRef = useRef<NodeJS.Timeout>(null);
+
+   const [isImgPopoverOpen, setIsImgPopoverOpen] = useState(false);
+   const popoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+   const handlePopoverMouseEnter = () => {
+      if (popoverTimeoutRef.current) clearTimeout(popoverTimeoutRef.current);
+      setIsImgPopoverOpen(true);
+   };
+
+   const handlePopoverMouseLeave = () => {
+      popoverTimeoutRef.current = setTimeout(() => {
+         setIsImgPopoverOpen(false);
+      }, 300);
+   };
 
    // Sync currentIndex with initialIndex when lightbox opens
    useEffect(() => {
@@ -35,6 +68,7 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
       if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
       setShowControls(true);
       controlsTimeoutRef.current = setTimeout(() => {
+         setIsImgPopoverOpen(false);
          setShowControls(false);
       }, 3000);
    }, []);
@@ -49,6 +83,7 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
          window.removeEventListener("mousemove", handleMouseMove);
          window.removeEventListener("touchstart", handleMouseMove);
          if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+         if (popoverTimeoutRef.current) clearTimeout(popoverTimeoutRef.current);
       };
    }, [isOpen, resetControlsTimeout]);
 
@@ -87,6 +122,34 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
       resetControlsTimeout();
    };
 
+   const handleDownload = async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (isDownloading) return;
+      setIsDownloading(true);
+      const url = getImage(urls[currentIndex]);
+      try {
+         const response = await fetch(url);
+         if (!response.ok) throw new Error("Network response was not ok");
+         const blob = await response.blob();
+         const blobUrl = window.URL.createObjectURL(blob);
+         
+         const link = document.createElement("a");
+         link.href = blobUrl;
+         
+         const filename = url.split("/").pop()?.split("?")[0] || "chat-image.jpg";
+         link.download = filename;
+         
+         document.body.appendChild(link);
+         link.click();
+         document.body.removeChild(link);
+         window.URL.revokeObjectURL(blobUrl);
+      } catch {
+         window.open(url, "_blank", "noopener,noreferrer");
+      } finally {
+         setIsDownloading(false);
+      }
+   };
+
    if (!isOpen) return null;
 
    const variants = {
@@ -105,6 +168,9 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
          scale: 1.05,
       },
    };
+
+   const currentImageReactions = message.mediaReactions?.[String(currentIndex)] || {};
+   const hasReactions = Object.keys(currentImageReactions).length > 0;
 
    return (
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -129,14 +195,80 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
                            </span>
                         </div>
                      </div>
-                     <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onClose}
-                        className="text-white hover:bg-white/20 bg-white/5 backdrop-blur-md rounded-full h-11 w-11 border border-white/10 shadow-xl transition-all hover:scale-110 active:scale-95 pointer-events-auto"
-                     >
-                        <X className="h-6 w-6" />
-                     </Button>
+                     <div className="flex items-center gap-3 pointer-events-auto">
+                        <Popover open={isImgPopoverOpen} onOpenChange={setIsImgPopoverOpen}>
+                           <div 
+                              onMouseEnter={handlePopoverMouseEnter}
+                              onMouseLeave={handlePopoverMouseLeave}
+                              className="relative"
+                           >
+                              <PopoverTrigger asChild>
+                                 <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    title="Add reaction to image"
+                                    onClick={(e) => {
+                                       e.stopPropagation();
+                                       setIsImgPopoverOpen(prev => !prev);
+                                    }}
+                                    className="text-white hover:bg-white/20 bg-white/5 backdrop-blur-md rounded-full h-11 w-11 border border-white/10 shadow-xl transition-all hover:scale-110 active:scale-95 pointer-events-auto"
+                                 >
+                                    <Smile className="h-5 w-5" />
+                                 </Button>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                 side="bottom"
+                                 align="end"
+                                 onMouseEnter={handlePopoverMouseEnter}
+                                 onMouseLeave={handlePopoverMouseLeave}
+                                 className="w-auto p-1 rounded-full flex gap-0.5 bg-background/95 backdrop-blur-md shadow-md border animate-in fade-in-50 slide-in-from-top-1 z-50 pointer-events-auto"
+                                 onClick={(e) => e.stopPropagation()}
+                              >
+                                 {EMOJIS.map((emoji) => {
+                                    const hasReacted = currentImageReactions[String(user?.id)] === emoji;
+                                    return (
+                                       <button
+                                          key={emoji}
+                                          onClick={(e) => {
+                                             e.stopPropagation();
+                                             onReact(message, emoji, currentIndex);
+                                             setIsImgPopoverOpen(false);
+                                          }}
+                                          className={cn(
+                                             "hover:scale-125 hover:bg-muted active:scale-95 transition-all p-1.5 rounded-full text-base leading-none cursor-pointer",
+                                             hasReacted && "bg-primary/10"
+                                          )}
+                                       >
+                                          {emoji}
+                                       </button>
+                                    );
+                                 })}
+                              </PopoverContent>
+                           </div>
+                        </Popover>
+                        <Button
+                           variant="ghost"
+                           size="icon"
+                           onClick={handleDownload}
+                           disabled={isDownloading}
+                           title="Download image"
+                           className="text-white hover:bg-white/20 bg-white/5 backdrop-blur-md rounded-full h-11 w-11 border border-white/10 shadow-xl transition-all hover:scale-110 active:scale-95 pointer-events-auto"
+                        >
+                           {isDownloading ? (
+                              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                           ) : (
+                              <Download className="h-5 w-5" />
+                           )}
+                        </Button>
+                        <Button
+                           variant="ghost"
+                           size="icon"
+                           onClick={onClose}
+                           className="text-white hover:bg-white/20 bg-white/5 backdrop-blur-md rounded-full h-11 w-11 border border-white/10 shadow-xl transition-all hover:scale-110 active:scale-95 pointer-events-auto"
+                        >
+                           <X className="h-6 w-6" />
+                        </Button>
+                     </div>
                   </motion.div>
                )}
             </AnimatePresence>
@@ -209,6 +341,24 @@ export const MediaLightbox = ({ urls, initialIndex, isOpen, onClose }: Props) =>
                <div className="absolute inset-y-0 inset-x-0 flex sm:hidden pointer-events-none">
                   <div className="flex-1 h-full pointer-events-auto" onClick={handlePrev} />
                   <div className="flex-1 h-full pointer-events-auto" onClick={handleNext} />
+               </div>
+            )}
+
+            {/* Reactions list for the active image */}
+            {hasReactions && showControls && (
+               <div 
+                  className={cn(
+                     "absolute left-0 right-0 flex justify-center z-50 pointer-events-auto",
+                     urls.length > 1 ? "bottom-32" : "bottom-10"
+                  )} 
+                  onClick={(e) => e.stopPropagation()}
+               >
+                  <ImageReactionsOverlay
+                     reactions={currentImageReactions}
+                     participantDetails={participantDetails}
+                     onReact={(emoji) => onReact(message, emoji, currentIndex)}
+                     className="bg-black/60 border-white/20"
+                  />
                </div>
             )}
 

@@ -10,7 +10,7 @@ import { SourceProvider } from '@/lib/analytics-source'
 import { ScrollArea } from '../ui/scroll-area'
 
 
-const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
+const ScrollContainer = ({ children, header }: { children: React.ReactNode; header?: React.ReactNode }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const dimensionsRef = useRef({ scrollHeight: 0, clientHeight: 0 });
   const pathname = usePathname()
@@ -102,7 +102,7 @@ const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
       >
         <SourceProvider value={{ source }}>
           <div className="min-h-full flex flex-col justify-between">
-            <SiteHeader />
+            {header || <SiteHeader />}
             <MainOutlet>
               {children}
             </MainOutlet>
@@ -117,11 +117,11 @@ const ScrollContainer = ({ children }: { children: React.ReactNode }) => {
     <ScrollArea
       viewportRef={ref}
       viewportId="scroll-container"
-      className='h-screen overflow-y-auto [&>[data-slot=scroll-area-viewport]>div]:!block'
+      className='h-screen overflow-hidden [&>[data-slot=scroll-area-viewport]>div]:!block'
     >
       <SourceProvider value={{ source }}>
         <div className="min-h-full flex flex-col justify-between">
-          <SiteHeader />
+          {header || <SiteHeader />}
           <MainOutlet>
             {children}
           </MainOutlet>

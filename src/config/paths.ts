@@ -248,6 +248,18 @@ export const paths = {
          getHref: (id: string) => `/posts/view/${id}`,
       },
    },
+    aboutUs: {
+      path: "/about-us",
+      getHref: () => "/about-us",
+   },
+   termsOfService: {
+      path: "/terms-of-service",
+      getHref: () => "/terms-of-service",
+   },
+   privacyPolicy: {
+      path: "/privacy-policy",
+      getHref: () => "/privacy-policy",
+   },
    notFound: {
       path: "*",
       getHref: () => "*",

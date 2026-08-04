@@ -40,7 +40,9 @@ export const useSendMessage = (conversationId: string | null) => {
                   [user.id]: {
                      id: String(user.id),
                      name: `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email,
-                     avatar: user.profile?.profile_picture || null
+                     avatar: user.profile?.profile_picture || null,
+                     user_type: user.user_type,
+                     cover_photo: user.profile?.cover_photo || null,
                   },
                   [recipient.id]: recipient
                },
@@ -89,7 +91,9 @@ export const useSendMessage = (conversationId: string | null) => {
                      [user.id]: {
                         id: String(user.id),
                         name,
-                        avatar: user.profile?.profile_picture || null
+                        avatar: user.profile?.profile_picture || null,
+                        user_type: user.user_type,
+                        cover_photo: user.profile?.cover_photo || null,
                      }
                   },
                   unreadCount: newUnreadCount

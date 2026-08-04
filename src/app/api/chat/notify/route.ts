@@ -3,7 +3,7 @@ import { adminDb, adminMessaging } from '@/lib/firebase-admin';
 
 export async function POST(req: NextRequest) {
    try {
-      const { recipientId, senderName, conversationId } = await req.json();
+      const { recipientId, senderName, conversationId, type = 'chat_message', title = 'New Message', body } = await req.json();
 
       if (!recipientId || !senderName) {
          return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -34,9 +34,9 @@ export async function POST(req: NextRequest) {
       // 2. Prepare payload
       const payload = {
          data: {
-            type: 'chat_message',
-            title: 'New Message',
-            body: `You have a new message from ${senderName}`,
+            type: String(type),
+            title: String(title),
+            body: String(body || `You have a new message from ${senderName}`),
             conversationId: String(conversationId),
             senderName: String(senderName),
             unreadCount: String(totalUnread),

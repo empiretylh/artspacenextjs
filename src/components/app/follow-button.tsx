@@ -16,7 +16,7 @@ const FollowButton = ({
    userType: string;
    following: boolean;
    loading?: boolean;
-   size?: "sm" | "default" | "lg" | "icon" | null | undefined;
+   size?: "sm" | "default" | "lg" | "icon" | "profile" | null | undefined;
    className?: string;
 }) => {
    const { isFollowing, handleFollow, isMutating } = useFollow({
@@ -25,9 +25,11 @@ const FollowButton = ({
       following,
    });
 
+   const innerButtonSize = size === "profile" ? "sm" : size === null ? undefined : size;
+
    if (loading) {
       return (
-         <Button variant="outline" size={size} disabled>
+         <Button variant="outline" size={innerButtonSize} disabled>
             Loading ...
          </Button >
       )
@@ -37,11 +39,11 @@ const FollowButton = ({
       <Button
          variant={isFollowing ? "outline" : "default"}
          onClick={handleFollow}
-         size={size}
+         size={innerButtonSize}
          disabled={isMutating}
          className={cn("", size === "sm" && "w-[70px]", className)}
       >
-         <span className={cn("truncate", size === "sm" && "text-xs")}>
+         <span className={cn(size === "sm" && "truncate text-xs", size === "profile" && "text-xs")}>
             {isFollowing ? "Unfollow" : "Follow"}
          </span>
       </Button>

@@ -42,16 +42,13 @@ export const getArtworksOg = async ({
                params[filter.id] = Number(filter.value);
                break;
 
-            case "price_range": {
-               const [min, max] = filter.value
-                  .toString()
-                  .split("-")
-                  .map(Number);
-
-               params.price_min = min;
-               params.price_max = max;
+            case "price_range":
+               if (params.price_range) {
+                  params.price_range = `${params.price_range},${filter.value}`;
+               } else {
+                  params.price_range = String(filter.value);
+               }
                break;
-            }
 
             default:
                if (params[filter.id]) {
@@ -110,16 +107,13 @@ export const getArtworks = async ({
                params[filter.id] = Number(filter.value);
                break;
 
-            case "price_range": {
-               const [min, max] = filter.value
-                  .toString()
-                  .split("-")
-                  .map(Number);
-
-               params.price_min = min;
-               params.price_max = max;
+            case "price_range":
+               if (params.price_range) {
+                  params.price_range = `${params.price_range},${filter.value}`;
+               } else {
+                  params.price_range = String(filter.value);
+               }
                break;
-            }
 
             default:
                if (params[filter.id]) {

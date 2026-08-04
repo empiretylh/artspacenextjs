@@ -50,6 +50,7 @@ interface ArtworksPageViewProps {
    removeFromFilter: (filterId: string, key: string) => void;
    artworkCard: (artwork: Artwork) => React.JSX.Element;
    options?: ArtworksPageViewOptions;
+   priceRanges?: { value: string; label: string; }[];
 }
 
 const ArtworksPageView = ({
@@ -69,6 +70,7 @@ const ArtworksPageView = ({
    removeFromFilter,
    artworkCard,
    options = { enableFilters: true, enableSorting: true },
+   priceRanges = [],
 }: ArtworksPageViewProps) => {
    const { ref: loadMoreRef, inView } = useInView({
       threshold: 0,
@@ -144,6 +146,23 @@ const ArtworksPageView = ({
                               <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground mr-1">Active Filters:</span>
                               {filters.map((f) => {
                                  const getFilterLabel = (id: string, val: string) => {
+                                    if (id === "currency") {
+                                       return val.toUpperCase();
+                                    }
+                                    if (id === "price_range") {
+                                       const matched = priceRanges.find((r) => r.value === val);
+                                       if (matched) return matched.label;
+                                    }
+                                    if (id === "price_min") {
+                                       const currencyVal = filters.find((fl) => fl.id === "currency")?.value as string || "USD";
+                                       const symbol = currencyVal === "MMK" ? "Ks" : "$";
+                                       return `Min: ${symbol}${val}`;
+                                    }
+                                    if (id === "price_max") {
+                                       const currencyVal = filters.find((fl) => fl.id === "currency")?.value as string || "USD";
+                                       const symbol = currencyVal === "MMK" ? "Ks" : "$";
+                                       return `Max: ${symbol}${val}`;
+                                    }
                                     if (id === "status") {
                                        if (val === "AVAILABLE") return "Available";
                                        if (val === "SOLD") return "Sold";

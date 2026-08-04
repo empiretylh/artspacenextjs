@@ -45,6 +45,7 @@ erDiagram
         enum type "'text' | 'image'"
         string content "Text or caption"
         string_array mediaUrls "Batch image URLs"
+        map reactions "{uid: emoji} reactions"
     }
 
     USER-BLOCK {
@@ -92,6 +93,11 @@ erDiagram
     - **Throttling**: The `useTypingIndicator` hook throttles Firestore writes to once every 2 seconds to minimize database overhead.
     - **Resilience**: Uses a `Timestamp` based model. The recipient validates the age of the indicator (clears after 5s), ensuring no "stuck" indicators if a user disconnects abruptly.
     - **Auto-stop**: Automatically clears the status after 3 seconds of inactivity or upon sending a message.
+12. **Reactions**:
+    - **Data Model**: Reactions are stored directly on the message document under a `reactions` map mapping `uid -> emoji`.
+    - **State Update**: The `useToggleReaction` hook toggles the reaction using Firestore dot notation. If the same emoji is clicked, it deletes the user's reaction field.
+    - **Security**: Firestore security rules restrict updates to the messages subcollection to ONLY modifying the `reactions` field and ONLY for the user's own UID key.
+    - **Notifications**: Toggling a reaction triggers an API notify call (`/api/chat/notify`) to send a push notification with a `'chat_reaction'` payload to the message sender.
 
 ## 🔔 Push Notifications (FCM)
 
@@ -156,6 +162,7 @@ Global chat state is centralized in `src/features/chat/store.ts` using **Zustand
     *   **Navigation**: Supports keyboard arrows (Left/Right/Esc), responsive on-screen buttons (visible on mobile), and invisible side-tap zones.
     *   **Thumbnail Strip**: Integrated with **shadcn ScrollArea** for high-performance horizontal scrolling with a synchronized "auto-scroll" behavior that centers the active image.
     *   **Performance**: Optimized with hardware-accelerated `opacity` and `scale` transitions via `framer-motion`, removing heavy filters for zero-lag interaction.
+    *   **Direct Download**: Features a premium download action in the lightbox control bar, falling back to opening in a new tab if direct blob retrieval fails.
 - **Unread Awareness**: 
     - Unread conversations are visually anchored in the `ChatList` using **bold text** for the participant name and the **Primary color** for the last message snippet.
     - A count badge indicates precisely how many messages are waiting.

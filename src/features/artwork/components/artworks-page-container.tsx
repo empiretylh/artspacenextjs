@@ -8,6 +8,8 @@ import { snakeToNormal } from "@/lib/utils";
 import type { Artwork, ColumnFiltersState, SortingState } from "@/types";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useLocale } from "next-intl";
+import { useGetPriceFilterOptions } from "@/features/service/artspace/get-price-filter-options";
 import ArtworksPageView from "./artworks-page-view";
 
 function parseSearchParams(sp: ReturnType<typeof useSearchParams>) {
@@ -16,16 +18,15 @@ function parseSearchParams(sp: ReturnType<typeof useSearchParams>) {
    const search = sp.get("search") || "";
 
    const filters: ColumnFiltersState = [];
+
    sp.forEach((value, key) => {
       if (!["page", "limit", "search", "sort"].includes(key)) {
-         if (key === "price_range") {
-            if (value) filters.push({ id: key, value });
-         } else {
-            String(value)
-               .split(",")
-               .filter(Boolean)
-               .forEach((v) => filters.push({ id: key, value: v }));
-         }
+         String(value)
+            .split(",")
+            .filter(Boolean)
+            .forEach((v) => {
+               filters.push({ id: key, value: v });
+            });
       }
    });
 
@@ -58,15 +59,9 @@ function buildSearchParams(input: {
       (groups[f.id] ??= new Set()).add(String(f.value));
    }
 
-   // price_range: single value
-   if (input.filters.some((f) => f.id === "price_range")) {
-      const last = input.filters.filter((f) => f.id === "price_range").at(-1);
-      if (last?.value != null) groups["price_range"] = new Set([String(last.value)]);
-   }
-
    for (const [key, set] of Object.entries(groups)) {
       const values = Array.from(set);
-      sp.set(key, key === "price_range" ? (values[0] ?? "") : values.join(","));
+      sp.set(key, values.join(","));
    }
 
    if (input.sorts.length) {
@@ -85,6 +80,9 @@ export default function ArtworksPageContainer() {
 
    // URL is truth
    const urlState = useMemo(() => parseSearchParams(searchParams), [searchParams]);
+
+   const activeCurrency = urlState.filters.find((f) => f.id === "currency")?.value as string | undefined;
+   const { data: priceFilterData } = useGetPriceFilterOptions({ currency: activeCurrency });
 
    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -124,7 +122,7 @@ export default function ArtworksPageContainer() {
    };
 
    const removeFromFilter = (filterId: string, key: string) => {
-      const nextFilters = urlState.filters.filter((f) =>
+      let nextFilters = urlState.filters.filter((f) =>
          f.id === filterId ? String(f.value) !== String(key) : true
       );
       updateUrl({ filters: nextFilters, page: 1 });
@@ -176,7 +174,14 @@ export default function ArtworksPageContainer() {
                   ? (next as (prev: ColumnFiltersState) => ColumnFiltersState)(urlState.filters)
                   : next;
 
-            updateUrl({ filters: resolved, page: 1 });
+            const prevCurrency = urlState.filters.find(f => f.id === "currency")?.value;
+            const nextCurrency = resolved.find(f => f.id === "currency")?.value;
+            let finalFilters = resolved;
+            if (nextCurrency !== prevCurrency) {
+               finalFilters = resolved.filter(f => !["price_range", "price_min", "price_max"].includes(f.id));
+            }
+
+            updateUrl({ filters: finalFilters, page: 1 });
          }}
          sorts={urlState.sorts}
          setSorts={(next) => updateUrl({ sorts: next, page: 1 })}
@@ -186,6 +191,7 @@ export default function ArtworksPageContainer() {
          hasNextPage={hasNextPage}
          isFetchingNextPage={isFetchingNextPage}
          removeFromFilter={removeFromFilter}
+         priceRanges={priceFilterData?.price_ranges || []}
       />
    );
 }

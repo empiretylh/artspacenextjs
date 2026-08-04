@@ -17,9 +17,13 @@ const SettingsPage = () => {
 
    return (
       <div className="space-y-4 mb-4">
-         <h1 className="text-xl font-bold capitalize font-display">{t("title")}</h1>
+         <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight capitalize">{t("title")}</h1>
          <div>
             <Card>
+               <CardHeader>
+                  <CardTitle>{t("profileMedia")}</CardTitle>
+                  <CardDescription>{t("profileMediaDesc")}</CardDescription>
+               </CardHeader>
                <CardContent>
                   <ProfileMedia />
                </CardContent>

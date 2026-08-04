@@ -14,7 +14,7 @@ export default function ProfileCard({ user }: { user: User }) {
    const coverSrc =
       user.profile?.cover_photo
          ? getImage(user.profile.cover_photo)
-         : "/assets/profile-cover-default.png";
+         : "/assets/profile-cover-default.jpg";
 
    const avatarSrc =
       user.profile?.profile_picture
@@ -92,22 +92,22 @@ export default function ProfileCard({ user }: { user: User }) {
                      following={user.profile.is_following}
                      className="w-full sm:w-auto rounded-lg"
                   />
-               {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
-                  <Link
-                     to={`${paths.chats.path}?userId=${user.id}&userType=${user.user_type === 'ARTIST' ? 'artists' : user.user_type === 'GALLERY' ? 'galleries' : 'collectors'}`}
-                     className="hidden sm:block"
-                  >
-                     <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs px-3 py-2 rounded-lg"
+                  {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
+                     <Link
+                        to={`${paths.chats.path}?userId=${user.id}&userType=${user.user_type === 'ARTIST' ? 'artists' : user.user_type === 'GALLERY' ? 'galleries' : 'collectors'}`}
+                        className="hidden sm:block"
                      >
-                        Message
-                     </Button>
-                  </Link>
-               )}
+                        <Button
+                           size="sm"
+                           variant="outline"
+                           className="text-xs px-3 py-2 rounded-lg"
+                        >
+                           Message
+                        </Button>
+                     </Link>
+                  )}
+               </div>
             </div>
-         </div>
          </div>
       </div>
    );

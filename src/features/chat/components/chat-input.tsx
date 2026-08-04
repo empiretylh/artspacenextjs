@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send, Image as ImageIcon, Loader2, X } from "lucide-react";
@@ -126,7 +125,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
    };
 
    return (
-      <div className="border-t bg-background p-3">
+      <div className="border-t border-border bg-background p-2">
          <div className="flex items-end gap-2">
             <input
                type="file"
@@ -140,6 +139,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
             <Button 
                size="icon" 
                variant="ghost" 
+               className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50"
                onClick={() => fileInputRef.current?.click()}
                disabled={isUploading}
             >
@@ -154,7 +154,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
                }}
                placeholder={t("typeMessagePlaceholder")}
                rows={1}
-               className="resize-none"
+               className="resize-none rounded-xl border-border bg-background focus-visible:ring-1 focus-visible:ring-primary text-sm min-h-[36px] py-1.5 px-3 font-sans"
                onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                      e.preventDefault();
@@ -163,16 +163,21 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
                }}
             />
 
-            <Button size="icon" disabled={!value.trim() || isUploading} onClick={handleSend}>
+            <Button 
+               size="icon" 
+               disabled={!value.trim() || isUploading} 
+               onClick={handleSend}
+               className="h-9 w-9 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            >
                <Send className="h-4 w-4" />
             </Button>
          </div>
 
          {/* Image Preview Dialog */}
          <Dialog open={isPreviewOpen} onOpenChange={(open) => !open && handleCancelPreview()}>
-            <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0">
-               <DialogHeader className="p-4 border-b shrink-0">
-                  <DialogTitle>{t("previewImages", { count: selectedFiles.length, plural: selectedFiles.length > 1 ? 's' : '' })}</DialogTitle>
+            <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 rounded-xl border border-border">
+               <DialogHeader className="p-4 border-b border-border shrink-0">
+                  <DialogTitle className="font-display text-lg font-bold">{t("previewImages", { count: selectedFiles.length, plural: selectedFiles.length > 1 ? 's' : '' })}</DialogTitle>
                </DialogHeader>
 
                <div className="flex-1 overflow-y-auto bg-muted/20 min-h-[200px]">
@@ -180,7 +185,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
                      {previewUrls.map((url, i) => (
                         <div 
                            key={url} 
-                           className="relative w-32 h-32 shrink-0 rounded-lg overflow-hidden bg-background border shadow-sm group"
+                           className="relative w-32 h-32 shrink-0 rounded-xl overflow-hidden bg-background border border-border shadow-sm group"
                         >
                            <img src={url} alt="Preview" className="w-full h-full object-cover" />
                            <Button
@@ -197,10 +202,10 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
                      {selectedFiles.length < MAX_IMAGES && (
                         <button 
                            onClick={() => fileInputRef.current?.click()}
-                           className="w-32 h-32 shrink-0 rounded-lg border-2 border-dashed border-muted-foreground/20 hover:border-muted-foreground/40 hover:bg-muted/50 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground"
+                           className="w-32 h-32 shrink-0 rounded-xl border-2 border-dashed border-muted-foreground/20 hover:border-muted-foreground/40 hover:bg-muted/50 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground"
                         >
                            <ImageIcon className="h-6 w-6" />
-                           <span className="text-xs font-medium">{t("addMore")}</span>
+                           <span className="text-xs font-medium font-sans">{t("addMore")}</span>
                         </button>
                       )}
                   </div>
@@ -213,21 +218,21 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
                   </div>
                )}
 
-               <div className="p-4 space-y-4 border-t bg-background shrink-0">
+               <div className="p-4 space-y-4 border-t border-border bg-background shrink-0">
                   <Textarea
                      value={caption}
                      onChange={(e) => setCaption(e.target.value)}
                      placeholder={t("addMessagePlaceholder")}
-                     className="resize-none min-h-[80px]"
+                     className="resize-none min-h-[80px] rounded-xl border-border bg-background focus-visible:ring-1 focus-visible:ring-primary text-sm font-sans"
                      rows={3}
                      autoFocus
                   />
                   
                   <DialogFooter className="flex flex-row justify-end gap-2">
-                     <Button variant="ghost" onClick={handleCancelPreview} disabled={isUploading}>
+                     <Button variant="ghost" className="rounded-full" onClick={handleCancelPreview} disabled={isUploading}>
                         {t("cancel")}
                      </Button>
-                     <Button onClick={handleConfirmSend} disabled={isUploading} className="min-w-[100px]">
+                     <Button onClick={handleConfirmSend} disabled={isUploading} className="min-w-[100px] rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
                         {isUploading ? (
                            <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

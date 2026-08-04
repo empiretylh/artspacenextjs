@@ -4,6 +4,8 @@ export interface ChatUser {
    id: string;
    name: string;
    avatar?: string | null;
+   user_type?: string | null;
+   cover_photo?: string | null;
 }
 
 export interface UserDocument extends ChatUser {
@@ -28,6 +30,8 @@ interface BaseMessage {
    id: string;
    senderId: string;
    createdAt: Timestamp;
+   reactions?: Record<string, string>;
+   mediaReactions?: Record<string, Record<string, string>>;
 }
 
 interface TextMessage {

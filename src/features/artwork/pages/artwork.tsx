@@ -12,11 +12,13 @@ import RelatedArtworkListContainer from "../components/related-artwork-list-cont
 import ArtworkDetailPageSkeleton from "./artwork-skeleton";
 import { Suspense, useEffect } from "react";
 import LoadingPage from "@/components/page/loading-page";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
+import { ArrowLeft } from "lucide-react";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
+   const router = useRouter();
    const artworkQuery = useGetArtwork({ artworkId: id });
    const artwork = artworkQuery.data;
    const { source } = useSource()
@@ -38,6 +40,15 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
 
    return (
       <section aria-labelledby="artwork-title">
+         <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center gap-2 mb-4 pl-0 hover:bg-transparent text-muted-foreground hover:text-foreground"
+            onClick={() => router.back()}
+         >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Artworks
+         </Button>
          <h1 id="artwork-title" className="text-2xl font-medium mb-4 md:mb-6 font-display">
             {artwork.title}
          </h1>

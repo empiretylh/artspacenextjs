@@ -20,6 +20,8 @@ import {
 import { useGetCategories } from "@/features/service/artspace/get-categories";
 import { useGetGenres } from "@/features/service/artspace/get-genres";
 import { useGetStyles } from "@/features/service/artspace/get-styles";
+import { useGetCurrencies } from "@/features/service/artspace/get-currencies";
+import { useGetPriceFilterOptions } from "@/features/service/artspace/get-price-filter-options";
 
 interface FilterSidebarProps {
    filters: ColumnFiltersState;
@@ -35,6 +37,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
    setIsSidebarOpen = () => { },
 }) => {
    const [openSections, setOpenSections] = useState({
+      currency: true,
       price: true,
       category: true,
       genre: true,
@@ -44,6 +47,14 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       medium: true,
    });
    
+   const activeCurrency = filters.find((f) => f.id === "currency")?.value as string | undefined;
+
+   const currenciesQuery = useGetCurrencies();
+   const currencies = currenciesQuery.data?.data || [];
+
+   const priceFilterQuery = useGetPriceFilterOptions({ currency: activeCurrency });
+   const priceFilterResponse = priceFilterQuery.data;
+
    const categoryQuery = useGetCategories();
    const categories = categoryQuery.data?.data || [];
 
@@ -59,6 +70,16 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
          [section]: !prev[section],
       }));
    };
+
+    const handleCurrencyChange = (newCurrency: string) => {
+       setFilters((prev) => {
+          const withoutPrice = prev.filter((f) => !["currency", "price_range", "price_min", "price_max"].includes(f.id));
+          if (newCurrency === "ALL") {
+             return withoutPrice;
+          }
+          return [...withoutPrice, { id: "currency", value: newCurrency }];
+       });
+    };
 
    const handleFilterChange = (
       id: string,
@@ -78,6 +99,18 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
          }
       });
    };
+   const handleCustomRangeChange = (min: number, max: number) => {
+      setFilters((prev) => {
+         const withoutSliderAndPresets = prev.filter(
+            (f) => !["price_range", "price_min", "price_max"].includes(f.id)
+         );
+         return [
+            ...withoutSliderAndPresets,
+            { id: "price_min", value: min },
+            { id: "price_max", value: max },
+         ];
+      });
+   };
 
    const handlePriceFilterChange = (
       id: string,
@@ -85,17 +118,30 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       checked: boolean
    ) => {
       setFilters((prev) => {
-         if (checked) {
-            const without = prev.filter((f) => f.id !== id);
-            if (value === "0-10000") {
-               return without;
+         if (id === "price_range") {
+            const withoutSlider = prev.filter((f) => f.id !== "price_min" && f.id !== "price_max");
+            if (checked) {
+               return [...withoutSlider, { id, value }];
+            } else {
+               return withoutSlider.filter((f) => !(f.id === id && f.value === value));
             }
-            return [...without, { id, value }];
          } else {
-            return prev.filter((f) => f.id !== id);
+            const withoutPresets = prev.filter((f) => f.id !== "price_range");
+            const withoutSelf = withoutPresets.filter((f) => f.id !== id);
+            if (value !== undefined && value !== null && value !== "") {
+               return [...withoutSelf, { id, value }];
+            }
+            return withoutSelf;
          }
       });
    };
+
+   const activeCurrencies = currencies.length > 0
+      ? currencies.filter((curr: any) => ["USD", "MMK"].includes(curr.code?.toUpperCase()))
+      : [
+           { code: "USD", name: "US Dollar" },
+           { code: "MMK", name: "Myanmar Kyat" }
+        ];
 
    return (
       <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
@@ -116,20 +162,50 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
             <ScrollArea className="flex-grow h-0 px-6">
                <div className="flex flex-col gap-2">
-                  {/* Price Filter */}
-                  <FilterSection
-                     title="Value Range"
-                     isOpen={openSections.price}
-                     onToggle={() => toggleSection("price")}
-                  >
-                     <div className="pt-2">
-                        <PriceFilter
-                           filterOptions={filterOptions}
-                           filters={filters}
-                           handleFilterChange={handlePriceFilterChange}
-                        />
-                     </div>
-                  </FilterSection>
+                   {/* Currency Filter */}
+                   <FilterSection
+                      title="Currency"
+                      isOpen={openSections.currency}
+                      onToggle={() => toggleSection("currency")}
+                   >
+                       <RadioGroup
+                          value={activeCurrency || "ALL"}
+                          onValueChange={handleCurrencyChange}
+                          className="grid grid-cols-1 gap-4 pt-1"
+                       >
+                          <div className="flex items-center gap-3 group cursor-pointer" key="ALL">
+                             <RadioGroupItem value="ALL" id="currency-ALL" className="size-5 border-muted-foreground/30 focus:border-primary" />
+                             <Label htmlFor="currency-ALL" className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors">
+                                All Currencies (Default)
+                             </Label>
+                          </div>
+                          {activeCurrencies.map((curr: any) => (
+                             <div className="flex items-center gap-3 group cursor-pointer" key={curr.code}>
+                                <RadioGroupItem value={curr.code} id={`currency-${curr.code}`} className="size-5 border-muted-foreground/30 focus:border-primary" />
+                                <Label htmlFor={`currency-${curr.code}`} className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors">
+                                   {curr.name} ({curr.code})
+                                </Label>
+                             </div>
+                          ))}
+                       </RadioGroup>
+                   </FilterSection>
+
+                   {/* Price Filter */}
+                   <FilterSection
+                      title="Value Range"
+                      isOpen={openSections.price}
+                      onToggle={() => toggleSection("price")}
+                   >
+                      <div className="pt-2">
+                          <PriceFilter
+                             priceFilterResponse={priceFilterResponse}
+                             filters={filters}
+                             handleFilterChange={handlePriceFilterChange}
+                             handleCustomRangeChange={handleCustomRangeChange}
+                             isLoading={priceFilterQuery.isLoading}
+                          />
+                      </div>
+                   </FilterSection>
 
                   {/* Status Filter */}
                   <FilterSection

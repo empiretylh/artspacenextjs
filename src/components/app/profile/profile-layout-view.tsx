@@ -19,7 +19,7 @@ import CollectionIcon from "@/components/icons/collection-icon";
 import HeartIcon from "@/components/icons/heart-icon";
 import OverviewIcon from "@/components/icons/overview-icon";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
-import { ClipboardPenLineIcon, Settings } from "lucide-react";
+import { ClipboardPenLineIcon, Settings, X } from "lucide-react";
 import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
 import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
 import { UserRouteType } from "@/features/service/artspace/get-users";
@@ -96,7 +96,7 @@ const ProfileLayoutView = ({
 
    const coverSrc = user?.profile.cover_photo
       ? getImage(user.profile.cover_photo)
-      : "/assets/profile-cover-default.png";
+      : "/assets/profile-cover-default.jpg";
 
    const avatarSrc = user?.profile.profile_picture
       ? getImage(user.profile.profile_picture)
@@ -116,7 +116,7 @@ const ProfileLayoutView = ({
                tabIndex={0}
                aria-label="Open cover photo"
                onClick={() => setIsCoverOpen(true)}
-               className="relative w-full h-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
+               className="relative w-full h-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary rounded-md hover:brightness-95 transition-all"
             >
                <AppImage
                   src={coverSrc}
@@ -138,7 +138,7 @@ const ProfileLayoutView = ({
                tabIndex={0}
                aria-label="Open profile picture"
                onClick={() => setIsAvatarOpen(true)}
-               className="mx-auto relative aspect-square w-[120px] sm:w-[150px] rounded-full border-4 border-background overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+               className="mx-auto relative aspect-square w-[120px] sm:w-[150px] rounded-full border-4 border-background overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary shadow-sm hover:brightness-95 transition-all"
             >
                <AppImage
                   src={avatarSrc}
@@ -152,12 +152,16 @@ const ProfileLayoutView = ({
 
             <div className="mt-3 space-y-1">
                <div className="flex items-center justify-center gap-2">
-                  <h1 className="font-display text-lg sm:text-xl">{fullName}</h1>
-                  {user?.user_type && getUserIcon()}
+                  <h1 className="font-bold font-display text-2xl sm:text-3xl tracking-tight">{fullName}</h1>
+                  {user?.user_type && getUserIcon(user.user_type)}
                </div>
 
                <p className="text-sm text-muted-foreground">{user?.email}</p>
-               <p className="text-sm max-w-md mx-auto whitespace-pre-wrap">{user?.profile.bio || "No bio"}</p>
+               {user?.profile.bio ? (
+                  <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-foreground/80">{user.profile.bio}</p>
+               ) : variant === "profile" ? (
+                  <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-muted-foreground/60 italic">No bio yet. Add one in settings!</p>
+               ) : null}
 
                <div className="mt-3 flex justify-center items-center gap-2">
                   <ShareButton
@@ -172,6 +176,8 @@ const ProfileLayoutView = ({
                            )}`
                            : undefined
                      }
+                     variant="outline"
+                     className="rounded-full h-8 w-8 text-muted-foreground"
                   />
 
                   {variant === "profile" && (
@@ -187,16 +193,17 @@ const ProfileLayoutView = ({
                      <>
                         {user && (
                            <FollowButton
-                              size="default"
+                              size="profile"
                               loading={followStatusQuery.isLoading}
                               userId={String(user.id)}
                               userType={user.user_type}
                               following={followStatusQuery.data || false}
+                              className="rounded-full h-8 px-4 text-xs font-semibold"
                            />
                         )}
                         {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
                            <Link to={`${paths.chats.path}?userId=${user.id}&userType=${userType}`}>
-                              <Button variant="outline">
+                              <Button variant="outline" className="rounded-full h-8 px-4 text-xs font-semibold">
                                  Send Message
                               </Button>
                            </Link>
@@ -220,8 +227,8 @@ const ProfileLayoutView = ({
                            key={link.href}
                            to={link.href}
                            className={cn(
-                              "py-2 px-2 flex flex-col items-center gap-2 font-display",
-                              isActive(link.href) ? "text-primary border-b-2 border-primary font-bold" : "border-b-2 border-transparent font-medium",
+                              "py-2 px-2 flex flex-col items-center gap-2",
+                              isActive(link.href) ? "text-primary border-b-2 border-primary -mb-px font-bold" : "border-b-2 border-transparent font-medium",
                               link.disabled && "pointer-events-none opacity-50"
                            )}
                         >
@@ -278,7 +285,7 @@ const ProfileLayoutView = ({
                   className="absolute text-white top-2 right-2"
                   aria-label="Close"
                >
-                  ✕
+                  <X className="h-4 w-4" />
                </Button>
             </div>
          </BaseDialog >
@@ -324,7 +331,7 @@ const ProfileLayoutView = ({
                   className="absolute text-white top-2 right-2"
                   aria-label="Close"
                >
-                  ✕
+                  <X className="h-4 w-4" />
                </Button>
             </div>
          </BaseDialog>

@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Minus, ChevronLeft } from "lucide-react";
+import { MessageCircle, X, Minus } from "lucide-react";
 import { useChatStore } from "../store";
 import { ChatWindow } from "./chat-window";
 import { ChatList } from "./chat-list";
@@ -32,15 +32,29 @@ export const MiniChat = () => {
     closeChat
   } = useChatStore();
 
-  // Prevent SSR hydration mismatch
+  const [hasVisitedChats, setHasVisitedChats] = useState(false);
+
+  // Prevent SSR hydration mismatch and check sessionStorage
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== "undefined") {
+      const visited = sessionStorage.getItem("artspace_chats_visited") === "true";
+      setHasVisitedChats(visited);
+    }
   }, []);
 
-  // Hide on main chat page
-  const isChatPage = pathname?.startsWith("/chats");
+  // Hide on main chat page (supports localized paths like /en/chats)
+  const isChatPage = pathname?.split("/").includes("chats");
 
-  if (!mounted || isChatPage || !user) return null;
+  // Track if user visited the chats page in this session
+  useEffect(() => {
+    if (isChatPage && typeof window !== "undefined") {
+      sessionStorage.setItem("artspace_chats_visited", "true");
+      setHasVisitedChats(true);
+    }
+  }, [isChatPage]);
+
+  if (!mounted || isChatPage || !user || !hasVisitedChats) return null;
 
   const unreadCount = conversations.reduce((acc, conv) => {
     return acc + (conv.unreadCount?.[String(user.id)] || 0);
@@ -55,19 +69,19 @@ export const MiniChat = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className={cn(
-              "flex flex-col overflow-hidden rounded-2xl border shadow-2xl transition-all duration-300",
+              "flex flex-col overflow-hidden rounded-2xl border border-border/80 shadow-2xl transition-all duration-300",
               "bg-background/80 backdrop-blur-md",
               "w-[90vw] sm:w-[400px] max-h-[calc(100vh-100px)] h-[500px]"
             )}
           >
             {/* Header / Toolbar */}
-            <div className="flex items-center justify-between border-b bg-muted/30 px-2 py-1">
-              <span className="pl-2 text-xs font-medium text-muted-foreground">Chat</span>
+            <div className="flex items-center justify-between border-b border-border bg-muted/10 px-2 py-1.5">
+              <span className="pl-2 text-xs font-bold font-display uppercase tracking-wider text-muted-foreground/80">Chat</span>
               <div className="flex items-center gap-1">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 rounded-full"
+                  className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   onClick={() => setIsMinimized(true)}
                 >
                   <Minus className="h-4 w-4" />
@@ -102,15 +116,16 @@ export const MiniChat = () => {
                   <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
                     <MessageCircle className="w-8 h-8 text-primary" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">Your Conversations</h3>
-                    <p className="text-muted-foreground text-sm">
+                  <div className="space-y-1">
+                    <h3 className="font-bold text-lg font-display tracking-tight text-foreground">Your Conversations</h3>
+                    <p className="text-muted-foreground text-sm font-sans">
                       Select a chat to start messaging
                     </p>
                   </div>
                   <Button
                     onClick={() => setShowList(true)}
                     variant="outline"
+                    className="rounded-full border-border text-xs uppercase tracking-wider font-semibold px-4"
                   >
                     View Chat List
                   </Button>
@@ -129,7 +144,7 @@ export const MiniChat = () => {
         <Button
           size="icon"
           className={cn(
-            "h-14 w-14 rounded-full shadow-lg transition-all duration-300",
+            "h-14 w-14 rounded-full bg-primary hover:bg-primary/95 text-primary-foreground shadow-lg border border-primary/10 transition-all duration-300",
             isOpen && !isMinimized ? "rotate-90 scale-90 opacity-0 pointer-events-none" : "scale-100 opacity-100"
           )}
           onClick={() => {
@@ -142,7 +157,7 @@ export const MiniChat = () => {
         >
           <MessageCircle className="h-6 w-6" />
           {unreadCount > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground border-2 border-background animate-in zoom-in duration-300">
+            <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground border-2 border-background animate-in zoom-in duration-300">
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}
@@ -158,13 +173,13 @@ export const MiniChat = () => {
               className="absolute bottom-0 right-0"
             >
               <Button
-                className="h-14 w-auto px-6 rounded-full shadow-lg gap-2"
+                className="h-14 w-auto px-6 rounded-full bg-primary hover:bg-primary/95 text-primary-foreground border border-primary/10 shadow-lg gap-2"
                 onClick={() => setIsMinimized(false)}
               >
                 <MessageCircle className="h-5 w-5" />
-                <span className="text-sm font-medium">Continue Chat</span>
+                <span className="text-sm font-semibold font-sans tracking-wide">Continue Chat</span>
                 {unreadCount > 0 && (
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-foreground text-primary text-[10px] font-bold">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold">
                     {unreadCount}
                   </span>
                 )}

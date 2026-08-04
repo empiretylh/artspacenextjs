@@ -64,7 +64,7 @@ export default function EventDetailPage() {
    return (
       <div className="pb-24 sm:pb-16">
          {/* Hero */}
-         <div className="relative w-screen md:w-full ml-[50%] translate-x-[-50%] aspect-video max-h-[480px]">
+         <div className="relative w-screen md:w-full ml-[50%] translate-x-[-50%] aspect-[16/9] max-h-[90dvh]">
             <AppImage
                src={getImage(event.cover_photo)}
                alt={event.title}
@@ -184,7 +184,7 @@ export default function EventDetailPage() {
                                  <ArtworkCard
                                     key={artwork.id}
                                     artwork={artwork}
-                                  />
+                                 />
                               ))}
                            </div>
                         </ScrollArea>
