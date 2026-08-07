@@ -8,8 +8,11 @@ import AppImage from "@/components/common/app-image";
 import { getImage } from "@/lib/utils";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAuth } from "@/features/auth/store";
+import Footer from "@/components/layout/footer";
 
 type Banner = {
   id: number;
@@ -29,22 +32,72 @@ interface Props {
 export default function LandingPageView({ banner, locale }: Props) {
   const t = useTranslations("Landing");
   const router = useRouter();
+  const { user } = useAuth();
+
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const lastScrollTopRef = useRef(0);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const handleScroll = () => {
+      const scrollTop = viewport.scrollTop;
+      const headerElement = headerRef.current;
+      const threshold = headerElement ? headerElement.offsetHeight : 100;
+
+      if (scrollTop <= threshold) {
+        setIsHeaderVisible(true);
+      } else {
+        if (scrollTop > lastScrollTopRef.current) {
+          setIsHeaderVisible(false);
+        } else {
+          setIsHeaderVisible(true);
+        }
+      }
+      lastScrollTopRef.current = scrollTop;
+    };
+
+    viewport.addEventListener("scroll", handleScroll, { passive: true });
+    return () => viewport.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleExploreMore = () => {
     Cookies.set("artspace_explored", "true", { expires: 30 });
     router.push("/home");
   };
 
+  const handleCreateAcc = () => {
+    Cookies.set("artspace_explored", "true", { expires: 30 });
+    router.push("/sign-up");
+  };
+
   return (
-    <ScrollArea className="h-screen w-full bg-background text-foreground font-sans">
+    <ScrollArea viewportRef={viewportRef} className="h-screen w-full bg-background text-foreground font-sans">
       
-      <header className="w-full flex items-center justify-between px-6 md:px-12 py-6 md:py-8 bg-background border-b border-border/40">
+      <motion.header 
+         ref={headerRef}
+         initial={{ y: 0 }}
+         animate={{ y: isHeaderVisible ? 0 : "-100%" }}
+         transition={{ duration: 0.3, ease: "easeInOut" }}
+         className="sticky top-0 z-50 w-full flex items-center justify-between px-6 md:px-12 py-6 md:py-8 bg-background border-b-2 border-border/60"
+      >
         <div className="flex items-center gap-3">
             <span className="uppercase font-display font-medium text-lg tracking-widest">
                 Myanmar Art Space
             </span>
         </div>
         <div className="flex items-center gap-6 text-sm">
+          {!user && (
+            <button 
+               onClick={handleCreateAcc}
+               className="hidden sm:block text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors font-medium cursor-pointer"
+            >
+               {t("createAccountButton")}
+            </button>
+          )}
           <button 
              onClick={handleExploreMore}
              className="hidden sm:block text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors font-medium cursor-pointer"
@@ -54,7 +107,7 @@ export default function LandingPageView({ banner, locale }: Props) {
           <LanguageSwitcher />
           <ThemeSwitcher />
         </div>
-      </header>
+      </motion.header>
 
       <main className="max-w-[1600px] mx-auto px-6 md:px-12">
         {/* Banner Section - 8:3 Ratio */}
@@ -192,25 +245,32 @@ export default function LandingPageView({ banner, locale }: Props) {
         </section>
 
         {/* The Mission Block */}
-        <section className="py-16 md:py-32 border-t border-border/40">
+        <section className="py-16 md:py-40 border-t border-border/40">
             <div className="max-w-4xl mx-auto text-center space-y-8 md:space-y-10">
                 <motion.h2 
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="text-xs md:text-sm uppercase tracking-widest text-muted-foreground"
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight"
                 >
                     {t("missionTitle")}
                 </motion.h2>
+                <motion.div 
+                    initial={{ opacity: 0, scaleX: 0 }}
+                    whileInView={{ opacity: 1, scaleX: 1 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+                    className="w-16 h-[1px] bg-foreground/30 mx-auto" 
+                />
                 <motion.p 
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-                    className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium leading-[1.15] tracking-tight text-balance"
+                    className="text-base sm:text-lg md:text-xl lg:text-2xl font-light leading-relaxed text-foreground/80 text-balance"
                 >
-                    "{t("missionContent")}"
+                    {t("missionContent")}
                 </motion.p>
             </div>
         </section>
@@ -243,25 +303,33 @@ export default function LandingPageView({ banner, locale }: Props) {
                     transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
                     className="pt-6 md:pt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-sm sm:max-w-none mx-auto"
                 >
+                     {!user && (
+                         <Button 
+                            size="lg"
+                            onClick={handleCreateAcc}
+                            className="rounded-sm px-10 h-12 md:h-14 text-sm uppercase tracking-widest w-full sm:w-auto cursor-pointer"
+                        >
+                            {t("createAccountButton")}
+                        </Button>
+                     )}
                      <Button 
-                        size="lg"
-                        onClick={() => router.push("/sign-up")}
-                        className="rounded-sm px-10 h-12 md:h-14 text-sm uppercase tracking-widest w-full sm:w-auto"
-                    >
-                        {t("createAccountButton")}
-                    </Button>
-                    <Button 
-                        variant="outline"
+                        variant={user ? "default" : "outline"}
                         size="lg"
                         onClick={handleExploreMore}
-                        className="rounded-sm px-10 h-12 md:h-14 text-sm uppercase tracking-widest w-full sm:w-auto"
-                    >
+                        className="rounded-sm px-10 h-12 md:h-14 text-sm uppercase tracking-widest w-full sm:w-auto cursor-pointer"
+                     >
                         {t("exploreButton")}
-                    </Button>
+                     </Button>
                 </motion.div>
             </div>
         </section>
       </main>
+      <Footer 
+         className="mt-16 md:mt-24" 
+         contentClassName="max-w-[1600px] px-6 md:px-12 py-20 md:py-28 gap-16 md:gap-24" 
+         columnClassName="space-y-6"
+         listClassName="space-y-4 text-[15px]"
+      />
     </ScrollArea>
   );
 }

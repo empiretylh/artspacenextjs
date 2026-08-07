@@ -46,12 +46,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   // 3️⃣ Landing page redirect (to /home) if user is authenticated or has explored
-  if (localeFreePathname === "/") {
-    const explored = request.cookies.get("artspace_explored")?.value === "true";
-    if (isAuthed || explored) {
-      return NextResponse.redirect(new URL(`/${locale}/home`, request.url));
-    }
-  }
+  // Removed redirect so all users see the landing page on root path.
 
   // Run next-intl localization routing
   return handleI18nRouting(request);
