@@ -12,6 +12,36 @@ import { Navigation } from "swiper/modules";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { FeaturedEventsSectionSkeleton } from "./featured-events-section-skeleton";
 import { useTranslations } from "next-intl";
+import { motion } from "framer-motion";
+
+const sectionVariants = {
+   hidden: {},
+   show: {
+      transition: {
+         staggerChildren: 0.15,
+      },
+   },
+} as const;
+
+const titleVariants = {
+   hidden: { opacity: 0, y: 15 },
+   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+} as const;
+
+const contentVariants = {
+   hidden: {},
+   show: {
+      transition: {
+         staggerChildren: 0.06,
+         delayChildren: 0.1,
+      },
+   },
+} as const;
+
+const cardVariants = {
+   hidden: { opacity: 0, y: 15 },
+   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+} as const;
 
 export const FeaturedEventsSection = () => {
    const t = useTranslations("Home");
@@ -32,8 +62,14 @@ export const FeaturedEventsSection = () => {
    }
 
    return (
-      <section className="space-y-6">
-         <div className="flex justify-between items-center">
+      <motion.section
+         variants={sectionVariants}
+         initial="hidden"
+         whileInView="show"
+         viewport={{ once: true, margin: "-100px" }}
+         className="space-y-6"
+      >
+         <motion.div variants={titleVariants} className="flex justify-between items-center">
             <div>
                <SectionTitle>{t("featuredEvents")}</SectionTitle>
                <p className="text-sm text-muted-foreground mt-1">{t("featuredEventsSubtitle")}</p>
@@ -53,42 +89,47 @@ export const FeaturedEventsSection = () => {
                   </Button>
                </div>
             </div>
-         </div>
+         </motion.div>
 
-         <div className="-mx-4 md:mx-0 overflow-hidden">
-            <Swiper
-               modules={[Navigation]}
-               slidesPerView={1.2}
-               slidesPerGroup={1}
-               spaceBetween={12}
-               watchSlidesProgress
-               touchStartPreventDefault={false}
-               navigation={{
-                  prevEl: ".swiper-event-prev",
-                  nextEl: ".swiper-event-next",
-               }}
-               breakpoints={{
-                  640: { slidesPerView: 2.2, spaceBetween: 16 },
-                  1024: { slidesPerView: 2.8, spaceBetween: 20 },
-                  1280: { slidesPerView: 3.5, spaceBetween: 24 },
-               }}
-               className="!px-4 md:!px-0 !overflow-visible"
-            >
-               {featuredEvents.map((event) => (
-                  <SwiperSlide key={event.id}>
-                     <EventWideCard event={event} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px" />
-                  </SwiperSlide>
-               ))}
-            </Swiper>
-         </div>
+         <motion.div variants={contentVariants}>
+            <div className="-mx-4 md:mx-0 overflow-hidden">
+               <Swiper
+                  modules={[Navigation]}
+                  slidesPerView={1.2}
+                  slidesPerGroup={1}
+                  spaceBetween={12}
+                  watchSlidesProgress
+                  touchStartPreventDefault={false}
+                  navigation={{
+                     prevEl: ".swiper-event-prev",
+                     nextEl: ".swiper-event-next",
+                  }}
+                  breakpoints={{
+                     640: { slidesPerView: 2.2, spaceBetween: 16 },
+                     // md matches tablet
+                     1024: { slidesPerView: 2.8, spaceBetween: 20 },
+                     1280: { slidesPerView: 3.5, spaceBetween: 24 },
+                  }}
+                  className="!px-4 md:!px-0 !overflow-visible"
+               >
+                  {featuredEvents.map((event) => (
+                     <SwiperSlide key={event.id}>
+                        <motion.div variants={cardVariants}>
+                           <EventWideCard event={event} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px" />
+                        </motion.div>
+                     </SwiperSlide>
+                  ))}
+               </Swiper>
+            </div>
 
-         <div className="md:hidden px-4">
-            <Link to={paths.events.path}>
-               <Button variant="outline" className="w-full">
-                  View All Events
-               </Button>
-            </Link>
-         </div>
-      </section>
+            <div className="md:hidden px-4 mt-4">
+               <Link to={paths.events.path}>
+                  <Button variant="outline" className="w-full">
+                     View All Events
+                  </Button>
+               </Link>
+            </div>
+         </motion.div>
+      </motion.section>
    );
 };

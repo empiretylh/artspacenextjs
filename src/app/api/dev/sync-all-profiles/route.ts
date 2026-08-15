@@ -49,7 +49,50 @@ export async function GET() {
          );
       }
 
-      // 2. Prepare user documents and write them in chunks of 500 to Firestore
+      // 2. Scan Firestore for users without user_type (buyers)
+      const firestoreUsersSnap = await adminDb.collection("users").get();
+      const buyerIds: string[] = [];
+      if (!firestoreUsersSnap.empty) {
+         for (const doc of firestoreUsersSnap.docs) {
+            const data = doc.data();
+            if (!data.user_type) {
+               buyerIds.push(doc.id);
+            }
+         }
+      }
+
+      // Fetch each buyer profile from public profile API and append to allUsers
+      let updatedBuyersCount = 0;
+      for (const buyerId of buyerIds) {
+         try {
+            const url = `${env.API_URL}/api/v1/users/profile/public/${buyerId}/`;
+            const res = await fetch(url, { cache: "no-store" });
+            if (res.ok) {
+               const data = await res.json();
+               if (data) {
+                  allUsers.push(data);
+                  updatedBuyersCount++;
+               }
+            } else {
+               errors.push({ type: "buyer_detail", id: buyerId, error: `Failed to fetch: ${res.statusText}` });
+            }
+         } catch (err: any) {
+            errors.push({ type: "buyer_detail", id: buyerId, error: err.message });
+         }
+      }
+
+      if (allUsers.length === 0) {
+         return NextResponse.json(
+            {
+               success: false,
+               message: "No users fetched from staging API",
+               errors,
+            },
+            { status: 400 }
+         );
+      }
+
+      // 3. Prepare user documents and write them in chunks of 500 to Firestore
       const userChunks: any[][] = [];
       for (let i = 0; i < allUsers.length; i += 500) {
          userChunks.push(allUsers.slice(i, i + 500));
@@ -83,7 +126,7 @@ export async function GET() {
          await batch.commit();
       }
 
-      // 3. Update the conversation metadata (participantDetails) in Firestore /conversations collection
+      // 4. Update the conversation metadata (participantDetails) in Firestore /conversations collection
       const conversationsSnap = await adminDb.collection("conversations").get();
 
       if (!conversationsSnap.empty) {
@@ -99,11 +142,12 @@ export async function GET() {
 
             for (const userIdStr of participants) {
                const matchedUser = allUsers.find((u) => String(u.id) === userIdStr);
+
                if (matchedUser) {
-                  const name = `${matchedUser.first_name || ""} ${matchedUser.last_name || ""}`.trim() || matchedUser.email || `User ${matchedUser.id}`;
-                  const avatar = matchedUser.profile?.profile_picture || null;
+                  const name = matchedUser.name || `${matchedUser.first_name || ""} ${matchedUser.last_name || ""}`.trim() || matchedUser.email || `User ${matchedUser.id}`;
+                  const avatar = matchedUser.avatar || matchedUser.profile?.profile_picture || null;
                   const user_type = matchedUser.user_type || (matchedUser.num_artworks !== undefined ? "ARTIST" : "COLLECTOR");
-                  const cover_photo = matchedUser.profile?.cover_photo || null;
+                  const cover_photo = matchedUser.cover_photo || matchedUser.profile?.cover_photo || null;
 
                   updatedDetails[`participantDetails.${userIdStr}`] = {
                      id: userIdStr,
@@ -140,9 +184,10 @@ export async function GET() {
 
       return NextResponse.json({
          success: true,
-         message: `Successfully synchronized ${updatedUsersCount} user profiles and updated metadata in ${updatedConversationsCount} conversations.`,
+         message: `Successfully synchronized ${updatedUsersCount} user profiles (including ${updatedBuyersCount} buyers), and updated metadata in ${updatedConversationsCount} conversations.`,
          errors,
          syncedUsersCount: updatedUsersCount,
+         syncedBuyersCount: updatedBuyersCount,
          syncedUsers,
       });
    } catch (error: any) {

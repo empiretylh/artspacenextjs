@@ -5,7 +5,7 @@ import React from 'react'
 const UserTypeLayout = async ({ children, params }: { params: Promise<{ userType: string }>, children: React.ReactNode }) => {
   const { userType } = await params as { userType: UserRouteType };
 
-  if (!userType || (userType !== 'artists' && userType !== 'galleries' && userType !== 'collectors')) {
+  if (!userType || (userType !== 'artists' && userType !== 'galleries' && userType !== 'collectors' && userType !== 'buyers')) {
     return notFound();
   }
 

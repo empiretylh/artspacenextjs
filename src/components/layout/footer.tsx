@@ -16,8 +16,16 @@ import { paths } from "@/config/paths";
 import { useSubscribeEmail } from "@/features/service/artspace/subscribe-email";
 import { useNotifications } from "../ui/notifications";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
-const Footer = () => {
+interface FooterProps {
+   className?: string;
+   contentClassName?: string;
+   columnClassName?: string;
+   listClassName?: string;
+}
+
+const Footer = ({ className, contentClassName, columnClassName, listClassName }: FooterProps) => {
    const t = useTranslations("Footer");
    const [isHelpOpen, setIsHelpOpen] = useState(false);
    const [email, setEmail] = useState("");
@@ -77,15 +85,15 @@ const Footer = () => {
    };
 
    return (
-      <footer className="border-t border-border bg-background">
-         <div className="mx-auto py-12 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+      <footer className={cn("border-t border-border bg-background", className)}>
+         <div className={cn("mx-auto py-12 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10", contentClassName)}>
             {/* Navigation sections */}
             {Object.keys(navlinks).map((section) => (
-               <div key={section} className="space-y-3">
+               <div key={section} className={cn("space-y-3", columnClassName)}>
                   <h3 className="text-base font-bold font-display text-foreground">
                      {section}
                   </h3>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
+                  <ul className={cn("space-y-2 text-sm text-muted-foreground", listClassName)}>
                      {navlinks[section].map((item) => {
                         if (item.href) {
                            return (
@@ -125,7 +133,7 @@ const Footer = () => {
             ))}
             {/* Subscribe */}
             <div className="flex flex-col gap-6">
-               <div className="space-y-3">
+               <div className={cn("space-y-3", columnClassName)}>
                   <h3 className="text-base font-bold font-display capitalize">
                      {t("subscribe")}
                   </h3>

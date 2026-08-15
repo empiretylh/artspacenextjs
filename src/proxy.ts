@@ -45,6 +45,9 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/sign-in`, request.url));
   }
 
+  // 3️⃣ Landing page redirect (to /home) if user is authenticated or has explored
+  // Removed redirect so all users see the landing page on root path.
+
   // Run next-intl localization routing
   return handleI18nRouting(request);
 }

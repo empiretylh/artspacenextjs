@@ -35,6 +35,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // fetch post information
   const data = await getCachedUser(id, userType);
+  if (!data) {
+    return {
+      title: "User Not Found",
+    };
+  }
+  
   const displayName = `${data.first_name || ""} ${data.last_name || ""}`.trim();
   const title = displayName || "User Profile";
   const description =

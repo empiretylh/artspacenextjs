@@ -17,7 +17,7 @@ export default function UserSmallCard({ user }: { user: User }) {
       "
       >
          {/* Avatar */}
-         <Link to={getUserLink(user, authUser!)} className="mb-2">
+         <Link to={getUserLink(user, authUser!)} className="mb-2 no-underline hover:no-underline">
             <AppImage
                src={
                   user?.profile?.profile_picture
@@ -39,7 +39,7 @@ export default function UserSmallCard({ user }: { user: User }) {
             max-w-[70px] sm:max-w-[80px] md:max-w-[110px]
          "
          >
-            <Link to={getUserLink(user, authUser!)}>
+            <Link to={getUserLink(user, authUser!)} className="no-underline hover:no-underline">
                <p
                   className="
                   text-sm md:text-base

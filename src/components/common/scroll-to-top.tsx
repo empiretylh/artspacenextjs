@@ -17,8 +17,8 @@ const isSameProfileTransition = (prevPath: string, currPath: string) => {
       return true;
    }
 
-   // Case 2: Entity profile (/artists/:id, /collectors/:id, /galleries/:id, /users/:id)
-   const profileRegex = /^\/(artists|collectors|galleries|users)\/([^/]+)/;
+   // Case 2: Entity profile (/artists/:id, /collectors/:id, /galleries/:id, /users/:id, /buyers/:id)
+   const profileRegex = /^\/(artists|collectors|galleries|users|buyers)\/([^/]+)/;
    const prevMatch = cleanPrev.match(profileRegex);
    const currMatch = cleanCurr.match(profileRegex);
 

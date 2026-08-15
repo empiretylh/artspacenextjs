@@ -13,7 +13,7 @@ export const getArtist = async ({
 }: {
    artistId: string;
 }): Promise<ApiResponse<User>> => {
-   const res = await api.get(`/users/artist/${artistId}`);
+   const res = await api.get(`/users/profile/public/${artistId}/`);
 
    return res.data;
 };

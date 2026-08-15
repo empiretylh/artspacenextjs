@@ -32,7 +32,7 @@ const data = {
    navMain: [
       {
          title: "home",
-         url: paths.root.path,
+         url: paths.home.path,
          icon: HomeIcon,
       },
       {

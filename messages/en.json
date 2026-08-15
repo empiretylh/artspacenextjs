@@ -395,5 +395,27 @@
         "admin": "Legal & Administrative: admin@myanmarartspace.net"
       }
     }
+  },
+  "Landing": {
+    "welcome": "Welcome to MAS",
+    "welcomeSubtitle": "Where every artist, gallery, and collector brings their world into one space.",
+    "whatIsMas": "What is MAS?",
+    "whatIsMasContent": "Myanmar Art Space is the pioneering art platform dedicated exclusively to the Myanmar art community. We are proud to be the very first digital ecosystem designed to connect the three pillars of our art world: Artists, Galleries, and Collectors bringing everyone together through individual accounts built for seamless connection.",
+    "trilogyTitle": "The \"Trilogy\" Space",
+    "trilogyContent": "We believe in a unified ecosystem where art thrives. Our platform functions as a \"Trilogy Space,\" bridging the gap between creativity, history, and commerce.",
+    "missionTitle": "Our Mission: History & Innovation",
+    "missionContent": "Beyond e-commerce, we stand as guardians of culture. We are dedicated to building the \"Digital Archive\" of Myanmar artists, ensuring that our rich artistic history is documented for future generations while facilitating a modern marketplace for today.",
+    "createAccountTitle": "Join the Art Ecosystem",
+    "createAccountContent": "Become a part of Myanmar's premier digital art ecosystem. Create your custom account today to start sharing, curating, or collecting exquisite local artwork.",
+    "createAccountButton": "Create Account",
+    "exploreButton": "Explore more",
+    "pillars": {
+      "artistsTitle": "Artists",
+      "artistsDesc": "Showcase works, document history, and connect with global collectors.",
+      "galleriesTitle": "Galleries",
+      "galleriesDesc": "Curate exhibitions, manage artists, and run commerce smoothly.",
+      "collectorsTitle": "Collectors",
+      "collectorsDesc": "Discover new artists, build collections, and acquire verified art."
+    }
   }
 }

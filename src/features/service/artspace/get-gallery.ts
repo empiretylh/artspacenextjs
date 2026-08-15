@@ -13,7 +13,7 @@ export const getGallery = async ({
 }: {
    galleryId: string;
 }): Promise<ApiResponse<User>> => {
-   const res = await api.get(`/users/gallery/${galleryId}`);
+   const res = await api.get(`/users/profile/public/${galleryId}/`);
 
    return res.data;
 };

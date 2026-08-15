@@ -12,9 +12,9 @@ export const getUserBlockStatus = async ({
   userType,
 }: {
   userId: string;
-  userType: UserRouteType;
+  userType?: UserRouteType;
 }): Promise<ApiResponse<User>> => {
-  const res = await api.get(`/users/${getUserPath(userType)}/${userId}`);
+  const res = await api.get(`/users/profile/public/${userId}/`);
 
   return res.data;
 };

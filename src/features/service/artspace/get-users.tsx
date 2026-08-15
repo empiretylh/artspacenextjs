@@ -14,7 +14,7 @@ import {
    useQuery,
 } from "@tanstack/react-query";
 
-export type UserRouteType = "artists" | "galleries" | "collectors";
+export type UserRouteType = "artists" | "galleries" | "collectors" | "buyers";
 
 export const getUsersOg = async (userType: UserRouteType, {
    filters = [],

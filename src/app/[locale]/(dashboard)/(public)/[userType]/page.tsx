@@ -4,6 +4,7 @@ import UsersPageContainer from "@/features/user/components/users-container";
 import UsersListLoading from "@/features/user/components/users-list-loading";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { notFound } from "next/navigation";
 
 type UserRouteMeta = {
   title: string;
@@ -37,6 +38,14 @@ const getUserRouteMeta = (userType: UserRouteType): UserRouteMeta => {
           "Meet collectors supporting Myanmar Art Space and discover the community behind the collections.",
         ogAlt: "Collectors - Myanmar Art Space",
         canonical: `${env.APP_URL}/collectors`,
+      };
+    case "buyers":
+      return {
+        title: "Buyers",
+        description:
+          "Meet buyers supporting Myanmar Art Space and discover the community behind the collections.",
+        ogAlt: "Buyers - Myanmar Art Space",
+        canonical: `${env.APP_URL}/buyers`,
       };
     default:
       return {
@@ -110,6 +119,10 @@ export async function generateMetadata({
 
 const UsersRoute = async ({ params }: { params: Promise<{ userType: string }> }) => {
   const { userType } = await params as { userType: UserRouteType };
+
+  if (userType === "buyers") {
+    return notFound();
+  }
 
   return (
     <Suspense fallback={<UsersListLoading withTitle />}>
