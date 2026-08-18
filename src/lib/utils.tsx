@@ -97,11 +97,14 @@ export const uuid = () => {
 };
 
 export const getImage = (src: string | undefined | null) => {
-   if (src && src?.startsWith("https")) {
+   if (src && (src.startsWith("https://") || src.startsWith("http://"))) {
       return src;
    }
-   return `${src ? "https://" + env.IMAGE_HOSTNAME + src : '/assets/logo.png'
-      }`;
+   if (!src) {
+      return "/assets/logo.png";
+   }
+   const cleanSrc = src.startsWith("/") ? src : `/${src}`;
+   return `https://${env.IMAGE_HOSTNAME}${cleanSrc}`;
 };
 
 export const getDate = (date: string) => {

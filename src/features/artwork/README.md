@@ -36,12 +36,17 @@ All artwork displays must follow the "Editorial Minimalist" standard:
 - **Price Filter**: Refactored to fetch dynamic quantile-based price levels and slider bounds from `/filter-options/` endpoint on the backend. Supports explicit currency toggling, automatic currency resetting on change, and multiple bracket checkboxes. Uses `price_min` and `price_max` URL params for custom sliders.
 
 ### 2. Social Sharing & Dynamic Open Graph Cards
-To guarantee premium presentation on platforms like Facebook, LinkedIn, Twitter/X, and Slack, the artwork detail routes use a dynamic Edge-rendered Open Graph generator:
+To guarantee premium presentation on platforms like Telegram, Facebook, LinkedIn, Twitter/X, and WhatsApp, the artwork detail routes use a dynamic Edge-rendered Open Graph generator:
 - **Renderer**: Built using Next.js's native `ImageResponse` with Satori for server-rendered HTML/CSS as high-fidelity images.
 - **Canvas Size**: Outputs exactly `1200x630` pixels (optimal 1.91:1 aspect ratio) for social sharing.
 - **Aesthetic Layout**:
-  - **Left Gallery Frame (55%)**: Centered frame featuring the artwork with `object-fit: contain` to preserve the source aspect ratio and prevent distortion or cropping.
+  - **Left Gallery Frame (55%)**: Centered frame featuring the artwork with `object-fit: contain` to preserve the source aspect ratio and prevent distortion or cropping. Includes resilient fallback placeholder.
   - **Right Info Placard (45%)**: Sleek typography containing the artwork title, artist name, medium, dimensions, year, and price (or status-specific indicators). Includes status indicator badges with distinct colors matching visual models.
+- **Performance & Reliability**:
+  - In-memory font caching across edge invocations to eliminate repeated CDN font downloads and scraper timeouts.
+  - Safe server-side image fetching and Base64 encoding to prevent Satori decoding errors on formats like WebP.
+  - Edge caching headers (`Cache-Control: public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400`) for global CDN caching.
+  - Dual metadata fallback with explicit `image/png` MIME types and direct artwork image fallbacks.
 - **Unified API Route**: Located at [route.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/app/api/og/route.tsx) which is called with a dynamic artwork ID query parameter (e.g., `/api/og?id=[id]`) to inject crisp, high-fidelity sharing preview images into the page SEO metadata.
 
 ## 📊 Model Enums
