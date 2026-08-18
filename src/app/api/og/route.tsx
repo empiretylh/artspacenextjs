@@ -1,82 +1,10 @@
-import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
-
 import sharp from "sharp";
 
 export const runtime = "nodejs";
 
-export const alt = "Artwork Preview - Myanmar Art Space";
-export const size = {
-  width: 1200,
-  height: 630,
-};
-
-export const contentType = "image/png";
-
-// Environment reading with fallbacks
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.myanmarartspace.net";
 const IMAGE_HOSTNAME = process.env.NEXT_PUBLIC_IMAGE_HOSTNAME || "api.myanmarartspace.net";
-
-// In-memory font caching
-let outfitFontCache: ArrayBuffer | null = null;
-let spaceGroteskFontCache: ArrayBuffer | null = null;
-
-async function loadFonts() {
-  if (outfitFontCache && spaceGroteskFontCache) {
-    return [
-      {
-        name: "Outfit",
-        data: outfitFontCache,
-        style: "normal" as const,
-        weight: 400 as const,
-      },
-      {
-        name: "Space Grotesk",
-        data: spaceGroteskFontCache,
-        style: "normal" as const,
-        weight: 700 as const,
-      },
-    ];
-  }
-
-  try {
-    const [outfitData, spaceGroteskData] = await Promise.all([
-      fetch("https://cdn.jsdelivr.net/fontsource/fonts/outfit@latest/latin-400-normal.ttf", {
-        headers: { "Cache-Control": "public, max-age=31536000" },
-      }).then((res) => {
-        if (!res.ok) throw new Error("Outfit fetch failed");
-        return res.arrayBuffer();
-      }),
-      fetch("https://cdn.jsdelivr.net/fontsource/fonts/space-grotesk@latest/latin-700-normal.ttf", {
-        headers: { "Cache-Control": "public, max-age=31536000" },
-      }).then((res) => {
-        if (!res.ok) throw new Error("Space Grotesk fetch failed");
-        return res.arrayBuffer();
-      }),
-    ]);
-
-    outfitFontCache = outfitData;
-    spaceGroteskFontCache = spaceGroteskData;
-
-    return [
-      {
-        name: "Outfit",
-        data: outfitData,
-        style: "normal" as const,
-        weight: 400 as const,
-      },
-      {
-        name: "Space Grotesk",
-        data: spaceGroteskData,
-        style: "normal" as const,
-        weight: 700 as const,
-      },
-    ];
-  } catch (fontError) {
-    console.error("Failed to load fonts for OpenGraph image, using system fallbacks:", fontError);
-    return [];
-  }
-}
 
 const resolveImageUrl = (src: string | undefined | null) => {
   if (!src) return null;
@@ -85,502 +13,110 @@ const resolveImageUrl = (src: string | undefined | null) => {
   return `https://${IMAGE_HOSTNAME}${cleanSrc}`;
 };
 
-async function fetchImageAsDataUrl(url: string | null): Promise<string | null> {
-  if (!url) return null;
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4500);
-    const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
-    if (!res.ok) return null;
+const OG_WIDTH = 1200;
+const OG_HEIGHT = 630;
 
-    const arrayBuffer = await res.arrayBuffer();
-    const inputBuffer = Buffer.from(arrayBuffer);
+// Gallery canvas background (pure white #ffffff)
+const BG_COLOR = { r: 255, g: 255, b: 255, alpha: 1 };
 
-    // Convert WebP / any image format into a clean high-res PNG for Satori
-    const pngBuffer = await sharp(inputBuffer)
-      .resize({ width: 800, height: 800, fit: "inside", withoutEnlargement: true })
-      .png({ quality: 90 })
-      .toBuffer();
-
-    return `data:image/png;base64,${pngBuffer.toString("base64")}`;
-  } catch (err) {
-    console.error("Failed to fetch and convert image for OG card:", err);
-    return null;
-  }
+async function createFallbackImage(): Promise<Buffer> {
+  return await sharp({
+    create: {
+      width: OG_WIDTH,
+      height: OG_HEIGHT,
+      channels: 4,
+      background: BG_COLOR,
+    },
+  })
+    .png({ quality: 85 })
+    .toBuffer();
 }
-
-const ogHeaders = {
-  "Content-Type": "image/png",
-  "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
-};
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
 
-  const fonts = await loadFonts();
-  const fontConfig = fonts.length > 0 ? { fonts } : {};
+  const headers = {
+    "Content-Type": "image/png",
+    "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
+  };
 
-  // Fallback to minimal branding card if no id provided
   if (!id) {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: "1200px",
-            height: "630px",
-            backgroundColor: "#ffffff",
-            color: "#111111",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: "Outfit, sans-serif",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "28px",
-              fontWeight: "bold",
-              letterSpacing: "0.25em",
-              textTransform: "uppercase",
-              fontFamily: "Space Grotesk, sans-serif",
-              color: "#111111",
-            }}
-          >
-            Myanmar Art Space
-          </span>
-          <span
-            style={{
-              fontSize: "14px",
-              color: "#737373",
-              marginTop: "12px",
-              letterSpacing: "0.15em",
-            }}
-          >
-            DISCOVER CONTEMPORARY ARTWORK
-          </span>
-        </div>
-      ),
-      {
-        ...size,
-        ...fontConfig,
-        headers: ogHeaders,
-      }
-    );
+    const fallback = await createFallbackImage();
+    return new Response(fallback as unknown as BodyInit, { status: 200, headers });
   }
 
   try {
     let artwork: any = null;
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
       const res = await fetch(`${API_URL}/api/v1/artworks/artworks/${id}`, {
-        headers: {
-          Accept: "application/json",
-        },
+        headers: { Accept: "application/json" },
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
       if (res.ok) {
         artwork = await res.json();
       }
-    } catch (fetchError) {
-      console.error("Failed to fetch artwork for api/og:", fetchError);
+    } catch (e) {
+      console.error("Failed to fetch artwork for OG image:", e);
     }
 
-    if (!artwork) {
-      return new ImageResponse(
-        (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: "1200px",
-              height: "630px",
-              backgroundColor: "#ffffff",
-              color: "#111111",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "Outfit, sans-serif",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "28px",
-                fontWeight: "bold",
-                letterSpacing: "0.25em",
-                textTransform: "uppercase",
-                fontFamily: "Space Grotesk, sans-serif",
-                color: "#111111",
-              }}
-            >
-              Myanmar Art Space
-            </span>
-            <span
-              style={{
-                fontSize: "14px",
-                color: "#737373",
-                marginTop: "12px",
-                letterSpacing: "0.15em",
-              }}
-            >
-              CONTEMPORARY ART GALLERY
-            </span>
-          </div>
-        ),
+    const imageUrl = resolveImageUrl(artwork?.image);
+    if (!imageUrl) {
+      const fallback = await createFallbackImage();
+      return new Response(fallback as unknown as BodyInit, { status: 200, headers });
+    }
+
+    // Fetch the remote artwork image (WebP, PNG, JPEG, etc.)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4500);
+    const imgRes = await fetch(imageUrl, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!imgRes.ok) {
+      const fallback = await createFallbackImage();
+      return new Response(fallback as unknown as BodyInit, { status: 200, headers });
+    }
+
+    const imgArrayBuffer = await imgRes.arrayBuffer();
+    const inputBuffer = Buffer.from(imgArrayBuffer);
+
+    // Resize artwork to fit cleanly inside 1100x560 with aspect ratio preserved
+    const resizedArtwork = await sharp(inputBuffer)
+      .resize(1100, 560, {
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .toBuffer();
+
+    // Composite centered on the 1200x630 studio canvas
+    const finalImageBuffer = await sharp({
+      create: {
+        width: OG_WIDTH,
+        height: OG_HEIGHT,
+        channels: 4,
+        background: BG_COLOR,
+      },
+    })
+      .composite([
         {
-          ...size,
-          ...fontConfig,
-          headers: ogHeaders,
-        }
-      );
-    }
+          input: resizedArtwork,
+          gravity: "center",
+        },
+      ])
+      .png({ quality: 90 })
+      .toBuffer();
 
-    // Resolve and prefetch image data URL safely
-    const resolvedImageUrl = resolveImageUrl(artwork.image);
-    const imageDataUrl = await fetchImageAsDataUrl(resolvedImageUrl);
-
-    const title = artwork.title || "Untitled";
-    const artistName =
-      artwork.artist_name ||
-      (artwork.current_owner_display?.first_name
-        ? `${artwork.current_owner_display?.first_name} ${artwork.current_owner_display?.last_name || ""}`.trim()
-        : "Unknown Artist");
-
-    const medium = artwork.medium || "";
-    const dimensions = artwork.dimensions || "";
-    const year = artwork.year ? String(artwork.year) : "";
-
-    // Map status
-    let statusText = "Available";
-    let statusColor = "#22c55e"; // Green
-    if (artwork.status === "SOLD" || artwork.status === "SOLD_OUT") {
-      statusText = artwork.status === "SOLD" ? "Sold" : "Sold Out";
-      statusColor = "#ef4444"; // Red
-    } else if (artwork.status === "NOT_FOR_SALE") {
-      statusText = "Not for Sale";
-      statusColor = "#737373"; // Grey
-    }
-
-    // Format price
-    const symbol = artwork.currency?.symbol || "$";
-    const formattedPrice = artwork.price
-      ? Number(artwork.price).toLocaleString("en-US")
-      : "";
-    const priceDisplay =
-      artwork.hide_price || !artwork.price
-        ? "Contact Gallery"
-        : `${symbol}${formattedPrice}`;
-
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            display: "flex",
-            width: "1200px",
-            height: "630px",
-            backgroundColor: "#ffffff",
-            color: "#111111",
-            fontFamily: "Outfit, sans-serif",
-            boxSizing: "border-box",
-          }}
-        >
-          {/* Left side: Artwork image frame (Luxury Studio Canvas representation) */}
-          <div
-            style={{
-              display: "flex",
-              width: "55%",
-              height: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#fcfbf9",
-              padding: "45px",
-              borderRight: "1px solid #f0eee9",
-              boxSizing: "border-box",
-            }}
-          >
-            {imageDataUrl ? (
-              <img
-                src={imageDataUrl}
-                alt={title}
-                width={570}
-                height={540}
-                style={{
-                  width: "570px",
-                  height: "540px",
-                  objectFit: "contain",
-                  borderRadius: "2px",
-                  border: "1px solid #e0ded9",
-                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.04)",
-                }}
-              />
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "280px",
-                  height: "280px",
-                  borderRadius: "8px",
-                  backgroundColor: "#f5f3ee",
-                  border: "1px dashed #d5d1c8",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    color: "#8c8a82",
-                    fontFamily: "Space Grotesk, sans-serif",
-                    letterSpacing: "0.1em",
-                  }}
-                >
-                  MAS
-                </span>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    color: "#a8a69d",
-                    marginTop: "8px",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  ARTWORK PREVIEW
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Right side: Exhibition placard info (Crisp Gallery White) */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: "45%",
-              height: "100%",
-              justifyContent: "space-between",
-              padding: "60px 50px",
-              backgroundColor: "#ffffff",
-              boxSizing: "border-box",
-            }}
-          >
-            {/* Header Branding */}
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span
-                style={{
-                  fontSize: "13px",
-                  fontWeight: "bold",
-                  letterSpacing: "0.25em",
-                  color: "#262626",
-                  textTransform: "uppercase",
-                  fontFamily: "Space Grotesk, sans-serif",
-                }}
-              >
-                Myanmar Art Space
-              </span>
-              <span
-                style={{
-                  fontSize: "10px",
-                  color: "#8c8a82",
-                  marginTop: "4px",
-                  letterSpacing: "0.15em",
-                }}
-              >
-                EXHIBITION PREVIEW
-              </span>
-            </div>
-
-            {/* Core metadata details */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-                justifyContent: "center",
-              }}
-            >
-              <h1
-                style={{
-                  fontSize: "38px",
-                  fontWeight: 700,
-                  color: "#111111",
-                  lineHeight: 1.15,
-                  margin: 0,
-                  fontFamily: "Space Grotesk, sans-serif",
-                  textTransform: "capitalize",
-                }}
-              >
-                {title}
-              </h1>
-              <p
-                style={{
-                  fontSize: "18px",
-                  color: "#404040",
-                  margin: "10px 0 0 0",
-                  fontFamily: "Outfit, sans-serif",
-                }}
-              >
-                by <span style={{ color: "#111111", fontWeight: "bold" }}>{artistName}</span>
-              </p>
-
-              {/* Accent divider - Charcoal MoMA-style brand line */}
-              <div
-                style={{
-                  width: "60px",
-                  height: "2px",
-                  backgroundColor: "#111111",
-                  margin: "22px 0",
-                }}
-              />
-
-              {/* Info Grid */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                {medium && (
-                  <div style={{ display: "flex", fontSize: "14px", fontFamily: "Outfit, sans-serif" }}>
-                    <span style={{ width: "100px", color: "#737373" }}>Medium:</span>
-                    <span style={{ color: "#262626", fontWeight: 500 }}>{medium}</span>
-                  </div>
-                )}
-                {dimensions && (
-                  <div style={{ display: "flex", fontSize: "14px", fontFamily: "Outfit, sans-serif" }}>
-                    <span style={{ width: "100px", color: "#737373" }}>Dimensions:</span>
-                    <span style={{ color: "#262626", fontWeight: 500 }}>{dimensions}</span>
-                  </div>
-                )}
-                {year && (
-                  <div style={{ display: "flex", fontSize: "14px", fontFamily: "Outfit, sans-serif" }}>
-                    <span style={{ width: "100px", color: "#737373" }}>Year:</span>
-                    <span style={{ color: "#262626", fontWeight: 500 }}>{year}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Footer Placard - Status & Price */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                borderTop: "1px solid #f0eee9",
-                paddingTop: "24px",
-              }}
-            >
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span
-                  style={{
-                    fontSize: "10px",
-                    color: "#737373",
-                    letterSpacing: "0.05em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Status
-                </span>
-                <div style={{ display: "flex", alignItems: "center", marginTop: "4px" }}>
-                  <div
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      backgroundColor: statusColor,
-                      marginRight: "8px",
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: 600,
-                      color: "#111111",
-                      fontFamily: "Space Grotesk, sans-serif",
-                    }}
-                  >
-                    {statusText}
-                  </span>
-                </div>
-              </div>
-
-              {/* Price Badge - Pure Black High-Contrast Tag */}
-              <div
-                style={{
-                  display: "flex",
-                  padding: "8px 16px",
-                  backgroundColor: "#111111",
-                  borderRadius: "4px",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: "13px",
-                    fontWeight: "bold",
-                    color: "#ffffff",
-                    fontFamily: "Space Grotesk, sans-serif",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  {priceDisplay}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-      {
-        ...size,
-        ...fontConfig,
-        headers: ogHeaders,
-      }
-    );
-  } catch (err) {
-    console.error("Unexpected error in /api/og GET:", err);
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: "1200px",
-            height: "630px",
-            backgroundColor: "#ffffff",
-            color: "#111111",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: "Outfit, sans-serif",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "28px",
-              fontWeight: "bold",
-              letterSpacing: "0.25em",
-              textTransform: "uppercase",
-              fontFamily: "Space Grotesk, sans-serif",
-              color: "#111111",
-            }}
-          >
-            Myanmar Art Space
-          </span>
-          <span
-            style={{
-              fontSize: "14px",
-              color: "#737373",
-              marginTop: "12px",
-              letterSpacing: "0.15em",
-            }}
-          >
-            DISCOVER CONTEMPORARY ARTWORK
-          </span>
-        </div>
-      ),
-      {
-        ...size,
-        ...fontConfig,
-        headers: ogHeaders,
-      }
-    );
+    return new Response(finalImageBuffer as unknown as BodyInit, {
+      status: 200,
+      headers,
+    });
+  } catch (error) {
+    console.error("Error generating OG image with sharp:", error);
+    const fallback = await createFallbackImage();
+    return new Response(fallback as unknown as BodyInit, { status: 200, headers });
   }
 }
+
