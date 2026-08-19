@@ -1,6 +1,6 @@
 export const SectionTitle = ({ children, className = "" }: any) => (
    <h2
-      className={`text-2xl font-bold font-display tracking-tight text-foreground ${className}`}
+      className={`text-2xl font-semibold font-display tracking-tight text-foreground ${className}`}
    >
       {children}
    </h2>

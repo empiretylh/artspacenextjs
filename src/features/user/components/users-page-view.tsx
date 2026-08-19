@@ -89,7 +89,7 @@ const UsersPageView = ({
                <div className="flex items-center justify-between mb-6">
                   <h1
                      id="users-title"
-                     className="text-2xl sm:text-3xl font-bold font-display tracking-tight capitalize"
+                     className="text-2xl sm:text-3xl font-semibold font-display tracking-tight capitalize"
                   >
                      {title}
                   </h1>
