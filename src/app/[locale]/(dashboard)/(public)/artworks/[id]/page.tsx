@@ -34,12 +34,12 @@ type Props = {
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
-  const { id } = await params;
+  const { locale, id } = await params;
 
   try {
     // fetch post information
     const data = await getCachedArtwork(id);
-    const canonical = `${env.APP_URL}/artworks/${id}`;
+    const canonical = `${env.APP_URL}/${locale}/artworks/${id}`;
     const ogImageUrl = `${env.APP_URL}/api/og?id=${id}`;
     const directImageUrl = getImage(data.image);
 

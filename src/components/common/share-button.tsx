@@ -98,7 +98,6 @@ export function ShareButton({
       try {
          await navigator.share({
             title: title || item_name,
-            text: title ? `${title} - ${item_name}` : item_name,
             url: url,
          });
          shareAnalytics.share({ source, content_type, item_id, item_name, user_type, method: 'native' });
