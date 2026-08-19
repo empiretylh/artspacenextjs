@@ -41,7 +41,9 @@ To guarantee high scroll frame rates (60fps) on mid-to-low-end mobile devices (e
 > **Layout Constraint**: When running on desktop, Radix UI's `ScrollArea` forces a `display: table` wrapper on the internal viewport. This **breaks Swiper's width calculations**. All instances of `ScrollArea` wrapping home carousels must include the override class: `[&>[data-slot=scroll-area-viewport]>div]:!block`.
 
 ## 📂 Key Files
+- [landing-page-view.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/landing-page-view.tsx): Root marketing landing page with responsive header navigation drawer.
 - [featured-artworks-section.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/featured-artworks-section.tsx): Implementation of the dense artwork slider.
 - [featured-events-section.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/featured-events-section.tsx): Implementation of the wide event preview slider.
 - [section-lazy-loader.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/section-lazy-loader.tsx): IntersectionObserver lazy loading wrapper.
+
 

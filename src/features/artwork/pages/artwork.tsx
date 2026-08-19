@@ -12,13 +12,17 @@ import RelatedArtworkListContainer from "../components/related-artwork-list-cont
 import ArtworkDetailPageSkeleton from "./artwork-skeleton";
 import { Suspense, useEffect } from "react";
 import LoadingPage from "@/components/page/loading-page";
-import { notFound, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
 import { ArrowLeft } from "lucide-react";
+import { useSafeBack } from "@/hooks/use-safe-back";
+import { paths } from "@/config/paths";
+import { useTranslations } from "next-intl";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
-   const router = useRouter();
+   const t = useTranslations("Artwork.detail");
+   const { goBack } = useSafeBack(paths.artworks.path);
    const artworkQuery = useGetArtwork({ artworkId: id });
    const artwork = artworkQuery.data;
    const { source } = useSource()
@@ -43,11 +47,11 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
          <Button
             variant="ghost"
             size="sm"
-            className="flex items-center gap-2 mb-4 pl-0 hover:bg-transparent text-muted-foreground hover:text-foreground"
-            onClick={() => router.back()}
+            className="flex items-center gap-2 mb-4 pl-0 hover:bg-transparent text-muted-foreground hover:text-foreground cursor-pointer"
+            onClick={goBack}
          >
             <ArrowLeft className="w-4 h-4" />
-            Back to Artworks
+            {t("backToArtworks")}
          </Button>
          <h1 id="artwork-title" className="text-2xl font-medium mb-4 md:mb-6 font-display">
             {artwork.title}
