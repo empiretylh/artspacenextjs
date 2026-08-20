@@ -43,7 +43,7 @@ const EventsPageView = ({
    renderEventCard,
    layoutClasses,
    titleOff = false,
- }: Props) => {
+}: Props) => {
    const { ref: loadMoreRef, inView } = useInView({
       threshold: 0,
    });
@@ -66,7 +66,7 @@ const EventsPageView = ({
 
                {!titleOff && (
                   <div className="flex items-center justify-between mb-6">
-                     <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight">{t("title")}</h1>
+                     <h1 className="text-2xl sm:text-3xl font-semibold font-display tracking-tight">{t("title")}</h1>
                   </div>
                )}
 

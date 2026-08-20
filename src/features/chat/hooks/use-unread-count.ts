@@ -17,7 +17,7 @@ export const useUnreadCount = () => {
 
    // Sync with PWA App Badge
    useEffect(() => {
-      if (!('setAppBadge' in navigator)) return;
+      if (typeof navigator === "undefined" || !('setAppBadge' in navigator)) return;
 
       if (totalUnreadCount > 0) {
          navigator.setAppBadge(totalUnreadCount).catch((error) => {

@@ -82,6 +82,7 @@
   },
   "Artwork": {
     "detail": {
+      "backToArtworks": "Back to Artworks",
       "askForCollect": "Ask for collect",
       "collectNow": "Collect Now",
       "sold": "Sold",

@@ -25,7 +25,26 @@ const isEnabled = env.FIREBASE_ENABLE;
 // Initialize the Firebase app with the provided configuration
 const app = isEnabled && getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
+function getFirebaseMessaging() {
+  if (
+    !isEnabled ||
+    typeof window === "undefined" ||
+    typeof navigator === "undefined" ||
+    !("serviceWorker" in navigator) ||
+    !("Notification" in window) ||
+    !navigator.serviceWorker
+  ) {
+    return null;
+  }
+  try {
+    return getMessaging(app);
+  } catch (err) {
+    console.warn("Firebase Messaging is not supported in this browser environment:", err);
+    return null;
+  }
+}
+
 export const auth = isEnabled ? getAuth(app) : null;
 export const db = isEnabled ? getFirestore(app) : null;
-export const messaging = isEnabled && typeof window !== "undefined" ? getMessaging(app) : null;
+export const messaging = getFirebaseMessaging();
 export { isEnabled };

@@ -82,6 +82,7 @@
   },
   "Artwork": {
     "detail": {
+      "backToArtworks": "အနုပညာလက်ရာများသို့ ပြန်သွားရန်",
       "askForCollect": "ဝယ်ယူရန် မေးမြန်းရန်",
       "collectNow": "ယခုဝယ်ယူရန်",
       "sold": "ရောင်းချပြီး",

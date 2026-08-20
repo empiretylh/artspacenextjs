@@ -10,6 +10,7 @@ export const useFcm = () => {
 
    const registerToken = useCallback(async () => {
       if (!messaging || !db || !user?.id) return;
+      if (typeof window === "undefined" || typeof Notification === "undefined") return;
 
       try {
          const permission = await Notification.requestPermission();

@@ -107,11 +107,11 @@ export default function SearchPage() {
       );
    }
 
-    return (
-       <div className="flex-grow transition-all duration-300 space-y-6">
-          {/* Search Header */}
-          <div className="space-y-2">
-             <h1 className="text-3xl font-bold font-display tracking-tight text-foreground">
+   return (
+      <div className="flex-grow transition-all duration-300 space-y-6">
+         {/* Search Header */}
+         <div className="space-y-2">
+            <h1 className="text-3xl font-semibold font-display tracking-tight text-foreground">
                {t("title")}
             </h1>
             <p className="text-muted-foreground text-sm sm:text-base">

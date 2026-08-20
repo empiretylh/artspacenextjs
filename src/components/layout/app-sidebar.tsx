@@ -58,7 +58,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <Link
                            to={"/"}
                            className={cn(
-                              "uppercase font-display font-bold text-[15px] tracking-tight whitespace-nowrap transition-all duration-200 -ml-2",
+                              "uppercase font-display font-semibold text-[15px] tracking-tight whitespace-nowrap transition-all duration-200 -ml-2",
                               open ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 pointer-events-none hidden"
                            )}
                         >

@@ -19,7 +19,7 @@ const FeaturedArtists = () => {
 
    return (
       <div>
-         <h2 className="font-display text-xl font-bold mb-2">
+         <h2 className="font-display text-xl font-semibold mb-2">
             {t("featuredArtists")}
          </h2>
 

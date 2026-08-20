@@ -11,6 +11,15 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
 import { useAuth } from "@/features/auth/store";
 import Footer from "@/components/layout/footer";
 
@@ -34,6 +43,7 @@ export default function LandingPageView({ banner, locale }: Props) {
   const router = useRouter();
   const { user } = useAuth();
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const lastScrollTopRef = useRef(0);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -85,11 +95,11 @@ export default function LandingPageView({ banner, locale }: Props) {
          className="sticky top-0 z-50 w-full flex items-center justify-between px-6 md:px-12 py-6 md:py-8 bg-background border-b-2 border-border/60"
       >
         <div className="flex items-center gap-3">
-            <span className="uppercase font-display font-medium text-lg tracking-widest">
+            <span className="uppercase font-display font-semibold text-base sm:text-lg tracking-widest">
                 Myanmar Art Space
             </span>
         </div>
-        <div className="flex items-center gap-6 text-sm">
+        <div className="flex items-center gap-3 sm:gap-6 text-sm">
           {!user && (
             <button 
                onClick={handleCreateAcc}
@@ -104,8 +114,79 @@ export default function LandingPageView({ banner, locale }: Props) {
           >
              {t("exploreButton")}
           </button>
-          <LanguageSwitcher />
-          <ThemeSwitcher />
+          <div className="hidden sm:flex items-center gap-4">
+            <LanguageSwitcher />
+            <ThemeSwitcher />
+          </div>
+
+          {/* Mobile Navigation Drawer */}
+          <div className="sm:hidden flex items-center">
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 p-0 cursor-pointer"
+                  aria-label="Open menu"
+                >
+                  <Menu className="size-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] p-6 flex flex-col justify-between">
+                <div>
+                  <SheetHeader className="p-0 mb-6 text-left">
+                    <SheetTitle className="font-display uppercase tracking-widest text-base font-semibold">
+                      Myanmar Art Space
+                    </SheetTitle>
+                    <SheetDescription className="text-xs text-muted-foreground">
+                      {t("welcome")}
+                    </SheetDescription>
+                  </SheetHeader>
+
+                  <div className="flex flex-col gap-3 py-4 border-t border-border/40">
+                    <Button
+                      variant="default"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        handleExploreMore();
+                      }}
+                      className="w-full justify-center text-xs uppercase tracking-widest h-11 cursor-pointer"
+                    >
+                      {t("exploreButton")}
+                    </Button>
+
+                    {!user && (
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          handleCreateAcc();
+                        }}
+                        className="w-full justify-center text-xs uppercase tracking-widest h-11 cursor-pointer"
+                      >
+                        {t("createAccountButton")}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-border/40 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+                      Language
+                    </span>
+                    <LanguageSwitcher />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+                      Theme
+                    </span>
+                    <ThemeSwitcher />
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </motion.header>
 
