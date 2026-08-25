@@ -5,7 +5,7 @@ export function InputWithLeftSelectSkeleton({ className }: { className?: string 
   return (
     <div
       className={cn(
-        "flex justify-center items-center shadow border-2 gap-2 rounded-full p-1 w-fit",
+        "flex justify-center items-center shadow-xs border border-input bg-background gap-2 rounded-full p-1 w-fit",
         className
       )}
     >

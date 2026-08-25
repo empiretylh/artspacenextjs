@@ -47,11 +47,9 @@ export function ArtistProfile({ artist }: { artist: User }) {
                            <span>{getUserIcon(artist.user_type)}</span>
                         </p>
                      </Link>
-                     {artist.profile?.show_email && (
-                        <p className="text-xs text-muted-foreground/85 font-medium">
-                           {artist.email}
-                        </p>
-                     )}
+                     <p className="text-xs text-muted-foreground/85 font-medium capitalize">
+                        {artist.user_type ? artist.user_type.toLowerCase() : "Artist"}
+                     </p>
                   </div>
                </div>
 

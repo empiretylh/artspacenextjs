@@ -52,9 +52,9 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
       return filters.find(f => f.id === id)?.value as string || "";
    }
 
-   // High-Contrast Premium pill styles
-   const activeFilterClass = "bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground hover:bg-primary/95 dark:hover:bg-primary/95 hover:text-primary-foreground shadow-md ring-1 ring-primary/20 scale-[1.02] transition-transform";
-   const inactiveFilterClass = "bg-background border-2 border-muted/70 shadow-sm hover:!border-primary/30 hover:bg-muted/10 transition-all";
+   // Filter pill styles aligned with app-wide design system
+   const activeFilterClass = "bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground data-[placeholder]:text-primary-foreground [&_svg]:text-primary-foreground [&_svg]:opacity-100 hover:bg-primary/90 shadow-xs border border-primary font-semibold transition-all";
+   const inactiveFilterClass = "bg-background dark:bg-background border border-input shadow-xs text-foreground data-[placeholder]:text-foreground [&_svg]:text-foreground [&_svg]:opacity-100 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent font-semibold transition-all";
 
    return (
       <div className="w-full mb-6">

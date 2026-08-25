@@ -156,8 +156,10 @@ const ProfileLayoutView = ({
                   {user?.user_type && getUserIcon(user.user_type)}
                </div>
 
-               <p className="text-sm text-muted-foreground">{user?.email}</p>
-               {user?.profile.bio ? (
+               {(variant === "profile" || user?.profile?.show_email) && user?.email && (
+                  <p className="text-sm text-muted-foreground">{user.email}</p>
+               )}
+               {user?.profile?.bio ? (
                   <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-foreground/80">{user.profile.bio}</p>
                ) : variant === "profile" ? (
                   <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-muted-foreground/60 italic">No bio yet. Add one in settings!</p>
