@@ -40,12 +40,10 @@ export type ApiResponse<T> = T;
 export type ListApiResponse<T> = {
    results: T[];
    count: number;
-   next: null;
-   previous: null;
-   // meta?: Meta;
-   // status: boolean;
-   // message: string;
-   // statusCode: number;
+   next: string | null;
+   previous: string | null;
+   current_page?: number;
+   total_pages?: number;
 };
 
 export type ColumnFiltersState = {

@@ -25,6 +25,9 @@ Most files in `artspace/` follow a strict three-layer pattern to ensure consiste
 ## 📂 Featured Service Hubs
 - [get-artworks.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-artworks.tsx): The central service for all artwork discovery, filtering, and sorting.
 - [get-users.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-users.tsx): A polymorphic service that handles "artists," "galleries," and "collectors" via a `userType` parameter.
+- [get-blog-posts.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-blog-posts.ts): Central service for the public editorial magazine, articles, taxonomy filtering, and infinite feed.
+- [get-blog-post.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-blog-post.ts): Single blog article reader lookup and prefetching.
+- [get-blog-taxonomies.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-blog-taxonomies.ts): Public categories and tags lookups with active post counts.
 
 ## ⚠️ Known Gotchas for AI
 - **Polymorphism**: Many entity types (Artists, Galleries) use the same `useGetUsers` hook with different `userType` parameters. Always look for existing generic services before creating new ones.

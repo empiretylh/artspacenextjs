@@ -321,4 +321,29 @@ export const queryKeys = {
       list: (query: string, limit?: number, topN?: number) =>
          ["global-search", query, limit, topN],
    },
+
+   /* =======================
+    * BLOG & ARTICLES
+    * ======================= */
+   blog: {
+      all: ["blog"],
+      posts: {
+         all: ["blog", "posts"],
+         list: (params?: Record<string, any>) =>
+            ["blog", "posts", "list", JSON.stringify(params ?? {})],
+         infinite: (params?: Record<string, any>) =>
+            ["blog", "posts", "infinite", JSON.stringify(params ?? {})],
+         detail: (slug: string) => ["blog", "posts", "detail", slug],
+         related: (slug: string, limit?: number) =>
+            ["blog", "posts", "related", slug, limit ?? 4],
+      },
+      categories: {
+         all: ["blog", "categories"],
+         list: () => ["blog", "categories", "list"],
+      },
+      tags: {
+         all: ["blog", "tags"],
+         list: () => ["blog", "tags", "list"],
+      },
+   },
 };

@@ -38,7 +38,7 @@ const Footer = ({ className, contentClassName, columnClassName, listClassName }:
       [t("explore")]: [
          { title: t("aboutUs"), href: paths.aboutUs.path },
          { title: t("arcade"), href: paths.collections.path },
-         { title: t("press"), href: "#" },
+         { title: t("press"), href: paths.press.path },
       ],
       [t("help")]: [
          { title: t("helpCenter"), href: "#" },

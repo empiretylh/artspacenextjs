@@ -85,6 +85,10 @@ export function analyticSourceFromPathname(
   // --- COLLECTIONS / ARCADE ---
   if (path === "/arcade") return "arcade";
 
+  // --- PRESS / BLOG ---
+  if (path === "/press" || path === "/blog") return "blog_page";
+  if (path.startsWith("/press/") || path.startsWith("/blog/")) return "blog_detail";
+
   // --- FALLBACK ---
   return "unknown";
 }
@@ -130,6 +134,8 @@ export type AnalyticsSource =
   | 'orders'
   | 'settings_page'
   | 'admin_dashboard'
+  | 'blog_page'
+  | 'blog_detail'
   | 'unknown'
   | 'sign_in_page'
   | 'sign_up_page'
