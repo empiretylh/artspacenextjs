@@ -17,6 +17,7 @@ The project follows a "Feature-Sliced" inspired architecture:
     - Contains feature-specific UI, logic, and API mutations.
     - [src/features/chat/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/chat/README.md): Real-time messaging engine with Push Notifications.
     - [src/features/blog/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/blog/README.md): Press releases, announcements, and editorial magazine engine.
+    - [src/features/profile/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/profile/README.md): User profile pages, tabbed navigation, and editorial layout standards.
 
 3.  **`components/` (The Skin)**:
     - Shared UI atoms and molecules (Shadcn UI).

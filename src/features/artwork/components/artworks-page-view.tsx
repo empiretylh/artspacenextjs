@@ -35,6 +35,7 @@ interface ArtworksPageViewOptions {
 
 interface ArtworksPageViewProps {
    title?: string;
+   titleClassName?: string;
    isLoading: boolean;
    isFetching?: boolean;
    pagesToRender: ListApiResponse<Artwork>[];
@@ -55,6 +56,7 @@ interface ArtworksPageViewProps {
 
 const ArtworksPageView = ({
    title,
+   titleClassName,
    isLoading,
    isFetching: _isFetching = false,
    pagesToRender,
@@ -134,9 +136,14 @@ const ArtworksPageView = ({
                      {(isLoading) && <Skeleton className="h-9 w-64 rounded-xl" />}
                      {!isLoading && (
                         <div className="flex items-center justify-between mb-6">
-                           <h1 className="text-3xl font-semibold font-display tracking-tight text-foreground">
+                           <h2
+                              className={cn(
+                                 "text-3xl font-semibold font-display tracking-tight text-foreground",
+                                 titleClassName
+                              )}
+                           >
                               {title ?? "Artworks"}
-                           </h1>
+                           </h2>
                         </div>
                      )}
 

@@ -152,7 +152,7 @@ const ProfileLayoutView = ({
 
             <div className="mt-3 space-y-1">
                <div className="flex items-center justify-center gap-2">
-                  <h1 className="font-bold font-display text-2xl sm:text-3xl tracking-tight">{fullName}</h1>
+                  <h1 className="text-2xl sm:text-3xl font-semibold font-display tracking-tight text-foreground">{fullName}</h1>
                   {user?.user_type && getUserIcon(user.user_type)}
                </div>
 

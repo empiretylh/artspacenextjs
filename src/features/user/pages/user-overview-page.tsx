@@ -16,60 +16,84 @@ const UserOverviewPage = () => {
             <div>
                <h2
                   id="user-overview-title"
-                  className="text-lg font-bold font-display mb-4"
+                  className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground mb-4"
                >
                   About the user
                </h2>
-               <p className="text-base">
+               <p className="text-base text-foreground/90 leading-relaxed">
                   {user?.profile?.about || "No about yet"}
                </p>
             </div>
             <div>
-               <h3 className="text-lg font-bold font-display mb-4">
+               <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground mb-4">
                   Summary
-               </h3>
-               <ul className="space-y-4 text-sm font-normal">
-                  <li className="flex gap-2 items-center">
-                     {/* <UsersIcon /> */}
-                     <span className="">Kind of Fine Art</span>
-                     <span className="text-muted-foreground">
-                        Digital Impressionism
-                     </span>
-                  </li>
-                  <li className="flex gap-2 items-center">
-                     <AwardIcon />
-                     <span className="">Kind of Fine Art</span>
-                     <div className="flex justify-between items-center bg-success/10 p-1.5 text-xs font-normal gap-1 rounded-xl text-success">
-                        <CheckMarkIcon size={18} className="w-4 h-4" /> Verified
+               </h2>
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm" role="list">
+                  <div className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-card/40" role="listitem">
+                     <div className="text-primary p-2 bg-primary/10 rounded-lg shrink-0">
+                        <AwardIcon />
                      </div>
-                  </li>
-                  <li className="flex gap-2 items-center">
-                     <Layers2Icon />
-                     <span className="">Kind of Fine Art</span>
-                     <div className="flex justify-between items-center bg-success/10 p-1.5 text-xs font-normal gap-1 rounded-xl text-success">
-                        <CheckMarkIcon size={18} className="w-4 h-4" /> Verified
+                     <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">Medium / Style</p>
+                        <p className="font-medium text-foreground truncate">Digital Impressionism</p>
                      </div>
-                  </li>
-                  <li className="flex gap-2 items-center">
-                     <SquareStackIcon />
-                     <span className="">Kind of Fine Art</span>
-                     <div className="flex justify-between items-center bg-success/10 p-1.5 text-xs font-normal gap-1 rounded-xl text-success">
-                        <CheckMarkIcon size={18} className="w-4 h-4" /> Verified
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-card/40" role="listitem">
+                     <div className="text-primary p-2 bg-primary/10 rounded-lg shrink-0">
+                        <AwardIcon />
                      </div>
-                  </li>
-               </ul>
+                     <div className="min-w-0 flex-1">
+                        <p className="text-xs text-muted-foreground">Identity</p>
+                        <div className="flex items-center text-xs font-medium text-success gap-1 mt-0.5">
+                           <CheckMarkIcon size={16} className="w-3.5 h-3.5" /> Verified Profile
+                        </div>
+                     </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-card/40" role="listitem">
+                     <div className="text-primary p-2 bg-primary/10 rounded-lg shrink-0">
+                        <Layers2Icon />
+                     </div>
+                     <div className="min-w-0 flex-1">
+                        <p className="text-xs text-muted-foreground">Collection</p>
+                        <div className="flex items-center text-xs font-medium text-success gap-1 mt-0.5">
+                           <CheckMarkIcon size={16} className="w-3.5 h-3.5" /> Verified Collection
+                        </div>
+                     </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-card/40" role="listitem">
+                     <div className="text-primary p-2 bg-primary/10 rounded-lg shrink-0">
+                        <SquareStackIcon />
+                     </div>
+                     <div className="min-w-0 flex-1">
+                        <p className="text-xs text-muted-foreground">Exhibition</p>
+                        <div className="flex items-center text-xs font-medium text-success gap-1 mt-0.5">
+                           <CheckMarkIcon size={16} className="w-3.5 h-3.5" /> Authenticated
+                        </div>
+                     </div>
+                  </div>
+               </div>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-               {user.profile.features_photos?.map((image) => (
-                  <figure key={image.id} className="relative">
-                     <img
-                        src={getImage(image.image)}
-                        className="rounded-2xl w-full border aspect-[4/5] object-cover"
-                        alt={image.description || "Featured photo"}
-                     />
-                  </figure>
-               ))}
-            </div>
+            {user?.profile?.features_photos && user.profile.features_photos.length > 0 && (
+               <div>
+                  <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground mb-4">
+                     Featured Highlights
+                  </h2>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                     {user.profile.features_photos.map((image) => (
+                        <figure key={image.id} className="relative group overflow-hidden rounded-xl border border-border/40 bg-muted/10">
+                           <img
+                              src={getImage(image.image)}
+                              className="w-full aspect-[4/5] object-cover transition-transform duration-500 group-hover:scale-105"
+                              alt={image.description || "Featured photo"}
+                           />
+                        </figure>
+                     ))}
+                  </div>
+               </div>
+            )}
          </div>
          {/* <div className="col-span-3 md:col-span-1">
             <UserArtworksList />
