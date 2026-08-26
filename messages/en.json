@@ -211,6 +211,11 @@
     "blockedUsersDesc": "You will not see content from users you’ve blocked. You can unblock them at any time."
   },
   "Home": {
+    "introTag": "What is MAS?",
+    "introHeading": "Myanmar Art Space",
+    "introDescription": "Myanmar Art Space is the pioneering art platform dedicated exclusively to the Myanmar art community. We are proud to be the very first digital ecosystem designed to connect the three pillars of our art world: Artists, Galleries, and Collectors bringing everyone together through individual accounts built for seamless connection.",
+    "learnMore": "Learn more about us",
+    "dismiss": "Dismiss",
     "shopByGenre": "Shop Paintings by Genre",
     "shopByCategoryAndStyle": "Shop Paintings by Category And Style",
     "artists": "Artists",

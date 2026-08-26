@@ -43,6 +43,7 @@ To guarantee high scroll frame rates (60fps) on mid-to-low-end mobile devices (e
 
 ## 📂 Key Files
 - [landing-page-view.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/landing-page-view.tsx): Marketing landing page (served at `/landing`) with responsive header navigation drawer.
+- [mas-intro-banner.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/mas-intro-banner.tsx): Dismissible "What is MAS?" welcome banner with localStorage persistence.
 - [featured-artworks-section.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/featured-artworks-section.tsx): Implementation of the dense artwork slider.
 - [featured-events-section.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/featured-events-section.tsx): Implementation of the wide event preview slider.
 - [section-lazy-loader.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/home/components/section-lazy-loader.tsx): IntersectionObserver lazy loading wrapper.
