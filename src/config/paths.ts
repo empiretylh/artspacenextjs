@@ -4,8 +4,12 @@ export const paths = {
       getHref: () => "/",
    },
    home: {
-      path: "/home",
-      getHref: () => "/home",
+      path: "/",
+      getHref: () => "/",
+   },
+   landing: {
+      path: "/landing",
+      getHref: () => "/landing",
    },
    search: {
       path: "/search",

@@ -6,7 +6,7 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
-export default async function RootRoutePage({ params }: Props) {
+export default async function LandingPageRoute({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 

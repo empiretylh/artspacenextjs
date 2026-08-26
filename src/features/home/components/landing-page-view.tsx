@@ -76,7 +76,7 @@ export default function LandingPageView({ banner, locale }: Props) {
 
   const handleExploreMore = () => {
     Cookies.set("artspace_explored", "true", { expires: 30 });
-    router.push("/home");
+    router.push("/");
   };
 
   const handleCreateAcc = () => {

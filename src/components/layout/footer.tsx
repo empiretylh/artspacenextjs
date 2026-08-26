@@ -36,14 +36,14 @@ const Footer = ({ className, contentClassName, columnClassName, listClassName }:
       Array<{ title: string; href?: string; link?: string }>
    > = {
       [t("explore")]: [
-         { title: t("aboutUs"), href: paths.aboutUs.path },
-         { title: t("arcade"), href: paths.collections.path },
-         { title: t("press"), href: paths.press.path },
+         { title: t("aboutUs"), href: paths?.aboutUs?.path ?? "/about-us" },
+         { title: t("arcade"), href: paths?.collections?.path ?? "/arcade" },
+         { title: t("press"), href: paths?.press?.path ?? "/press" },
       ],
       [t("help")]: [
          { title: t("helpCenter"), href: "#" },
-         { title: t("termsOfService"), href: paths.termsOfService.path },
-         { title: t("privacyPolicy"), href: paths.privacyPolicy.path },
+         { title: t("termsOfService"), href: paths?.termsOfService?.path ?? "/terms-of-service" },
+         { title: t("privacyPolicy"), href: paths?.privacyPolicy?.path ?? "/privacy-policy" },
       ],
    };
 
