@@ -39,5 +39,7 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
 
 ## 📂 Related Files
 - [profile-layout-view.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/profile/profile-layout-view.tsx): Shared presentation shell for avatar, cover photo, full name, social actions, and tab bar.
-- [profile-overview-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/profile/pages/profile-overview-page.tsx): Main profile landing screen.
-- [user-overview-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/user/pages/user-overview-page.tsx): Public mirror screen for artist/gallery/collector profiles.
+- [profile-overview-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/profile/pages/profile-overview-page.tsx): Main profile landing screen with 2/3 overview info and 1/3 artwork infinite scroll sidebar.
+- [user-overview-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/user/pages/user-overview-page.tsx): Public mirror screen with 2/3 overview info and 1/3 artwork infinite scroll sidebar.
+- [user-artworks-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/user/components/user-artworks-sidebar.tsx): 1-column infinite-scrolling artwork catalog sidebar.
+
