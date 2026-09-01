@@ -47,6 +47,11 @@ erDiagram
         string_array mediaUrls "Batch image URLs"
         map reactions "{uid: emoji} reactions"
         map linkPreview "{url, title, description, image, siteName, favicon}"
+        boolean isEdited "Edited flag"
+        timestamp editedAt "Timestamp of last edit"
+        boolean isDeleted "Soft-delete flag for everyone"
+        timestamp deletedAt "Timestamp of deletion"
+        string_array deletedFor "UIDs who deleted message for themselves"
     }
 
     USER-BLOCK {
@@ -104,6 +109,14 @@ erDiagram
     - **Server Proxy & SSRF Security**: The `/api/chat/link-preview` API route fetches remote HTML, protects against SSRF (blocking loopback/private IPv4 spaces), enforces a 4-second timeout, and parses Open Graph (`og:*`), Twitter Card, and standard HTML meta tags into structured JSON.
     - **Persistence**: Once resolved, the message document in Firestore is updated with the `linkPreview` metadata object, rendering seamlessly for all conversation participants.
     - **UI Component**: The `LinkPreviewCard` displays the domain, favicon, cover image, bold title, and description snippet directly below the message bubble. Embedded URLs in message text are also automatically formatted into clickable links.
+14. **Message Editing**:
+    - **Architecture**: Senders can edit their own text messages in-place.
+    - **Data Model**: Sets `isEdited: true`, `editedAt: serverTimestamp()`, and updates `content`. Link previews are re-evaluated if URLs change.
+    - **Last Message Sync**: Updates the parent conversation's `lastMessage` if the edited message is the latest in the thread.
+    - **UI Feedback**: Renders an inline editor and displays a subtle `• (edited)` indicator next to the message timestamp.
+15. **Message Deletion (WhatsApp-Style Dual Delete)**:
+    - **Delete for Everyone**: Soft-deletes the message document (`isDeleted: true`, `deletedAt: Timestamp`), clears media/reactions/previews, and renders a muted *"This message was deleted"* placeholder for all users. Also synchronizes `CONVERSATION.lastMessage`.
+    - **Delete for Me**: Appends the current user's UID to `deletedFor: string[]` via `arrayUnion`. `useMessages` filters out these messages client-side, making them vanish only for the user who hid them.
 
 ## 🔔 Push Notifications (FCM)
 
@@ -153,6 +166,10 @@ Global chat state is centralized in `src/features/chat/store.ts` using **Zustand
 
 ## 🎨 UI & UX Patterns
 
+- **Typography Standard**: Top-level modal/dialog titles, sheet headers, and main titles use semi-bold font weight (`font-semibold`).
+- **Contextual Message Actions**: 
+  - **Desktop**: Hovering reveals a toolbar with quick reaction smile and a 3-dots dropdown menu (Edit/Delete).
+  - **Mobile**: Long-pressing (500ms + haptic feedback) opens a unified contextual popover anchored directly to the bubble containing both emoji reactions and action buttons.
 - **Conversation Discovery**: High-speed local search implemented in the `ChatList` header using a togglable `Input` field. It filters by participant names in real-time.
 - **Visual Anchoring**: The chat list uses `flex-col-reverse` to natively anchor the scroll to the bottom. This ensures that any new messages appear at the bottom without requiring manual programmatic scrolling.
 - **Message Bubbles**: Uses a modern rounded design (`rounded-2xl`) with directional "tails" (`rounded-tr-none` for sender, `rounded-tl-none` for receiver) to provide clear visual orientation.
@@ -191,7 +208,7 @@ Production-grade security rules.
   - **Read/Update**: Restricted to participants only.
 - **Messages**: 
   - **Create**: Verified against the parent conversation's `blockedBy` metadata for "Zero-Cost" instant enforcement.
-  - **Update**: Restricted to message sender updating `linkPreview`, or participants toggling their own `reactions` / `mediaReactions`.
+  - **Update**: Restricted to message sender updating `content`, `isEdited`, `editedAt`, `isDeleted`, `deletedAt`, `linkPreview`, or participants modifying their own `reactions` / `mediaReactions` or appending to `deletedFor` (Delete for Me).
 - **Blocks**:
   - **Read/Write**: Strictly owner-only to preserve user privacy.
 - **Users**: 

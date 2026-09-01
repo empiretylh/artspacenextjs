@@ -16,6 +16,7 @@ Project agents guidance for `art-space-next`.
 ## 🏗️ Technical Standards
 - **Stack**: Next.js App Router, Tailwind CSS, Zustand, React Query, Axios.
 - **Pattern**: vertical feature slices. Components in `app/` should be thin compositors; logic lives in `features/`.
+- **Typography**: Top-level font weight / header boldness across UI headers, dialog titles, and card headings is **semi-bold** (`font-semibold`).
 - **Formatting**: Match existing patterns. Add comments only when logic is non-obvious. No Unicode in ASCII files.
 
 ## ✅ Verification

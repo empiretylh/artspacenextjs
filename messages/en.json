@@ -160,7 +160,17 @@
     "addMessagePlaceholder": "Add a message...",
     "sending": "Sending...",
     "send": "Send",
-    "maxImagesError": "You can only send up to {max} images at once."
+    "maxImagesError": "You can only send up to {max} images at once.",
+    "edit": "Edit",
+    "delete": "Delete",
+    "edited": "edited",
+    "deletedMessage": "This message was deleted",
+    "save": "Save",
+    "deleteForMe": "Delete for me",
+    "deleteForEveryone": "Delete for everyone",
+    "deleteForEveryoneDesc": "This message will be deleted for everyone in this chat.",
+    "deleteForMeDesc": "This message will be deleted from your view only. Other participants will still be able to see it.",
+    "deleteMessageTitle": "Delete message?"
   },
   "Events": {
     "title": "Events",

@@ -19,7 +19,7 @@ Production-grade security rules.
   - **Read/Update**: Restricted to participants only.
 - **Messages**: 
   - **Create**: Verified against the parent conversation's `blockedBy` metadata for "Zero-Cost" instant enforcement.
-  - **Update**: Restricted to message sender updating `linkPreview`, or participants toggling their own `reactions` / `mediaReactions`.
+  - **Update**: Restricted to message sender updating `content`, `isEdited`, `editedAt`, `isDeleted`, `deletedAt`, `linkPreview`, or participants modifying their own `reactions` / `mediaReactions` or appending to `deletedFor` (Delete for Me).
 - **Blocks**:
   - **Read/Write**: Strictly owner-only to preserve user privacy.
 - **Users**: 

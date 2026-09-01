@@ -42,6 +42,11 @@ interface BaseMessage {
    reactions?: Record<string, string>;
    mediaReactions?: Record<string, Record<string, string>>;
    linkPreview?: LinkPreviewData | null;
+   isEdited?: boolean;
+   editedAt?: Timestamp | null;
+   isDeleted?: boolean;
+   deletedAt?: Timestamp | null;
+   deletedFor?: string[];
 }
 
 interface TextMessage {
