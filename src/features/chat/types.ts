@@ -26,12 +26,22 @@ export interface Conversation {
 
 export type Message = BaseMessage & (TextMessage | ImageMessage);
 
+export interface LinkPreviewData {
+   url: string;
+   title?: string | null;
+   description?: string | null;
+   image?: string | null;
+   siteName?: string | null;
+   favicon?: string | null;
+}
+
 interface BaseMessage {
    id: string;
    senderId: string;
    createdAt: Timestamp;
    reactions?: Record<string, string>;
    mediaReactions?: Record<string, Record<string, string>>;
+   linkPreview?: LinkPreviewData | null;
 }
 
 interface TextMessage {

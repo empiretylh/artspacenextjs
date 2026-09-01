@@ -10,6 +10,8 @@ import { MessageReactions } from "./message-reactions";
 import { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from "@/components/ui/popover";
 import { useAuth } from "@/features/auth/store";
 import { ImageReactionsOverlay } from "./image-reactions-overlay";
+import { LinkPreviewCard } from "./link-preview-card";
+import { renderFormattedMessageText } from "../utils/link-detector";
 
 type Props = {
    message: Message;
@@ -235,14 +237,24 @@ export const ChatMessageBubble = ({ message, isMine, conversationId, participant
                         />
                         {message.content && message.content !== "Sent images" && message.content !== "Sent an image" && (
                            <p className="px-3 pt-2 pb-1 text-sm whitespace-pre-wrap break-words leading-relaxed font-sans">
-                              {message.content}
+                              {renderFormattedMessageText(message.content, isMine)}
                            </p>
+                        )}
+                        {message.linkPreview && (
+                           <div className="px-1.5 pb-1.5">
+                              <LinkPreviewCard preview={message.linkPreview} isMine={isMine} />
+                           </div>
                         )}
                      </div>
                   ) : (
-                     <p className="whitespace-pre-wrap break-words text-sm leading-relaxed font-sans">
-                        {message.content}
-                     </p>
+                     <div>
+                        <p className="whitespace-pre-wrap break-words text-sm leading-relaxed font-sans">
+                           {renderFormattedMessageText(message.content, isMine)}
+                        </p>
+                        {message.linkPreview && (
+                           <LinkPreviewCard preview={message.linkPreview} isMine={isMine} />
+                        )}
+                     </div>
                   )}
                   
                   <span className={cn(

@@ -77,12 +77,16 @@ service cloud.firestore {
           (!("blockedBy" in getConversation(conversationId)) || 
            getConversation(conversationId).blockedBy.keys().size() == 0);
 
-        // Allow reactions or mediaReactions updates only
+        // Allow reactions, mediaReactions, or message sender adding linkPreview
         allow update: if isSignedIn() && 
           request.auth.uid in getConversation(conversationId).participants &&
           (!("blockedBy" in getConversation(conversationId)) || 
            getConversation(conversationId).blockedBy.keys().size() == 0) &&
           (
+            (
+              request.auth.uid == resource.data.senderId &&
+              request.resource.data.diff(resource.data).affectedKeys().hasOnly(['linkPreview'])
+            ) ||
             (
               request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions']) &&
               (

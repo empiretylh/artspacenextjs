@@ -46,6 +46,7 @@ erDiagram
         string content "Text or caption"
         string_array mediaUrls "Batch image URLs"
         map reactions "{uid: emoji} reactions"
+        map linkPreview "{url, title, description, image, siteName, favicon}"
     }
 
     USER-BLOCK {
@@ -98,6 +99,11 @@ erDiagram
     - **State Update**: The `useToggleReaction` hook toggles the reaction using Firestore dot notation. If the same emoji is clicked, it deletes the user's reaction field.
     - **Security**: Firestore security rules restrict updates to the messages subcollection to ONLY modifying the `reactions` field and ONLY for the user's own UID key.
     - **Notifications**: Toggling a reaction triggers an API notify call (`/api/chat/notify`) to send a push notification with a `'chat_reaction'` payload to the message sender.
+13. **Rich Link Previews (Open Graph URL Unfurling)**:
+    - **Architecture**: When a message containing a URL is sent, the message persists immediately to Firestore to ensure zero-lag UX. Concurrently, a background non-blocking request is made to the `/api/chat/link-preview` route.
+    - **Server Proxy & SSRF Security**: The `/api/chat/link-preview` API route fetches remote HTML, protects against SSRF (blocking loopback/private IPv4 spaces), enforces a 4-second timeout, and parses Open Graph (`og:*`), Twitter Card, and standard HTML meta tags into structured JSON.
+    - **Persistence**: Once resolved, the message document in Firestore is updated with the `linkPreview` metadata object, rendering seamlessly for all conversation participants.
+    - **UI Component**: The `LinkPreviewCard` displays the domain, favicon, cover image, bold title, and description snippet directly below the message bubble. Embedded URLs in message text are also automatically formatted into clickable links.
 
 ## 🔔 Push Notifications (FCM)
 
@@ -185,6 +191,7 @@ Production-grade security rules.
   - **Read/Update**: Restricted to participants only.
 - **Messages**: 
   - **Create**: Verified against the parent conversation's `blockedBy` metadata for "Zero-Cost" instant enforcement.
+  - **Update**: Restricted to message sender updating `linkPreview`, or participants toggling their own `reactions` / `mediaReactions`.
 - **Blocks**:
   - **Read/Write**: Strictly owner-only to preserve user privacy.
 - **Users**: 
