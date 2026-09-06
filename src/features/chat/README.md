@@ -47,6 +47,7 @@ erDiagram
         string_array mediaUrls "Batch image URLs"
         map reactions "{uid: emoji} reactions"
         map linkPreview "{url, title, description, image, siteName, favicon}"
+        map orderCard "{orderId, orderCode, artworkTitle, artworkImage, price, currency}"
         boolean isEdited "Edited flag"
         timestamp editedAt "Timestamp of last edit"
         boolean isDeleted "Soft-delete flag for everyone"
@@ -117,6 +118,10 @@ erDiagram
 15. **Message Deletion (WhatsApp-Style Dual Delete)**:
     - **Delete for Everyone**: Soft-deletes the message document (`isDeleted: true`, `deletedAt: Timestamp`), clears media/reactions/previews, and renders a muted *"This message was deleted"* placeholder for all users. Also synchronizes `CONVERSATION.lastMessage`.
     - **Delete for Me**: Appends the current user's UID to `deletedFor: string[]` via `arrayUnion`. `useMessages` filters out these messages client-side, making them vanish only for the user who hid them.
+16. **Rich Embedded Order Cards (`orderCard`)**:
+    - **Architecture**: Messages can carry an `orderCard` payload (`orderId`, `orderCode`, `artworkTitle`, `artworkImage`, `price`, `currency`, `status`).
+    - **Attachment UX**: Navigating to `/chats` from an order card sets an attached draft snapshot in `ChatInput`.
+    - **Persistence & Display**: Persisted on the message document and rendered via `OrderCardBubble` inside the message bubble with direct navigation to `/orders/[id]`.
 
 ## 🔔 Push Notifications (FCM)
 

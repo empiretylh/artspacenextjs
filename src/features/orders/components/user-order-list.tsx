@@ -9,12 +9,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Price from '@/components/common/price'
 import AppImage from '@/components/common/app-image'
-import { getImage, getUserRouteType } from '@/lib/utils'
+import { getImage, getRelativeImagePath, getUserRouteType } from '@/lib/utils'
 import { format } from 'date-fns'
 import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
 import { Loader2, Package, MessageSquare, ArrowRight } from 'lucide-react'
 import { env } from '@/config/env'
+import { SUPPORT_ACCOUNT, generateOrderInquiryMessage } from '@/config/support'
 import { Pagination } from '@/components/common/pagination'
 import {
   AlertDialog,
@@ -180,11 +181,29 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
                             +{order.items.length - 1} more item(s)
                           </Badge>
                         )}
-                        {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && artwork?.current_owner_display && (
+                        {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
                           <Link
                             to={paths.chats.getHref({
-                              userId: artwork.current_owner_display.id,
-                              userType: getUserRouteType(artwork.current_owner_display.user_type),
+                              userId: SUPPORT_ACCOUNT.userId,
+                              userType: SUPPORT_ACCOUNT.userType,
+                              initialMessage: generateOrderInquiryMessage({
+                                orderId: order.id,
+                                orderCode: order.id.slice(0, 8).toUpperCase(),
+                                artworkTitle: artwork.title,
+                                artworkId: artwork.id,
+                                artworkImage: getRelativeImagePath(artwork.image),
+                                price: order.total_price,
+                                currency: order.currency || 'MMK',
+                                status: order.status || order.order_status,
+                              }),
+                              orderId: order.id,
+                              orderCode: order.id.slice(0, 8).toUpperCase(),
+                              artworkId: artwork.id,
+                              artworkTitle: artwork.title,
+                              artworkImage: getRelativeImagePath(artwork.image),
+                              price: order.total_price,
+                              currency: order.currency || 'MMK',
+                              status: order.status || order.order_status,
                             })}
                             className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-primary transition-colors"
                           >

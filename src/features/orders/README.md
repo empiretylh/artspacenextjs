@@ -32,8 +32,9 @@
 - It uses the shared [pagination.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/common/pagination.tsx) component for navigating through order history.
 
 ### 4. Communication
-- **Contact Seller**: Orders provide a direct entry point to the Chat feature via a "Contact Seller" button.
-- **Dynamic Routing**: Targets `current_owner_display` of the artwork using the `getUserRouteType` utility.
+- **Contact Seller / Support**: Orders provide a direct entry point to the Chat feature via a "Contact Seller" button.
+- **Dynamic Support Routing**: Routes to the centralized Support/Admin account defined in `SUPPORT_ACCOUNT` (`src/config/support.ts`, configurable via `NEXT_PUBLIC_SUPPORT_USER_ID` and `NEXT_PUBLIC_SUPPORT_USER_TYPE`).
+- **Rich Embedded Order Cards**: Seamlessly deep-links to `/chats` with order snapshot parameters (`orderId`, `orderCode`, `artworkTitle`, `artworkImage`, `price`, `currency`), attaching an order card draft that renders permanently in the chat stream via `OrderCardBubble` with direct navigation back to `/orders/[id]`.
 - **Feature Flag**: Conditionally rendered based on `env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE`.
 
 ### 5. UI/UX & Typography Standards

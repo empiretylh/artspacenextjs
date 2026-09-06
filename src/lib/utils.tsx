@@ -107,6 +107,26 @@ export const getImage = (src: string | undefined | null) => {
    return `https://${env.IMAGE_HOSTNAME}${cleanSrc}`;
 };
 
+export const getRelativeImagePath = (src: string | undefined | null): string => {
+   if (!src) return "";
+   if (src.startsWith("http://") || src.startsWith("https://")) {
+      try {
+         const url = new URL(src);
+         if (
+            url.hostname === env.IMAGE_HOSTNAME || 
+            url.hostname.includes("myanmarartspace.net") || 
+            url.hostname === "localhost" ||
+            url.hostname === "127.0.0.1"
+         ) {
+            return url.pathname;
+         }
+      } catch {
+         // fallback
+      }
+   }
+   return src;
+};
+
 export const getDate = (date: string) => {
    const newDate = new Date(date);
    return format(newDate, "MMMM d, yyyy");

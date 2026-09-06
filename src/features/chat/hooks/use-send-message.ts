@@ -11,8 +11,9 @@ import {
 } from "firebase/firestore";
 import { db } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
-import type { ChatUser } from "../types";
+import type { ChatUser, OrderCardData } from "../types";
 import { extractFirstUrl } from "../utils/link-detector";
+import { getRelativeImagePath } from "@/lib/utils";
 
 export const useSendMessage = (conversationId: string | null) => {
    const { user } = useAuth();
@@ -21,10 +22,16 @@ export const useSendMessage = (conversationId: string | null) => {
       content: string, 
       recipient?: ChatUser, 
       type: 'text' | 'image' = 'text',
-      mediaUrls?: string[]
+      mediaUrls?: string[],
+      orderCard?: OrderCardData | null
    ) => {
       const hasMedia = mediaUrls && mediaUrls.length > 0;
-      if (!user?.id || !db || (!content.trim() && !hasMedia)) return;
+      const hasOrderCard = !!orderCard;
+      if (!user?.id || !db || (!content.trim() && !hasMedia && !hasOrderCard)) return;
+
+      const lastMessageSnippet = type === 'image' 
+         ? "Sent an image" 
+         : (content.trim() || (orderCard ? `Inquiry for Order #${orderCard.orderCode}` : "Sent a message"));
 
       try {
          let targetId = conversationId;
@@ -48,7 +55,7 @@ export const useSendMessage = (conversationId: string | null) => {
                   },
                   [recipient.id]: recipient
                },
-               lastMessage: type === 'image' ? "Sent an image" : content,
+               lastMessage: lastMessageSnippet,
                updatedAt: serverTimestamp(),
             }, { merge: true });
          }
@@ -76,12 +83,18 @@ export const useSendMessage = (conversationId: string | null) => {
                }
             }
 
+            const sanitizedOrderCard = orderCard ? {
+               ...orderCard,
+               artworkImage: getRelativeImagePath(orderCard.artworkImage) || undefined
+            } : null;
+
             const messagesRef = collection(db!, "conversations", targetId, "messages");
             const messageDocRef = await addDoc(messagesRef, {
                senderId: String(user.id),
                content,
                type,
                ...(hasMedia && { mediaUrls }),
+               ...(sanitizedOrderCard && { orderCard: sanitizedOrderCard }),
                ...(initialPreview && (initialPreview.title || initialPreview.description || initialPreview.image) && { linkPreview: initialPreview }),
                createdAt: serverTimestamp(),
             });
@@ -120,7 +133,7 @@ export const useSendMessage = (conversationId: string | null) => {
                });
 
                transaction.set(convRef, {
-                  lastMessage: type === 'image' ? "Sent an image" : content,
+                  lastMessage: lastMessageSnippet,
                   updatedAt: serverTimestamp(),
                   participantDetails: {
                      [user.id]: {

@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/store";
 import { ImageReactionsOverlay } from "./image-reactions-overlay";
 import { LinkPreviewCard } from "./link-preview-card";
+import { OrderCardBubble } from "./order-card-bubble";
 import { renderFormattedMessageText } from "../utils/link-detector";
 import { useTranslations } from "next-intl";
 
@@ -490,9 +491,16 @@ export const ChatMessageBubble = ({ message, isMine, conversationId, participant
                      </div>
                   ) : (
                      <div>
-                        <p className="whitespace-pre-wrap break-words text-sm leading-relaxed font-sans">
-                           {renderFormattedMessageText(message.content, isMine)}
-                        </p>
+                        {message.orderCard && (
+                           <div className="pb-1">
+                              <OrderCardBubble orderCard={message.orderCard} isMine={isMine} />
+                           </div>
+                        )}
+                        {message.content && (
+                           <p className="whitespace-pre-wrap break-words text-sm leading-relaxed font-sans">
+                              {renderFormattedMessageText(message.content, isMine)}
+                           </p>
+                        )}
                         {message.linkPreview && (
                            <LinkPreviewCard preview={message.linkPreview} isMine={isMine} />
                         )}

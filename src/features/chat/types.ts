@@ -35,6 +35,17 @@ export interface LinkPreviewData {
    favicon?: string | null;
 }
 
+export interface OrderCardData {
+   orderId: string;
+   orderCode: string;
+   artworkId?: string;
+   artworkTitle: string;
+   artworkImage?: string;
+   price: string | number;
+   currency: string;
+   status?: string;
+}
+
 interface BaseMessage {
    id: string;
    senderId: string;
@@ -42,6 +53,7 @@ interface BaseMessage {
    reactions?: Record<string, string>;
    mediaReactions?: Record<string, Record<string, string>>;
    linkPreview?: LinkPreviewData | null;
+   orderCard?: OrderCardData | null;
    isEdited?: boolean;
    editedAt?: Timestamp | null;
    isDeleted?: boolean;
