@@ -209,6 +209,7 @@ export const ProfileArtworksPage = () => {
    return (
       <>
          <ArtworksPageView
+            titleClassName="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground"
             isLoading={isLoading}
             pagesToRender={data?.pages || []}
             filters={urlState.filters}

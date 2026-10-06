@@ -1,9 +1,12 @@
-export const revalidate = 60;
+import { redirect } from "@/i18n/routing";
 
-import HomePage from "@/features/home/pages";
-
-const HomePageRoute = () => {
-  return <HomePage />;
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default HomePageRoute;
+const HomeRedirectRoute = async ({ params }: Props) => {
+  const { locale } = await params;
+  redirect({ href: "/", locale });
+};
+
+export default HomeRedirectRoute;

@@ -1,4 +1,4 @@
-import AppImage from "@/components/common/app-image";
+import Image from "next/image";
 import { env } from "@/config/env";
 import { paths } from "@/config/paths";
 import { UserRouteType } from "@/features/service/artspace/get-users";
@@ -146,7 +146,7 @@ export const slugify = (text: string) => {
 };
 
 export const getUserIcon = (_type?: User["user_type"]) => {
-   return <AppImage withoutContainer width={16} height={16} src={'/assets/logo.png'} className="inline-block" alt="logo" />;
+   return <Image width={16} height={16} src={'/assets/logo.png'} className="inline-block" alt="logo" />;
    // if (type === "ARTIST") {
    //    return (
    //       <span className="inline-block border-2 border-primary p-1 rounded-full">

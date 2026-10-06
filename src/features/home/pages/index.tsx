@@ -12,14 +12,9 @@ import { FeaturedArtworksSectionSkeleton } from "../components/featured-artworks
 import { FeaturedGalleriesSectionSkeleton } from "../components/featured-galleries-section-skeleton";
 import { FeaturedCollectorsSectionSkeleton } from "../components/featured-collectors-section-skeleton";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { getEvents } from "@/features/service/artspace/get-events";
-import { queryKeys } from "@/config/query-keys";
-import { getArtworks } from "@/features/service/artspace/get-artworks";
-import { getArtists } from "@/features/service/artspace/get-artists";
-import { getGalleries } from "@/features/service/artspace/get-galleries";
-import { getCollectors } from "@/features/service/artspace/get-collectors";
 import { getQueryClient } from "@/lib/get-query-client";
 import BannerSliderContainer from "../components/banner-slider-container";
+import { MasIntroBanner } from "../components/mas-intro-banner";
 
 // --- Main App Component ---
 export default async function HomePage() {
@@ -31,6 +26,7 @@ export default async function HomePage() {
    return (
       <div className="space-y-9">
          <BannerSliderContainer />
+         <MasIntroBanner />
          {/* <HeroSection /> */}
          <GenreSection />
          <CategoryAndStyleSection />

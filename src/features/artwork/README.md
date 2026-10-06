@@ -28,9 +28,9 @@ All artwork displays must follow the "Editorial Minimalist" standard:
     - **Density**: Minimal padding (`p-3`), no borders, and no shadows unless explicitly in "Masonry" mode.
     - **Visibility**: Overlaid actions (like the heart button) are styled for visibility (e.g., red color). On mobile, a top shadow overlay is used instead of a solid background button.
     - **Status**: Status badges (SOLD, NOT FOR SALE, etc.) are omitted from the card to maintain a clean, minimal aesthetic.
-- **High-Gravity Pills (Filters)**:
-    - **Inactive**: `bg-white`, `border-2 border-muted/70`, `shadow-sm`.
-    - **Active**: `bg-primary`, `text-primary-foreground`.
+- **Filter Pills (Filters)**:
+    - **Inactive**: `bg-background`, `border border-input`, `shadow-xs`.
+    - **Active**: `bg-primary`, `text-primary-foreground`, `shadow-xs`.
 - **Labels**: UI labels for status enums should use Title Case (e.g., "Available") rather than database ALL_CAPS.
 - **Sidebar**: The [filter-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/filter-sidebar.tsx) handles responsive layouts, currency selection (fetched via `useGetCurrencies`), and dynamic price ranges sync.
 - **Price Filter**: Refactored to fetch dynamic quantile-based price levels and slider bounds from `/filter-options/` endpoint on the backend. Supports explicit currency toggling, automatic currency resetting on change, and multiple bracket checkboxes. Uses `price_min` and `price_max` URL params for custom sliders.

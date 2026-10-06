@@ -20,9 +20,9 @@ const PostCard = ({ post }: { post: Post }) => {
             </CardDescription>
          </CardHeader>
          <CardFooter className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">{`Created by ${post.userId}`}</p>
-            <Link to={`${paths.posts.edit.getHref(String(post.id))}`}>
-               <Button variant="outline">Edit</Button>
+            <p className="text-sm text-muted-foreground">{`Created by ${post.author?.first_name || post.author_id || "Art Space"}`}</p>
+            <Link to={`${paths.blog.detail.getHref(post.slug)}`}>
+               <Button variant="outline">Read</Button>
             </Link>
          </CardFooter>
       </Card>

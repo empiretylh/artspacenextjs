@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -32,10 +32,13 @@ import {
 } from '../api/create-artwork-order'
 import type { Artwork } from '@/types'
 import Price from '@/components/common/price'
-import { Loader2 } from 'lucide-react'
+import AppImage from '@/components/common/app-image'
+import { getImage } from '@/lib/utils'
+import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
 import { ecommerceAnalytics, itemFromArtwork } from '@/lib/analytics'
 import { useSource } from '@/lib/analytics-source'
+import { ArrowLeft, Loader2, ShieldCheck, Sparkles, Truck } from 'lucide-react'
 
 interface ArtworkOrderFormProps {
   artwork: Artwork
@@ -74,20 +77,20 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
   const onSubmit = async (data: CreateArtworkOrderInput) => {
     try {
       const order = await createOrderMutation.mutateAsync(data)
-      
+
       // Tracking: Add Shipping Info
       ecommerceAnalytics.addShippingInfo(
-        artwork.currency.code || "MMK",
+        artwork.currency?.code || 'MMK',
         totalPrice,
         [itemFromArtwork(artwork)],
-        data.city, // Using city as the shipping tier/proxy
+        data.city, // Using city as shipping tier/proxy
         source
-      );
+      )
 
       addNotification({
         type: 'success',
-        title: 'Order Created',
-        message: 'Your order has been successfully placed.',
+        title: 'Order Placed',
+        message: 'Your order has been created. Proceed to payment to complete your purchase.',
       })
       router.replace(paths.order.payment.getHref(order.id))
     } catch (error: any) {
@@ -99,14 +102,42 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
     }
   }
 
+  const artistDisplayName = artwork.artist_profile
+    ? `${artwork.artist_profile.first_name} ${artwork.artist_profile.last_name}`
+    : artwork.artist_name || 'Featured Artist'
+
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Complete Your Order</h1>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Shipping Details</CardTitle>
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Top Breadcrumb / Back Link */}
+      <div>
+        <Link
+          to={paths.artworks.detail.getHref(artwork.id)}
+          className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors gap-2 group"
+        >
+          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+          Back to Artwork Details
+        </Link>
+      </div>
+
+      {/* Page Header */}
+      <div className="space-y-1">
+        <h1 className="text-2xl sm:text-3xl font-semibold font-display tracking-tight text-foreground">
+          Checkout & Shipping
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Enter your delivery details below to reserve and order this artwork.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Form */}
+        <div className="lg:col-span-7 space-y-6">
+          <Card className="border border-border/60 shadow-xs">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                <Truck className="h-4 w-4 text-primary" />
+                Shipping Information
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <Form {...form}>
@@ -116,7 +147,7 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FormLabel className="text-sm font-medium">Full Name</FormLabel>
                         <FormControl>
                           <Input placeholder="Enter your full name" {...field} />
                         </FormControl>
@@ -125,59 +156,66 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="phone_number"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter your phone number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>City</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          disabled={isLoadingCharges}
-                        >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="phone_number"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select your city" />
-                            </SelectTrigger>
+                            <Input placeholder="e.g. 0912345678" {...field} />
                           </FormControl>
-                          <SelectContent>
-                            {deliveryCharges?.map((charge) => (
-                              <SelectItem key={charge.id} value={charge.city}>
-                                {charge.city}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">City / Township</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            disabled={isLoadingCharges}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select delivery city" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {deliveryCharges?.map((charge) => (
+                                <SelectItem key={charge.id} value={charge.city}>
+                                  <div className="flex items-center justify-between w-full gap-4">
+                                    <span>{charge.city}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      +{charge.charges} MMK
+                                    </span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
                     name="shipping_address"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Shipping Address</FormLabel>
+                        <FormLabel className="text-sm font-medium">Street Address</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Enter your detailed shipping address"
-                            className="min-h-[100px]"
+                            placeholder="Detailed address (house number, street name, ward)"
+                            className="min-h-[90px] resize-none"
                             {...field}
                           />
                         </FormControl>
@@ -191,10 +229,14 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Additional Description (Optional)</FormLabel>
+                        <FormLabel className="text-sm font-medium">
+                          Delivery Instructions{' '}
+                          <span className="text-xs text-muted-foreground font-normal">(Optional)</span>
+                        </FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Any special instructions for delivery"
+                            placeholder="Special requests or landmark notes for courier"
+                            className="min-h-[70px] resize-none"
                             {...field}
                           />
                         </FormControl>
@@ -205,7 +247,7 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
 
                   <Button
                     type="submit"
-                    className="w-full"
+                    className="w-full h-11 text-base font-semibold shadow-xs"
                     disabled={createOrderMutation.isPending}
                   >
                     {createOrderMutation.isPending ? (
@@ -214,7 +256,7 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
                         Placing Order...
                       </>
                     ) : (
-                      'Place Order'
+                      'Proceed to Payment'
                     )}
                   </Button>
                 </form>
@@ -223,38 +265,85 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
           </Card>
         </div>
 
-        <div>
-          <Card className="sticky top-20">
-            <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+        {/* Right Column: Order Summary & Trust Card */}
+        <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
+          <Card className="border border-border/60 shadow-xs overflow-hidden">
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
+              <CardTitle className="text-base font-semibold">Order Summary</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between items-center pb-4 border-b">
-                <span className="font-medium">{artwork.title}</span>
-                <span>
-                  <Price price={artwork.price} currency={artwork.currency} />
-                </span>
+            <CardContent className="pt-4 space-y-5">
+              {/* Artwork Preview Card */}
+              <div className="flex gap-4 items-start sm:items-center">
+                <div className="relative h-20 w-20 shrink-0 rounded-lg overflow-hidden border bg-muted/20 shadow-2xs">
+                  <AppImage
+                    src={getImage(artwork.image)}
+                    alt={artwork.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="space-y-1.5 min-w-0 flex-1">
+                  <h4 className="font-semibold text-sm leading-normal sm:leading-relaxed text-foreground line-clamp-1 sm:line-clamp-2">
+                    {artwork.title}
+                  </h4>
+                  <p className="text-xs text-muted-foreground truncate">by {artistDisplayName}</p>
+                  <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
+                    {artwork.category_name && (
+                      <span className="text-[10px] font-medium text-primary/80 bg-primary/5 border border-primary/10 px-1.5 py-0.2 rounded-sm">
+                        {artwork.category_name}
+                      </span>
+                    )}
+                    {artwork.dimensions && (
+                      <span className="text-[10px] text-muted-foreground">{artwork.dimensions}</span>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              <div className="flex justify-between items-center pb-4 border-b">
-                <span className="text-muted-foreground">Delivery Charge</span>
-                <span>
-                  {selectedDelivery ? (
-                    <Price price={selectedDelivery.charges} currency={artwork.currency} />
-                  ) : (
-                    'Select city'
-                  )}
-                </span>
-              </div>
+              <div className="border-t border-border/50 pt-4 space-y-2.5 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Artwork Price</span>
+                  <span className="font-medium">
+                    <Price price={artwork.price} currency={artwork.currency} />
+                  </span>
+                </div>
 
-              <div className="flex justify-between items-center text-lg font-bold">
-                <span>Total</span>
-                <span>
-                  <Price price={totalPrice} currency={artwork.currency} />
-                </span>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Delivery Charge</span>
+                  <span className="font-medium">
+                    {selectedDelivery ? (
+                      <Price price={selectedDelivery.charges} currency={artwork.currency} />
+                    ) : (
+                      <span className="text-xs text-muted-foreground italic">Calculated at city selection</span>
+                    )}
+                  </span>
+                </div>
+
+                <div className="border-t border-border/50 pt-3 flex justify-between items-center">
+                  <span className="font-semibold text-base">Total Amount</span>
+                  <span className="text-lg font-semibold text-primary">
+                    <Price price={totalPrice} currency={artwork.currency} />
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Art Trust & Protection Card */}
+          <div className="p-4 rounded-xl border border-border/50 bg-muted/20 space-y-3">
+            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
+              <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
+              <span>Original artwork guaranteed authentic</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
+              <Truck className="h-4 w-4 text-primary shrink-0" />
+              <span>Secure, protective packaging & insured handling</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
+              <Sparkles className="h-4 w-4 text-primary shrink-0" />
+              <span>Direct support to the verified artist & gallery</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

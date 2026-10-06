@@ -3,6 +3,7 @@ import {
    doc,
    setDoc,
    addDoc,
+   updateDoc,
    getDoc,
    serverTimestamp,
    runTransaction,
@@ -11,6 +12,7 @@ import {
 import { db } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
 import type { ChatUser } from "../types";
+import { extractFirstUrl } from "../utils/link-detector";
 
 export const useSendMessage = (conversationId: string | null) => {
    const { user } = useAuth();
@@ -59,14 +61,47 @@ export const useSendMessage = (conversationId: string | null) => {
                throw new Error("BLOCK_EXISTS");
             }
 
+            const detectedUrl = type === 'text' ? extractFirstUrl(content) : null;
+            let initialPreview: any = null;
+
+            // Fast-path preview fetch (up to 500ms) to attach preview directly on message creation
+            if (detectedUrl) {
+               try {
+                  const fastFetchPromise = fetch(`/api/chat/link-preview?url=${encodeURIComponent(detectedUrl)}`)
+                     .then((res) => (res.ok ? res.json() : null));
+                  const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 500));
+                  initialPreview = await Promise.race([fastFetchPromise, timeoutPromise]);
+               } catch {
+                  // Fallback to background fetch
+               }
+            }
+
             const messagesRef = collection(db!, "conversations", targetId, "messages");
-            await addDoc(messagesRef, {
+            const messageDocRef = await addDoc(messagesRef, {
                senderId: String(user.id),
                content,
                type,
                ...(hasMedia && { mediaUrls }),
+               ...(initialPreview && (initialPreview.title || initialPreview.description || initialPreview.image) && { linkPreview: initialPreview }),
                createdAt: serverTimestamp(),
             });
+
+            // Asynchronously fetch rich link preview if fast-path didn't catch it
+            if (detectedUrl && !initialPreview && targetId && messageDocRef?.id) {
+               const createdDocRef = doc(db!, "conversations", targetId, "messages", messageDocRef.id);
+               fetch(`/api/chat/link-preview?url=${encodeURIComponent(detectedUrl)}`)
+                  .then(async (res) => {
+                     if (res.ok) {
+                        const previewData = await res.json();
+                        if (previewData && (previewData.title || previewData.description || previewData.image)) {
+                           await updateDoc(createdDocRef, { linkPreview: previewData });
+                        }
+                     }
+                  })
+                  .catch((err) => {
+                     console.warn("Link preview fetch failed:", err);
+                  });
+            }
 
             const convRef = doc(db!, "conversations", targetId);
             const name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email;

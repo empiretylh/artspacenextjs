@@ -4,8 +4,12 @@ export const paths = {
       getHref: () => "/",
    },
    home: {
-      path: "/home",
-      getHref: () => "/home",
+      path: "/",
+      getHref: () => "/",
+   },
+   landing: {
+      path: "/landing",
+      getHref: () => "/landing",
    },
    search: {
       path: "/search",
@@ -262,9 +266,25 @@ export const paths = {
          getHref: () => "/sign-up",
       },
    },
+   press: {
+      path: "/press",
+      getHref: () => "/press",
+      detail: {
+         path: "/press/:slug",
+         getHref: (slug: string) => `/press/${slug}`,
+      },
+   },
+   blog: {
+      path: "/press",
+      getHref: () => "/press",
+      detail: {
+         path: "/press/:slug",
+         getHref: (slug: string) => `/press/${slug}`,
+      },
+   },
    posts: {
-      path: "/posts",
-      getHref: () => "/posts",
+      path: "/press",
+      getHref: () => "/press",
       create: {
          path: "/posts/create",
          getHref: () => "/posts/create",

@@ -133,9 +133,9 @@ const ProfileEventsPage = () => {
    return (
       <div className="space-y-4 px-1">
          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-semibold font-display tracking-tight capitalize">
+            <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground capitalize">
                Events
-            </h1>
+            </h2>
             <Button onClick={() => setIsEventCreateModalOpen(true)}>
                Create
             </Button>

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { SiteHeader } from './site-header'
 import MainOutlet from './main-outlet'
 import Footer from './footer'
@@ -9,18 +9,10 @@ import { usePathname } from 'next/navigation'
 import { SourceProvider } from '@/lib/analytics-source'
 import { ScrollArea } from '../ui/scroll-area'
 
-
 const ScrollContainer = ({ children, header }: { children: React.ReactNode; header?: React.ReactNode }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const dimensionsRef = useRef({ scrollHeight: 0, clientHeight: 0 });
-  const pathname = usePathname()
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsTouchDevice(window.matchMedia("(pointer: coarse)").matches);
-    }
-  }, []);
+  const pathname = usePathname();
 
   useEffect(() => {
     const el = ref.current;
@@ -75,7 +67,6 @@ const ScrollContainer = ({ children, header }: { children: React.ReactNode; head
         if (progress >= 0.9) {
           if (!fired) {
             fired = true;
-            console.log('reach end')
             scrollAnalytics.scrollToEnd({ scrollPercent: progress * 100 });
           }
         }
@@ -88,30 +79,9 @@ const ScrollContainer = ({ children, header }: { children: React.ReactNode; head
       el.removeEventListener("scroll", onScroll);
       resizeObserver.disconnect();
     };
-  }, [pathname, isTouchDevice]);
+  }, [pathname]);
 
   const source = analyticSourceFromPathname(pathname);
-
-  if (isTouchDevice) {
-    return (
-      <div
-        ref={ref}
-        id="scroll-container"
-        className="h-screen overflow-y-auto scroll-smooth select-none"
-        style={{ WebkitOverflowScrolling: "touch" }}
-      >
-        <SourceProvider value={{ source }}>
-          <div className="min-h-full flex flex-col justify-between">
-            {header || <SiteHeader />}
-            <MainOutlet>
-              {children}
-            </MainOutlet>
-            <Footer />
-          </div>
-        </SourceProvider>
-      </div>
-    );
-  }
 
   return (
     <ScrollArea
@@ -129,8 +99,7 @@ const ScrollContainer = ({ children, header }: { children: React.ReactNode; head
         </div>
       </SourceProvider>
     </ScrollArea>
-  )
-}
+  );
+};
 
-export default ScrollContainer
-
+export default ScrollContainer;

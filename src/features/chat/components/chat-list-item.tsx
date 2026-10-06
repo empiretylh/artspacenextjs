@@ -33,14 +33,14 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
          className={cn(
             "flex w-full items-center gap-2.5 border-b border-border py-2 pr-4 text-left transition-all duration-200",
             isActive 
-               ? "bg-muted/65 border-l-[3px] border-primary pl-[13px]" 
-               : "hover:bg-muted/40 border-l-[3px] border-transparent pl-[13px]"
+               ? "bg-muted/65 border-l-[3px] border-l-primary pl-[13px]" 
+               : "hover:bg-muted/40 border-l-[3px] border-l-transparent pl-[13px]"
          )}
       >
          <div className="relative">
             <Avatar className="border border-border/60">
                <AvatarImage src={getImage(otherUser.avatar)} alt={otherUser.name} />
-               <AvatarFallback className="font-display font-bold bg-primary/5 text-primary text-xs">{otherUser.name[0]}</AvatarFallback>
+               <AvatarFallback className="font-display font-semibold bg-primary/5 text-primary text-xs">{otherUser.name[0]}</AvatarFallback>
             </Avatar>
             <span 
                className={cn(
@@ -52,8 +52,8 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
  
          <div className="min-w-0 flex-1">
             <p className={cn(
-               "truncate text-sm font-bold font-display tracking-tight text-foreground/90",
-               unreadCount > 0 && "text-foreground font-extrabold"
+               "truncate text-sm font-semibold font-display tracking-tight text-foreground/90",
+               unreadCount > 0 && "text-foreground font-bold"
             )}>
                {otherUser.name}
             </p>

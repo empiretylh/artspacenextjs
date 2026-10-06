@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useAuth } from '@/features/auth/store'
 import { useGetUserOrders } from '../api/get-orders'
 import { useUpdateOrder } from '../api/update-order'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Price from '@/components/common/price'
@@ -13,9 +13,8 @@ import { getImage, getUserRouteType } from '@/lib/utils'
 import { format } from 'date-fns'
 import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
-import { Loader2, Package, MessageSquare } from 'lucide-react'
+import { Loader2, Package, MessageSquare, ArrowRight } from 'lucide-react'
 import { env } from '@/config/env'
-import { cn } from '@/lib/utils'
 import { Pagination } from '@/components/common/pagination'
 import {
   AlertDialog,
@@ -26,7 +25,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from '@/components/ui/alert-dialog'
+import { OrderStatusBadge } from './order-status-badge'
 
 export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> }) => {
   const { user } = useAuth()
@@ -44,58 +44,62 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
 
   const confirmCancel = () => {
     if (orderIdToCancel) {
-      updateOrder.mutate({ orderId: orderIdToCancel, data: { order_status: "CANCELLED" } })
+      updateOrder.mutate({ orderId: orderIdToCancel, data: { order_status: 'CANCELLED' } })
       setOrderIdToCancel(null)
     }
   }
 
-  const hasFilters = Object.keys(filters).length > 0;
+  const hasFilters = Object.keys(filters).length > 0
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-20">
+      <div className="flex flex-col justify-center items-center py-20 gap-3">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-xs text-muted-foreground animate-pulse">Loading orders...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="text-center py-20 bg-destructive/10 rounded-2xl border border-destructive/20 text-destructive font-bold p-8">
-        Failed to load orders. Please try again later.
+      <div className="text-center py-16 bg-destructive/5 rounded-2xl border border-destructive/20 text-destructive text-sm font-medium p-6 max-w-md mx-auto">
+        Failed to load your orders. Please try refreshing the page.
       </div>
     )
   }
 
   if (!orders || orders.results.length === 0) {
     return (
-      <Card className="text-center py-20 border-dashed bg-muted/20 border-2 rounded-3xl">
-        <CardContent className="flex flex-col items-center gap-6">
-          <Package className="h-16 w-16 text-muted-foreground/50" />
-          <div className="space-y-2">
-            <h3 className="font-black text-2xl uppercase tracking-tight text-primary font-display">
-              {hasFilters ? "No matching orders" : "No orders yet"}
+      <Card className="text-center py-16 border border-border/60 bg-muted/10 rounded-2xl">
+        <CardContent className="flex flex-col items-center gap-4 max-w-sm mx-auto">
+          <div className="h-14 w-14 rounded-full bg-muted/40 flex items-center justify-center text-muted-foreground">
+            <Package className="h-7 w-7" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-semibold text-lg text-foreground">
+              {hasFilters ? 'No matching orders' : 'No orders yet'}
             </h3>
-            <p className="text-muted-foreground font-medium max-w-xs mx-auto font-sans">
+            <p className="text-xs text-muted-foreground">
               {hasFilters
-                ? "Try adjusting your filters to find what you're looking for."
-                : "When you buy an artwork, it will show up here."}
+                ? 'Try adjusting or clearing your filters to find your orders.'
+                : 'When you purchase an artwork, your order history will appear here.'}
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="pt-2">
             {hasFilters ? (
               <Button
                 variant="outline"
+                size="sm"
                 onClick={() => window.location.reload()}
-                className="font-bold uppercase tracking-widest text-xs border-2 font-sans"
+                className="text-xs font-medium"
               >
                 Clear all filters
               </Button>
             ) : (
               <Link to={paths.artworks.getHref()}>
-                <Badge variant="outline" className="cursor-pointer hover:bg-accent transition-colors py-2 px-6 font-bold uppercase tracking-widest text-xs bg-background border-2 font-sans">
-                  Browse Artworks
-                </Badge>
+                <Button size="sm" className="font-medium gap-1.5 text-xs">
+                  Browse Artworks <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
               </Link>
             )}
           </div>
@@ -105,157 +109,179 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
   }
 
   return (
-    <div className="grid gap-6">
+    <div className="space-y-4">
       {orders.results.map((order) => {
-        // Use either order_status or status
         const status = order.order_status || order.status || 'PENDING'
+        const paymentStatus = order.payment_status || 'PENDING'
         const firstItem = order.items?.[0]
         const artwork = firstItem?.artwork
 
+        const isPendingPayment =
+          status === 'PENDING' && (paymentStatus === 'PENDING' || paymentStatus === 'FAILED')
+
         return (
-          <Card key={order.id} className="overflow-hidden hover:shadow-md transition-all duration-300 group border-primary/10">
-            <div className="bg-muted/30 p-6 pb-4 border-b border-border">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <Link to={paths.order.detail.getHref(order.id)} className="space-y-1 block hover:opacity-80 transition-opacity">
-                  <p className="text-xs text-muted-foreground font-mono font-bold tracking-wider uppercase font-sans">ORDER #{order.id.slice(0, 8)}</p>
-                  <p className="text-sm font-medium font-sans">Placed on {format(new Date(order.created_at), 'PPP')}</p>
+          <Card
+            key={order.id}
+            className="overflow-hidden border border-border/60 shadow-xs hover:border-border transition-colors group"
+          >
+            {/* Top Bar: Order Meta & Status */}
+            <div className="bg-muted/20 px-5 py-3 border-b border-border/50 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
+                <Link
+                  to={paths.order.detail.getHref(order.id)}
+                  className="font-mono text-xs font-medium text-foreground hover:text-primary transition-colors"
+                >
+                  ORDER #{order.id.slice(0, 8).toUpperCase()}
                 </Link>
-                <div className="flex items-center gap-4">
-                  <div className="text-right space-y-0.5">
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest font-sans">Total Price</p>
-                    <p className="text-lg font-black text-primary font-display">
-                      <Price
-                        price={order.total_price}
-                        currency={{
-                          code: order.currency || 'MMK',
-                          name: order.currency || 'MMK',
-                          symbol: '',
-                          numeric_code: ''
-                        }}
-                      />
-                    </p>
-                  </div>
-                  <Badge
-                    className={cn(
-                      "font-sans font-bold",
-                      status === 'COMPLETED' ? 'bg-green-500 hover:bg-green-600 shadow-sm' :
-                        status === 'PENDING' ? 'bg-yellow-500 hover:bg-yellow-600 shadow-sm' :
-                          status === 'FAILED' ? 'bg-red-500 hover:bg-red-600 shadow-sm' :
-                            status === 'CANCELLED' ? 'bg-slate-500 hover:bg-slate-600 shadow-sm' :
-                              'bg-blue-500 hover:bg-blue-600 shadow-sm'
-                    )}
-                  >
-                    {status}
-                  </Badge>
-                  {status === 'PENDING' && (order.payment_status === 'PENDING' || order.payment_status === 'FAILED' || !order.payment_status) && (
-                    <div className="flex gap-2">
-                      <Link to={paths.order.payment.getHref(order.id)}>
-                        <Button size="sm" className="font-bold shadow-lg shadow-primary/20 font-sans">
-                          Pay Now
-                        </Button>
-                      </Link>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleCancel(order.id)}
-                        disabled={updateOrder.isPending}
-                        className="font-bold font-sans border-2"
-                      >
-                        Cancel Order
-                      </Button>
-                    </div>
-                  )}
-                </div>
+                <span className="text-xs text-muted-foreground hidden sm:inline">•</span>
+                <span className="text-xs text-muted-foreground">
+                  {format(new Date(order.created_at), 'MMM dd, yyyy')}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <OrderStatusBadge status={status} type="order" />
+                <OrderStatusBadge status={paymentStatus} type="payment" />
               </div>
             </div>
-            <Link to={paths.order.detail.getHref(order.id)} className="block">
-              <CardContent className="hover:bg-muted/10 transition-colors">
+
+            {/* Main Content Area */}
+            <CardContent className="p-5">
+              <div className="flex flex-col sm:flex-row gap-5 items-start justify-between">
                 {artwork ? (
-                  <div className="flex gap-6">
-                    <div className="relative h-28 w-28 shrink-0 rounded-xl overflow-hidden border shadow-sm group-hover:shadow-md transition-all duration-500">
+                  <div className="flex gap-4 items-start sm:items-center min-w-0 flex-1">
+                    <div className="relative h-20 w-20 shrink-0 rounded-lg overflow-hidden border bg-muted/20 shadow-2xs">
                       <AppImage
                         src={getImage(artwork.image)}
                         alt={artwork.title}
                         fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
-                    <div className="space-y-2 py-1">
-                      <div className="space-y-0.5">
-                        <h4 className="text-xl font-bold group-hover:text-primary transition-colors font-display tracking-tight">{artwork.title}</h4>
-                        <p className="text-sm text-muted-foreground font-sans">
-                          by {artwork.artist_profile ? `${artwork.artist_profile.first_name} ${artwork.artist_profile.last_name}` : artwork.artist_name}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-4 mt-2 font-sans">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quantity</span>
-                          <span className="text-sm font-black">{firstItem.quantity}</span>
-                        </div>
+                    <div className="space-y-1.5 min-w-0 flex-1">
+                      <Link
+                        to={paths.order.detail.getHref(order.id)}
+                        className="hover:text-primary transition-colors block max-w-full"
+                      >
+                        <h4 className="font-semibold text-sm sm:text-base text-foreground leading-normal sm:leading-relaxed line-clamp-1 sm:line-clamp-2">
+                          {artwork.title}
+                        </h4>
+                      </Link>
+                      <p className="text-xs text-muted-foreground truncate">
+                        by{' '}
+                        {artwork.artist_profile
+                          ? `${artwork.artist_profile.first_name} ${artwork.artist_profile.last_name}`
+                          : artwork.artist_name || 'Featured Artist'}
+                      </p>
+                      <div className="flex items-center gap-3 text-xs pt-0.5 flex-wrap">
+                        <span className="text-muted-foreground">Qty: {firstItem.quantity}</span>
                         {order.items && order.items.length > 1 && (
-                          <Badge variant="secondary" className="text-[10px] font-bold uppercase font-sans">
-                            + {order.items.length - 1} more items
+                          <Badge variant="secondary" className="text-[10px] font-normal py-0 px-1.5">
+                            +{order.items.length - 1} more item(s)
                           </Badge>
                         )}
-                      </div>
-                      <div className="flex items-center gap-4 mt-1">
-                        <Button variant="link" className="p-0 h-auto font-bold text-primary text-xs font-sans uppercase tracking-widest">View Details</Button>
                         {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && artwork?.current_owner_display && (
-                          <Link 
-                            to={paths.chats.getHref({ 
-                              userId: artwork.current_owner_display.id, 
-                              userType: getUserRouteType(artwork.current_owner_display.user_type) 
+                          <Link
+                            to={paths.chats.getHref({
+                              userId: artwork.current_owner_display.id,
+                              userType: getUserRouteType(artwork.current_owner_display.user_type),
                             })}
+                            className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-primary transition-colors"
                           >
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="gap-2 font-bold text-muted-foreground hover:text-primary transition-colors h-auto py-1 px-2 rounded-lg hover:bg-primary/5 text-[10px] uppercase tracking-widest font-sans"
-                            >
-                              <MessageSquare className="h-3 w-3" />
-                              Contact Seller
-                            </Button>
+                            <MessageSquare className="h-3 w-3" />
+                            <span>Contact Seller</span>
                           </Link>
                         )}
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3 py-4 text-muted-foreground italic">
-                    <Package className="h-5 w-5" />
-                    Artwork details unavailable
+                  <div className="flex items-center gap-2 py-4 text-xs text-muted-foreground italic">
+                    <Package className="h-4 w-4" />
+                    Artwork information unavailable
                   </div>
                 )}
-              </CardContent>
-            </Link>
+
+                {/* Right Side: Total Price & Actions */}
+                <div className="flex flex-col sm:items-end justify-between w-full sm:w-auto gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-border/40">
+                  <div className="flex items-baseline justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                    <span className="text-xs text-muted-foreground sm:hidden">Total Amount</span>
+                    <span className="text-base sm:text-lg font-semibold text-primary sm:text-right">
+                      <Price
+                        price={order.total_price}
+                        currency={{
+                          code: order.currency || 'MMK',
+                          name: order.currency || 'MMK',
+                          symbol: '',
+                          numeric_code: '',
+                        }}
+                      />
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    {isPendingPayment && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleCancel(order.id)}
+                        disabled={updateOrder.isPending}
+                        className="h-8 text-xs font-normal text-muted-foreground hover:text-destructive px-2"
+                      >
+                        Cancel
+                      </Button>
+                    )}
+
+                    <Link to={paths.order.detail.getHref(order.id)} className={isPendingPayment ? '' : 'w-full sm:w-auto'}>
+                      <Button variant="outline" size="sm" className="h-8 text-xs font-medium w-full sm:w-auto px-3">
+                        Details
+                      </Button>
+                    </Link>
+
+                    {isPendingPayment && (
+                      <Link to={paths.order.payment.getHref(order.id)}>
+                        <Button size="sm" className="h-8 text-xs font-semibold shadow-xs px-3.5">
+                          Pay Now
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
           </Card>
         )
       })}
+
       {orders && orders.count > 0 && (
-        <Pagination
-          total={orders.count}
-          page={page}
-          limit={limit}
-          onPageChange={setPage}
-          onLimitChange={setLimit}
-          showLimitSelector={false}
-        />
+        <div className="pt-2">
+          <Pagination
+            total={orders.count}
+            page={page}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={setLimit}
+            showLimitSelector={false}
+          />
+        </div>
       )}
+
+      {/* Cancellation Dialog */}
       <AlertDialog open={!!orderIdToCancel} onOpenChange={(open) => !open && setOrderIdToCancel(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold font-sans">Cancel Order</AlertDialogTitle>
-            <AlertDialogDescription className="font-medium font-sans">
-              Are you sure you want to cancel this order? This action cannot be undone and will stop any further processing for this order.
+            <AlertDialogTitle className="text-lg font-semibold">Cancel Order</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-muted-foreground">
+              Are you sure you want to cancel this order? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="font-bold border-2">Keep Order</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogCancel className="font-medium">Keep Order</AlertDialogCancel>
+            <AlertDialogAction
               onClick={confirmCancel}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-medium"
             >
-              Cancel Order
+              Confirm Cancel
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

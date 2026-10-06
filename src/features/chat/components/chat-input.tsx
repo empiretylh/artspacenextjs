@@ -177,7 +177,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
          <Dialog open={isPreviewOpen} onOpenChange={(open) => !open && handleCancelPreview()}>
             <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 rounded-xl border border-border">
                <DialogHeader className="p-4 border-b border-border shrink-0">
-                  <DialogTitle className="font-display text-lg font-bold">{t("previewImages", { count: selectedFiles.length, plural: selectedFiles.length > 1 ? 's' : '' })}</DialogTitle>
+                  <DialogTitle className="font-display text-lg font-semibold">{t("previewImages", { count: selectedFiles.length, plural: selectedFiles.length > 1 ? 's' : '' })}</DialogTitle>
                </DialogHeader>
 
                <div className="flex-1 overflow-y-auto bg-muted/20 min-h-[200px]">

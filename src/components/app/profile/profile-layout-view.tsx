@@ -152,12 +152,14 @@ const ProfileLayoutView = ({
 
             <div className="mt-3 space-y-1">
                <div className="flex items-center justify-center gap-2">
-                  <h1 className="font-bold font-display text-2xl sm:text-3xl tracking-tight">{fullName}</h1>
+                  <h1 className="text-2xl sm:text-3xl font-semibold font-display tracking-tight text-foreground">{fullName}</h1>
                   {user?.user_type && getUserIcon(user.user_type)}
                </div>
 
-               <p className="text-sm text-muted-foreground">{user?.email}</p>
-               {user?.profile.bio ? (
+               {(variant === "profile" || user?.profile?.show_email) && user?.email && (
+                  <p className="text-sm text-muted-foreground">{user.email}</p>
+               )}
+               {user?.profile?.bio ? (
                   <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-foreground/80">{user.profile.bio}</p>
                ) : variant === "profile" ? (
                   <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-muted-foreground/60 italic">No bio yet. Add one in settings!</p>

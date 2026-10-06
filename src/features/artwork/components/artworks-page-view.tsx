@@ -35,6 +35,7 @@ interface ArtworksPageViewOptions {
 
 interface ArtworksPageViewProps {
    title?: string;
+   titleClassName?: string;
    isLoading: boolean;
    isFetching?: boolean;
    pagesToRender: ListApiResponse<Artwork>[];
@@ -55,6 +56,7 @@ interface ArtworksPageViewProps {
 
 const ArtworksPageView = ({
    title,
+   titleClassName,
    isLoading,
    isFetching: _isFetching = false,
    pagesToRender,
@@ -134,9 +136,14 @@ const ArtworksPageView = ({
                      {(isLoading) && <Skeleton className="h-9 w-64 rounded-xl" />}
                      {!isLoading && (
                         <div className="flex items-center justify-between mb-6">
-                           <h1 className="text-3xl font-semibold font-display tracking-tight text-foreground">
+                           <h2
+                              className={cn(
+                                 "text-3xl font-semibold font-display tracking-tight text-foreground",
+                                 titleClassName
+                              )}
+                           >
                               {title ?? "Artworks"}
-                           </h1>
+                           </h2>
                         </div>
                      )}
 
@@ -232,12 +239,12 @@ const ArtworksPageView = ({
                                     }}
                                  >
                                     <SelectTrigger
-                                       className="w-[180px] h-10 rounded-full bg-white border-2 border-muted/70 shadow-sm hover:border-primary/30 hover:bg-muted/10 transition-all font-bold focus:ring-primary/20"
+                                       className="w-[180px] h-10 rounded-full bg-background dark:bg-background border border-input shadow-xs text-foreground data-[placeholder]:text-foreground [&_svg]:text-foreground [&_svg]:opacity-100 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent transition-all font-semibold focus:ring-primary/20"
                                        data-testid="artworks-sort-select"
                                     >
                                        <SelectValue placeholder="Sort by" />
                                     </SelectTrigger>
-                                    <SelectContent className="rounded-xl border-none shadow-2xl p-1.5 min-w-[180px]">
+                                    <SelectContent className="rounded-xl border border-border/80 shadow-lg p-1.5 min-w-[180px]">
                                        <SelectGroup>
                                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Ordering</SelectLabel>
                                           <SelectItem value="created_at-desc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
@@ -262,7 +269,7 @@ const ArtworksPageView = ({
                               <Button
                                  variant="outline"
                                  onClick={() => setIsSidebarOpen(true)}
-                                 className="flex items-center gap-2 rounded-full h-10 px-6 bg-background border-2 border-muted/70 shadow-sm hover:!border-primary/30 hover:bg-muted/10 transition-all font-bold"
+                                 className="flex items-center gap-2 rounded-full h-10 px-6 bg-background border border-input shadow-xs hover:bg-accent hover:text-accent-foreground transition-all font-semibold"
                               >
                                  <FilterIcon className="h-4 w-4" />
                                  <span className="hidden md:inline">More Filters</span>

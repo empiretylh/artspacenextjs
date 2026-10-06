@@ -21,18 +21,13 @@ export default function ProfileCard({ user }: { user: User }) {
          ? getImage(user.profile.profile_picture)
          : "/assets/profile-default.png";
 
-   const fullName = `${user.first_name} ${user.last_name}`;
+   const fullName = `${user.first_name || ""} ${user.last_name || ""}`.trim() || "User";
 
    return (
-      <div className="flex w-full justify-center border rounded-xl overflow-hidden bg-background">
+      <div className="flex w-full justify-center border border-border/80 rounded-xl overflow-hidden bg-background shadow-xs hover:shadow-sm transition-all duration-300">
          <div className="w-full flex flex-col items-center">
             {/* Cover */}
             <div className="hidden md:block relative aspect-8/3 overflow-hidden w-full">
-               {/* <img
-                  src={coverSrc}
-                  alt={`${fullName} cover`}
-                  className="absolute inset-0 w-full h-full object-cover"
-               /> */}
                <AppImage
                   src={coverSrc}
                   alt={`${fullName} cover`}
@@ -46,61 +41,60 @@ export default function ProfileCard({ user }: { user: User }) {
                <div className="absolute inset-0 bg-gradient-to-b from-transparent from-30% to-background" />
             </div>
 
-            <div className="mt-3 md:mt-[-32px] flex flex-col items-center pb-4 w-full">
+            <div className="mt-3 md:mt-[-32px] flex flex-col items-center pb-4 w-full px-2">
                {/* Avatar */}
-               <div className="relative mb-2 w-16 h-16">
-                  {/* <img
-                     src={avatarSrc}
-                     alt={fullName}
-                     className="w-full h-full rounded-full border-2 border-background object-cover bg-white"
-                  /> */}
+               <div className="relative mb-2 w-16 h-16 shrink-0">
                   <AppImage
                      src={avatarSrc}
                      alt={fullName}
                      width={64} // 16 * 4 = 64px
                      height={64}
-                     className="rounded-full border-2 border-background object-cover bg-white"
+                     className="rounded-full border-2 border-background object-cover bg-muted"
                   />
                </div>
 
                {/* Info */}
-               <div className="text-center px-2 mb-2 w-full">
-                  <div className="flex items-center justify-center gap-1/2 mb-2">
+               <div className="text-center mb-3 w-full">
+                  <div className="flex items-center justify-center gap-1.5 mb-1">
                      <Link to={getUserLink(user, authUser!)}>
-                        <h2 className="text-sm sm:text-base lg:text-lg font-bold hover:underline truncate max-w-20 lg:max-w-32.5 font-display tracking-tight">
+                        <h2 className="text-sm sm:text-base font-bold hover:underline truncate max-w-[140px] sm:max-w-[180px] font-display tracking-tight text-foreground">
                            {fullName}
                         </h2>
                      </Link>
-                     {getUserIcon()}
+                     {getUserIcon(user.user_type)}
                   </div>
 
-                  <p className="text-xs text-muted-foreground mb-1 truncate max-w-20 lg:max-w-32.5 mx-auto min-h-[16px]">
-                     {user.profile?.show_email ? user.email : ""}
-                  </p>
-
-                  <p className="hidden sm:block text-xs text-muted-foreground truncate max-w-20 lg:max-w-32.5 mx-auto min-h-[16px]">
-                     {user.profile?.bio}
-                  </p>
+                  <div className="h-14 sm:h-16 flex items-center justify-center w-full">
+                     <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed px-1 mx-auto max-w-[200px]">
+                        {user.profile?.bio ? (
+                           user.profile.bio
+                        ) : (
+                           <span className="capitalize text-muted-foreground/75">
+                              {user.user_type ? user.user_type.toLowerCase() : "Artist"}
+                           </span>
+                        )}
+                     </p>
+                  </div>
                </div>
 
                {/* Actions */}
-               <div className="flex gap-1 px-2 w-full justify-center flex-wrap min-h-[36px]">
+               <div className="flex gap-1.5 w-full justify-center items-center flex-wrap">
                   <FollowButton
                      size={"sm"}
                      userId={String(user.id)}
                      userType={user.user_type}
-                     following={user.profile.is_following}
-                     className="w-full sm:w-auto rounded-lg"
+                     following={user.profile?.is_following}
+                     className="w-full sm:w-auto rounded-lg text-xs"
                   />
                   {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
                      <Link
                         to={`${paths.chats.path}?userId=${user.id}&userType=${user.user_type === 'ARTIST' ? 'artists' : user.user_type === 'GALLERY' ? 'galleries' : 'collectors'}`}
-                        className="hidden sm:block"
+                        className="hidden sm:inline-block"
                      >
                         <Button
                            size="sm"
                            variant="outline"
-                           className="text-xs px-3 py-2 rounded-lg"
+                           className="text-xs px-2.5 py-1.5 h-8 rounded-lg"
                         >
                            Message
                         </Button>
