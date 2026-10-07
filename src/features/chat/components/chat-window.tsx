@@ -9,7 +9,7 @@ import { ChatInput } from "./chat-input";
 import { useConversations } from "../hooks/use-conversations";
 import { useAuth } from "@/features/auth/store";
 import { useChatStore } from "../store";
-import { Loader2, User as UserIcon, ExternalLink, Package, X } from "lucide-react";
+import { Loader2, User as UserIcon, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserQueryOptions } from "@/features/service/artspace/get-user";
 import { UserRouteType } from "@/features/service/artspace/get-users";
@@ -94,7 +94,7 @@ export const ChatWindow = ({
 
    // Fetch full recipient data for profile sheet
    const { data: recipientData, isLoading: recipientLoading } = useQuery({
-      ...getUserQueryOptions(finalRecipientId || "", initialUserType),
+      ...getUserQueryOptions(finalRecipientId || ""),
       enabled: !!finalRecipientId,
    });
 

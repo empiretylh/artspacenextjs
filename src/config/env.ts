@@ -32,8 +32,7 @@ const createEnv = () => {
       FIREBASE_CLIENT_EMAIL: z.string().optional(),
       NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().optional(),
       NEXT_PUBLIC_FEATURE_CHAT_ENABLE: z.string().optional().default('false').transform((s) => s === 'true'),
-      NEXT_PUBLIC_SUPPORT_USER_ID: z.string().optional().default('3'),
-      NEXT_PUBLIC_SUPPORT_USER_TYPE: z.string().optional().default('collectors'),
+      NEXT_PUBLIC_SUPPORT_USER_ID: z.string().optional().default('1'),
       FIREBASE_VAPID_KEY: z.string().optional(),
    }).superRefine((env, ctx) => {
       if (env.ENABLE_ANALYTICS && !env.GA_ID) {
@@ -72,7 +71,6 @@ const createEnv = () => {
       NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       NEXT_PUBLIC_FEATURE_CHAT_ENABLE: process.env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE,
       NEXT_PUBLIC_SUPPORT_USER_ID: process.env.NEXT_PUBLIC_SUPPORT_USER_ID,
-      NEXT_PUBLIC_SUPPORT_USER_TYPE: process.env.NEXT_PUBLIC_SUPPORT_USER_TYPE,
       FIREBASE_VAPID_KEY: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
    };
 

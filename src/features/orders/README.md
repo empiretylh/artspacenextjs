@@ -33,7 +33,7 @@
 
 ### 4. Communication
 - **Contact Seller / Support**: Orders provide a direct entry point to the Chat feature via a "Contact Seller" button.
-- **Dynamic Support Routing**: Routes to the centralized Support/Admin account defined in `SUPPORT_ACCOUNT` (`src/config/support.ts`, configurable via `NEXT_PUBLIC_SUPPORT_USER_ID` and `NEXT_PUBLIC_SUPPORT_USER_TYPE`).
+- **Dynamic Support Routing**: Routes to the centralized Support/Admin account defined in `SUPPORT_ACCOUNT` (`src/config/support.ts`, configurable via `NEXT_PUBLIC_SUPPORT_USER_ID`).
 - **Rich Embedded Order Cards**: Seamlessly deep-links to `/chats` with order snapshot parameters (`orderId`, `orderCode`, `artworkTitle`, `artworkImage`, `price`, `currency`), attaching an order card draft that renders permanently in the chat stream via `OrderCardBubble` with direct navigation back to `/orders/[id]`.
 - **Feature Flag**: Conditionally rendered based on `env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE`.
 

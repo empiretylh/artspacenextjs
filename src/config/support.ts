@@ -1,5 +1,4 @@
 import { env } from './env';
-import { UserRouteType } from '@/features/service/artspace/get-users';
 
 export interface OrderInquiryContext {
   orderId?: string | number;
@@ -13,8 +12,7 @@ export interface OrderInquiryContext {
 }
 
 export const SUPPORT_ACCOUNT = {
-  userId: env.NEXT_PUBLIC_SUPPORT_USER_ID || '3',
-  userType: (env.NEXT_PUBLIC_SUPPORT_USER_TYPE || 'collectors') as UserRouteType,
+  userId: env.NEXT_PUBLIC_SUPPORT_USER_ID || '1',
 };
 
 /**

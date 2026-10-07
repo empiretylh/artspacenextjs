@@ -88,7 +88,10 @@ export default function ProfileCard({ user }: { user: User }) {
                   />
                   {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
                      <Link
-                        to={`${paths.chats.path}?userId=${user.id}&userType=${user.user_type === 'ARTIST' ? 'artists' : user.user_type === 'GALLERY' ? 'galleries' : 'collectors'}`}
+                        to={paths.chats.getHref({
+                           userId: user.id,
+                           userType: user.user_type === 'ARTIST' ? 'artists' : user.user_type === 'GALLERY' ? 'galleries' : 'collectors'
+                        })}
                         className="hidden sm:inline-block"
                      >
                         <Button

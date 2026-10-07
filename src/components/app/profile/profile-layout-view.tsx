@@ -204,7 +204,7 @@ const ProfileLayoutView = ({
                            />
                         )}
                         {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
-                           <Link to={`${paths.chats.path}?userId=${user.id}&userType=${userType}`}>
+                           <Link to={paths.chats.getHref({ userId: user.id, userType })}>
                               <Button variant="outline" className="rounded-full h-8 px-4 text-xs font-semibold">
                                  Send Message
                               </Button>

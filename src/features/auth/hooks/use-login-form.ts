@@ -19,7 +19,7 @@ export const loginSchema = z.object({
     .string()
     .email("Enter a valid email address")
     .max(254, "Email must be less than 254 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(5, "Password must be at least 5 characters"),
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;

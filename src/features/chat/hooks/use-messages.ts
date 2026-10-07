@@ -77,6 +77,7 @@ export const useMessages = (conversationId: string | null) => {
             console.error("Error fetching messages:", err);
             setError(err);
             setLoading(false);
+            setHasMore(false);
          }
       );
 
@@ -88,8 +89,17 @@ export const useMessages = (conversationId: string | null) => {
       };
    }, [conversationId, auth?.currentUser?.uid, limitAmount, db, isVisible]);
 
+   // Reset pagination state on conversation switch
+   const [prevConversationId, setPrevConversationId] = useState(conversationId);
+   if (prevConversationId !== conversationId) {
+      setPrevConversationId(conversationId);
+      setLimitAmount(10);
+      setHasMore(true);
+      setError(null);
+   }
+
    const loadMore = () => {
-      if (hasMore && !loading) {
+      if (hasMore && !loading && !error && messages.length > 0) {
          setLimitAmount((prev) => prev + 10);
       }
    };
