@@ -87,8 +87,6 @@ export const getUploadedArtworks = async ({
 
    const res = await api.get(`/artworks/artworks/uploaded/`, { params });
 
-   console.log(res.data)
-
    return res.data;
 };
 
@@ -129,6 +127,7 @@ type UseArtworksOptions = {
    search?: string;
    filters?: ColumnFiltersState;
    queryConfig?: QueryConfig<typeof getUploadedArtworksQueryOptions>;
+   enabled?: boolean;
 };
 
 export const useGetUploadedArtworks = ({
@@ -138,6 +137,7 @@ export const useGetUploadedArtworks = ({
    search,
    page = 1,
    limit = 10,
+   enabled = true,
 }: UseArtworksOptions = {}) => {
    return useQuery({
       ...getUploadedArtworksQueryOptions({
@@ -147,6 +147,7 @@ export const useGetUploadedArtworks = ({
          limit,
          search,
       }),
+      enabled,
       ...queryConfig,
    });
 };
@@ -178,6 +179,7 @@ export const useGetUploadedArtworksInfinite = ({
    sorts,
    search,
    limit = 10,
+   enabled = true,
 }: UseArtworksOptions = {}) => {
    return useInfiniteQuery({
       queryKey: queryKeys.artwork.byUser.me({
@@ -195,5 +197,6 @@ export const useGetUploadedArtworksInfinite = ({
       },
       // Add initialPageParam here
       initialPageParam: 1,
+      enabled,
    });
 };

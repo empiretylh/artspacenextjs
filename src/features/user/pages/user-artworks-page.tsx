@@ -115,12 +115,13 @@ const ArtworksPageContainer = () => {
    // Fetch Artworks
    const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
       useGetArtworksByUserIdInfinite({
-         userId: String(user?.id),
+         userId: user?.id ? String(user.id) : "",
          page: urlState.page,
          search: urlState.search,
          filters: [...urlState.filters].filter(Boolean) as ColumnFiltersState,
          sorts: urlState.sorts,
          limit: urlState.limit,
+         enabled: !!user?.id,
       });
 
    useEffect(() => {
