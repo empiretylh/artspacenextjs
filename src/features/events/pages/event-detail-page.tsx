@@ -18,6 +18,9 @@ import { format } from "date-fns";
 import { notFound, useParams } from "next/navigation";
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { Maximize2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 
 const typeColorMap: Record<string, string> = {
    Solo: "bg-indigo-100 text-indigo-700",
@@ -64,7 +67,7 @@ export default function EventDetailPage() {
    return (
       <div className="pb-24 sm:pb-16">
          {/* Hero */}
-         <div className="relative w-screen md:w-full ml-[50%] translate-x-[-50%] aspect-[16/9] max-h-[90dvh]">
+         <div className="relative w-screen md:w-full ml-[50%] translate-x-[-50%] aspect-[4/3] sm:aspect-video md:aspect-[2/1] min-h-[320px] sm:min-h-0 max-h-[90dvh]">
             <AppImage
                src={getImage(event.cover_photo)}
                alt={event.title}
@@ -73,7 +76,31 @@ export default function EventDetailPage() {
                className="object-cover"
             />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+            <Dialog>
+               <DialogTrigger asChild>
+                  <Button 
+                     variant="secondary" 
+                     size="icon" 
+                     className="absolute top-4 right-4 z-20 rounded-full bg-black/40 text-white hover:bg-black/60 border-0"
+                     title="View full image"
+                  >
+                     <Maximize2 className="h-4 w-4" />
+                  </Button>
+               </DialogTrigger>
+               <DialogContent className="max-w-[100vw] w-screen h-[100dvh] sm:max-w-[100vw] bg-black/95 border-none ring-0 p-0 rounded-none flex items-center justify-center shadow-none [&>button]:text-white [&>button]:bg-white/10 [&>button]:hover:bg-white/20 [&>button]:top-4 [&>button]:right-4 [&>button]:w-10 [&>button]:h-10 [&>button]:rounded-full [&>button]:border-0">
+                  <DialogTitle className="sr-only">Full view of {event.title} banner</DialogTitle>
+                  <div className="relative w-full h-full max-w-[1400px] max-h-[100dvh] mx-auto p-4 sm:p-8">
+                     <AppImage
+                        src={getImage(event.cover_photo)}
+                        alt={event.title}
+                        fill
+                        className="object-contain"
+                     />
+                  </div>
+               </DialogContent>
+            </Dialog>
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
 
             <div className="absolute bottom-4 sm:bottom-8 left-1/2 w-full -translate-x-1/2 px-4 sm:px-6">
                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">

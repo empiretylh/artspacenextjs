@@ -18,10 +18,20 @@ To ensure consistent development and AI-efficiency, please refer to:
 - **Myanmar Language Font Support**: Seamless integration of `Noto_Sans_Myanmar` via `next/font/google` as a dynamic fallback, with global visual-scale balancing (`font-size-adjust`) and line-height collision prevention applied to the layout and form elements.
 
 ## 🚀 Getting Started
+### Local Development
 1. Install dependencies: `npm install`
 2. Create environment file: `cp .env.example .env` (Update values accordingly).
 3. Start dev server: `npm run dev`
 4. Visit `http://localhost:3000`.
+
+### Docker (Local Testing & Server)
+The project is configured with a multi-stage Docker build utilizing Next.js `standalone` mode for optimal performance.
+1. Build and run via Docker Compose:
+   ```bash
+   docker-compose up --build -d
+   ```
+2. The app will be available at `http://localhost:3000`.
+To deploy to a server, transfer `docker-compose.yml`, `.dockerignore`, `Dockerfile`, `.env` and run the same command.
 
 ## 📂 Project Structure (The Three Pillars)
 The project follows a vertical-slice architecture. See the [Universal Map](./src/README.md) for details.

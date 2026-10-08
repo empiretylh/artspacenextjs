@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Image as ImageIcon, Loader2, X } from "lucide-react";
+import { Send, Image as ImageIcon, Loader2, X, Package } from "lucide-react";
 import { useTypingIndicator } from "../hooks/use-typing-indicator";
 import { useImageUpload } from "@/features/service/artspace/image-upload";
 import { useTranslations } from "next-intl";
+import type { OrderCardData } from "../types";
+import { getImage } from "@/lib/utils";
 import {
    Dialog,
    DialogContent,
@@ -15,16 +17,25 @@ import {
 
 type Props = {
    conversationId: string | null;
-   onSend: (message: string, type?: 'text' | 'image', mediaUrls?: string[]) => Promise<void>;
+   onSend: (message: string, type?: 'text' | 'image', mediaUrls?: string[], orderCard?: OrderCardData | null) => Promise<void>;
+   initialValue?: string;
+   attachedOrder?: OrderCardData | null;
+   onDetachOrder?: () => void;
 };
 
-export const ChatInput = ({ conversationId, onSend }: Props) => {
-   const [value, setValue] = useState("");
+export const ChatInput = ({ conversationId, onSend, initialValue, attachedOrder, onDetachOrder }: Props) => {
+   const [value, setValue] = useState(initialValue || "");
    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
    const [caption, setCaption] = useState("");
    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
    const t = useTranslations("Chat");
+
+   useEffect(() => {
+      if (initialValue) {
+         setValue(initialValue);
+      }
+   }, [initialValue]);
    
    const fileInputRef = useRef<HTMLInputElement>(null);
    const { setTyping } = useTypingIndicator(conversationId);
@@ -38,11 +49,13 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
    }, [previewUrls]);
 
    const handleSend = async () => {
-      if (!value.trim() || isUploading) return;
+      if ((!value.trim() && !attachedOrder) || isUploading) return;
       const message = value;
+      const currentOrder = attachedOrder;
       setValue("");
       setTyping(false); 
-      await onSend(message, 'text');
+      await onSend(message, 'text', undefined, currentOrder);
+      if (onDetachOrder) onDetachOrder();
    };
 
    const MAX_IMAGES = 10;
@@ -126,6 +139,47 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
 
    return (
       <div className="border-t border-border bg-background p-2">
+         {/* Attached Order Card Draft */}
+         {attachedOrder && (
+            <div className="flex items-center justify-between gap-2 p-2 mb-2 bg-muted/40 border border-border/80 rounded-xl animate-in fade-in-50 slide-in-from-bottom-1">
+               <div className="flex items-center gap-2.5 min-w-0">
+                  {attachedOrder.artworkImage ? (
+                     <img
+                        src={getImage(attachedOrder.artworkImage)}
+                        alt={attachedOrder.artworkTitle}
+                        className="h-10 w-10 shrink-0 rounded-lg object-cover border border-border/50"
+                     />
+                  ) : (
+                     <div className="h-10 w-10 shrink-0 rounded-lg bg-muted flex items-center justify-center border">
+                        <Package className="h-5 w-5 text-muted-foreground" />
+                     </div>
+                  )}
+                  <div className="flex flex-col min-w-0">
+                     <div className="flex items-center gap-1.5 text-xs font-semibold font-sans">
+                        <span className="text-primary font-mono shrink-0">#{attachedOrder.orderCode}</span>
+                        <span className="text-foreground truncate max-w-[160px] sm:max-w-[280px]">
+                           {attachedOrder.artworkTitle}
+                        </span>
+                     </div>
+                     <span className="text-[11px] text-muted-foreground font-sans">
+                        {attachedOrder.currency || "MMK"} {attachedOrder.price}
+                     </span>
+                  </div>
+               </div>
+               {onDetachOrder && (
+                  <Button
+                     size="icon"
+                     variant="ghost"
+                     className="h-6 w-6 rounded-full text-muted-foreground hover:text-foreground shrink-0"
+                     onClick={onDetachOrder}
+                     title="Remove attached order"
+                  >
+                     <X className="h-3.5 w-3.5" />
+                  </Button>
+               )}
+            </div>
+         )}
+
          <div className="flex items-end gap-2">
             <input
                type="file"
@@ -152,7 +206,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
                   setValue(e.target.value);
                   setTyping(true);
                }}
-               placeholder={t("typeMessagePlaceholder")}
+               placeholder={attachedOrder ? "Add a message about this order (optional)..." : t("typeMessagePlaceholder")}
                rows={1}
                className="resize-none rounded-xl border-border bg-background focus-visible:ring-1 focus-visible:ring-primary text-sm min-h-[36px] py-1.5 px-3 font-sans"
                onKeyDown={(e) => {
@@ -165,7 +219,7 @@ export const ChatInput = ({ conversationId, onSend }: Props) => {
 
             <Button 
                size="icon" 
-               disabled={!value.trim() || isUploading} 
+               disabled={(!value.trim() && !attachedOrder) || isUploading} 
                onClick={handleSend}
                className="h-9 w-9 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
             >

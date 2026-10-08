@@ -17,16 +17,16 @@ export default function ProfileCardSkeleton() {
                </div>
 
                {/* User Info */}
-               <div className="text-center mb-3 w-full flex flex-col items-center">
+               <div className="text-center mb-3 w-full flex flex-col items-center min-w-0 px-1">
                   {/* Name */}
                   <div className="mb-1 min-h-[22px] w-full flex items-center justify-center">
-                     <Skeleton className="h-4 sm:h-5 w-[110px]" />
+                     <Skeleton className="h-3.5 sm:h-4 md:h-5 w-20 sm:w-28 max-w-[80%]" />
                   </div>
 
                   {/* Bio / Subtitle */}
                   <div className="h-14 sm:h-16 flex flex-col justify-center items-center gap-1.5 w-full">
-                     <Skeleton className="h-3 w-[120px]" />
-                     <Skeleton className="h-3 w-[80px]" />
+                     <Skeleton className="h-3 w-full max-w-[120px]" />
+                     <Skeleton className="h-3 w-2/3 max-w-[80px]" />
                   </div>
                </div>
 

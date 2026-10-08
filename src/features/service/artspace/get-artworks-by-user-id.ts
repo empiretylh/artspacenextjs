@@ -122,6 +122,7 @@ type UseArtworksOptions = {
    search?: string;
    filters?: ColumnFiltersState;
    queryConfig?: QueryConfig<typeof getArtworksByUserIdQueryOptions>;
+   enabled?: boolean;
 };
 
 export const useGetArtworksByUserId = ({
@@ -132,6 +133,7 @@ export const useGetArtworksByUserId = ({
    search,
    page = 1,
    limit = 10,
+   enabled = true,
 }: UseArtworksOptions) => {
    return useQuery({
       ...getArtworksByUserIdQueryOptions({
@@ -142,6 +144,7 @@ export const useGetArtworksByUserId = ({
          limit,
          search,
       }),
+      enabled: enabled && !!userId,
       ...queryConfig,
    });
 };
@@ -173,6 +176,7 @@ export const useGetArtworksByUserIdInfinite = ({
    sorts,
    search,
    limit = 10,
+   enabled = true,
 }: UseArtworksOptions) => {
    return useInfiniteQuery({
       queryKey: queryKeys.artwork.byUser.infinite(userId, {
@@ -189,5 +193,6 @@ export const useGetArtworksByUserIdInfinite = ({
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },
       initialPageParam: 1,
+      enabled: enabled && !!userId,
    });
 };

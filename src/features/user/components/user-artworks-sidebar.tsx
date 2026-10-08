@@ -34,10 +34,12 @@ export const UserArtworksSidebar: React.FC<UserArtworksSidebarProps> = ({
    const publicArtworksQuery = useGetArtworksByUserIdInfinite({
       userId: userId || "",
       limit: 6,
+      enabled: !isOwnProfile && !!userId,
    });
 
    const ownArtworksQuery = useGetUploadedArtworksInfinite({
       limit: 6,
+      enabled: isOwnProfile,
    });
 
    const {

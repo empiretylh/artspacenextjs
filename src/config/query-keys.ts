@@ -107,6 +107,7 @@ export const queryKeys = {
          ["users", userType, "infinite", normalizeParams(params)],
 
       detail: (userType: string, id: string) => ["users", userType, "detail", id],
+      publicProfile: (userId: string) => ["users", "public-profile", userId],
       blocked: {
          all: ["users", "blocked"],
          list: (params?: QueryKeys) =>

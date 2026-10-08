@@ -187,11 +187,32 @@ export const paths = {
    },
    chats: {
       path: "/chats",
-      getHref: (params?: { userId?: string | number; userType?: string }) => {
+      getHref: (params?: {
+         userId?: string | number;
+         userType?: string;
+         initialMessage?: string;
+         orderId?: string | number;
+         orderCode?: string;
+         artworkId?: string | number;
+         artworkTitle?: string;
+         artworkImage?: string;
+         price?: string | number;
+         currency?: string;
+         status?: string;
+      }) => {
          if (!params) return "/chats";
          const query = new URLSearchParams();
          if (params.userId) query.set("userId", String(params.userId));
          if (params.userType) query.set("userType", params.userType);
+         if (params.initialMessage) query.set("initialMessage", params.initialMessage);
+         if (params.orderId) query.set("orderId", String(params.orderId));
+         if (params.orderCode) query.set("orderCode", params.orderCode);
+         if (params.artworkId) query.set("artworkId", String(params.artworkId));
+         if (params.artworkTitle) query.set("artworkTitle", params.artworkTitle);
+         if (params.artworkImage) query.set("artworkImage", params.artworkImage);
+         if (params.price) query.set("price", String(params.price));
+         if (params.currency) query.set("currency", params.currency);
+         if (params.status) query.set("status", params.status);
          const queryString = query.toString();
          return queryString ? `/chats?${queryString}` : "/chats";
       },

@@ -134,7 +134,8 @@ export default function ProfileEditForm({
                      <FormControl>
                         <Textarea
                            placeholder={t("bioPlaceholder")}
-                           className="min-h-32 resize-y"
+                           className="min-h-24 resize-y"
+                           maxLength={150}
                            {...field}
                         />
                      </FormControl>

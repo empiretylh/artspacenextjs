@@ -150,7 +150,7 @@ const ProfileLayoutView = ({
                />
             </button>
 
-            <div className="mt-3 space-y-1">
+            <div className="mt-3 space-y-2">
                <div className="flex items-center justify-center gap-2">
                   <h1 className="text-2xl sm:text-3xl font-semibold font-display tracking-tight text-foreground">{fullName}</h1>
                   {user?.user_type && getUserIcon(user.user_type)}
@@ -160,7 +160,11 @@ const ProfileLayoutView = ({
                   <p className="text-sm text-muted-foreground">{user.email}</p>
                )}
                {user?.profile?.bio ? (
-                  <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-foreground/80">{user.profile.bio}</p>
+                  <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-foreground/80">
+                     {user.profile.bio.length > 150 
+                        ? `${user.profile.bio.slice(0, 150)}...` 
+                        : user.profile.bio}
+                  </p>
                ) : variant === "profile" ? (
                   <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-muted-foreground/60 italic">No bio yet. Add one in settings!</p>
                ) : null}
@@ -204,7 +208,7 @@ const ProfileLayoutView = ({
                            />
                         )}
                         {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
-                           <Link to={`${paths.chats.path}?userId=${user.id}&userType=${userType}`}>
+                           <Link to={paths.chats.getHref({ userId: user.id, userType })}>
                               <Button variant="outline" className="rounded-full h-8 px-4 text-xs font-semibold">
                                  Send Message
                               </Button>

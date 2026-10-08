@@ -57,6 +57,10 @@ export const FeaturedArtworksSection = () => {
       return <FeaturedArtworksSectionSkeleton />;
    }
 
+   if (featuredArtworks.length === 0) {
+      return null;
+   }
+
    return (
       <motion.section
          variants={sectionVariants}

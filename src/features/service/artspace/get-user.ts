@@ -6,9 +6,8 @@ import { queryKeys } from "@/config/query-keys";
 import { cache } from "react";
 import { useAuth } from "@/features/auth/store";
 import { UserRouteType } from "./get-users";
-import { getUserPath } from "@/lib/utils";
 
-export const getCachedUser = cache((id: string, userType: UserRouteType) => getUser({ userId: id, userType }))
+export const getCachedUser = cache((id: string, userType?: UserRouteType) => getUser({ userId: id, userType }));
 
 export const getUser = async ({
   userId,
@@ -25,16 +24,16 @@ export const getUser = async ({
   }
 };
 
-export const getUserQueryOptions = (userId: string, userType: UserRouteType) => {
+export const getUserQueryOptions = (userId: string, userType?: UserRouteType) => {
   return queryOptions({
-    queryKey: queryKeys.user.followed.status(userId, userType),
+    queryKey: queryKeys.user.publicProfile(userId),
     queryFn: () => getUser({ userId, userType }),
   });
 };
 
 type UseArtistOptions = {
   userId: string;
-  userType: UserRouteType;
+  userType?: UserRouteType;
   queryConfig?: QueryConfig<typeof getUserQueryOptions>;
 };
 

@@ -13,7 +13,7 @@ export const updateProfileInputSchema = z.object({
    first_name: z.string().min(1, "First name is required"),
    last_name: z.string().min(1, "Last name is required"),
    // email: z.string().email("Invalid email address"),
-   bio: z.string().optional(),
+   bio: z.string().max(150, "Bio cannot exceed 150 characters").optional(),
    website: z.string().url().optional().or(z.literal("")),
    about: z.string().optional(),
    show_email: z.boolean().optional(),

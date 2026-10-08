@@ -21,7 +21,7 @@ export const useConversations = () => {
 
    useEffect(() => {
       // Pause listener if document is not visible or no user session
-      if (!db || !user?.id || !isVisible) {
+      if (!db || !user?.id || !isVisible || !auth?.currentUser) {
          setLoading(false);
          return;
       }

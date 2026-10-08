@@ -86,7 +86,7 @@ service cloud.firestore {
             (
               request.auth.uid == resource.data.senderId &&
               request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-                'content', 'isEdited', 'editedAt', 'isDeleted', 'deletedAt', 'mediaUrls', 'linkPreview', 'reactions', 'mediaReactions'
+                'content', 'isEdited', 'editedAt', 'isDeleted', 'deletedAt', 'mediaUrls', 'linkPreview', 'reactions', 'mediaReactions', 'orderCard'
               ])
             ) ||
             (

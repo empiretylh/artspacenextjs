@@ -57,6 +57,10 @@ export const FeaturedGalleriesSlider = () => {
       return <FeaturedGalleriesSectionSkeleton />;
    }
 
+   if (featuredGalleries.length === 0) {
+      return null;
+   }
+
    return (
       <motion.section
          variants={sectionVariants}

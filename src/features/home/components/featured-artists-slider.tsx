@@ -57,6 +57,10 @@ export const FeaturedArtistsSlider = () => {
       return <FeaturedArtistsSectionSkeleton />;
    }
 
+   if (featuredArtists.length === 0) {
+      return null;
+   }
+
    return (
       <motion.section
          variants={sectionVariants}

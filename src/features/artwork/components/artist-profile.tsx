@@ -64,7 +64,10 @@ export function ArtistProfile({ artist }: { artist: User }) {
                   />
 
                   {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
-                     <Link to={`${paths.chats.path}?userId=${artist.id}&userType=${artist.user_type === 'ARTIST' ? 'artists' : artist.user_type === 'GALLERY' ? 'galleries' : 'collectors'}`}>
+                     <Link to={paths.chats.getHref({
+                        userId: artist.id,
+                        userType: artist.user_type === 'ARTIST' ? 'artists' : artist.user_type === 'GALLERY' ? 'galleries' : 'collectors'
+                     })}>
                         <Button variant="outline" className="rounded-lg font-medium shadow-xs transition-transform duration-200 active:scale-95">
                            Send Message
                         </Button>

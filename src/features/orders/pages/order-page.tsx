@@ -4,10 +4,10 @@ import React, { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useGetOrder } from '../api/get-orders'
 import { useUpdateOrder } from '../api/update-order'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import Price from '@/components/common/price'
 import AppImage from '@/components/common/app-image'
-import { getImage, getUserRouteType } from '@/lib/utils'
+import { getImage, getRelativeImagePath } from '@/lib/utils'
 import { format } from 'date-fns'
 import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
@@ -19,10 +19,10 @@ import {
   CreditCard,
   Calendar,
   MessageSquare,
-  ShieldCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { env } from '@/config/env'
+import { SUPPORT_ACCOUNT, generateOrderInquiryMessage } from '@/config/support'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -204,11 +204,28 @@ const OrderDetail = () => {
                             View Artwork Page
                           </Button>
                         </Link>
-                        {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && item.artwork.current_owner_display && (
+                        {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
                           <Link
                             to={paths.chats.getHref({
-                              userId: item.artwork.current_owner_display.id,
-                              userType: getUserRouteType(item.artwork.current_owner_display.user_type),
+                              userId: SUPPORT_ACCOUNT.userId,
+                              initialMessage: generateOrderInquiryMessage({
+                                orderId: order.id,
+                                orderCode: order.id.slice(0, 8).toUpperCase(),
+                                artworkTitle: item.artwork?.title,
+                                artworkId: item.artwork?.id,
+                                artworkImage: getRelativeImagePath(item.artwork?.image),
+                                price: item.price_at_purchase,
+                                currency: order.currency || 'MMK',
+                                status: order.status || order.order_status,
+                              }),
+                              orderId: order.id,
+                              orderCode: order.id.slice(0, 8).toUpperCase(),
+                              artworkId: item.artwork?.id,
+                              artworkTitle: item.artwork?.title,
+                              artworkImage: getRelativeImagePath(item.artwork?.image),
+                              price: item.price_at_purchase,
+                              currency: order.currency || 'MMK',
+                              status: order.status || order.order_status,
                             })}
                           >
                             <Button

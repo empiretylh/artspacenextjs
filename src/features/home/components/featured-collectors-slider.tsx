@@ -57,6 +57,10 @@ export const FeaturedCollectorsSlider = () => {
       return <FeaturedCollectorsSectionSkeleton />;
    }
 
+   if (featuredCollectors.length === 0) {
+      return null;
+   }
+
    return (
       <motion.section
          variants={sectionVariants}

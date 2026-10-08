@@ -54,14 +54,22 @@ export default function ProfileCard({ user }: { user: User }) {
                </div>
 
                {/* Info */}
-               <div className="text-center mb-3 w-full">
-                  <div className="flex items-center justify-center gap-1.5 mb-1">
-                     <Link to={getUserLink(user, authUser!)}>
-                        <h2 className="text-sm sm:text-base font-bold hover:underline truncate max-w-[140px] sm:max-w-[180px] font-display tracking-tight text-foreground">
+               <div className="text-center mb-3 w-full min-w-0">
+                  <div className="flex items-center justify-center gap-1 sm:gap-1.5 mb-1 w-full min-w-0 px-1">
+                     <Link
+                        to={getUserLink(user, authUser!)}
+                        className="min-w-0 truncate block"
+                     >
+                        <h2
+                           className="text-xs sm:text-sm md:text-base font-semibold hover:underline truncate font-display tracking-tight text-foreground"
+                           title={fullName}
+                        >
                            {fullName}
                         </h2>
                      </Link>
-                     {getUserIcon(user.user_type)}
+                     <span className="shrink-0 inline-flex items-center">
+                        {getUserIcon(user.user_type)}
+                     </span>
                   </div>
 
                   <div className="h-14 sm:h-16 flex items-center justify-center w-full">
@@ -88,7 +96,10 @@ export default function ProfileCard({ user }: { user: User }) {
                   />
                   {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
                      <Link
-                        to={`${paths.chats.path}?userId=${user.id}&userType=${user.user_type === 'ARTIST' ? 'artists' : user.user_type === 'GALLERY' ? 'galleries' : 'collectors'}`}
+                        to={paths.chats.getHref({
+                           userId: user.id,
+                           userType: user.user_type === 'ARTIST' ? 'artists' : user.user_type === 'GALLERY' ? 'galleries' : 'collectors'
+                        })}
                         className="hidden sm:inline-block"
                      >
                         <Button

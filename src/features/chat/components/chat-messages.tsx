@@ -23,7 +23,7 @@ export const ChatMessages = ({ conversationId, messages, hasMore, onLoadMore, lo
 
    // 1. Automated Pagination Trigger
    useEffect(() => {
-      if (!hasMore || loading) return;
+      if (!hasMore || loading || messages.length === 0) return;
 
       const observer = new IntersectionObserver(
          (entries) => {
@@ -40,7 +40,7 @@ export const ChatMessages = ({ conversationId, messages, hasMore, onLoadMore, lo
       }
 
       return () => observer.disconnect();
-   }, [hasMore, loading, onLoadMore]);
+   }, [hasMore, loading, onLoadMore, messages.length]);
 
    return (
       <div 

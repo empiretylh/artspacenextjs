@@ -15,8 +15,8 @@ import { getUserQueryOptions } from "@/features/service/artspace/get-user";
 import { UserRouteType } from "@/features/service/artspace/get-users";
 import { useMarkRead } from "../hooks/use-mark-read";
 import { useChatSecurity } from "../hooks/use-chat-security";
-import type { ChatUser } from "../types";
-import { useEffect, useState } from "react";
+import type { ChatUser, OrderCardData } from "../types";
+import { useEffect, useState, useRef } from "react";
 import {
    Sheet,
    SheetContent,
@@ -36,6 +36,9 @@ type Props = {
    conversationId?: string | null;
    recipientId?: string | null;
    userType?: UserRouteType | null;
+   initialMessage?: string | null;
+   orderCard?: OrderCardData | null;
+   onClearOrderContext?: () => void;
    onBack: () => void;
    variant?: "default" | "mini";
 };
@@ -44,6 +47,9 @@ export const ChatWindow = ({
    conversationId: propConversationId, 
    recipientId: propRecipientId, 
    userType = "buyers", 
+   initialMessage,
+   orderCard,
+   onClearOrderContext,
    onBack,
    variant = "default" 
 }: Props) => {
@@ -57,6 +63,16 @@ export const ChatWindow = ({
    const { conversations } = useConversations();
    const { markAsRead } = useMarkRead();
    const [isProfileOpen, setIsProfileOpen] = useState(false);
+   const [activeOrderCard, setActiveOrderCard] = useState<OrderCardData | null>(orderCard || null);
+   const lastLoadedOrderRef = useRef<string | null>(orderCard ? `${orderCard.orderId}-${orderCard.orderCode}` : null);
+
+   useEffect(() => {
+      const currentKey = orderCard ? `${orderCard.orderId}-${orderCard.orderCode}` : null;
+      if (currentKey && currentKey !== lastLoadedOrderRef.current) {
+         lastLoadedOrderRef.current = currentKey;
+         setActiveOrderCard(orderCard || null);
+      }
+   }, [orderCard]);
    
    const { messages, loading: messagesLoading, hasMore, loadMore } = useMessages(conversationId);
    const { sendMessage } = useSendMessage(conversationId);
@@ -78,7 +94,7 @@ export const ChatWindow = ({
 
    // Fetch full recipient data for profile sheet
    const { data: recipientData, isLoading: recipientLoading } = useQuery({
-      ...getUserQueryOptions(finalRecipientId || "", initialUserType),
+      ...getUserQueryOptions(finalRecipientId || ""),
       enabled: !!finalRecipientId,
    });
 
@@ -163,18 +179,26 @@ export const ChatWindow = ({
             )}
          </div>
 
-         {isBlocked ? (
-            <div className="p-4 bg-muted/30 border-t text-center text-sm text-muted-foreground italic">
-               {t("blockedWarning")}
-            </div>
-         ) : (
-            <ChatInput 
-               conversationId={conversationId}
-               onSend={async (text, type, mediaUrls) => {
-                  await sendMessage(text, recipientUser || undefined, type, mediaUrls as any);
-               }} 
-            />
-         )}
+          {isBlocked ? (
+             <div className="p-4 bg-muted/30 border-t text-center text-sm text-muted-foreground italic">
+                {t("blockedWarning")}
+             </div>
+          ) : (
+             <ChatInput 
+                conversationId={conversationId}
+                initialValue={initialMessage || undefined}
+                attachedOrder={activeOrderCard}
+                onDetachOrder={() => {
+                   setActiveOrderCard(null);
+                   onClearOrderContext?.();
+                }}
+                onSend={async (text, type, mediaUrls, orderCard) => {
+                   await sendMessage(text, recipientUser || undefined, type, mediaUrls as any, orderCard);
+                   setActiveOrderCard(null);
+                   onClearOrderContext?.();
+                }} 
+             />
+          )}
 
          {/* Profile Preview Sheet */}
          <Sheet open={isProfileOpen} onOpenChange={setIsProfileOpen}>
