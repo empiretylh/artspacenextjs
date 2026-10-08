@@ -322,7 +322,7 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                                  />
                               </FormControl>
                               <FormDescription>
-                                 Upload a cover photo (max 5MB)
+                                 Upload a cover photo (2:1 ratio recommended, max 5MB)
                               </FormDescription>
                               <FormMessage />
                            </FormItem>
@@ -508,7 +508,7 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                                  />
                               </FormControl>
                               <FormDescription>
-                                 Upload a cover photo (max 5MB)
+                                 Upload event images (max 5MB)
                               </FormDescription>
                               <FormMessage />
                            </FormItem>

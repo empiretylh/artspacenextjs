@@ -295,7 +295,7 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                               />
                            </FormControl>
                            <FormDescription>
-                              Upload a cover logo (max 5MB)
+                              Upload a cover photo (2:1 ratio recommended, max 5MB)
                            </FormDescription>
                            <FormMessage />
                         </FormItem>
@@ -457,7 +457,7 @@ export const EventUpdateForm = ({ event, onSuccess }: EventUpdateFormProps) => {
                               />
                            </FormControl>
                            <FormDescription>
-                              Upload a event images (max 5MB)
+                              Upload event images (max 5MB)
                            </FormDescription>
                            <FormMessage />
                         </FormItem>

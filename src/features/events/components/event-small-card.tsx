@@ -22,7 +22,7 @@ export const EventSmallCard: React.FC<EventSmallCardProps> = ({ event, sizes }) 
    return (
       <div className="overflow-hidden w-full border h-full rounded-md">
          <Link to={paths.events.detail.getHref(event.slug)}>
-            <div className="relative aspect-video w-full">
+            <div className="relative aspect-[2/1] w-full">
                <AppImage
                   src={getImage(event.cover_photo)}
                   alt={event.title}
