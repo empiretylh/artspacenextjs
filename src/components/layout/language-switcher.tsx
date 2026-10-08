@@ -38,7 +38,7 @@ export function LanguageSwitcher() {
                disabled={isPending}
             >
                <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-               <span>{locale === "en" ? "EN" : "MY"}</span>
+               <span>{locale === "en" ? "EN" : "MM"}</span>
                <ChevronDown className="h-3 w-3 text-muted-foreground" />
             </Button>
          </DropdownMenuTrigger>

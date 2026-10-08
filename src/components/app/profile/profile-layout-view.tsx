@@ -224,22 +224,22 @@ const ProfileLayoutView = ({
             </div>
          </div>
 
-         <div className="container mt-1 sm:mt-2">
+         <div className="w-full mt-1 sm:mt-2">
             <ScrollArea className="w-full">
-               <div className="flex justify-center my-2">
-                  <div className="inline-flex gap-4 text-sm md:text-base border-b whitespace-nowrap">
+               <div className="flex sm:justify-center my-2">
+                  <div className="flex sm:inline-flex w-full sm:w-auto justify-between sm:justify-center sm:gap-6 text-sm md:text-base border-b whitespace-nowrap">
                      {navLinks.map((link) => (
                         <Link
                            key={link.href}
                            to={link.href}
                            className={cn(
-                              "py-2 px-2 flex flex-col items-center gap-2",
-                              isActive(link.href) ? "text-primary border-b-2 border-primary -mb-px font-bold" : "border-b-2 border-transparent font-medium",
+                              "py-2 sm:py-2 px-1 sm:px-3 flex flex-col items-center justify-center gap-1.5 sm:gap-2 transition-colors",
+                              isActive(link.href) ? "text-primary border-b-2 border-primary -mb-px font-bold" : "border-b-2 border-transparent font-medium text-muted-foreground hover:text-foreground",
                               link.disabled && "pointer-events-none opacity-50"
                            )}
                         >
                            {getIcon(link.icon)}
-                           <span>{link.title}</span>
+                           <span className="hidden sm:inline">{link.title}</span>
                         </Link>
                      ))}
                   </div>

@@ -64,7 +64,7 @@ To maintain typographic elegance while serving a multilingual user base, Artspac
    - Font Stack: `var(--font-outfit-sans), var(--font-noto-myanmar), "Outfit", sans-serif`
    - Purpose: Standard readability for UI text, menus, forms, and lists.
 2. **Display/Serif (Headings & Artistic Titles)**:
-   - Font Stack: `var(--font-fraunces), var(--font-noto-serif-myanmar), "Fraunces", serif`
+   - Font Stack: `var(--font-fraunces), var(--font-masterpiece-round), var(--font-noto-serif-myanmar), "Fraunces", serif`
    - Purpose: Elegant serif style used for exhibition titles, artwork headings, artist signatures.
 
 ### Line Height Constraints

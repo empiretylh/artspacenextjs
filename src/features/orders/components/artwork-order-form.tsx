@@ -122,7 +122,7 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
       {/* Page Header */}
       <div className="space-y-1">
         <h1 className="text-2xl sm:text-3xl font-semibold font-display tracking-tight text-foreground">
-          Checkout & Shipping
+          Checkout & Delivery
         </h1>
         <p className="text-sm text-muted-foreground">
           Enter your delivery details below to reserve and order this artwork.
@@ -136,7 +136,7 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold flex items-center gap-2">
                 <Truck className="h-4 w-4 text-primary" />
-                Shipping Information
+                Delivery Information
               </CardTitle>
             </CardHeader>
             <CardContent>

@@ -274,7 +274,7 @@ const OrderDetail = () => {
 
               <div className="space-y-0.5 pt-2 border-t border-border/40">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Shipping Address
+                  Delivery Address
                 </p>
                 <p className="text-xs leading-relaxed text-foreground whitespace-pre-wrap">
                   {order.shipping_address}

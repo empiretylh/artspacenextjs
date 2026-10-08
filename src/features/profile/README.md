@@ -33,6 +33,7 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
 
 ### 2. Tab Navigation & Redundancy Prevention
 - The active navigation tab bar serves as the primary tab anchor.
+- **Responsive Presentation**: On mobile viewports (`< sm`), tab labels are hidden (`hidden sm:inline`) to display clean, evenly-distributed icon-only tabs (`flex-1`) that fit all routes on one screen without horizontal scrolling. On larger viewports (`≥ sm`), both icon and text title are shown.
 - The **Overview** tab starts directly with equal structured section blocks (`About the profile`, `Summary`, `Featured Highlights`) to avoid repeating duplicate "Overview" titles.
 
 ---

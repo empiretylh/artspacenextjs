@@ -57,7 +57,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-success: var(--success);
   --color-info: var(--color-blue-500);
-  --font-display: var(--font-fraunces), var(--font-noto-serif-myanmar), "Fraunces", serif;
+  --font-display: var(--font-fraunces), var(--font-masterpiece-round), var(--font-noto-serif-myanmar), "Fraunces", serif;
   /* --font-sans: 'Poppins', 'ui-sans-serif', 'system-ui'; */
   --font-sans: var(--font-outfit-sans), var(--font-noto-myanmar), "Outfit", sans-serif;
   --spacing: 0.25rem;
@@ -217,7 +217,7 @@ body {
   height: 100%;
 }
 
-/* Burmese Global Line Height Adjustment */
+/* Burmese Global Line Height Adjustment & Diacritics Protection */
 html[lang="my"],
 html[lang="my"] body {
   line-height: 1.6;
@@ -230,6 +230,21 @@ html[lang="my"] h4,
 html[lang="my"] h5,
 html[lang="my"] h6 {
   line-height: 1.6;
+}
+
+/* Ensure Burmese lower vocal marks (ု, ူ, ့, ှ) are not clipped by overflow containers in sidebars without shifting vertical alignment */
+html[lang="my"] [data-sidebar="menu-button"],
+html[lang="my"] [data-slot="sidebar-menu-button"],
+html[lang="my"] [data-sidebar="menu-sub-button"],
+html[lang="my"] [data-slot="sidebar-menu-sub-button"] {
+  overflow: visible !important;
+}
+
+html[lang="my"] [data-sidebar="menu-button"] > span:last-child,
+html[lang="my"] [data-slot="sidebar-menu-button"] > span:last-child,
+html[lang="my"] [data-sidebar="menu-sub-button"] > span:last-child,
+html[lang="my"] [data-slot="sidebar-menu-sub-button"] > span:last-child {
+  overflow: visible !important;
 }
 
 /* body[data-scroll-locked] [data-slot="sidebar-inset"] {
