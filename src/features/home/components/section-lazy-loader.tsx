@@ -26,7 +26,7 @@ export const SectionLazyLoader = ({
    });
 
    return (
-      <div ref={ref} className="min-h-[200px]">
+      <div ref={ref} className="empty:hidden">
          {inView ? children : skeleton}
       </div>
    );
