@@ -22,10 +22,16 @@ import AppSidebarFooter from "./app-sidbar-footer";
 import AppImage from "@/components/common/app-image";
 import { PanelLeftIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
    const { open, toggleSidebar } = useSidebar()
+   const pathname = usePathname();
    const t = useTranslations("Header");
+
+   if (pathname?.includes('/artworks/') && pathname?.includes('/order')) {
+      return null;
+   }
 
    return (
       <Sidebar collapsible="icon" className="h-auto" {...props}>

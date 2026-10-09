@@ -29,7 +29,7 @@
 - **Payment Lifecycle**: `PENDING` → `PROCESSING` → `COMPLETED` / `FAILED`.
 
 ### 3. Order History & Pagination
-- [user-order-list.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/user-order-list.tsx) renders order cards with responsive action blocks.
+- [user-order-list.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/user-order-list.tsx) renders order cards using a responsive 2-column grid on wide screens (`grid-cols-1 xl:grid-cols-2 gap-4`), eliminating empty horizontal voids and presenting compact, high-density order cards with status badges and action blocks.
 - It uses the shared [pagination.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/common/pagination.tsx) component for navigating through order history.
 
 ### 4. Communication
@@ -39,6 +39,14 @@
 - **Feature Flag**: Conditionally rendered based on `env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE`.
 
 ### 5. UI/UX & Typography Standards
+- **Distraction-Free Split-Screen Checkout**: Route `/artworks/:id/order` implements an industry-standard checkout frame (Shopify, Stripe Checkout, Artsy inspired). It removes platform sidebar and search clutter, featuring:
+  - Minimal header with Art Space logo, "Back to artwork" link, and simple "Secure Checkout" badge.
+  - Left rail: Ergonomic delivery details form constrained to optimal readable width (~560px) with grouped phone & city fields.
+  - Right rail: Subtle tinted summary rail (`bg-muted/30`) with artwork preview, live price breakdown, and authentic art trust points.
+  - Mobile ergonomics: Expandable top order summary accordion with instant toggle, ensuring zero clutter on smaller viewports.
+- **Order Details Dashboard Split**: Route `/orders/:id` uses a balanced 7/5 two-column layout (`max-w-7xl`):
+  - Left column (7 cols): Order status stepper and full purchased artwork item cards.
+  - Right column (5 cols, sticky): Itemized payment summary with live price breakdown, payment status, quick action buttons, and complete delivery information.
 - **Page Titles**: Use `font-display font-semibold text-2xl sm:text-3xl tracking-tight text-foreground` across all order screens for platform-wide consistency.
 - **Script-Safe Typography**: Artwork titles in order cards use `leading-normal sm:leading-relaxed` and responsive clamping (`line-clamp-1 sm:line-clamp-2`) to guarantee Myanmar and multi-line titles render without vertical clipping.
 - **Mobile Ergonomics**: Order cards use a 2-row footer on mobile (`Total Amount` on top row, action buttons in single horizontal row below) with the seller chat trigger anchored directly to the item metadata.

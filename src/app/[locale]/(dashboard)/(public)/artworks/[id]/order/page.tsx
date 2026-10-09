@@ -48,9 +48,7 @@ const ArtworkOrderRoute = async ({ params }: Props) => {
 
     return (
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <div className="container">
-          <ArtworkOrderForm artwork={artwork} />
-        </div>
+        <ArtworkOrderForm artwork={artwork} />
       </HydrationBoundary>
     );
   } catch (error) {

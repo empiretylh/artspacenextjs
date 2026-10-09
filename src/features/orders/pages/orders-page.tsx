@@ -52,7 +52,7 @@ const OrdersPage = () => {
   }
 
   return (
-    <div className="flex flex-col max-w-5xl mx-auto w-full space-y-6">
+    <div className="flex flex-col max-w-7xl mx-auto w-full space-y-6">
       {/* Header & Filter Controls */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-border/60">
         <div className="space-y-1">
