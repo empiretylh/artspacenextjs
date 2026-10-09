@@ -64,6 +64,7 @@ To guarantee premium presentation on platforms like Telegram, Facebook, LinkedIn
 
 ## 📂 Key Files
 - [artwork.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/pages/artwork.tsx): Artwork detail page component featuring smart back navigation (`useSafeBack`).
+- [artist-profile.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artist-profile.tsx): "About the Artist" section rendering artist info and dynamic artist summary badges (`artist_badges`).
 - [artwork-create-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-create-form.tsx): The 300+ line form handling multi-step artwork entry.
 - [artwork-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/artwork-card.tsx): The primary UI card used in the responsive grid layout.
 - [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The detail view info card used on the artwork page with instant checkout transition.

@@ -43,6 +43,11 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
   - `Hidden` with `<EyeOff />` (when `show_email` is off, clarifying that it is hidden from the public).
   - `Public` with `<Eye />` (when `show_email` is on).
 
+### 4. Artist Summary Badges
+- Reusable summary badges (`artist_badges`) assigned to artist profiles by administrators via Django admin or admin API.
+- Rendered via `<ArtistSummaryBadges />` in the "Summary" section of `ProfileOverviewPage` and `UserOverviewPage`.
+- Shows up to 4 active badges ordered by `position`, displaying category above title, badge image/icon, and optional status/description text (e.g., "Verified Profile").
+
 ---
 
 ## 📂 Related Files
@@ -50,4 +55,5 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
 - [profile-overview-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/profile/pages/profile-overview-page.tsx): Main profile landing screen with 2/3 overview info and 1/3 artwork infinite scroll sidebar.
 - [user-overview-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/user/pages/user-overview-page.tsx): Public mirror screen with 2/3 overview info and 1/3 artwork infinite scroll sidebar.
 - [user-artworks-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/user/components/user-artworks-sidebar.tsx): 1-column infinite-scrolling artwork catalog sidebar.
+- [artist-summary-badges.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/profile/artist-summary-badges.tsx): Shared summary badges grid for artist profiles.
 

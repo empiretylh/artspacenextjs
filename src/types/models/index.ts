@@ -22,6 +22,16 @@ export interface Style {
    slug: string;
 }
 
+export interface ArtistBadge {
+   id: number;
+   image: string;
+   category: string;
+   title: string;
+   text?: string | null;
+   is_active?: boolean;
+   position?: number;
+}
+
 export interface Profile {
    bio: string;
    about: string;
@@ -32,6 +42,7 @@ export interface Profile {
    features_photos: FeaturedPhoto[];
    is_following: boolean;
    isBlocked: boolean;
+   artist_badges?: ArtistBadge[];
 }
 
 export interface Category {

@@ -7,13 +7,7 @@ import { env } from "@/config/env";
 import { paths } from "@/config/paths";
 import { getImage, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
-import {
-   CheckCircle2,
-   Hand,
-   Medal,
-   Package,
-   Sparkles
-} from "lucide-react";
+import ArtistSummaryBadges from "@/components/app/profile/artist-summary-badges";
 
 export function ArtistProfile({ artist }: { artist: User }) {
    return (
@@ -90,63 +84,14 @@ export function ArtistProfile({ artist }: { artist: User }) {
             </div>
 
             {/* Summary */}
-            <div className="space-y-4">
-               <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">
-                  Summary
-               </h3>
-
-               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" aria-label="Artist summary">
-                  {/* Fine Art Type */}
-                  <div className="flex items-center space-x-3 p-3.5 rounded-xl bg-muted/30 border border-border/40 transition-colors hover:bg-muted/40">
-                     <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                        <Hand className="w-4 h-4" />
-                     </div>
-                     <div>
-                        <p className="text-xs text-muted-foreground font-medium">Kind of Fine Art</p>
-                        <p className="text-sm font-semibold text-foreground">Digital Impressionism</p>
-                     </div>
-                  </div>
-
-                  {/* Community Member */}
-                  <div className="flex items-center space-x-3 p-3.5 rounded-xl bg-muted/30 border border-border/40 transition-colors hover:bg-muted/40">
-                     <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                        <Medal className="w-4 h-4" />
-                     </div>
-                     <div className="flex-1 flex items-center justify-between gap-2">
-                        <p className="text-xs text-muted-foreground font-medium">Community Member</p>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/25">
-                           <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Verified
-                        </span>
-                     </div>
-                  </div>
-
-                  {/* Custom Orders */}
-                  <div className="flex items-center space-x-3 p-3.5 rounded-xl bg-muted/30 border border-border/40 transition-colors hover:bg-muted/40">
-                     <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                        <Sparkles className="w-4 h-4" />
-                     </div>
-                     <div className="flex-1 flex items-center justify-between gap-2">
-                        <p className="text-xs text-muted-foreground font-medium">Custom Orders</p>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/25">
-                           <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Verified
-                        </span>
-                     </div>
-                  </div>
-
-                  {/* Collaborations */}
-                  <div className="flex items-center space-x-3 p-3.5 rounded-xl bg-muted/30 border border-border/40 transition-colors hover:bg-muted/40">
-                     <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                        <Package className="w-4 h-4" />
-                     </div>
-                     <div className="flex-1 flex items-center justify-between gap-2">
-                        <p className="text-xs text-muted-foreground font-medium">Collaboration with Curators</p>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
-                           <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Available
-                        </span>
-                     </div>
-                  </div>
+            {artist.profile?.artist_badges && artist.profile.artist_badges.length > 0 && (
+               <div className="space-y-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">
+                     Summary
+                  </h3>
+                  <ArtistSummaryBadges badges={artist.profile.artist_badges} />
                </div>
-            </div>
+            )}
          </CardContent>
       </Card>
    );

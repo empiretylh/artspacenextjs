@@ -1,9 +1,5 @@
 'use client'
-import ArtistsIcon from "@/components/icons/artists-icon";
-import AwardIcon from "@/components/icons/award-icon";
-import CheckMarkIcon from "@/components/icons/check-mark-icon";
-import Layers2Icon from "@/components/icons/layers-2-icon";
-import SquareStackIcon from "@/components/icons/square-stack-icon";
+import ArtistSummaryBadges from "@/components/app/profile/artist-summary-badges";
 import { useGetProfile } from "../api/get-profile";
 import { useUploadFeaturedPhoto } from "../api/upload-featured-photo";
 import { useEditFeaturedPhoto } from "../api/edit-featured-photo";
@@ -107,59 +103,14 @@ const ProfileOverviewPage = () => {
                   </p>
                </div>
 
-               <div>
-                  <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground mb-4">
-                     Summary
-                  </h2>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm" role="list">
-                     <div className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-card/40" role="listitem">
-                        <div className="text-primary p-2 bg-primary/10 rounded-lg shrink-0">
-                           <ArtistsIcon />
-                        </div>
-                        <div className="min-w-0">
-                           <p className="text-xs text-muted-foreground">Medium / Style</p>
-                           <p className="font-medium text-foreground truncate">Digital Impressionism</p>
-                        </div>
-                     </div>
-
-                     <div className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-card/40" role="listitem">
-                        <div className="text-primary p-2 bg-primary/10 rounded-lg shrink-0">
-                           <AwardIcon />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                           <p className="text-xs text-muted-foreground">Identity</p>
-                           <div className="flex items-center text-xs font-medium text-success gap-1 mt-0.5">
-                              <CheckMarkIcon size={16} className="w-3.5 h-3.5" /> Verified Profile
-                           </div>
-                        </div>
-                     </div>
-
-                     <div className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-card/40" role="listitem">
-                        <div className="text-primary p-2 bg-primary/10 rounded-lg shrink-0">
-                           <Layers2Icon />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                           <p className="text-xs text-muted-foreground">Collection</p>
-                           <div className="flex items-center text-xs font-medium text-success gap-1 mt-0.5">
-                              <CheckMarkIcon size={16} className="w-3.5 h-3.5" /> Verified Collection
-                           </div>
-                        </div>
-                     </div>
-
-                     <div className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-card/40" role="listitem">
-                        <div className="text-primary p-2 bg-primary/10 rounded-lg shrink-0">
-                           <SquareStackIcon />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                           <p className="text-xs text-muted-foreground">Exhibition</p>
-                           <div className="flex items-center text-xs font-medium text-success gap-1 mt-0.5">
-                              <CheckMarkIcon size={16} className="w-3.5 h-3.5" /> Authenticated
-                           </div>
-                        </div>
-                     </div>
+               {userProfile.profile?.artist_badges && userProfile.profile.artist_badges.length > 0 && (
+                  <div>
+                     <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground mb-4">
+                        Summary
+                     </h2>
+                     <ArtistSummaryBadges badges={userProfile.profile.artist_badges} />
                   </div>
-               </div>
+               )}
 
                <div>
                   <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground mb-4">
