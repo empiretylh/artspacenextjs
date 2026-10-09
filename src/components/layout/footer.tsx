@@ -42,6 +42,7 @@ const Footer = ({ className, contentClassName, columnClassName, listClassName }:
       ],
       [t("help")]: [
          { title: t("helpCenter"), href: "#" },
+         { title: t("faq"), href: paths?.faq?.path ?? "/faq" },
          { title: t("termsOfService"), href: paths?.termsOfService?.path ?? "/terms-of-service" },
          { title: t("privacyPolicy"), href: paths?.privacyPolicy?.path ?? "/privacy-policy" },
       ],

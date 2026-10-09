@@ -1,6 +1,7 @@
 {
   "Common": {
-    "title": "မြန်မာအနုပညာရပ်ဝန်း"
+    "title": "မြန်မာအနုပညာရပ်ဝန်း",
+    "back": "နောက်သို့"
   },
   "Header": {
     "title": "မြန်မာအနုပညာရပ်ဝန်း",
@@ -27,6 +28,7 @@
     "press": "သတင်းထုတ်ပြန်ချက်",
     "help": "အကူအညီ",
     "helpCenter": "အကူအညီစင်တာ",
+    "faq": "အမေးများသော မေးခွန်းများ",
     "termsOfService": "ဝန်ဆောင်မှုစည်းကမ်းချက်များ",
     "privacyPolicy": "ကိုယ်ရေးအချက်အလက်မူဝါဒ",
     "subscribe": "စာရင်းသွင်းရန်",
@@ -474,5 +476,145 @@
     "loadingMore": "ထပ်မံရယူနေပါသည်...",
     "loadMoreArticles": "နောက်ထပ် ဆောင်းပါးများ ဖတ်ရှုရန်",
     "tryAgain": "ထပ်မံကြိုးစားရန်"
+  },
+  "FAQ": {
+    "title": "အမေးများသော မေးခွန်းများ",
+    "metaTitle": "အမေးများသော မေးခွန်းများ | Myanmar Art Space",
+    "metaDescription": "Myanmar Art Space အကြောင်း၊ အကောင့်များနှင့် အနုပညာလက်ရာများ၊ ရောင်းဝယ်ခြင်း၊ ပို့ဆောင်ခြင်း၊ ပြပွဲများနှင့် အချက်အလက်လုံခြုံရေးဆိုင်ရာ အမေးများသော မေးခွန်းများ။",
+    "subtitle": "Myanmar Art Space နှင့်ပတ်သက်၍ အမေးများသော မေးခွန်းများနှင့် အဖြေများကို ဤနေရာတွင် စုစည်းဖော်ပြပေးထားပါသည်။",
+    "categories": {
+      "all": "အားလုံး",
+      "general": "အထွေထွေ",
+      "accountArtwork": "Account နှင့် Artwork",
+      "buyingSelling": "ဝယ်ယူခြင်းနှင့် ရောင်းချခြင်း",
+      "shippingReturns": "Shipping နှင့် Returns",
+      "eventsCommunity": "Event နှင့် Community",
+      "privacySupport": "Privacy နှင့် Support"
+    },
+    "items": [
+      {
+        "id": "1",
+        "category": "general",
+        "question": "၁။ Myanmar Art Space (MAS) ဆိုတာဘာလဲ။",
+        "answer": "Myanmar Art Space သည် မြန်မာ့အနုပညာအသိုင်းအဝိုင်းအတွက် ရည်ရွယ်ထားသော Digital Platform တစ်ခုဖြစ်ပြီး Artists၊ Galleries နှင့် Collectors များကို ချိတ်ဆက်ပေးပါသည်။"
+      },
+      {
+        "id": "2",
+        "category": "general",
+        "question": "၂။ MAS ကို ဘယ်သူတွေ အသုံးပြုနိုင်သလဲ။",
+        "answer": "MAS တွင် Collector၊ Artist နှင့် Gallery ဟူ၍ အဓိက အသုံးပြုသူအမျိုးအစား သုံးမျိုးရှိပါသည်။"
+      },
+      {
+        "id": "3",
+        "category": "general",
+        "question": "၃။ MAS မှာ ဘာတွေလုပ်နိုင်သလဲ။",
+        "answer": "Artwork၊ Artist၊ Gallery နှင့် Collector များကို ရှာဖွေကြည့်ရှုနိုင်ပြီး Artist များကို Follow လုပ်ခြင်း၊ Search အသုံးပြုခြင်း၊ Event Information ကြည့်ရှုခြင်း၊ Messaging အသုံးပြုခြင်းနှင့် သက်ဆိုင်ရာ Order များကို ကြည့်ရှုနိုင်ပါသည်။"
+      },
+      {
+        "id": "4",
+        "category": "accountArtwork",
+        "question": "၄။ MAS အသုံးပြုရန် Account လိုအပ်ပါသလား။",
+        "answer": "MAS ၏ အချို့သော Feature များကို အသုံးပြုရန် Account ပြုလုပ်ရန် လိုအပ်ပါသည်။"
+      },
+      {
+        "id": "5",
+        "category": "accountArtwork",
+        "question": "၅။ Artist တစ်ဦးကို Follow လုပ်နိုင်ပါသလား။",
+        "answer": "ရပါတယ်။ MAS တွင် ရရှိနိုင်သော Artist Profile များကို Follow လုပ်နိုင်ပါသည်။"
+      },
+      {
+        "id": "6",
+        "category": "accountArtwork",
+        "question": "၆။ Artwork တစ်ခုကို ဘယ်လိုရှာနိုင်မလဲ။",
+        "answer": "Artwork Section၊ Genre၊ Search သို့မဟုတ် Artist နှင့် Gallery Profile များမှတစ်ဆင့် Artwork များကို ရှာဖွေနိုင်ပါသည်။"
+      },
+      {
+        "id": "7",
+        "category": "accountArtwork",
+        "question": "၇။ Artwork နှင့် Copyright ကို ဘယ်သူပိုင်ပါသလဲ။",
+        "answer": "MAS တွင် တင်ထားသော Physical Artwork နှင့် Digital Image များ၏ ပိုင်ဆိုင်ခွင့်နှင့် Copyright ကို Artist သို့မဟုတ် Gallery မှ ဆက်လက်ပိုင်ဆိုင်ပါသည်။"
+      },
+      {
+        "id": "8",
+        "category": "buyingSelling",
+        "question": "၈။ MAS မှာ Artwork ဝယ်ယူနိုင်ပါသလား။",
+        "answer": "ရပါတယ်။ Collector များသည် Artist နှင့် Gallery များက တင်ထားသော ရရှိနိုင်သည့် Artwork များကို ဝယ်ယူနိုင်ပါသည်။"
+      },
+      {
+        "id": "9",
+        "category": "buyingSelling",
+        "question": "၉။ Artwork ဈေးနှုန်းကို ဘယ်သူသတ်မှတ်ပါသလဲ။",
+        "answer": "Artwork ဈေးနှုန်းကို သက်ဆိုင်ရာ Artist သို့မဟုတ် Gallery မှ သတ်မှတ်ပါသည်။"
+      },
+      {
+        "id": "10",
+        "category": "buyingSelling",
+        "question": "၁၀။ MAS မှ Commission ကောက်ခံပါသလား။",
+        "answer": "Artist သို့မဟုတ် Gallery နှင့် သဘောတူထားသော သတ်မှတ်ချက်များအတိုင်း အောင်မြင်သော အရောင်းအဝယ်များအပေါ် Service Fee သို့မဟုတ် Commission ကောက်ခံနိုင်ပါသည်။"
+      },
+      {
+        "id": "11",
+        "category": "buyingSelling",
+        "question": "၁၁။ Order ကို ဘယ်မှာကြည့်နိုင်မလဲ။",
+        "answer": "Order Section မှတစ်ဆင့် သက်ဆိုင်ရာ Order Information များကို ကြည့်ရှုနိုင်ပါသည်။"
+      },
+      {
+        "id": "12",
+        "category": "shippingReturns",
+        "question": "၁၂။ Artwork ပို့ဆောင်ရန် ဘယ်သူ့မှာ တာဝန်ရှိပါသလဲ။",
+        "answer": "MAS မှ အခြားသတ်မှတ်ထားခြင်းမရှိပါက Artwork ကို လုံခြုံစွာ ထုပ်ပိုးရန် Seller တွင် တာဝန်ရှိပါသည်။"
+      },
+      {
+        "id": "13",
+        "category": "shippingReturns",
+        "question": "၁၃။ Artwork ရောက်လာတဲ့အချိန် ပျက်စီးနေရင် ဘာလုပ်ရမလဲ။",
+        "answer": "Delivery ရရှိပြီး ၄၈ နာရီအတွင်း ဓာတ်ပုံအထောက်အထားနှင့်အတူ support@myanmarartspace.net သို့ ဆက်သွယ်ရပါမည်။"
+      },
+      {
+        "id": "14",
+        "category": "shippingReturns",
+        "question": "၁၄။ စိတ်ပြောင်းသွားလို့ Artwork ပြန်အပ်လို့ရပါသလား။",
+        "answer": "ယေဘုယျအားဖြင့် ပြန်လည်ပေးပို့၍ မရပါ။ သက်ဆိုင်ရာ Seller မှ သီးခြားခွင့်ပြုထားပါကသာ ပြန်လည်ပေးပို့နိုင်ပါသည်။"
+      },
+      {
+        "id": "15",
+        "category": "shippingReturns",
+        "question": "၁၅။ Artwork ရဲ့ Authenticity အတွက် ဘယ်သူ့မှာ တာဝန်ရှိပါသလဲ။",
+        "answer": "Artwork ၏ Authenticity အတွက် Seller တွင်သာ တာဝန်ရှိပါသည်။"
+      },
+      {
+        "id": "16",
+        "category": "eventsCommunity",
+        "question": "၁၆။ MAS မှာ Event ကို ဝယ်ယူခြင်း သို့မဟုတ် Booking လုပ်နိုင်ပါသလား။",
+        "answer": "လက်ရှိတွင် Event Purchase နှင့် Booking Feature များ မရရှိသေးပါ။"
+      },
+      {
+        "id": "17",
+        "category": "eventsCommunity",
+        "question": "၁၇။ Artist သို့မဟုတ် Gallery ကို ဆက်သွယ်နိုင်ပါသလား။",
+        "answer": "ရပါတယ်။ MAS တွင် ရရှိနိုင်သော Messaging Function မှတစ်ဆင့် ဆက်သွယ်နိုင်ပါသည်။"
+      },
+      {
+        "id": "18",
+        "category": "eventsCommunity",
+        "question": "၁၈။ MAS မှာ ဘယ်လို Content တွေကို ခွင့်မပြုပါသလဲ။",
+        "answer": "Harassment၊ Hate Speech၊ Fraudulent Activities၊ Fake Reviews၊ Shill Bidding၊ Intellectual Property ချိုးဖောက်မှုနှင့် Community Harmony ကို ထိခိုက်စေသော Content များကို ခွင့်မပြုပါ။"
+      },
+      {
+        "id": "19",
+        "category": "privacySupport",
+        "question": "၁၉။ MAS က ကျွန်ုပ်ရဲ့ Personal Data ကို ရောင်းချပါသလား။",
+        "answer": "မရောင်းပါ။ ဝန်ဆောင်မှုပေးရန်၊ Transaction နှင့် Order များကို ဆောင်ရွက်ရန် သို့မဟုတ် ဥပဒေအရ လိုအပ်သည့်အခါတွင်သာ သက်ဆိုင်ရာအချက်အလက်များကို အသုံးပြုခြင်း သို့မဟုတ် မျှဝေခြင်း ပြုလုပ်နိုင်ပါသည်။"
+      },
+      {
+        "id": "20",
+        "category": "privacySupport",
+        "question": "၂၀။ MAS ကို ဘယ်လိုဆက်သွယ်နိုင်မလဲ။",
+        "answer": "Platform Support: support@myanmarartspace.net\nSales & Billing: sale@myanmarartspace.net\nCommunity / Artist Issues: community@myanmarartspace.net\nLegal / Admin: admin@myanmarartspace.net"
+      }
+    ],
+    "stillHaveQuestions": "သိရှိလိုသည်များ ကျန်ရှိနေသေးပါသလား?",
+    "contactSupportText": "သင်သိရှိလိုသော အဖြေကို မတွေ့ရှိပါက ကျွန်ုပ်တို့၏ ပံ့ပိုးကူညီရေးအဖွဲ့ထံသို့ အချိန်မရွေး ဆက်သွယ်မေးမြန်းနိုင်ပါသည်။",
+    "contactSupportButton": "အကူအညီရယူရန် ဆက်သွယ်ပါ"
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import BackButton from "@/components/common/back-button";
 
 const TermsOfServicePage = () => {
   const t = useTranslations("TermsOfService");
@@ -22,7 +23,9 @@ const TermsOfServicePage = () => {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-12 md:py-24 flex flex-col gap-16 md:gap-20">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 sm:py-12 md:py-16 flex flex-col gap-10 md:gap-14">
+      <BackButton />
+
       {/* Hero Section */}
       <header className="space-y-6 text-center md:text-left">
         <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-primary leading-[1.1]">
