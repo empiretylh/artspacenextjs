@@ -61,7 +61,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
         orderId: order.id,
         data: {
           payment_status: 'PROCESSING',
-          stripe_session_id: paymentIntent.txn_id,
+          mgpay_txn_id: paymentIntent.txn_id,
         },
       })
 

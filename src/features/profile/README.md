@@ -36,6 +36,13 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
 - **Responsive Presentation**: On mobile viewports (`< sm`), tab labels are hidden (`hidden sm:inline`) to display clean, evenly-distributed icon-only tabs (`flex-1`) that fit all routes on one screen without horizontal scrolling. On larger viewports (`≥ sm`), both icon and text title are shown.
 - The **Overview** tab starts directly with equal structured section blocks (`About the profile`, `Summary`, `Featured Highlights`) to avoid repeating duplicate "Overview" titles.
 
+### 3. Email Privacy & Owner Visibility
+- Email visibility follows the user's `show_email` profile setting.
+- On public profile pages (`/artists/[id]`, `/collectors/[id]`), the email is strictly hidden if `show_email` is disabled.
+- On the user's own profile page (`/profile`), the email is always displayed to the account owner along with an eye status badge:
+  - `Hidden` with `<EyeOff />` (when `show_email` is off, clarifying that it is hidden from the public).
+  - `Public` with `<Eye />` (when `show_email` is on).
+
 ---
 
 ## 📂 Related Files

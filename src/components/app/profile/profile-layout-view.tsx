@@ -19,7 +19,8 @@ import CollectionIcon from "@/components/icons/collection-icon";
 import HeartIcon from "@/components/icons/heart-icon";
 import OverviewIcon from "@/components/icons/overview-icon";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
-import { ClipboardPenLineIcon, Settings, X } from "lucide-react";
+import { ClipboardPenLineIcon, Eye, EyeOff, Settings, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
 import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
 import { UserRouteType } from "@/features/service/artspace/get-users";
@@ -156,8 +157,33 @@ const ProfileLayoutView = ({
                   {user?.user_type && getUserIcon(user.user_type)}
                </div>
 
-               {(variant === "profile" || user?.profile?.show_email) && user?.email && (
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
+               {user?.email && (
+                  variant === "profile" ? (
+                     <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
+                        <span>{user.email}</span>
+                        {user.profile?.show_email ? (
+                           <Badge
+                              variant="outline"
+                              className="gap-1 text-[11px] font-medium py-0 px-2 h-5 rounded-full border bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30"
+                              title="Visible to public"
+                           >
+                              <Eye className="w-3 h-3 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                              <span>Public</span>
+                           </Badge>
+                        ) : (
+                           <Badge
+                              variant="outline"
+                              className="gap-1 text-[11px] font-medium py-0 px-2 h-5 rounded-full border bg-amber-500/10 text-amber-700 border-amber-500/20 dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/30"
+                              title="Hidden from public"
+                           >
+                              <EyeOff className="w-3 h-3 shrink-0 text-amber-600 dark:text-amber-400" />
+                              <span>Hidden</span>
+                           </Badge>
+                        )}
+                     </div>
+                  ) : user?.profile?.show_email ? (
+                     <p className="text-sm text-muted-foreground">{user.email}</p>
+                  ) : null
                )}
                {user?.profile?.bio ? (
                   <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-foreground/80">

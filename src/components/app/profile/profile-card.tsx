@@ -27,7 +27,7 @@ export default function ProfileCard({ user }: { user: User }) {
       <div className="flex w-full justify-center border border-border/80 rounded-xl overflow-hidden bg-background shadow-xs hover:shadow-sm transition-all duration-300">
          <div className="w-full flex flex-col items-center">
             {/* Cover */}
-            <div className="hidden md:block relative aspect-8/3 overflow-hidden w-full">
+            <div className="hidden md:block relative aspect-2/1 overflow-hidden w-full">
                <AppImage
                   src={coverSrc}
                   alt={`${fullName} cover`}
@@ -38,7 +38,7 @@ export default function ProfileCard({ user }: { user: User }) {
                   sizes="(max-width: 768px) 100vw, 350px"
                   className="object-cover"
                />
-               <div className="absolute inset-0 bg-gradient-to-b from-transparent from-30% to-background" />
+               <div className="absolute inset-0 bg-gradient-to-b from-transparent from-60% to-background" />
             </div>
 
             <div className="mt-3 md:mt-[-32px] flex flex-col items-center pb-4 w-full px-2">

@@ -7,7 +7,7 @@ export default function ProfileCardSkeleton() {
             {/* Cover */}
             <div className="hidden md:block relative aspect-8/3 w-full">
                <Skeleton className="absolute inset-0 w-full h-full rounded-none" />
-               <div className="absolute inset-0 bg-gradient-to-b from-transparent from-30% to-background" />
+               <div className="absolute inset-0 bg-gradient-to-b from-transparent from-60% to-background" />
             </div>
 
             <div className="mt-3 md:mt-[-32px] flex flex-col items-center pb-4 w-full px-2">

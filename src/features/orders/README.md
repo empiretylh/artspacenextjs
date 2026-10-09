@@ -25,7 +25,8 @@
 
 ### 2. Payment Integration
 - Payments use a dedicated Server Action in [payment.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/api/payment.ts).
-- **External API**: It calls `env.PAYMENT_API_URL` to receive a `payment_url`.
+- **External API**: It calls `env.PAYMENT_API_URL` to receive a `payment_url` and `txn_id`.
+- **Order Update**: Order status is patched to `PROCESSING` with `mgpay_txn_id` (`updateOrder`) before redirecting to the payment gateway.
 - **Payment Lifecycle**: `PENDING` → `PROCESSING` → `COMPLETED` / `FAILED`.
 
 ### 3. Order History & Pagination

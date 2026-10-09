@@ -65,6 +65,7 @@ export interface Order {
    order_status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED" | "CANCELLED";
    payment_status?: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
    stripe_session_id?: string | null;
+   mgpay_txn_id?: string | null;
    status?: "PENDING" | "COMPLETED" | "FAILED" | "SHIPPED" | "CANCELLED";
    paid_at?: Date | string | null;
    created_at: Date | string;
