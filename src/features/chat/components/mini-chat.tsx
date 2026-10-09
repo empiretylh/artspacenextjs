@@ -43,8 +43,9 @@ export const MiniChat = () => {
     }
   }, []);
 
-  // Hide on main chat page (supports localized paths like /en/chats)
+  // Hide on main chat page (supports localized paths like /en/chats) and checkout pages
   const isChatPage = pathname?.split("/").includes("chats");
+  const isCheckoutPage = Boolean(pathname?.includes("/artworks/") && pathname?.includes("/order"));
 
   // Track if user visited the chats page in this session
   useEffect(() => {
@@ -54,7 +55,7 @@ export const MiniChat = () => {
     }
   }, [isChatPage]);
 
-  if (!mounted || isChatPage || !user || !hasVisitedChats) return null;
+  if (!mounted || isChatPage || isCheckoutPage || !user || !hasVisitedChats) return null;
 
   const unreadCount = conversations.reduce((acc, conv) => {
     return acc + (conv.unreadCount?.[String(user.id)] || 0);

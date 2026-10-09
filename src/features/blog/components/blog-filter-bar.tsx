@@ -116,7 +116,7 @@ export const BlogFilterBar: React.FC<BlogFilterBarProps> = ({
                   <SelectContent align="end">
                      <SelectItem value="all">{t("allLanguages")}</SelectItem>
                      <SelectItem value="en">English (EN)</SelectItem>
-                     <SelectItem value="my">မြန်မာစာ (MY)</SelectItem>
+                     <SelectItem value="my">မြန်မာစာ (MM)</SelectItem>
                   </SelectContent>
                </Select>
 

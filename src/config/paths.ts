@@ -323,6 +323,10 @@ export const paths = {
       path: "/about-us",
       getHref: () => "/about-us",
    },
+   faq: {
+      path: "/faq",
+      getHref: () => "/faq",
+   },
    termsOfService: {
       path: "/terms-of-service",
       getHref: () => "/terms-of-service",

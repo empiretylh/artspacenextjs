@@ -3,6 +3,7 @@ import { AuthInitializer } from "@/features/auth/auth-initializer";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { Outfit, Fraunces, Noto_Sans_Myanmar, Noto_Serif_Myanmar } from "next/font/google";
+import localFont from "next/font/local";
 import "@/app/globals.css";
 import AppProvider from "./providers";
 import { env } from "@/config/env";
@@ -33,6 +34,12 @@ const notoSerifMyanmar = Noto_Serif_Myanmar({
   variable: "--font-noto-serif-myanmar",
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["myanmar"],
+})
+
+const masterpieceUniRound = localFont({
+  src: "../../assets/fonts/MasterpieceUniRound.ttf",
+  variable: "--font-masterpiece-round",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -70,7 +77,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${outfitSans.variable} ${fraunces.variable} ${notoMyanmar.variable} ${notoSerifMyanmar.variable} antialiased`}
+        className={`${outfitSans.variable} ${fraunces.variable} ${notoMyanmar.variable} ${notoSerifMyanmar.variable} ${masterpieceUniRound.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
           <NextTopLoader

@@ -13,6 +13,7 @@ export const createOrderInputSchema = z.object({
       message: "Shipping address must be at least 5 characters.",
    }),
    stripe_session_id: z.string().optional(),
+   mgpay_txn_id: z.string().optional(),
    items: z
       .array(
          z.object({

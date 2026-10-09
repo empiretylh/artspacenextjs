@@ -21,14 +21,16 @@
 - Orders are created via [artwork-order-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/artwork-order-form.tsx).
 - **Validation**: Requires `shipping_address`, `phone_number`, and `city`.
 - **Live Summary**: Dynamically calculates delivery charges based on selected city and updates the total price in real time.
+- **Route Streaming & Prefetching**: Route `/artworks/:id/order` features an instant Next.js streaming skeleton (`loading.tsx`), server-side parallel prefetching for both artwork details and delivery charges (`getDeliveryCharges`), and localized request session validation to ensure sub-second page transitions.
 
 ### 2. Payment Integration
 - Payments use a dedicated Server Action in [payment.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/api/payment.ts).
-- **External API**: It calls `env.PAYMENT_API_URL` to receive a `payment_url`.
+- **External API**: It calls `env.PAYMENT_API_URL` to receive a `payment_url` and `txn_id`.
+- **Order Update**: Order status is patched to `PROCESSING` with `mgpay_txn_id` (`updateOrder`) before redirecting to the payment gateway.
 - **Payment Lifecycle**: `PENDING` → `PROCESSING` → `COMPLETED` / `FAILED`.
 
 ### 3. Order History & Pagination
-- [user-order-list.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/user-order-list.tsx) renders order cards with responsive action blocks.
+- [user-order-list.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/user-order-list.tsx) renders order cards using a responsive 2-column grid on wide screens (`grid-cols-1 xl:grid-cols-2 gap-4`), eliminating empty horizontal voids and presenting compact, high-density order cards with status badges and action blocks.
 - It uses the shared [pagination.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/common/pagination.tsx) component for navigating through order history.
 
 ### 4. Communication
@@ -38,6 +40,14 @@
 - **Feature Flag**: Conditionally rendered based on `env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE`.
 
 ### 5. UI/UX & Typography Standards
+- **Distraction-Free Split-Screen Checkout**: Route `/artworks/:id/order` implements an industry-standard checkout frame (Shopify, Stripe Checkout, Artsy inspired). It removes platform sidebar and search clutter, featuring:
+  - Minimal header with Art Space logo, "Back to artwork" link, and simple "Secure Checkout" badge.
+  - Left rail: Ergonomic delivery details form constrained to optimal readable width (~560px) with grouped phone & city fields.
+  - Right rail: Subtle tinted summary rail (`bg-muted/30`) with artwork preview, live price breakdown, and authentic art trust points.
+  - Mobile ergonomics: Expandable top order summary accordion with instant toggle, ensuring zero clutter on smaller viewports.
+- **Order Details Dashboard Split**: Route `/orders/:id` uses a balanced 7/5 two-column layout (`max-w-7xl`):
+  - Left column (7 cols): Order status stepper and full purchased artwork item cards.
+  - Right column (5 cols, sticky): Itemized payment summary with live price breakdown, payment status, quick action buttons, and complete delivery information.
 - **Page Titles**: Use `font-display font-semibold text-2xl sm:text-3xl tracking-tight text-foreground` across all order screens for platform-wide consistency.
 - **Script-Safe Typography**: Artwork titles in order cards use `leading-normal sm:leading-relaxed` and responsive clamping (`line-clamp-1 sm:line-clamp-2`) to guarantee Myanmar and multi-line titles render without vertical clipping.
 - **Mobile Ergonomics**: Order cards use a 2-row footer on mobile (`Total Amount` on top row, action buttons in single horizontal row below) with the seller chat trigger anchored directly to the item metadata.

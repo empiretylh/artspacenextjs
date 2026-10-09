@@ -19,7 +19,8 @@ import CollectionIcon from "@/components/icons/collection-icon";
 import HeartIcon from "@/components/icons/heart-icon";
 import OverviewIcon from "@/components/icons/overview-icon";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
-import { ClipboardPenLineIcon, Settings, X } from "lucide-react";
+import { ClipboardPenLineIcon, Eye, EyeOff, Settings, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
 import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
 import { UserRouteType } from "@/features/service/artspace/get-users";
@@ -156,8 +157,33 @@ const ProfileLayoutView = ({
                   {user?.user_type && getUserIcon(user.user_type)}
                </div>
 
-               {(variant === "profile" || user?.profile?.show_email) && user?.email && (
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
+               {user?.email && (
+                  variant === "profile" ? (
+                     <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
+                        <span>{user.email}</span>
+                        {user.profile?.show_email ? (
+                           <Badge
+                              variant="outline"
+                              className="gap-1 text-[11px] font-medium py-0 px-2 h-5 rounded-full border bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30"
+                              title="Visible to public"
+                           >
+                              <Eye className="w-3 h-3 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                              <span>Public</span>
+                           </Badge>
+                        ) : (
+                           <Badge
+                              variant="outline"
+                              className="gap-1 text-[11px] font-medium py-0 px-2 h-5 rounded-full border bg-amber-500/10 text-amber-700 border-amber-500/20 dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/30"
+                              title="Hidden from public"
+                           >
+                              <EyeOff className="w-3 h-3 shrink-0 text-amber-600 dark:text-amber-400" />
+                              <span>Hidden</span>
+                           </Badge>
+                        )}
+                     </div>
+                  ) : user?.profile?.show_email ? (
+                     <p className="text-sm text-muted-foreground">{user.email}</p>
+                  ) : null
                )}
                {user?.profile?.bio ? (
                   <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-foreground/80">
@@ -224,22 +250,22 @@ const ProfileLayoutView = ({
             </div>
          </div>
 
-         <div className="container mt-1 sm:mt-2">
+         <div className="w-full mt-1 sm:mt-2">
             <ScrollArea className="w-full">
-               <div className="flex justify-center my-2">
-                  <div className="inline-flex gap-4 text-sm md:text-base border-b whitespace-nowrap">
+               <div className="flex sm:justify-center my-2">
+                  <div className="flex sm:inline-flex w-full sm:w-auto justify-between sm:justify-center sm:gap-6 text-sm md:text-base border-b whitespace-nowrap">
                      {navLinks.map((link) => (
                         <Link
                            key={link.href}
                            to={link.href}
                            className={cn(
-                              "py-2 px-2 flex flex-col items-center gap-2",
-                              isActive(link.href) ? "text-primary border-b-2 border-primary -mb-px font-bold" : "border-b-2 border-transparent font-medium",
+                              "py-2 sm:py-2 px-1 sm:px-3 flex flex-col items-center justify-center gap-1.5 sm:gap-2 transition-colors",
+                              isActive(link.href) ? "text-primary border-b-2 border-primary -mb-px font-bold" : "border-b-2 border-transparent font-medium text-muted-foreground hover:text-foreground",
                               link.disabled && "pointer-events-none opacity-50"
                            )}
                         >
                            {getIcon(link.icon)}
-                           <span>{link.title}</span>
+                           <span className="hidden sm:inline">{link.title}</span>
                         </Link>
                      ))}
                   </div>

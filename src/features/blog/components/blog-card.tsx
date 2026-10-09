@@ -142,7 +142,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({
                   className="absolute top-2.5 right-2.5 text-[9px] uppercase font-bold backdrop-blur-md bg-background/85 px-1.5 py-0.5 border-border/60"
                >
                   <Globe className="w-2.5 h-2.5 mr-0.5" />
-                  {post.language}
+                  {post.language === "my" ? "MM" : post.language.toUpperCase()}
                </Badge>
             )}
          </Link>

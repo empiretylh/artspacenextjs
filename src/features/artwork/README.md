@@ -55,13 +55,18 @@ To guarantee premium presentation on platforms like Telegram, Facebook, LinkedIn
 | **Visibility** | `PUBLIC`, `PRIVATE` |
 
 ## 📈 Analytics Tracking
-- **`begin_checkout`**: Triggered when a user clicks the "Order Now" button on the [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx).
+- **`begin_checkout`**: Triggered when a user clicks the "Collect Now" button on the [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx).
 - **Source Context**: Auto-tagged as `artwork_detail` via the `useSource()` hook.
+
+## ⚡ Performance & Navigation
+- **Checkout Prefetching**: [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx) uses `@/i18n/routing` router prefetching on mount/available status to eliminate navigation latency when moving to `/artworks/:id/order`.
+- **Immediate Transition**: Uses React `useTransition` to provide instant pending feedback and spinner states on the "Collect Now" button during navigation.
 
 ## 📂 Key Files
 - [artwork.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/pages/artwork.tsx): Artwork detail page component featuring smart back navigation (`useSafeBack`).
+- [artist-profile.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artist-profile.tsx): "About the Artist" section rendering artist info and dynamic artist summary badges (`artist_badges`).
 - [artwork-create-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-create-form.tsx): The 300+ line form handling multi-step artwork entry.
 - [artwork-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/artwork-card.tsx): The primary UI card used in the responsive grid layout.
-- [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The detail view info card used on the artwork page.
+- [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The detail view info card used on the artwork page with instant checkout transition.
 - [route.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/app/api/og/route.tsx): Unified, dynamic, high-fidelity Open Graph image generator API.
 

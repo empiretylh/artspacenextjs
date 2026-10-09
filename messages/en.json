@@ -1,6 +1,7 @@
 {
   "Common": {
-    "title": "Myanmar Art Space"
+    "title": "Myanmar Art Space",
+    "back": "Back"
   },
   "Header": {
     "title": "Myanmar Art Space",
@@ -27,6 +28,7 @@
     "press": "Press",
     "help": "Help",
     "helpCenter": "Help Center",
+    "faq": "FAQ",
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
     "subscribe": "Subscribe",
@@ -91,7 +93,7 @@
       "notForSale": "Not For Sale",
       "saveForLater": "Save for Later",
       "needHelp": "Need Help?",
-      "securePayment": "Secure payment methods: card, bank",
+      "securePayment": "Secure payment",
       "freeReturns": "Free and easy 14 days returns",
       "characteristicsTitle": "Characteristics of the Painting",
       "yearOfCreation": "Year of Creation",
@@ -119,7 +121,7 @@
   },
   "Checkout": {
     "title": "Checkout",
-    "shippingAddress": "Shipping Address",
+    "shippingAddress": "Delivery Address",
     "firstName": "First name",
     "lastName": "Last name",
     "address": "Address",
@@ -135,7 +137,7 @@
     "cartEmptyTitle": "Cart is empty",
     "cartEmptyMessage": "Add items before checkout.",
     "missingAddressTitle": "Missing address",
-    "missingAddressMessage": "Please enter a shipping address.",
+    "missingAddressMessage": "Please enter a delivery address.",
     "orderCreatedTitle": "Order created",
     "orderCreatedMessage": "Your order has been placed!",
     "errorTitle": "Error",
@@ -474,5 +476,145 @@
     "loadingMore": "Loading more...",
     "loadMoreArticles": "Load more articles",
     "tryAgain": "Try Again"
+  },
+  "FAQ": {
+    "title": "Frequently Asked Questions",
+    "metaTitle": "Frequently Asked Questions | Myanmar Art Space",
+    "metaDescription": "Find answers to commonly asked questions about Myanmar Art Space, user roles, buying and selling, shipping, events, and privacy.",
+    "subtitle": "Everything you need to know about Myanmar Art Space, our community, and how to buy and showcase art.",
+    "categories": {
+      "all": "All",
+      "general": "General",
+      "accountArtwork": "Account & Artwork",
+      "buyingSelling": "Buying & Selling",
+      "shippingReturns": "Shipping & Returns",
+      "eventsCommunity": "Events & Community",
+      "privacySupport": "Privacy & Support"
+    },
+    "items": [
+      {
+        "id": "1",
+        "category": "general",
+        "question": "1. What is Myanmar Art Space (MAS)?",
+        "answer": "Myanmar Art Space is a digital platform dedicated to the Myanmar art community, connecting Artists, Galleries, and Collectors."
+      },
+      {
+        "id": "2",
+        "category": "general",
+        "question": "2. Who can use MAS?",
+        "answer": "MAS supports three main user roles: Collectors, Artists, and Galleries."
+      },
+      {
+        "id": "3",
+        "category": "general",
+        "question": "3. What can I do on MAS?",
+        "answer": "You can discover artworks, artists, galleries, and collectors, follow artists, search for content, view event information, use messaging features, and manage applicable orders."
+      },
+      {
+        "id": "4",
+        "category": "accountArtwork",
+        "question": "4. Do I need an account to use MAS?",
+        "answer": "Certain MAS features require you to register an account."
+      },
+      {
+        "id": "5",
+        "category": "accountArtwork",
+        "question": "5. Can I follow an Artist?",
+        "answer": "Yes. Users can follow available Artist profiles through MAS."
+      },
+      {
+        "id": "6",
+        "category": "accountArtwork",
+        "question": "6. How can I find an artwork?",
+        "answer": "You can browse artworks, explore them by genre, use Search, or discover them through Artist and Gallery profiles."
+      },
+      {
+        "id": "7",
+        "category": "accountArtwork",
+        "question": "7. Who owns the artwork and its copyright?",
+        "answer": "Artists and Galleries retain ownership and copyright of their physical artworks and digital images uploaded to MAS."
+      },
+      {
+        "id": "8",
+        "category": "buyingSelling",
+        "question": "8. Can I purchase artwork through MAS?",
+        "answer": "Yes. Collectors can purchase available artworks listed by Artists and Galleries."
+      },
+      {
+        "id": "9",
+        "category": "buyingSelling",
+        "question": "9. Who sets the artwork price?",
+        "answer": "The Artist or Gallery is responsible for setting the artwork price."
+      },
+      {
+        "id": "10",
+        "category": "buyingSelling",
+        "question": "10. Does MAS charge a commission?",
+        "answer": "MAS may charge a service fee or commission on successful sales according to the applicable agreement with the Artist or Gallery."
+      },
+      {
+        "id": "11",
+        "category": "buyingSelling",
+        "question": "11. Where can I check my order?",
+        "answer": "Applicable order information can be accessed through the Order section."
+      },
+      {
+        "id": "12",
+        "category": "shippingReturns",
+        "question": "12. Who is responsible for shipping?",
+        "answer": "Unless otherwise stated by MAS, the Seller is responsible for securely packaging the artwork."
+      },
+      {
+        "id": "13",
+        "category": "shippingReturns",
+        "question": "13. What should I do if my artwork arrives damaged?",
+        "answer": "Contact support@myanmarartspace.net within 48 hours of delivery with photographic evidence."
+      },
+      {
+        "id": "14",
+        "category": "shippingReturns",
+        "question": "14. Can I return an artwork if I change my mind?",
+        "answer": "Generally, change-of-mind returns are not accepted unless specifically offered by the individual Seller."
+      },
+      {
+        "id": "15",
+        "category": "shippingReturns",
+        "question": "15. Who is responsible for artwork authenticity?",
+        "answer": "The Seller is solely responsible for guaranteeing the authenticity of the artwork."
+      },
+      {
+        "id": "16",
+        "category": "eventsCommunity",
+        "question": "16. Can I purchase or book an event through MAS?",
+        "answer": "Currently, event purchase and booking are not available."
+      },
+      {
+        "id": "17",
+        "category": "eventsCommunity",
+        "question": "17. Can I communicate with Artists or Galleries?",
+        "answer": "Yes. MAS provides messaging functionality where applicable."
+      },
+      {
+        "id": "18",
+        "category": "eventsCommunity",
+        "question": "18. What type of content is prohibited on MAS?",
+        "answer": "Harassment, hate speech, fraudulent activities, fake reviews, shill bidding, intellectual property infringement, and content that disrupts community harmony are prohibited."
+      },
+      {
+        "id": "19",
+        "category": "privacySupport",
+        "question": "19. Does MAS sell my personal data?",
+        "answer": "No. MAS does not sell users' personal data. Information may be shared where necessary to provide services, process transactions, fulfill orders, or comply with legal requirements."
+      },
+      {
+        "id": "20",
+        "category": "privacySupport",
+        "question": "20. How can I contact MAS?",
+        "answer": "Platform Support: support@myanmarartspace.net\nSales & Billing: sale@myanmarartspace.net\nCommunity / Artist Issues: community@myanmarartspace.net\nLegal / Admin: admin@myanmarartspace.net"
+      }
+    ],
+    "stillHaveQuestions": "Still have questions?",
+    "contactSupportText": "Can't find the answer you're looking for? Reach out to our dedicated support team or explore our Help Center.",
+    "contactSupportButton": "Contact Support"
   }
 }

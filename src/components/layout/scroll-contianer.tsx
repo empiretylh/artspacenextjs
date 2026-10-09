@@ -83,6 +83,18 @@ const ScrollContainer = ({ children, header }: { children: React.ReactNode; head
 
   const source = analyticSourceFromPathname(pathname);
 
+  const isCheckoutPage = Boolean(pathname?.includes('/artworks/') && pathname?.includes('/order'));
+
+  if (isCheckoutPage) {
+    return (
+      <SourceProvider value={{ source }}>
+        <div className="h-screen w-full bg-background flex flex-col overflow-y-auto">
+          {children}
+        </div>
+      </SourceProvider>
+    );
+  }
+
   return (
     <ScrollArea
       viewportRef={ref}

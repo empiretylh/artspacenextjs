@@ -61,7 +61,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
         orderId: order.id,
         data: {
           payment_status: 'PROCESSING',
-          stripe_session_id: paymentIntent.txn_id,
+          mgpay_txn_id: paymentIntent.txn_id,
         },
       })
 
@@ -143,7 +143,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 font-semibold text-[11px]">
             ✓
           </span>
-          <span>1. Shipping Details</span>
+          <span>1. Delivery Details</span>
         </div>
         <div className="h-px w-12 bg-border" />
         <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
@@ -265,10 +265,10 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
             </div>
           </div>
 
-          {/* Shipping Address Preview */}
+          {/* Delivery Address Preview */}
           <div className="border border-border/50 rounded-xl p-4 space-y-1 bg-muted/10">
             <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Shipping Destination
+              Delivery Destination
             </h4>
             <p className="text-sm font-semibold text-foreground">{order.name}</p>
             <p className="text-xs text-muted-foreground whitespace-pre-wrap">{order.shipping_address}</p>

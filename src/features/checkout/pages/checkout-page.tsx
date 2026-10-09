@@ -43,7 +43,7 @@ export default function CheckoutPage() {
             data: {
                total_price: getTotal(),
                shipping_address: shippingAddress,
-               stripe_session_id: "", // left empty for now
+               mgpay_txn_id: "", // left empty for now
                items: items.map((i) => ({
                   artworkId: i.id,
                   price_at_purchase: i.price,

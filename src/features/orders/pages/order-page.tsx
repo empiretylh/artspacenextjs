@@ -82,7 +82,7 @@ const OrderDetail = () => {
   const paymentStatus = order.payment_status || 'PENDING'
 
   return (
-    <div className="max-w-5xl mx-auto w-full space-y-6">
+    <div className="max-w-7xl mx-auto w-full space-y-6">
       {/* Top Navigation */}
       <div>
         <Link
@@ -129,14 +129,16 @@ const OrderDetail = () => {
         </div>
       </div>
 
-      {/* Visual Order Progress Stepper */}
-      <Card className="border border-border/60 shadow-2xs p-4 sm:p-6 bg-muted/10">
-        <OrderStepper orderStatus={orderStatus} paymentStatus={paymentStatus} />
-      </Card>
+      {/* Balanced 2-Column Dashboard (7/5 split) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column (7 cols) - Stepper & Purchased Artworks */}
+        <div className="lg:col-span-7 space-y-6">
+          {/* Visual Order Progress Stepper */}
+          <Card className="border border-border/60 shadow-2xs p-4 sm:p-6 bg-muted/10">
+            <OrderStepper orderStatus={orderStatus} paymentStatus={paymentStatus} />
+          </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        {/* Left Column - Artworks in Order */}
-        <div className="lg:col-span-2 space-y-6">
+          {/* Purchased Artworks Card */}
           <Card className="border border-border/60 shadow-xs overflow-hidden">
             <div className="bg-muted/30 p-4 px-6 border-b border-border/50">
               <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -247,9 +249,98 @@ const OrderDetail = () => {
           </Card>
         </div>
 
-        {/* Right Column - Customer, Shipping & Payment Summary */}
-        <div className="space-y-6">
-          {/* Shipping & Customer Card */}
+        {/* Right Column (5 cols) - Sticky Payment Summary & Delivery Info */}
+        <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-6">
+          {/* Payment & Actions Card */}
+          <Card className="border border-border/60 shadow-xs">
+            <div className="bg-muted/30 p-4 px-6 border-b border-border/50">
+              <CardTitle className="text-base font-semibold flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-primary" />
+                Payment Summary
+              </CardTitle>
+            </div>
+            <CardContent className="pt-4 space-y-3.5 text-sm">
+              <div className="flex justify-between items-center pb-2 border-b border-border/40">
+                <span className="text-xs text-muted-foreground">Payment Status</span>
+                <OrderStatusBadge status={paymentStatus} type="payment" />
+              </div>
+
+              {order.price && (
+                <div className="flex justify-between items-center text-xs text-muted-foreground">
+                  <span>Artwork Price</span>
+                  <span className="font-medium text-foreground">
+                    <Price
+                      price={order.price}
+                      currency={{
+                        code: order.currency || 'MMK',
+                        name: order.currency || 'MMK',
+                        symbol: '',
+                        numeric_code: '',
+                      }}
+                    />
+                  </span>
+                </div>
+              )}
+
+              {order.deli_fee && Number(order.deli_fee) > 0 && (
+                <div className="flex justify-between items-center text-xs text-muted-foreground">
+                  <span>Delivery Charge</span>
+                  <span className="font-medium text-foreground">
+                    <Price
+                      price={order.deli_fee}
+                      currency={{
+                        code: order.currency || 'MMK',
+                        name: order.currency || 'MMK',
+                        symbol: '',
+                        numeric_code: '',
+                      }}
+                    />
+                  </span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center text-xs pb-2 border-b border-border/40">
+                <span className="text-muted-foreground">Payment Date</span>
+                <span className="font-medium text-foreground">
+                  {order.paid_at ? format(new Date(order.paid_at), 'PP') : 'Unpaid'}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center pt-1 text-base font-semibold">
+                <span>Total Amount</span>
+                <span className="text-lg font-semibold text-primary">
+                  <Price
+                    price={order.total_price}
+                    currency={{
+                      code: order.currency || 'MMK',
+                      name: order.currency || 'MMK',
+                      symbol: '',
+                      numeric_code: '',
+                    }}
+                  />
+                </span>
+              </div>
+
+              {orderStatus === 'PENDING' &&
+                (paymentStatus === 'PENDING' || paymentStatus === 'FAILED') && (
+                  <div className="space-y-2 pt-3 border-t border-border/40">
+                    <Link to={paths.order.payment.getHref(order.id)} className="block">
+                      <Button className="w-full font-semibold shadow-xs">Complete Payment</Button>
+                    </Link>
+                    <Button
+                      variant="outline"
+                      onClick={handleCancel}
+                      disabled={updateOrder.isPending}
+                      className="w-full text-xs font-medium text-muted-foreground hover:text-destructive hover:border-destructive/30"
+                    >
+                      Cancel Order
+                    </Button>
+                  </div>
+                )}
+            </CardContent>
+          </Card>
+
+          {/* Shipping & Delivery Info Card */}
           <Card className="border border-border/60 shadow-xs">
             <div className="bg-muted/30 p-4 px-6 border-b border-border/50">
               <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -274,7 +365,7 @@ const OrderDetail = () => {
 
               <div className="space-y-0.5 pt-2 border-t border-border/40">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Shipping Address
+                  Delivery Address
                 </p>
                 <p className="text-xs leading-relaxed text-foreground whitespace-pre-wrap">
                   {order.shipping_address}
@@ -287,46 +378,6 @@ const OrderDetail = () => {
                   <p className="text-xs font-medium text-foreground">{order.phone_number}</p>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          {/* Payment & Actions Card */}
-          <Card className="border border-border/60 shadow-xs">
-            <div className="bg-muted/30 p-4 px-6 border-b border-border/50">
-              <CardTitle className="text-base font-semibold flex items-center gap-2">
-                <CreditCard className="h-4 w-4 text-primary" />
-                Payment Summary
-              </CardTitle>
-            </div>
-            <CardContent className="pt-4 space-y-3.5 text-sm">
-              <div className="flex justify-between items-center pb-2 border-b border-border/40">
-                <span className="text-xs text-muted-foreground">Payment Status</span>
-                <OrderStatusBadge status={paymentStatus} type="payment" />
-              </div>
-
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground">Payment Date</span>
-                <span className="font-medium text-foreground">
-                  {order.paid_at ? format(new Date(order.paid_at), 'PP') : 'Unpaid'}
-                </span>
-              </div>
-
-              {orderStatus === 'PENDING' &&
-                (paymentStatus === 'PENDING' || paymentStatus === 'FAILED') && (
-                  <div className="space-y-2 pt-3 border-t border-border/40">
-                    <Link to={paths.order.payment.getHref(order.id)} className="block">
-                      <Button className="w-full font-semibold shadow-xs">Complete Payment</Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      onClick={handleCancel}
-                      disabled={updateOrder.isPending}
-                      className="w-full text-xs font-medium text-muted-foreground hover:text-destructive hover:border-destructive/30"
-                    >
-                      Cancel Order
-                    </Button>
-                  </div>
-                )}
             </CardContent>
           </Card>
         </div>

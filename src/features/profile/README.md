@@ -33,7 +33,20 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
 
 ### 2. Tab Navigation & Redundancy Prevention
 - The active navigation tab bar serves as the primary tab anchor.
+- **Responsive Presentation**: On mobile viewports (`< sm`), tab labels are hidden (`hidden sm:inline`) to display clean, evenly-distributed icon-only tabs (`flex-1`) that fit all routes on one screen without horizontal scrolling. On larger viewports (`≥ sm`), both icon and text title are shown.
 - The **Overview** tab starts directly with equal structured section blocks (`About the profile`, `Summary`, `Featured Highlights`) to avoid repeating duplicate "Overview" titles.
+
+### 3. Email Privacy & Owner Visibility
+- Email visibility follows the user's `show_email` profile setting.
+- On public profile pages (`/artists/[id]`, `/collectors/[id]`), the email is strictly hidden if `show_email` is disabled.
+- On the user's own profile page (`/profile`), the email is always displayed to the account owner along with an eye status badge:
+  - `Hidden` with `<EyeOff />` (when `show_email` is off, clarifying that it is hidden from the public).
+  - `Public` with `<Eye />` (when `show_email` is on).
+
+### 4. Artist Summary Badges
+- Reusable summary badges (`artist_badges`) assigned to artist profiles by administrators via Django admin or admin API.
+- Rendered via `<ArtistSummaryBadges />` in the "Summary" section of `ProfileOverviewPage` and `UserOverviewPage`.
+- Shows up to 4 active badges ordered by `position`, displaying category above title, badge image/icon, and optional status/description text (e.g., "Verified Profile").
 
 ---
 
@@ -42,4 +55,5 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
 - [profile-overview-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/profile/pages/profile-overview-page.tsx): Main profile landing screen with 2/3 overview info and 1/3 artwork infinite scroll sidebar.
 - [user-overview-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/user/pages/user-overview-page.tsx): Public mirror screen with 2/3 overview info and 1/3 artwork infinite scroll sidebar.
 - [user-artworks-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/user/components/user-artworks-sidebar.tsx): 1-column infinite-scrolling artwork catalog sidebar.
+- [artist-summary-badges.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/profile/artist-summary-badges.tsx): Shared summary badges grid for artist profiles.
 

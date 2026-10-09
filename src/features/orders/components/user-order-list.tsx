@@ -110,23 +110,24 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
   }
 
   return (
-    <div className="space-y-4">
-      {orders.results.map((order) => {
-        const status = order.order_status || order.status || 'PENDING'
-        const paymentStatus = order.payment_status || 'PENDING'
-        const firstItem = order.items?.[0]
-        const artwork = firstItem?.artwork
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        {orders.results.map((order) => {
+          const status = order.order_status || order.status || 'PENDING'
+          const paymentStatus = order.payment_status || 'PENDING'
+          const firstItem = order.items?.[0]
+          const artwork = firstItem?.artwork
 
-        const isPendingPayment =
-          status === 'PENDING' && (paymentStatus === 'PENDING' || paymentStatus === 'FAILED')
+          const isPendingPayment =
+            status === 'PENDING' && (paymentStatus === 'PENDING' || paymentStatus === 'FAILED')
 
-        return (
-          <Card
-            key={order.id}
-            className="overflow-hidden border border-border/60 shadow-xs hover:border-border transition-colors group"
-          >
-            {/* Top Bar: Order Meta & Status */}
-            <div className="bg-muted/20 px-5 py-3 border-b border-border/50 flex flex-wrap items-center justify-between gap-3">
+          return (
+            <Card
+              key={order.id}
+              className="overflow-hidden border border-border/60 shadow-xs hover:border-border transition-colors group flex flex-col justify-between"
+            >
+              {/* Top Bar: Order Meta & Status */}
+              <div className="bg-muted/20 px-4 sm:px-5 py-3 border-b border-border/50 flex flex-wrap items-center justify-between gap-2.5">
               <div className="flex items-center gap-3 flex-wrap">
                 <Link
                   to={paths.order.detail.getHref(order.id)}
@@ -270,6 +271,7 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
           </Card>
         )
       })}
+      </div>
 
       {orders && orders.count > 0 && (
         <div className="pt-2">
