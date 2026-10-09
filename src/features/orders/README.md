@@ -21,6 +21,7 @@
 - Orders are created via [artwork-order-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/artwork-order-form.tsx).
 - **Validation**: Requires `shipping_address`, `phone_number`, and `city`.
 - **Live Summary**: Dynamically calculates delivery charges based on selected city and updates the total price in real time.
+- **Route Streaming & Prefetching**: Route `/artworks/:id/order` features an instant Next.js streaming skeleton (`loading.tsx`), server-side parallel prefetching for both artwork details and delivery charges (`getDeliveryCharges`), and localized request session validation to ensure sub-second page transitions.
 
 ### 2. Payment Integration
 - Payments use a dedicated Server Action in [payment.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/api/payment.ts).

@@ -10,20 +10,32 @@ import { paths } from "@/config/paths";
 import { useAuth } from "@/features/auth/store";
 import { getImage, getUserRouteType, timeAgo } from "@/lib/utils";
 import type { Artwork } from "@/types";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
 import { useTranslations } from "next-intl";
+import { useEffect, useTransition } from "react";
+import { Loader2 } from "lucide-react";
 
 export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
    const router = useRouter();
    const { user } = useAuth();
    const { source } = useSource();
    const t = useTranslations("Artwork.detail");
+   const [isPending, startTransition] = useTransition();
+
+   const orderHref = paths.artworks.order.getHref(artwork.id);
+
+   // Prefetch the order page when the artwork is available to eliminate navigation latency
+   useEffect(() => {
+      if (artwork.status === "AVAILABLE") {
+         router.prefetch(orderHref);
+      }
+   }, [artwork.status, orderHref, router]);
 
    const handleOrder = () => {
       if (!user) {
-         router.push(paths.auth.login.getHref())
+         router.push(`${paths.auth.login.getHref()}?redirectTo=${encodeURIComponent(orderHref)}`);
          return;
       }
 
@@ -35,7 +47,9 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
          source
       );
 
-      router.push(paths.artworks.order.getHref(artwork.id));
+      startTransition(() => {
+         router.push(orderHref);
+      });
    };
 
    return (
@@ -101,14 +115,26 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
             {/* Buttons */}
             <div className="space-y-3 mb-6">
                <Button
-                  disabled={artwork.status !== "AVAILABLE"}
+                  disabled={artwork.status !== "AVAILABLE" || isPending}
                   onClick={handleOrder}
-                  className="w-full text-base rounded-md font-medium font-display bg-primary text-primary-foreground"
+                  className="w-full text-base rounded-md font-medium font-display bg-primary text-primary-foreground cursor-pointer"
                >
-                  {artwork.status === "AVAILABLE" ? t("collectNow") :
-                     artwork.status === "SOLD" ? t("sold") :
-                        artwork.status === "SOLD_OUT" ? t("soldOut") :
-                           artwork.status === "NOT_FOR_SALE" ? t("notForSale") : t("collectNow")}
+                  {isPending ? (
+                     <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {t("collectNow")}
+                     </>
+                  ) : artwork.status === "AVAILABLE" ? (
+                     t("collectNow")
+                  ) : artwork.status === "SOLD" ? (
+                     t("sold")
+                  ) : artwork.status === "SOLD_OUT" ? (
+                     t("soldOut")
+                  ) : artwork.status === "NOT_FOR_SALE" ? (
+                     t("notForSale")
+                  ) : (
+                     t("collectNow")
+                  )}
                </Button>
 
                <Button

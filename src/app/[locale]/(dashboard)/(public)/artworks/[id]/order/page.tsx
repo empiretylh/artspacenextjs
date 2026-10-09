@@ -7,25 +7,35 @@ import { queryKeys } from "@/config/query-keys";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getSession } from "@/lib/auth";
 import { paths } from "@/config/paths";
+import { setRequestLocale } from "next-intl/server";
+import { getDeliveryCharges } from "@/features/orders/api/get-delivery-charges";
 
 const getCachedArtwork = cache((id: string) => getArtwork({ artworkId: id }))
 
 type Props = {
-  params: Promise<{ id: string }>
+  params: Promise<{ locale: string; id: string }>
 }
 
 const ArtworkOrderRoute = async ({ params }: Props) => {
-  const { id } = await params;
+  const { locale, id } = await params;
+  setRequestLocale(locale);
+
   const session = await getSession();
 
   if (!session?.user) {
-    redirect(`${paths.auth.login.getHref()}?redirectTo=${paths.artworks.order.getHref(id)}`);
+    redirect(`/${locale}${paths.auth.login.getHref()}?redirectTo=/${locale}${paths.artworks.order.getHref(id)}`);
   }
 
   const queryClient = getQueryClient();
 
   try {
-    const artwork = await getCachedArtwork(id);
+    const [artwork] = await Promise.all([
+      getCachedArtwork(id),
+      queryClient.prefetchQuery({
+        queryKey: ["delivery-charges"],
+        queryFn: getDeliveryCharges,
+      }),
+    ]);
     
     if (!artwork) {
       return notFound();
@@ -38,7 +48,7 @@ const ArtworkOrderRoute = async ({ params }: Props) => {
 
     return (
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <div className="container py-10">
+        <div className="container">
           <ArtworkOrderForm artwork={artwork} />
         </div>
       </HydrationBoundary>
@@ -50,3 +60,4 @@ const ArtworkOrderRoute = async ({ params }: Props) => {
 }
 
 export default ArtworkOrderRoute
+
