@@ -19,6 +19,7 @@ import { ArrowLeft } from "lucide-react";
 import { useSafeBack } from "@/hooks/use-safe-back";
 import { paths } from "@/config/paths";
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/features/auth/store";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
    const t = useTranslations("Artwork.detail");
@@ -27,6 +28,8 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
    const artwork = artworkQuery.data;
    const { source } = useSource()
 
+   const { loading: authLoading } = useAuth();
+
    useEffect(() => {
       if (artwork) {
          const item = itemFromArtwork(artwork);
@@ -34,11 +37,11 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
       }
    }, [artwork]);
 
-   if (artworkQuery.isLoading) {
+   if (artworkQuery.isLoading || authLoading) {
       return <ArtworkDetailPageSkeleton />;
    }
 
-   if (!artwork) {
+   if (artworkQuery.isError || !artwork) {
       return notFound();
    }
 

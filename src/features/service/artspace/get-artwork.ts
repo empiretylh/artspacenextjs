@@ -31,11 +31,13 @@ export const useGetArtwork = ({
    artworkId,
    queryConfig,
 }: UseArtworkOptions) => {
-   const { accessToken } = useAuth.getState();
+   const { accessToken, loading } = useAuth();
 
    return useQuery({
       ...getArtworkQueryOptions(artworkId),
       ...queryConfig,
-      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
+      enabled: queryConfig?.enabled !== undefined 
+         ? queryConfig.enabled && !loading
+         : !loading,
    });
 };
