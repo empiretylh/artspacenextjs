@@ -36,28 +36,6 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
       initialLiked: artwork.is_liked,
    });
    const { source } = useSource();
-   const router = useRouter();
-   const [collections, setCollections] = useState<
-      {
-         id: number;
-         name: string;
-         items: string[];
-      }[]
-   >([
-      { id: 1, name: "Favorites", items: [] },
-      { id: 2, name: "Inspiration", items: [] },
-   ]);
-
-   const toggleCollection = (collectionId: number) => {
-      alert("toggle collection " + collectionId);
-   };
-
-   const createCollection = () => {
-      const name = prompt("Collection name?");
-      if (!name) return;
-      setCollections((prev) => [...prev, { id: Date.now(), name, items: [] }]);
-   };
-
    const masonrySizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1536px) 20vw, 300px";
    const defaultSizes = "(max-width: 768px) 100vw, 400px"; // Adjust based on your fixed-height row layout
 

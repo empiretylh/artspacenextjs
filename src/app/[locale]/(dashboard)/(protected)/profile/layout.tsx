@@ -44,10 +44,9 @@ const ProfileDetailLayout = ({ children }: { children: React.ReactNode }) => {
       icon: "likes",
     },
     {
-      title: "Save",
+      title: "Boards",
       href: paths.profile.save.path,
       icon: "save",
-      disabled: true,
     },
   ];
 

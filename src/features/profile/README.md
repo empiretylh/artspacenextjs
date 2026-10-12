@@ -15,7 +15,7 @@
   - `profile-events-page.tsx`: Event list and event creation modal for artist/gallery users.
   - `profile-liked-artworks-page.tsx`: Artworks favorited by the current user.
   - `profile-collections-page.tsx`: Paginated/infinite grid of user's bought/collected artworks.
-  - `profile-save-page.tsx`: Bookmarks (placeholder/in-progress).
+  - `profile-save-page.tsx`: Boards tab (`/profile/save`) for managing Save for Later and custom artwork boards.
 
 ---
 

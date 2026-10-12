@@ -8,14 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { paths } from "@/config/paths";
 import { useAuth } from "@/features/auth/store";
-import { getImage, getUserRouteType, timeAgo } from "@/lib/utils";
+import { cn, getImage, getUserRouteType, timeAgo } from "@/lib/utils";
 import type { Artwork } from "@/types";
 import { useRouter } from "@/i18n/routing";
 import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
 import { useTranslations } from "next-intl";
-import { useEffect, useTransition } from "react";
-import { Loader2 } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import { Loader2, Bookmark } from "lucide-react";
+import { SaveToBoardDialog } from "@/features/boards/components/save-to-board-dialog";
+import { useGetArtworkSaveStatus } from "@/features/service/artspace/save-artwork";
 
 export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
    const router = useRouter();
@@ -23,6 +25,12 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
    const { source } = useSource();
    const t = useTranslations("Artwork.detail");
    const [isPending, startTransition] = useTransition();
+   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+
+   const { data: saveStatus } = useGetArtworkSaveStatus({
+      artworkId: String(artwork.id),
+      enabled: !!user,
+   });
 
    const orderHref = paths.artworks.order.getHref(artwork.id);
 
@@ -139,11 +147,34 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                </Button>
 
                <Button
-                  disabled
                   variant="outline"
-                  className="w-full text-base rounded-md font-medium font-display border-2 border-border text-foreground/80"
+                  onClick={() => {
+                     if (!user) {
+                        router.push(
+                           `${paths.auth.login.getHref()}?redirectTo=${encodeURIComponent(
+                              window.location.pathname
+                           )}`
+                        );
+                        return;
+                     }
+                     setIsSaveModalOpen(true);
+                  }}
+                  className={cn(
+                     "w-full text-base rounded-md font-medium font-display border-2 gap-2 cursor-pointer transition-colors",
+                     saveStatus?.saved
+                        ? "border-primary/50 bg-primary/10 text-foreground hover:bg-primary/20"
+                        : "border-border text-foreground/80 hover:text-foreground hover:bg-muted/40"
+                  )}
                >
-                  {t("saveForLater")}
+                  <Bookmark
+                     className={cn(
+                        "w-4 h-4 transition-transform",
+                        saveStatus?.saved
+                           ? "fill-primary text-primary"
+                           : "text-muted-foreground"
+                     )}
+                  />
+                  {saveStatus?.saved ? "Saved to Boards" : t("saveForLater")}
                </Button>
 
                <Button
@@ -154,6 +185,12 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   {t("needHelp")}
                </Button>
             </div>
+
+            <SaveToBoardDialog
+               isOpen={isSaveModalOpen}
+               onClose={() => setIsSaveModalOpen(false)}
+               artwork={artwork}
+            />
 
             {/* Details */}
             <div className="space-y-4">

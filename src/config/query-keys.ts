@@ -366,4 +366,29 @@ export const queryKeys = {
          list: () => ["blog", "tags", "list"],
       },
    },
+
+   /* =======================
+    * BOARDS (SAVE FOR LATER)
+    * ======================= */
+   board: {
+      all: ["boards"],
+
+      list: (params?: QueryKeys) =>
+         ["boards", "list", normalizeParams(params)],
+
+      infinite: (params?: QueryKeys) =>
+         ["boards", "infinite", normalizeParams(params)],
+
+      detail: (id: string) => ["boards", "detail", id],
+
+      artworks: {
+         all: (boardId: string) => ["boards", boardId, "artworks"],
+         list: (boardId: string, params?: QueryKeys) =>
+            ["boards", boardId, "artworks", "list", normalizeParams(params)],
+         infinite: (boardId: string, params?: QueryKeys) =>
+            ["boards", boardId, "artworks", "infinite", normalizeParams(params)],
+      },
+
+      saveStatus: (artworkId: string) => ["boards", "save-status", artworkId],
+   },
 };
