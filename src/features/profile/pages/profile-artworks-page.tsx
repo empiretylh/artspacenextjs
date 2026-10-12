@@ -7,7 +7,9 @@ import ArtworkCard from "@/components/app/artwork-card";
 import { useSoftDeleteArtwork } from "../../service/artspace/soft-delete-artwork";
 import DeleteConfirmDialog from "@/components/common/dialogs/delete-confirm-dialog";
 import ArtworkUpdateModal from "@/features/artwork/components/artwork-update-modal";
-import { useGetUploadedArtworksInfinite } from "@/features/service/artspace/get-uploaded-artworks";
+import { useGetArtworksByUserIdInfinite } from "@/features/service/artspace/get-artworks-by-user-id";
+import { useAuth } from "@/features/auth/store";
+import { useGetProfile } from "../api/get-profile";
 import { ArtworkControlActions } from "@/components/app/artwork-control-actions";
 import { artworkAnalytics, ecommerceAnalytics, itemsFromArtworks } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
@@ -166,15 +168,23 @@ export const ProfileArtworksPage = () => {
       setIsArtworkUpdateModalOpen(true);
    };
 
+   const { data: profileRes, isLoading: isProfileLoading } = useGetProfile();
+   const authUser = useAuth((state) => state.user);
+   const currentUserId = profileRes?.data?.id ?? authUser?.id;
+
    // Fetch Artworks
-   const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-      useGetUploadedArtworksInfinite({
+   const { isLoading: isArtworksLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+      useGetArtworksByUserIdInfinite({
+         userId: currentUserId ? String(currentUserId) : "",
          page: urlState.page,
          search: urlState.search,
          filters: [...urlState.filters].filter(Boolean) as ColumnFiltersState,
          sorts: urlState.sorts,
          limit: urlState.limit,
+         enabled: !!currentUserId,
       });
+
+   const isLoading = isArtworksLoading || (!currentUserId && isProfileLoading);
 
    useEffect(() => {
       if (!isLoading && data) {

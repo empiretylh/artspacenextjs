@@ -247,6 +247,19 @@ html[lang="my"] [data-slot="sidebar-menu-sub-button"] > span:last-child {
   overflow: visible !important;
 }
 
+/* Ensure Burmese lower vocal marks and descenders (ု, ူ, ့, ှ, ြ, ျ) are not clipped in clamped titles across all locales */
+.font-display.line-clamp-1,
+.line-clamp-1.font-display {
+  line-height: 1.65;
+  padding-bottom: 2px;
+}
+
+.font-display.line-clamp-2,
+.line-clamp-2.font-display {
+  line-height: 1.6;
+  padding-bottom: 2px;
+}
+
 /* body[data-scroll-locked] [data-slot="sidebar-inset"] {
   margin-right: 4px !important;
 } */

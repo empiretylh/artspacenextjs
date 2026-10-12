@@ -114,7 +114,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
             <div className="pt-3 space-y-1">
                <div className="space-y-0.5">
                   <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
-                     <h3 className="font-bold text-sm hover:text-primary transition-colors font-display line-clamp-1">
+                     <h3 className="font-semibold text-sm hover:text-primary transition-colors font-display line-clamp-1 leading-[1.65] pb-0.5">
                         {artwork.title}
                      </h3>
                   </Link>

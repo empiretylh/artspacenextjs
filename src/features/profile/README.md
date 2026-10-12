@@ -1,7 +1,7 @@
 # Profile Feature: User Profiles, Tabbed Navigation & Media Management
 
 > [!IMPORTANT]
-> **AI MODELS**: This directory manages private user profile views (`/profile`), tabbed sub-pages (`/profile/artworks`, `/profile/events`, `/profile/liked-artworks`), and public profile mirrors. It coordinates with `features/settings` for profile updates and `features/artwork` for uploaded artwork catalogs.
+> **AI MODELS**: This directory manages private user profile views (`/profile`), tabbed sub-pages (`/profile/artworks`, `/profile/events`, `/profile/liked-artworks`), and public profile mirrors. It coordinates with `features/settings` for profile updates and `features/artwork` for owned/uploaded artwork catalogs.
 
 ## 🚀 Directory Structure
 - **`api/`**:
@@ -11,10 +11,11 @@
   - `profile-layout.tsx`: Layout wrapper consuming `ProfileLayoutView`.
 - **`pages/`**:
   - `profile-overview-page.tsx`: Overview tab featuring "About the profile", structured "Summary" metadata cards, and "Featured Highlights" photo gallery.
-  - `profile-artworks-page.tsx`: Paginated/infinite grid of user's uploaded artworks with edit/delete controls.
+  - `profile-artworks-page.tsx`: Paginated/infinite grid of user's owned artworks with edit/delete controls.
   - `profile-events-page.tsx`: Event list and event creation modal for artist/gallery users.
   - `profile-liked-artworks-page.tsx`: Artworks favorited by the current user.
-  - `profile-collections-page.tsx`, `profile-save-page.tsx`: Collections and bookmarks (placeholders/in-progress).
+  - `profile-collections-page.tsx`: Paginated/infinite grid of user's bought/collected artworks.
+  - `profile-save-page.tsx`: Bookmarks (placeholder/in-progress).
 
 ---
 

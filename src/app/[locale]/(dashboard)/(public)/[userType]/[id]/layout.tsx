@@ -28,7 +28,6 @@ const UserDetailLayout = async ({ params, children }: { params: Promise<{ userTy
       title: "Collections",
       href: paths[pathKey].collections.getHref(String(user.id)),
       icon: "collections",
-      disabled: true,
     },
     {
       title: "Like Artworks",

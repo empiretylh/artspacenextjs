@@ -227,6 +227,7 @@ const ProfileOverviewPage = () => {
             {/* 1/3 Right Column: 1-Column Infinite Scroll Artworks List */}
             <div className="lg:col-span-1">
                <UserArtworksSidebar
+                  userId={userProfile?.id ? String(userProfile.id) : undefined}
                   viewAllHref={paths.profile.artworks.getHref()}
                   isOwnProfile={true}
                />

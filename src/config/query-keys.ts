@@ -221,6 +221,25 @@ export const queryKeys = {
                normalizeParams(params),
             ],
       },
+
+      /* =======================
+       * COLLECTIONS BY USER
+       * ======================= */
+      collectionsByUser: {
+         all: ["artworks", "collections-by-user"],
+
+         list: (userId: string, params?: QueryKeys) =>
+            ["artworks", "collections-by-user", userId, normalizeParams(params)],
+
+         infinite: (userId: string, params?: QueryKeys) =>
+            [
+               "artworks",
+               "collections-by-user",
+               userId,
+               "infinite",
+               normalizeParams(params),
+            ],
+      },
    },
 
    /* =======================

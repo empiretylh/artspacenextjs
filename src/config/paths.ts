@@ -173,7 +173,6 @@ export const paths = {
       collections: {
          path: "/buyers/:id/collections",
          getHref: (id: string) => `/buyers/${id}/collections`,
-         disabled: true,
       },
       save: {
          path: "/buyers/:id/save",

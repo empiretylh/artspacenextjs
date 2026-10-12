@@ -57,7 +57,7 @@ export const EventWideCard: React.FC<EventWideCardProps> = ({ event, sizes }) =>
          {/* Info */}
          <div className="pt-3 flex flex-col gap-1.5">
             <Link to={paths.events.detail.getHref(event.slug)}>
-               <h3 className="text-lg font-bold font-display tracking-tight group-hover:text-primary transition-colors line-clamp-1">
+               <h3 className="text-lg font-semibold font-display tracking-tight group-hover:text-primary transition-colors line-clamp-1 leading-[1.6] pb-0.5">
                   {event.title}
                </h3>
             </Link>
