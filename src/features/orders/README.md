@@ -41,7 +41,7 @@
 
 ### 5. UI/UX & Typography Standards
 - **Distraction-Free Split-Screen Checkout**: Route `/artworks/:id/order` implements an industry-standard checkout frame (Shopify, Stripe Checkout, Artsy inspired). It removes platform sidebar and search clutter, featuring:
-  - Minimal header with Art Space logo, "Back to artwork" link, and simple "Secure Checkout" badge.
+  - Minimal header with Art Space logo, "Back to artwork" button (using `router.back()` with fallback to preserve browser history stack and upstream filter/scroll states), and simple "Secure Checkout" badge.
   - Left rail: Ergonomic delivery details form constrained to optimal readable width (~560px) with grouped phone & city fields.
   - Right rail: Subtle tinted summary rail (`bg-muted/30`) with artwork preview, live price breakdown, and authentic art trust points.
   - Mobile ergonomics: Expandable top order summary accordion with instant toggle, ensuring zero clutter on smaller viewports.

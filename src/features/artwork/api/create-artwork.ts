@@ -83,10 +83,11 @@ export const createArt = async ({
       delete data.price;
    }
 
+   const hasRegisteredArtist = Array.isArray(data.artist) && data.artist.length > 0;
    const newPayload = {
       ...data,
-      artist: (data.artist && !data.artist_name) ? data.artist[0].value : null,
-      artist_name: (data.artist_name && (Array.isArray(data.artist) ? data.artist.length <= 0 : !data.artist)) ? data.artist_name : null,
+      artist: hasRegisteredArtist && data.artist ? data.artist[0].value : null,
+      artist_name: !hasRegisteredArtist && data.artist_name ? data.artist_name : null,
       styles_artwork_ids: newStyles,
       image: data.image[0],
    };

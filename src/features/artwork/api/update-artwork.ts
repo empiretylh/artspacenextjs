@@ -113,8 +113,16 @@ const transformUpdatePayload = (data: UpdateArtInput) => {
 
    if (data.currency !== undefined) payload.currency = data.currency;
 
-   if (data.artist_name !== undefined && (Array.isArray(data.artist) ? data.artist.length <= 0 : !data.artist)) payload.artist_name = data.artist_name;
-   if (data.artist !== undefined && Array.isArray(data.artist) && data.artist.length > 0 && !data.artist_name) payload.artist = data.artist[0].value;
+   const hasRegisteredArtist = Array.isArray(data.artist) && data.artist.length > 0;
+   if (hasRegisteredArtist) {
+      payload.artist = data.artist![0].value;
+      payload.artist_name = null;
+   } else if (data.artist_name !== undefined) {
+      payload.artist_name = data.artist_name;
+      if (Array.isArray(data.artist)) {
+         payload.artist = null;
+      }
+   }
 
    if (data.hide_price) {
       delete payload.price;

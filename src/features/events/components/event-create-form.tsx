@@ -1,18 +1,11 @@
-"use client";
+'use client';
 
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
+import { keepPreviousData } from "@tanstack/react-query";
 
-import { Button } from "@/components/ui/button";
-import {
-   Card,
-   CardContent,
-   CardDescription,
-   CardFooter,
-   CardHeader,
-   CardTitle,
-} from "@/components/ui/card";
 import {
    Form,
    FormControl,
@@ -24,9 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useNotifications } from "@/components/ui/notifications";
-import { getImage, handleFormError, slugify } from "@/lib/utils";
-
 import {
    Select,
    SelectContent,
@@ -34,43 +24,54 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-// import ImageDnd from "@/components/image-dnd";
-import {
-   useGetArtistsInfinite,
-} from "@/features/service/artspace/get-artists";
-import {
-   useGetArtworksInfinite,
-} from "@/features/service/artspace/get-artworks";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { useNotifications } from "@/components/ui/notifications";
+import { getImage, handleFormError, slugify } from "@/lib/utils";
+import DatePicker from "@/components/ui/date-picker";
+import ImageDnd from "@/components/common/dnd-image-upload";
+import AsyncMultipleSelector from "@/components/common/async-multi-select";
+import RequiredAsterisk from "@/components/common/required-asterisk";
+import { FormDialog, FormSection } from "@/components/common/dialogs/form-dialog";
+
 import {
    eventCreateInputSchema,
    useEventCreate,
 } from "@/features/service/artspace/event-create";
-import DatePicker from "@/components/ui/date-picker";
+import { useGetArtistsInfinite } from "@/features/service/artspace/get-artists";
+import { useGetArtworksInfinite } from "@/features/service/artspace/get-artworks";
 import { useImageUpload } from "@/features/service/artspace/image-upload";
-import ImageDnd from "@/components/common/dnd-image-upload";
-import { useEffect, useState } from "react";
-import type { Artwork, ListApiResponse, User } from "@/types";
-import { keepPreviousData } from "@tanstack/react-query";
-import AsyncMultipleSelector from "@/components/common/async-multi-select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { eventAnalytics } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
+import type { Artwork, ListApiResponse, User } from "@/types";
+import {
+   CalendarDays,
+   ImageIcon,
+   Sparkles,
+   Users,
+   Globe,
+} from "lucide-react";
 
 type FormData = z.infer<typeof eventCreateInputSchema>;
 
-interface EventCreateFormProps {
+export interface EventCreateFormProps {
+   isOpen: boolean;
+   onClose: () => void;
    onCreateSuccess?: () => void;
 }
 
-export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
+export const EventCreateForm: React.FC<EventCreateFormProps> = ({
+   isOpen,
+   onClose,
+   onCreateSuccess,
+}) => {
    const { addNotification } = useNotifications();
+   const { source } = useSource();
 
-   const [artworksOldData, setArtworksOldData] = useState<ListApiResponse<Artwork>[]
-   >([]);
-   const [artistsOldData, setArtistsOldData] = useState<ListApiResponse<User>[]
-   >([]);
-   const [page, setPage] = useState(1);
-   const [limit, setLimit] = useState(10);
+   const [artworksOldData, setArtworksOldData] = useState<ListApiResponse<Artwork>[]>([]);
+   const [artistsOldData, setArtistsOldData] = useState<ListApiResponse<User>[]>([]);
+   const [page] = useState(1);
+   const [limit] = useState(10);
    const [artworkSearch, setArtworkSearch] = useState("");
    const [artistSearch, setArtistSearch] = useState("");
    const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
@@ -83,16 +84,16 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
    });
 
    useEffect(() => {
-      if (!artworksInfiniteQuery.isLoading && artworksInfiniteQuery.data)
+      if (!artworksInfiniteQuery.isLoading && artworksInfiniteQuery.data) {
          setArtworksOldData(artworksInfiniteQuery.data.pages);
+      }
    }, [artworksInfiniteQuery.data, artworksInfiniteQuery.isLoading]);
 
    const artworksPagesToRender = artworksInfiniteQuery.isLoading
       ? artworksOldData
       : artworksInfiniteQuery.data?.pages || [];
 
-   const artworks =
-      artworksPagesToRender.flatMap((page) => page.results) ?? [];
+   const artworks = artworksPagesToRender.flatMap((p) => p.results) ?? [];
 
    const artistsInfiniteQuery = useGetArtistsInfinite({
       page,
@@ -102,19 +103,18 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
    });
 
    useEffect(() => {
-      if (!artistsInfiniteQuery.isLoading && artistsInfiniteQuery.data)
+      if (!artistsInfiniteQuery.isLoading && artistsInfiniteQuery.data) {
          setArtistsOldData(artistsInfiniteQuery.data.pages);
+      }
    }, [artistsInfiniteQuery.data, artistsInfiniteQuery.isLoading]);
 
    const artistsPagesToRender = artistsInfiniteQuery.isLoading
       ? artistsOldData
       : artistsInfiniteQuery.data?.pages || [];
 
-   const artists =
-      artistsPagesToRender.flatMap((page) => page.results) ?? [];
+   const artists = artistsPagesToRender.flatMap((p) => p.results) ?? [];
 
    const imageUploadMutation = useImageUpload();
-   const { source } = useSource();
 
    const eventCreateMutation = useEventCreate({
       mutationConfig: {
@@ -122,12 +122,12 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
          onSuccess: () => {
             addNotification({
                type: "success",
-               title: "Success",
-               message: "Event created successfully",
+               title: "Event Created",
+               message: "Event has been successfully created.",
             });
             eventAnalytics.create(source);
-            onCreateSuccess?.();
             form.reset();
+            onCreateSuccess?.();
          },
       },
    });
@@ -153,10 +153,6 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
       },
    });
 
-   const onSubmit: SubmitHandler<FormData> = (values) => {
-      eventCreateMutation.mutate({ data: values });
-   };
-
    const titleValue = form.watch("title");
 
    useEffect(() => {
@@ -168,33 +164,60 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
       });
    }, [titleValue, isSlugManuallyEdited, form]);
 
-   return (
-      <div className="mx-auto">
-         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-               <Card className="border border-border shadow-sm">
-                  <CardHeader>
-                     <CardTitle>Create New Event</CardTitle>
-                     <CardDescription>
-                        Fill in the details below to create an event.
-                     </CardDescription>
-                  </CardHeader>
+   const onSubmit: SubmitHandler<FormData> = (values) => {
+      eventCreateMutation.mutate({ data: values });
+   };
 
-                  <CardContent className="space-y-8">
+   return (
+      <FormDialog
+         isOpen={isOpen}
+         onClose={onClose}
+         title="Create New Event"
+         description="Configure exhibition details, schedule dates, feature artists and artworks."
+         icon={<CalendarDays className="w-4 h-4" />}
+         size="3xl"
+         formId="event-create-form"
+         submitText="Create Event"
+         cancelText="Cancel"
+         resetText="Reset"
+         onReset={() => form.reset()}
+         isSubmitting={eventCreateMutation.isPending}
+      >
+         <Form {...form}>
+            <form
+               id="event-create-form"
+               onSubmit={form.handleSubmit(onSubmit)}
+               className="space-y-8"
+            >
+               {/* Section 1: General Information */}
+               <FormSection
+                  icon={<Sparkles className="w-4 h-4" />}
+                  title="General Information"
+                  description="Event title, URL identifier, and exhibition category."
+               >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                      {/* Title */}
-                     <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>Title</FormLabel>
-                              <FormControl>
-                                 <Input placeholder="Event title" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
+                     <div className="sm:col-span-2">
+                        <FormField
+                           control={form.control}
+                           name="title"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel>
+                                    Title <RequiredAsterisk />
+                                 </FormLabel>
+                                 <FormControl>
+                                    <Input
+                                       placeholder="e.g. Modern Expressions 2026"
+                                       className="h-10 text-sm bg-background border-border/80"
+                                       {...field}
+                                    />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                     </div>
 
                      {/* Slug */}
                      <FormField
@@ -202,19 +225,22 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                         name="slug"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Slug</FormLabel>
+                              <FormLabel>
+                                 Slug <RequiredAsterisk />
+                              </FormLabel>
                               <FormControl>
                                  <Input
                                     {...field}
-                                    placeholder="Unique slug"
+                                    placeholder="unique-event-slug"
+                                    className="h-10 text-sm bg-background border-border/80"
                                     onChange={(e) => {
                                        setIsSlugManuallyEdited(true);
                                        field.onChange(e);
                                     }}
                                  />
                               </FormControl>
-                              <FormDescription>
-                                 Slug will be used in URL
+                              <FormDescription className="text-[11px] text-muted-foreground">
+                                 Used in public URL: /events/{field.value || "slug"}
                               </FormDescription>
                               <FormMessage />
                            </FormItem>
@@ -227,25 +253,21 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                         name="event_type"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Event Type</FormLabel>
+                              <FormLabel>
+                                 Event Type <RequiredAsterisk />
+                              </FormLabel>
                               <FormControl>
                                  <Select
                                     onValueChange={field.onChange}
                                     value={field.value}
                                  >
-                                    <SelectTrigger className="w-full">
+                                    <SelectTrigger className="h-10 text-sm bg-background border-border/80 w-full">
                                        <SelectValue placeholder="Select type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                       <SelectItem value="SOLO">
-                                          Solo
-                                       </SelectItem>
-                                       <SelectItem value="GROUP">
-                                          Group
-                                       </SelectItem>
-                                       <SelectItem value="COLLECTOR">
-                                          Collector
-                                       </SelectItem>
+                                       <SelectItem value="SOLO">Solo Exhibition</SelectItem>
+                                       <SelectItem value="GROUP">Group Exhibition</SelectItem>
+                                       <SelectItem value="COLLECTOR">Collector Showcase</SelectItem>
                                     </SelectContent>
                                  </Select>
                               </FormControl>
@@ -254,274 +276,181 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                         )}
                      />
 
-                     {/* About */}
-                     <FormField
-                        control={form.control}
-                        name="about"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>About</FormLabel>
-                              <FormControl>
-                                 <Textarea
-                                    placeholder="Describe the event"
-                                    {...field}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
+                     {/* About / Description */}
+                     <div className="sm:col-span-2">
+                        <FormField
+                           control={form.control}
+                           name="about"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel>
+                                    About / Curatorial Concept <RequiredAsterisk />
+                                 </FormLabel>
+                                 <FormControl>
+                                    <Textarea
+                                       placeholder="Provide an overview, theme, and background of this event (min 10 characters)..."
+                                       className="min-h-24 resize-y text-sm bg-background border-border/80 leading-relaxed"
+                                       {...field}
+                                    />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                     </div>
+                  </div>
+               </FormSection>
 
-                     {/* Cover Photo */}
-                     <FormField
-                        control={form.control}
-                        name="cover_photo"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel htmlFor={field.name}>Cover Photo</FormLabel>
-                              <FormControl>
-                                 <ImageDnd
-                                    ref={field.ref}
-                                    id={field.name}
-                                    name={field.name}
-                                    value={
-                                       field?.value?.map((url) => url) || []
-                                    }
-                                    onRemoveImage={(newValue) => {
-                                       field.onChange(newValue);
-                                    }}
-                                    maxFiles={1}
-                                    loading={imageUploadMutation.isPending}
-                                    onChange={(value) => {
-                                       console.log(typeof value);
-                                       if (value) {
-                                          imageUploadMutation.mutate(
-                                             { data: { image: value } },
-                                             {
-                                                onSuccess: (response) => {
-                                                   const newUrls =
-                                                      response.data.map(
-                                                         (item) => item.url
-                                                      );
-                                                   let newValues = undefined;
-                                                   if (field.value) {
-                                                      newValues = [
-                                                         ...field.value,
-                                                         ...newUrls,
-                                                      ];
-                                                   } else {
-                                                      newValues = [...newUrls];
-                                                   }
-                                                   field.onChange(newValues);
-                                                },
-                                             }
-                                          );
-                                          // field.onChange(value);
-                                       }
-                                    }}
-                                 />
-                              </FormControl>
-                              <FormDescription>
-                                 Upload a cover photo (2:1 ratio recommended, max 5MB)
-                              </FormDescription>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
+               {/* Section 2: Media & Branding */}
+               <FormSection
+                  icon={<ImageIcon className="w-4 h-4" />}
+                  title="Media & Branding"
+                  description="Upload the main banner, brand logo, and supplementary gallery photographs."
+               >
+                  <div className="space-y-5">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                        {/* Cover Photo */}
+                        <FormField
+                           control={form.control}
+                           name="cover_photo"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel htmlFor={field.name}>
+                                    Cover Banner <RequiredAsterisk />
+                                 </FormLabel>
+                                 <FormControl>
+                                    <ImageDnd
+                                       ref={field.ref}
+                                       id={field.name}
+                                       name={field.name}
+                                       value={field.value?.map((url) => url) || []}
+                                       onRemoveImage={(newValue) => field.onChange(newValue)}
+                                       maxFiles={1}
+                                       loading={imageUploadMutation.isPending}
+                                       onChange={(value) => {
+                                          if (value) {
+                                             imageUploadMutation.mutate(
+                                                { data: { image: value } },
+                                                {
+                                                   onSuccess: (response) => {
+                                                      const newUrls = response.data.map((item) => item.url);
+                                                      const newValues = field.value ? [...field.value, ...newUrls] : [...newUrls];
+                                                      field.onChange(newValues);
+                                                   },
+                                                }
+                                             );
+                                          }
+                                       }}
+                                    />
+                                 </FormControl>
+                                 <FormDescription className="text-[11px] text-muted-foreground">
+                                    Recommended: 2:1 widescreen banner image
+                                 </FormDescription>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
 
-                     {/* Event Logo */}
-                     <FormField
-                        control={form.control}
-                        name="event_logo"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel htmlFor={field.name}>Event Logo</FormLabel>
-                              <FormControl>
-                                 <ImageDnd
-                                    ref={field.ref}
-                                    id={field.name}
-                                    name={field.name}
-                                    value={
-                                       field?.value?.map((url) => url) || []
-                                    }
-                                    onRemoveImage={(newValue) => {
-                                       field.onChange(newValue);
-                                    }}
-                                    maxFiles={1}
-                                    loading={imageUploadMutation.isPending}
-                                    onChange={(value) => {
-                                       console.log(typeof value);
-                                       if (value) {
-                                          imageUploadMutation.mutate(
-                                             { data: { image: value } },
-                                             {
-                                                onSuccess: (response) => {
-                                                   const newUrls =
-                                                      response.data.map(
-                                                         (item) => item.url
-                                                      );
-                                                   let newValues = undefined;
-                                                   if (field.value) {
-                                                      newValues = [
-                                                         ...field.value,
-                                                         ...newUrls,
-                                                      ];
-                                                   } else {
-                                                      newValues = [...newUrls];
-                                                   }
-                                                   field.onChange(newValues);
-                                                },
-                                             }
-                                          );
-                                          // field.onChange(value);
-                                       }
-                                    }}
-                                 />
-                              </FormControl>
-                              <FormDescription>
-                                 Upload a event logo (max 5MB)
-                              </FormDescription>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
+                        {/* Event Logo */}
+                        <FormField
+                           control={form.control}
+                           name="event_logo"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel htmlFor={field.name}>
+                                    Event Logo <RequiredAsterisk />
+                                 </FormLabel>
+                                 <FormControl>
+                                    <ImageDnd
+                                       ref={field.ref}
+                                       id={field.name}
+                                       name={field.name}
+                                       value={field.value?.map((url) => url) || []}
+                                       onRemoveImage={(newValue) => field.onChange(newValue)}
+                                       maxFiles={1}
+                                       loading={imageUploadMutation.isPending}
+                                       onChange={(value) => {
+                                          if (value) {
+                                             imageUploadMutation.mutate(
+                                                { data: { image: value } },
+                                                {
+                                                   onSuccess: (response) => {
+                                                      const newUrls = response.data.map((item) => item.url);
+                                                      const newValues = field.value ? [...field.value, ...newUrls] : [...newUrls];
+                                                      field.onChange(newValues);
+                                                   },
+                                                }
+                                             );
+                                          }
+                                       }}
+                                    />
+                                 </FormControl>
+                                 <FormDescription className="text-[11px] text-muted-foreground">
+                                    Square or emblem format logo
+                                 </FormDescription>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                     </div>
 
-                     {/* Artists */}
-                     <FormField
-                        control={form.control}
-                        name="artists_ids"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>Artists</FormLabel>
-                              <FormControl>
-                                 <AsyncMultipleSelector
-                                    onUserScrollToEnd={() => {
-                                       if (
-                                          artistsInfiniteQuery.hasNextPage &&
-                                          !artistsInfiniteQuery.isFetchingNextPage
-                                       ) {
-                                          artistsInfiniteQuery.fetchNextPage();
-                                       }
-                                       // load next page / fetch more
-                                    }}
-                                    options={artists.map((a) => ({
-                                       label: `${a.first_name} ${a.last_name}`,
-                                       value: String(a.id),
-                                    }))}
-                                    onSearchChange={(value) => {
-                                       setArtistSearch(value);
-                                    }}
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    placeholder="Select artists"
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-
-                     {/* Artworks */}
-                     <FormField
-                        control={form.control}
-                        name="artworks_ids"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>Artworks</FormLabel>
-                              <FormControl>
-                                 <AsyncMultipleSelector
-                                    onUserScrollToEnd={() => {
-                                       if (
-                                          artworksInfiniteQuery.hasNextPage &&
-                                          !artworksInfiniteQuery.isFetchingNextPage
-                                       ) {
-                                          artworksInfiniteQuery.fetchNextPage();
-                                       }
-                                       // load next page / fetch more
-                                    }}
-                                    options={artworks.map((a) => ({
-                                       label: a.title,
-                                       value: a.id,
-                                    }))}
-                                    onSearchChange={(value) => {
-                                       setArtworkSearch(value);
-                                    }}
-                                    loading={artworksInfiniteQuery.isFetching}
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    placeholder="Select artworks"
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-
+                     {/* Supplementary Gallery Images */}
                      <FormField
                         control={form.control}
                         name="images"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel htmlFor={field.name}>Images</FormLabel>
+                              <FormLabel htmlFor={field.name}>Additional Event Photos</FormLabel>
                               <FormControl>
                                  <ImageDnd
                                     ref={field.ref}
                                     id={field.name}
                                     name={field.name}
-                                    value={
-                                       field?.value?.map((url: string) =>
-                                          getImage(url)
-                                       ) || []
-                                    }
-                                    onRemoveImage={(newValue) => {
-                                       field.onChange(newValue);
-                                    }}
-                                    // maxFiles={10}
+                                    value={field.value?.map((url: string) => getImage(url)) || []}
+                                    onRemoveImage={(newValue) => field.onChange(newValue)}
                                     loading={imageUploadMutation.isPending}
                                     onChange={(value) => {
-                                       console.log(typeof value);
                                        if (value) {
                                           imageUploadMutation.mutate(
                                              { data: { image: value } },
                                              {
                                                 onSuccess: (response) => {
-                                                   const newUrls =
-                                                      response.data.map(
-                                                         (item) => item.url
-                                                      );
-                                                   let newValues = undefined;
-                                                   if (field.value) {
-                                                      newValues = [
-                                                         ...field.value,
-                                                         ...newUrls,
-                                                      ];
-                                                   } else {
-                                                      newValues = [...newUrls];
-                                                   }
+                                                   const newUrls = response.data.map((item) => item.url);
+                                                   const newValues = field.value ? [...field.value, ...newUrls] : [...newUrls];
                                                    field.onChange(newValues);
                                                 },
                                              }
                                           );
-                                          // field.onChange(value);
                                        }
                                     }}
                                  />
                               </FormControl>
-                              <FormDescription>
-                                 Upload event images (max 5MB)
+                              <FormDescription className="text-[11px] text-muted-foreground">
+                                 Upload exhibition photos, installation views, or venue pictures.
                               </FormDescription>
                               <FormMessage />
                            </FormItem>
                         )}
                      />
+                  </div>
+               </FormSection>
 
+               {/* Section 3: Schedule & Dates */}
+               <FormSection
+                  icon={<CalendarDays className="w-4 h-4" />}
+                  title="Schedule & Timing"
+                  description="Opening and closing dates for the exhibition."
+               >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                      {/* Start Date */}
                      <FormField
                         control={form.control}
                         name="start_date"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel htmlFor={field.name}>Start Date</FormLabel>
+                              <FormLabel htmlFor={field.name}>
+                                 Start Date <RequiredAsterisk />
+                              </FormLabel>
                               <FormControl>
                                  <DatePicker
                                     id={field.name}
@@ -542,7 +471,9 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                         name="end_date"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel htmlFor={field.name}>End Date</FormLabel>
+                              <FormLabel htmlFor={field.name}>
+                                 End Date <RequiredAsterisk />
+                              </FormLabel>
                               <FormControl>
                                  <DatePicker
                                     id={field.name}
@@ -556,40 +487,173 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                            </FormItem>
                         )}
                      />
+                  </div>
+               </FormSection>
 
-                     {/* Popup */}
+               {/* Section 4: Curation (Artists & Artworks) */}
+               <FormSection
+                  icon={<Users className="w-4 h-4" />}
+                  title="Featured Artists & Artworks"
+                  description="Link participating artist profiles and specific artworks exhibited."
+               >
+                  <div className="space-y-4">
+                     {/* Artists */}
                      <FormField
                         control={form.control}
-                        name="show_popup"
+                        name="artists_ids"
                         render={({ field }) => (
                            <FormItem>
+                              <FormLabel>Participating Artists</FormLabel>
                               <FormControl>
-                                 <div className="flex items-center gap-3">
-                                    <Checkbox
-                                       id={field.name}
-                                       name={field.name}
-                                       onCheckedChange={field.onChange}
-                                       checked={field.value}
-                                    />
-                                    <FormLabel htmlFor={field.name}>
-                                       Show Popup?
-                                    </FormLabel>
-                                 </div>
+                                 <AsyncMultipleSelector
+                                    onUserScrollToEnd={() => {
+                                       if (
+                                          artistsInfiniteQuery.hasNextPage &&
+                                          !artistsInfiniteQuery.isFetchingNextPage
+                                       ) {
+                                          artistsInfiniteQuery.fetchNextPage();
+                                       }
+                                    }}
+                                    options={artists.map((a) => ({
+                                       label: `${a.first_name || ""} ${a.last_name || ""}`.trim() || a.username || "Artist",
+                                       value: String(a.id),
+                                    }))}
+                                    onSearchChange={(value) => {
+                                       setArtistSearch(value);
+                                    }}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    placeholder="Search artists by name..."
+                                 />
                               </FormControl>
+                              <FormDescription className="text-[11px] text-muted-foreground">
+                                 Tagged artists will receive exhibition invitations and be linked on the event page.
+                              </FormDescription>
                               <FormMessage />
                            </FormItem>
                         )}
                      />
 
-                     {/* Popup Dates */}
-                     {form.getValues("show_popup") && (
-                        <div className="space-y-5">
+                     {/* Artworks */}
+                     <FormField
+                        control={form.control}
+                        name="artworks_ids"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>Exhibited Artworks</FormLabel>
+                              <FormControl>
+                                 <AsyncMultipleSelector
+                                    onUserScrollToEnd={() => {
+                                       if (
+                                          artworksInfiniteQuery.hasNextPage &&
+                                          !artworksInfiniteQuery.isFetchingNextPage
+                                       ) {
+                                          artworksInfiniteQuery.fetchNextPage();
+                                       }
+                                    }}
+                                    options={artworks.map((a) => ({
+                                       label: a.title,
+                                       value: a.id,
+                                    }))}
+                                    onSearchChange={(value) => {
+                                       setArtworkSearch(value);
+                                    }}
+                                    loading={artworksInfiniteQuery.isFetching}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    placeholder="Search artworks by title..."
+                                 />
+                              </FormControl>
+                              <FormDescription className="text-[11px] text-muted-foreground">
+                                 Featured artworks presented in this exhibition catalogue.
+                              </FormDescription>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+                  </div>
+               </FormSection>
+
+               {/* Section 5: Promotion & Visibility */}
+               <FormSection
+                  icon={<Globe className="w-4 h-4" />}
+                  title="Promotion & Publishing"
+                  description="Visibility, status, and homepage announcement popup options."
+               >
+                  <div className="space-y-4">
+                     {/* Published Toggle */}
+                     <FormField
+                        control={form.control}
+                        name="is_published"
+                        render={({ field }) => (
+                           <FormItem className="rounded-xl border border-border/80 bg-muted/20 p-3.5 space-y-0">
+                              <div className="flex items-center justify-between">
+                                 <div className="space-y-0.5">
+                                    <Label
+                                       htmlFor="is_published"
+                                       className="text-xs font-semibold text-foreground cursor-pointer"
+                                    >
+                                       Publish Event
+                                    </Label>
+                                    <p className="text-[11px] text-muted-foreground">
+                                       Make this event publicly visible in the gallery events calendar immediately.
+                                    </p>
+                                 </div>
+                                 <FormControl>
+                                    <Checkbox
+                                       id="is_published"
+                                       checked={field.value}
+                                       onCheckedChange={field.onChange}
+                                    />
+                                 </FormControl>
+                              </div>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     {/* Popup Toggle */}
+                     <FormField
+                        control={form.control}
+                        name="show_popup"
+                        render={({ field }) => (
+                           <FormItem className="rounded-xl border border-border/80 bg-muted/20 p-3.5 space-y-0">
+                              <div className="flex items-center justify-between">
+                                 <div className="space-y-0.5">
+                                    <Label
+                                       htmlFor="show_popup"
+                                       className="text-xs font-semibold text-foreground cursor-pointer"
+                                    >
+                                       Promote as Homepage Announcement Popup
+                                    </Label>
+                                    <p className="text-[11px] text-muted-foreground">
+                                       Highlight this event in a prominent modal popup for site visitors.
+                                    </p>
+                                 </div>
+                                 <FormControl>
+                                    <Checkbox
+                                       id="show_popup"
+                                       checked={field.value}
+                                       onCheckedChange={field.onChange}
+                                    />
+                                 </FormControl>
+                              </div>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     {/* Popup Dates (Conditional) */}
+                     {form.watch("show_popup") && (
+                        <div className="p-4 rounded-xl border border-border/60 bg-muted/30 grid grid-cols-1 sm:grid-cols-2 gap-4">
                            <FormField
                               control={form.control}
                               name="popup_start"
                               render={({ field }) => (
                                  <FormItem>
-                                    <FormLabel htmlFor={field.name}>Popup Start Date</FormLabel>
+                                    <FormLabel htmlFor={field.name}>
+                                       Popup Active From <RequiredAsterisk />
+                                    </FormLabel>
                                     <FormControl>
                                        <DatePicker
                                           id={field.name}
@@ -608,7 +672,9 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                               name="popup_end"
                               render={({ field }) => (
                                  <FormItem>
-                                    <FormLabel htmlFor={field.name}>Popup End Date</FormLabel>
+                                    <FormLabel htmlFor={field.name}>
+                                       Popup Active Until <RequiredAsterisk />
+                                    </FormLabel>
                                     <FormControl>
                                        <DatePicker
                                           id={field.name}
@@ -624,54 +690,10 @@ export const EventCreateForm = ({ onCreateSuccess }: EventCreateFormProps) => {
                            />
                         </div>
                      )}
-
-                     {/* Published */}
-                     <FormField
-                        control={form.control}
-                        name="is_published"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormControl>
-                                 <div className="flex items-center gap-3">
-                                    <Checkbox
-                                       id={field.name}
-                                       name={field.name}
-                                       onCheckedChange={field.onChange}
-                                       checked={field.value}
-                                    />
-                                    <FormLabel htmlFor={field.name}>
-                                       Published?
-                                    </FormLabel>
-                                 </div>
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-                  </CardContent>
-
-                  <CardFooter className="flex flex-col sm:flex-row gap-3 sm:justify-between">
-                     <Button
-                        onClick={() => form.reset()}
-                        type="button"
-                        variant="outline"
-                        className="w-full sm:w-auto"
-                     >
-                        Cancel
-                     </Button>
-                     <Button
-                        type="submit"
-                        disabled={eventCreateMutation.isPending}
-                        className="w-full sm:w-auto"
-                     >
-                        {eventCreateMutation.isPending
-                           ? "Creating..."
-                           : "Create Event"}
-                     </Button>
-                  </CardFooter>
-               </Card>
+                  </div>
+               </FormSection>
             </form>
          </Form>
-      </div>
+      </FormDialog>
    );
 };

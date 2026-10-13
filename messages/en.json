@@ -185,7 +185,8 @@
     "artworks": "Artworks",
     "noArtworks": "No artworks available.",
     "images": "Images",
-    "noImages": "No images available."
+    "noImages": "No images available.",
+    "createEvent": "Create Event"
   },
   "Settings": {
     "title": "Settings",

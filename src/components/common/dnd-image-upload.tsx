@@ -29,9 +29,6 @@ export default function ImageDnd({
    maxFiles = 10,
    multiple = true,
 }: Readonly<ImageDndProps>) {
-   const maxSizeMB = 5;
-   const maxSize = maxSizeMB * 1024 * 1024;
-
    const [
       { files, isDragging, errors },
       {
@@ -46,7 +43,6 @@ export default function ImageDnd({
    ] = useFileUpload({
       accept: "image/*",
       multiple,
-      maxSize,
       maxFiles: multiple ? maxFiles : 1,
    });
 
@@ -107,8 +103,8 @@ export default function ImageDnd({
                      </p>
                      <p className="text-xs text-muted-foreground">
                         {multiple
-                           ? `Up to ${maxFiles} images · Max ${maxSizeMB}MB each`
-                           : `Upload one image · Max ${maxSizeMB}MB`}
+                           ? `Up to ${maxFiles} images`
+                           : "Upload one image"}
                      </p>
                   </div>
                )}

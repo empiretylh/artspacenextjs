@@ -26,6 +26,7 @@ interface Props {
    renderEventCard?: (event: Event) => React.JSX.Element;
    layoutClasses?: string;
    titleOff?: boolean;
+   headerAction?: React.ReactNode;
 }
 
 const EventsPageView = ({
@@ -43,6 +44,7 @@ const EventsPageView = ({
    renderEventCard,
    layoutClasses,
    titleOff = false,
+   headerAction,
 }: Props) => {
    const { ref: loadMoreRef, inView } = useInView({
       threshold: 0,
@@ -65,8 +67,9 @@ const EventsPageView = ({
                {/* <FilterRow filters={filters} setFilters={setFilters} /> */}
 
                {!titleOff && (
-                  <div className="flex items-center justify-between mb-6">
-                     <h1 className="text-2xl sm:text-3xl font-semibold font-display tracking-tight">{t("title")}</h1>
+                  <div className="flex items-center justify-between gap-4 mb-6">
+                     <h1 className="text-2xl sm:text-3xl font-semibold font-display tracking-tight text-foreground">{t("title")}</h1>
+                     {headerAction && <div>{headerAction}</div>}
                   </div>
                )}
 

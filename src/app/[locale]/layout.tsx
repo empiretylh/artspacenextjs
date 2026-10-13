@@ -1,7 +1,7 @@
 import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { AuthInitializer } from "@/features/auth/auth-initializer";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit, Fraunces, Noto_Sans_Myanmar, Noto_Serif_Myanmar } from "next/font/google";
 import localFont from "next/font/local";
 import "@/app/globals.css";
@@ -41,6 +41,13 @@ const masterpieceUniRound = localFont({
   variable: "--font-masterpiece-round",
   display: "swap",
 })
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: {

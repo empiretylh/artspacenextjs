@@ -1,39 +1,60 @@
-import { BaseDialog } from "@/components/common/dialogs/base-dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+'use client';
+
+import React, { useEffect, useState } from "react";
+import { FormDialog } from "@/components/common/dialogs/form-dialog";
 import { ArtworkUpdateForm } from "./artwork-update-form";
-import { Artwork } from "@/types";
+import type { Artwork } from "@/types";
 import LoadingPage from "@/components/page/loading-page";
+import { Pencil } from "lucide-react";
 
 type ArtworkUpdateProps = {
    isArtworkUpdateModalOpen: boolean;
    setIsArtworkUpdateModalOpen: (_isOpen: boolean) => void;
-   artwork: Artwork | null; // Replace with your Artwork type
+   artwork: Artwork | null;
 };
 
-const ArtworkUpdateModal = ({
+const ArtworkUpdateModal: React.FC<ArtworkUpdateProps> = ({
    isArtworkUpdateModalOpen,
    setIsArtworkUpdateModalOpen,
    artwork,
-}: ArtworkUpdateProps) => {
-   return (
-      <div>
-         <BaseDialog
-            title="Update Artwork"
-            description="Modify the artwork details and save the changes."
+}) => {
+   const [isMounted, setIsMounted] = useState(false);
+
+   useEffect(() => {
+      setIsMounted(true);
+   }, []);
+
+   if (!isMounted) {
+      return null;
+   }
+
+   const handleClose = () => {
+      setIsArtworkUpdateModalOpen(false);
+   };
+
+   if (!artwork) {
+      return (
+         <FormDialog
             isOpen={isArtworkUpdateModalOpen}
-            onClose={() => setIsArtworkUpdateModalOpen(false)}
+            onClose={handleClose}
+            title="Update Artwork"
+            description="Modify the artwork details and save your changes."
+            icon={<Pencil className="w-4 h-4" />}
+            size="3xl"
+            showFooter={false}
          >
-            <ScrollArea className="h-[600px]">
-               {
-                  artwork ? (<ArtworkUpdateForm
-                     artwork={artwork}
-                     onUpdateSuccess={() => setIsArtworkUpdateModalOpen(false)}
-                  />) : (<LoadingPage className="h-full" />
-                  )
-               }
-            </ScrollArea>
-         </BaseDialog>
-      </div>
+            <LoadingPage className="h-full min-h-[300px]" />
+         </FormDialog>
+      );
+   }
+
+   return (
+      <ArtworkUpdateForm
+         artwork={artwork}
+         isOpen={isArtworkUpdateModalOpen}
+         onClose={handleClose}
+         onUpdateSuccess={handleClose}
+      />
    );
 };
 
