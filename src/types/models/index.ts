@@ -1,5 +1,6 @@
 export * from "./post";
 export * from "./board";
+export * from "./notification";
 
 export interface User {
    id: number;

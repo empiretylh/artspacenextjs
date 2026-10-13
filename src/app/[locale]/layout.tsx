@@ -12,6 +12,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { FcmManager } from "@/features/chat/components/fcm-manager";
+import { NotificationListener } from "@/features/notifications/components/notification-listener";
 import NextTopLoader from "nextjs-toploader";
 
 const outfitSans = Outfit({
@@ -103,6 +104,7 @@ export default async function RootLayout({
           <AppProvider>
             <AuthInitializer />
             <FcmManager />
+            <NotificationListener />
             <ScrollToTop />
             {children}
           </AppProvider>

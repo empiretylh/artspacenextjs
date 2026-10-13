@@ -334,6 +334,10 @@ export const paths = {
       path: "/privacy-policy",
       getHref: () => "/privacy-policy",
    },
+   notifications: {
+      path: "/notifications",
+      getHref: () => "/notifications",
+   },
    notFound: {
       path: "*",
       getHref: () => "*",

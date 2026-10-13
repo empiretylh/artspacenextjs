@@ -392,4 +392,13 @@ export const queryKeys = {
       saveStatus: (artworkId: string) => ["boards", "save-status", artworkId],
       user: (userId: string) => ["boards", "user", userId],
    },
+
+   /* =======================
+    * NOTIFICATIONS
+    * ======================= */
+   notification: {
+      all: ["notifications"],
+      list: () => ["notifications", "list"],
+      detail: (id: number) => ["notifications", "detail", id],
+   },
 };

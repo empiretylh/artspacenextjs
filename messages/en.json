@@ -10,6 +10,18 @@
     "joinNow": "Join Now",
     "notifications": "Notifications"
   },
+  "Notifications": {
+    "title": "Notifications",
+    "subtitle": "Stay updated on your orders, artworks, and followers",
+    "all": "All",
+    "unread": "Unread",
+    "new": "new",
+    "empty": "No notifications yet",
+    "emptyDescription": "When someone follows you, purchases your art, or updates an order, you'll see it here.",
+    "markAllAsRead": "Mark all as read",
+    "viewAll": "View all notifications",
+    "loading": "Loading notifications..."
+  },
   "Navigation": {
     "home": "Home",
     "artwork": "Artwork",

@@ -24,13 +24,14 @@ messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
   
   const data = payload.data || {};
-  const notificationTitle = data.title || 'New Message';
+  const notificationTitle = data.title || 'Artspace Notification';
   const notificationOptions = {
-    body: data.body || 'You have a new message on Artspace.',
-    icon: '/favicon.ico',
+    body: data.message || data.body || 'You have a new update on Artspace.',
+    icon: data.image_url || '/favicon.ico',
     badge: '/favicon.ico',
+    image: data.image_url || undefined,
     data: data,
-    tag: 'chat-notification',
+    tag: data.notification_id ? ('notification-' + data.notification_id) : (data.tag || 'artspace-notification'),
     renotify: true,
   };
 
@@ -44,11 +45,16 @@ messaging.onBackgroundMessage((payload) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const conversationId = event.notification.data?.conversationId;
+  const data = event.notification.data || {};
+  const conversationId = data.conversationId;
+  const webRoute = data.web_route;
   
-  const urlToOpen = conversationId 
-    ? \`/chats?id=\${conversationId}\` 
-    : '/chats';
+  let urlToOpen = '/notifications';
+  if (webRoute) {
+    urlToOpen = webRoute;
+  } else if (conversationId) {
+    urlToOpen = '/chats?id=' + conversationId;
+  }
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
