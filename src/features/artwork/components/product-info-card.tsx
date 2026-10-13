@@ -1,14 +1,13 @@
 import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import Price from "@/components/common/price";
-import DeliverIcon from "@/components/icons/deliver-icon";
 import SecureIcon from "@/components/icons/secure-icon";
 import VerifyIcon from "@/components/icons/verify-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { paths } from "@/config/paths";
 import { useAuth } from "@/features/auth/store";
-import { cn, getImage, getUserRouteType, timeAgo } from "@/lib/utils";
+import { cn, getImage, getUserDisplayName, getUserRouteType, timeAgo } from "@/lib/utils";
 import type { Artwork } from "@/types";
 import { useRouter } from "@/i18n/routing";
 import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
@@ -72,7 +71,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   )}
                   width={48}
                   height={48}
-                  alt={`${artwork.current_owner_display?.first_name || ''} ${artwork.current_owner_display?.last_name || ''} profile picture`}
+                  alt={`${getUserDisplayName(artwork.current_owner_display)} profile picture`}
                   containerClassName="w-12 h-12 rounded-full overflow-hidden"
                   className="object-cover"
                />
@@ -86,8 +85,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                            )}
                         >
                            <p className="flex items-center hover:underline gap-2 text-muted-foreground font-semibold text-sm">
-                              {artwork.current_owner_display.first_name}{" "}
-                              {artwork.current_owner_display.last_name}
+                              {getUserDisplayName(artwork.current_owner_display)}
                               {/* <span>
                         <Home className="w-4 h-4" />
                      </span> */}
@@ -209,13 +207,6 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                      <SecureIcon />
                   </span>
                   <p className="text-xs">{t("securePayment")}</p>
-               </div>
-
-               <div className="flex items-center space-x-3 md:space-x-4">
-                  <span className="text-primary">
-                     <DeliverIcon />
-                  </span>
-                  <p className="text-xs">{t("freeReturns")}</p>
                </div>
             </div>
          </CardContent>

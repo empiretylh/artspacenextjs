@@ -13,7 +13,7 @@ import { db } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
 import type { ChatUser, OrderCardData } from "../types";
 import { extractFirstUrl } from "../utils/link-detector";
-import { getRelativeImagePath } from "@/lib/utils";
+import { getImage, getRelativeImagePath, getUserDisplayName } from "@/lib/utils";
 
 export const useSendMessage = (conversationId: string | null) => {
    const { user } = useAuth();
@@ -48,7 +48,7 @@ export const useSendMessage = (conversationId: string | null) => {
                participantDetails: {
                   [user.id]: {
                      id: String(user.id),
-                     name: `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email,
+                     name: getUserDisplayName(user, user.email),
                      avatar: user.profile?.profile_picture || null,
                      user_type: user.user_type,
                      cover_photo: user.profile?.cover_photo || null,
@@ -117,7 +117,7 @@ export const useSendMessage = (conversationId: string | null) => {
             }
 
             const convRef = doc(db!, "conversations", targetId);
-            const name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email;
+            const name = getUserDisplayName(user, user.email);
             
             await runTransaction(db!, async (transaction) => {
                const convSnap = await transaction.get(convRef);

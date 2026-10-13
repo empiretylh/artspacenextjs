@@ -7,6 +7,7 @@ import { BoardCard } from "@/features/boards/components/board-card";
 import { BoardArtworksView } from "@/features/boards/components/board-artworks-view";
 import { Bookmark } from "lucide-react";
 import type { Board } from "@/types";
+import { getUserDisplayName } from "@/lib/utils";
 
 const UserSavePage = () => {
    const { data: user } = useProfileUser();
@@ -20,7 +21,7 @@ const UserSavePage = () => {
    const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
 
    const selectedBoard = boards.find((b: Board) => b.id === selectedBoardId) || null;
-   const fullName = `${user?.first_name || ""} ${user?.last_name || ""}`.trim() || "User";
+   const fullName = getUserDisplayName(user);
 
    if (selectedBoard) {
       return (

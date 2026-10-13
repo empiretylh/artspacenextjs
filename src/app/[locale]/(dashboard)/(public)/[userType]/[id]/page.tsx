@@ -4,7 +4,7 @@ import { env } from "@/config/env";
 import UserOverviewPage from "@/features/user/pages/user-overview-page";
 import { getCachedUser } from "@/features/service/artspace/get-user";
 import { getUsersOg, UserRouteType } from "@/features/service/artspace/get-users";
-import { getImage, getUserRouteType } from "@/lib/utils";
+import { getImage, getUserDisplayName, getUserRouteType } from "@/lib/utils";
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
   
-  const displayName = `${data.first_name || ""} ${data.last_name || ""}`.trim();
+  const displayName = getUserDisplayName(data);
   const title = displayName || "User Profile";
   const description =
     data.profile.bio || `Explore ${displayName || "this"} profile on Myanmar Art Space.`;

@@ -46,6 +46,7 @@ export interface Profile {
    cover_photo: string | null;
    website: string;
    show_email: boolean;
+   hide_collector_name?: boolean;
    features_photos: FeaturedPhoto[];
    is_following: boolean;
    isBlocked: boolean;

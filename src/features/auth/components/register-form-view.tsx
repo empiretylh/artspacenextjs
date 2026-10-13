@@ -61,6 +61,13 @@ export default function RegisterFormView({
         {t("subtitle")}
       </p>
 
+      {/* Server / form errors */}
+      {form.formState.errors.root && (
+        <div className="text-destructive p-3 text-center border flex items-center justify-center mb-3 rounded border-destructive text-sm bg-destructive/10">
+          {form.formState.errors.root.message}
+        </div>
+      )}
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

@@ -17,6 +17,7 @@ export const updateProfileInputSchema = z.object({
    website: z.string().url().optional().or(z.literal("")),
    about: z.string().optional(),
    show_email: z.boolean().optional(),
+   hide_collector_name: z.boolean().optional(),
    // profile_picture: z.string().nullable().optional(),
 });
 
@@ -31,11 +32,17 @@ export const updateProfile = ({
    const payload = {
       first_name: data.first_name,
       last_name: data.last_name,
+      ...(data.hide_collector_name !== undefined && {
+         hide_collector_name: data.hide_collector_name,
+      }),
       profile: {
          bio: data.bio,
          website: data.website,
          about: data.about,
          show_email: data.show_email,
+         ...(data.hide_collector_name !== undefined && {
+            hide_collector_name: data.hide_collector_name,
+         }),
       },
    };
 

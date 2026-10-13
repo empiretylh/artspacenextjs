@@ -7,7 +7,7 @@ import { env } from "@/config/env";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useAuth } from "@/features/auth/store";
-import { cn, getImage, getUserIcon } from "@/lib/utils";
+import { cn, getImage, getUserDisplayName, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
 import { redirect } from "next/navigation";
 import { usePathname } from "@/i18n/routing";
@@ -104,7 +104,9 @@ const ProfileLayoutView = ({
       : "/assets/profile-default.png";
 
    const fullName =
-      `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() || "User";
+      variant === "profile"
+         ? [user?.first_name?.trim(), user?.last_name?.trim()].filter(Boolean).join(" ") || "User"
+         : getUserDisplayName(user);
 
    return (
       <div>

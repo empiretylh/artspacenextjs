@@ -2,6 +2,7 @@ import { doc, setDoc, serverTimestamp, getDocs, collection, query, where, writeB
 import { db } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
 import type { UserDocument } from "../types";
+import { getUserDisplayName } from "@/lib/utils";
 
 export const useSyncUserProfile = () => {
    const { user } = useAuth();
@@ -12,7 +13,7 @@ export const useSyncUserProfile = () => {
       const userIdStr = String(user.id);
       const userRef = doc(db, "users", userIdStr);
 
-      const name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email;
+      const name = getUserDisplayName(user, user.email);
       const avatar = user.profile?.profile_picture || null;
       const user_type = user.user_type;
       const cover_photo = user.profile?.cover_photo || null;

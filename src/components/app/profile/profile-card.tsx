@@ -3,7 +3,7 @@ import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
 import { env } from "@/config/env";
 import { useAuth } from "@/features/auth/store";
-import { getImage, getUserIcon, getUserLink } from "@/lib/utils";
+import { getImage, getUserDisplayName, getUserIcon, getUserLink } from "@/lib/utils";
 import type { User } from "@/types";
 import FollowButton from "../follow-button";
 import { paths } from "@/config/paths";
@@ -21,7 +21,7 @@ export default function ProfileCard({ user }: { user: User }) {
          ? getImage(user.profile.profile_picture)
          : "/assets/profile-default.png";
 
-   const fullName = `${user.first_name || ""} ${user.last_name || ""}`.trim() || "User";
+   const fullName = getUserDisplayName(user);
 
    return (
       <div className="flex w-full justify-center border border-border/80 rounded-xl overflow-hidden bg-background shadow-xs hover:shadow-sm transition-all duration-300">

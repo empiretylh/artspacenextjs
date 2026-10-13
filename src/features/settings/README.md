@@ -21,6 +21,11 @@ This feature allows users to maintain their public presence and control their pr
     - A boolean flag within the `Profile` model.
     - Managed via a `Switch` toggle in the `ProfileEditForm`.
     - **UI Impact**: When set to `false`, components like `ProfileCard` and `ArtistProfile` will hide the user's email address while maintaining layout alignment.
+- **Collector Name Privacy (`hide_collector_name`)**:
+    - A boolean flag within the `Profile` model accepted specifically for collector accounts (`user_type === 'COLLECTOR'`).
+    - Managed via a dedicated `Switch` toggle in `ProfileEditForm` (rendered exclusively for collector users).
+    - Sent to `PATCH /api/v1/users/profile/me/`.
+    - **UI Impact**: When enabled, the collector's name is rendered as `Anonymous` across public profile mirrors, collector list/cards (`ProfileCard`, `UserSearchCard`), and nested ownership representations (`ProductInfoCard`, `ArtworkCharacteristicsCard`), while persisted first and last names remain intact for account owners.
 
 ## 📂 Key Files
 - [profile-edit-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/settings/components/profile-edit-form.tsx): The primary form for managing user identity and privacy settings.

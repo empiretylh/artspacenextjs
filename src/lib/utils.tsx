@@ -3,6 +3,7 @@ import { env } from "@/config/env";
 import { paths } from "@/config/paths";
 import { UserRouteType } from "@/features/service/artspace/get-users";
 import type { ApiErrorResponse, Currency, User } from "@/types";
+import { useNotifications } from "@/components/ui/notifications";
 import { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
@@ -63,33 +64,119 @@ export const date = {
 
 export const handleFormError = <T extends Record<string, unknown>>(
    error: unknown,
-   form: UseFormReturn<T>
+   form?: UseFormReturn<T>,
+   options?: { fallbackTitle?: string; fallbackMessage?: string; showNotification?: boolean }
 ) => {
-   if (error instanceof AxiosError) {
-      const data = error.response?.data as ApiErrorResponse<T> | undefined;
-      if (!data) return;
+   let errorMessage = options?.fallbackMessage || "An unexpected error occurred";
+   const errorTitle = options?.fallbackTitle || "Error";
+   let hasSetFieldError = false;
 
-      // Handle field-specific validation errors
-      Object.keys(data).forEach((key) => {
-         const value = data[key as keyof typeof data];
-         if (key === "non_field_errors" && Array.isArray(value)) {
-            // ✅ Handle general (non-field) errors — attach to form root
-            form.setError("root", {
-               type: "manual",
-               message: value[0] || "An unexpected error occurred",
+   if (error instanceof AxiosError) {
+      const data = error.response?.data;
+
+      if (data) {
+         if (typeof data === "string") {
+            if (data.includes("<!DOCTYPE") || data.includes("<html") || data.includes("<body")) {
+               const titleMatch = data.match(/<title>(.*?)<\/title>/i);
+               const excMatch = data.match(/<pre class="exception_value">([\s\S]*?)<\/pre>/i);
+               errorMessage = excMatch ? excMatch[1].replace(/<[^>]+>/g, "").trim() : (titleMatch ? titleMatch[1].trim() : "Server error");
+            } else {
+               errorMessage = data.replace(/<[^>]+>/g, "").trim() || "An unexpected error occurred";
+            }
+         } else if (typeof data === "object") {
+            let extractedBackendMsg = "";
+
+            const cleanStr = (val: any) => {
+               if (typeof val !== "string") return "";
+               if (val.includes("<!DOCTYPE") || val.includes("<html") || val.includes("<body")) {
+                  const titleMatch = val.match(/<title>(.*?)<\/title>/i);
+                  const excMatch = val.match(/<pre class="exception_value">([\s\S]*?)<\/pre>/i);
+                  return excMatch ? excMatch[1].replace(/<[^>]+>/g, "").trim() : (titleMatch ? titleMatch[1].trim() : "Server error");
+               }
+               return val.replace(/<[^>]+>/g, "").trim();
+            };
+
+            // Check for direct message/detail/error properties
+            if (typeof (data as any).detail === "string") {
+               extractedBackendMsg = cleanStr((data as any).detail);
+            } else if (typeof (data as any).message === "string") {
+               extractedBackendMsg = cleanStr((data as any).message);
+            } else if (typeof (data as any).error === "string") {
+               extractedBackendMsg = cleanStr((data as any).error);
+            }
+
+            // Key mapping dictionary for backend-to-frontend field mismatch
+            const fieldAliases: Record<string, string> = {
+               phone_number: "phone",
+            };
+
+            // Iterate through response keys
+            Object.keys(data).forEach((rawKey) => {
+               const key = fieldAliases[rawKey] || rawKey;
+               const value = (data as any)[rawKey];
+
+               if (rawKey === "non_field_errors" || rawKey === "detail" || rawKey === "message" || rawKey === "error") {
+                  const msg = Array.isArray(value) ? value[0] : (typeof value === "string" ? value : null);
+                  if (msg) {
+                     extractedBackendMsg = msg;
+                     if (form) {
+                        form.setError("root", {
+                           type: "manual",
+                           message: msg,
+                        });
+                        hasSetFieldError = true;
+                     }
+                  }
+               } else if (Array.isArray(value) && value.length > 0) {
+                  const msg = typeof value[0] === "string" ? value[0] : JSON.stringify(value[0]);
+                  if (form) {
+                     form.setError(key as Path<T>, {
+                        type: "manual",
+                        message: msg,
+                     });
+                     hasSetFieldError = true;
+                     form.setFocus(key as Path<T>);
+                  }
+                  if (!extractedBackendMsg) {
+                     extractedBackendMsg = msg;
+                  }
+               } else if (typeof value === "string") {
+                  if (form) {
+                     form.setError(key as Path<T>, {
+                        type: "manual",
+                        message: value,
+                     });
+                     hasSetFieldError = true;
+                     form.setFocus(key as Path<T>);
+                  }
+                  if (!extractedBackendMsg) {
+                     extractedBackendMsg = value;
+                  }
+               }
             });
-         } else if (Array.isArray(value)) {
-            // ✅ Handle field-level errors
-            const field = key as Path<T>;
-            const message = value[0] ?? "Validation error";
-            form.setError(field, {
-               type: "manual",
-               message,
-            });
+
+            if (extractedBackendMsg) {
+               errorMessage = extractedBackendMsg;
+            }
          }
-         form.setFocus(key as Path<T>);
+      } else if (error.message) {
+         errorMessage = error.message;
+      }
+   } else if (error instanceof Error) {
+      errorMessage = error.message;
+   }
+
+   // Always show notification if explicitly requested OR if no field error was mapped on the form
+   const shouldNotify = options?.showNotification ?? (!form || !hasSetFieldError);
+   if (shouldNotify) {
+      useNotifications.getState().addNotification({
+         type: "error",
+         title: errorTitle,
+         message: errorMessage,
       });
    }
+
+   return errorMessage;
 };
 
 export const uuid = () => {
@@ -273,6 +360,42 @@ export const getUserLink = (user: User, authUser: User) => {
       default:
          return paths.artists.detail.getHref(String(user.id));
    }
+};
+
+export const getUserDisplayName = (
+   user?: {
+      name?: string | null;
+      first_name?: string | null;
+      last_name?: string | null;
+      user_type?: string | null;
+      profile?: {
+         hide_collector_name?: boolean | null;
+      } | null;
+      hide_collector_name?: boolean | null;
+   } | null,
+   fallback = "User"
+): string => {
+   if (!user) return fallback;
+
+   // 1. If backend already returns a single name field (e.g. search, chat user representation)
+   if (user.name !== undefined && user.name !== null && user.name.trim() !== "") {
+      return user.name.trim();
+   }
+
+   // 2. Build full name from first_name and last_name (backend already masks first_name/last_name to "Anonymous" if enabled)
+   const fullName = [user.first_name?.trim(), user.last_name?.trim()].filter(Boolean).join(" ");
+   if (fullName) {
+      return fullName;
+   }
+
+   // 3. Fallback: only if backend fields are undefined/empty and collector privacy is toggled
+   const isCollector = user.user_type === "COLLECTOR";
+   const isHidden = Boolean(user.hide_collector_name || user.profile?.hide_collector_name);
+   if (isCollector && isHidden) {
+      return "Anonymous";
+   }
+
+   return fallback;
 };
 
 export const getUserRouteType = (entityType: string) => {

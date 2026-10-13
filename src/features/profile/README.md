@@ -43,6 +43,8 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
 - On the user's own profile page (`/profile`), the email is always displayed to the account owner along with an eye status badge:
   - `Hidden` with `<EyeOff />` (when `show_email` is off, clarifying that it is hidden from the public).
   - `Public` with `<Eye />` (when `show_email` is on).
+- **Collector Name Privacy (`hide_collector_name`)**:
+  - Collectors can hide their public name via Settings. When enabled, the backend masks public name fields to `Anonymous` on public profiles, search cards, and artwork ownership cards. Persisted account names can be restored at any time by toggling it off.
 
 ### 4. Profile Counters & Activity Metrics
 - **Counters**: `artwork_count` (distinct purchases for collectors; authored/uploaded for artists/galleries/buyers), `collection_count` (Save for Later boards), `like_artwork_count` (liked artworks), and `save_collection_count` (saved artworks).

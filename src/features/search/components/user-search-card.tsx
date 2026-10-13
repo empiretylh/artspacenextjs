@@ -40,13 +40,17 @@ export default function UserSearchCard({ user, type }: UserSearchCardProps) {
       return <div className="flex items-center gap-3">{children}</div>;
    };
 
+   const displayName =
+      user.name?.trim() ||
+      (type === "collector" && user.hide_collector_name ? "Anonymous" : "User");
+
    return (
       <div className="flex flex-col h-full border border-border rounded-xl p-4 bg-card/30 hover:bg-card/60 transition-all duration-300 shadow-xs">
          <HeaderWrapper>
             <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 bg-muted">
                <AppImage
                   src={avatarSrc}
-                  alt={user.name}
+                  alt={displayName}
                   width={48}
                   height={48}
                   className="object-cover"
@@ -54,7 +58,7 @@ export default function UserSearchCard({ user, type }: UserSearchCardProps) {
             </div>
             <div className="min-w-0 flex-1">
                <h3 className="font-semibold text-sm sm:text-base font-display truncate group-hover/header:text-primary transition-colors">
-                  {user.name}
+                  {displayName}
                </h3>
                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
                   <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/80">

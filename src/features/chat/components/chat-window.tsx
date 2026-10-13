@@ -28,7 +28,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getImage, getUserRouteType } from "@/lib/utils";
+import { getImage, getUserDisplayName, getUserRouteType } from "@/lib/utils";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
@@ -105,7 +105,7 @@ export const ChatWindow = ({
 
    const recipientUser: ChatUser | null = recipientData ? {
       id: String((recipientData as any).id),
-      name: `${(recipientData as any).first_name || ""} ${(recipientData as any).last_name || ""}`.trim() || (recipientData as any).email,
+      name: getUserDisplayName(recipientData as any, (recipientData as any).email),
       avatar: (recipientData as any).profile?.profile_picture || null,
       user_type: (recipientData as any).user_type || null,
       cover_photo: (recipientData as any).profile?.cover_photo || null,
@@ -113,7 +113,8 @@ export const ChatWindow = ({
 
    const finalUser = displayUser ? {
       ...displayUser,
-      ...(recipientUser || {})
+      ...recipientUser,
+      name: recipientUser?.name || displayUser.name,
    } : recipientUser;
 
    const { isBlocked } = useChatSecurity(
@@ -125,7 +126,7 @@ export const ChatWindow = ({
    const participantDetails = activeConversation?.participantDetails || (finalRecipientId && finalUser ? {
       [String(currentUser?.id)]: {
          id: String(currentUser?.id),
-         name: `${currentUser?.first_name || ""} ${currentUser?.last_name || ""}`.trim() || currentUser?.email || "You",
+         name: getUserDisplayName(currentUser, currentUser?.email || "You"),
          avatar: currentUser?.profile?.profile_picture || null
       },
       [finalRecipientId]: finalUser
