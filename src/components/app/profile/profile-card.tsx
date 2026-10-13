@@ -73,15 +73,96 @@ export default function ProfileCard({ user }: { user: User }) {
                   </div>
 
                   <div className="h-14 sm:h-16 flex items-center justify-center w-full">
-                     <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed px-1 mx-auto max-w-[200px]">
-                        {user.profile?.bio ? (
-                           user.profile.bio
-                        ) : (
-                           <span className="capitalize text-muted-foreground/75">
+                     {(() => {
+                        const bio = user.profile?.bio?.trim();
+                        const hasEnoughBio = Boolean(bio && bio.length >= 15);
+
+                        if (hasEnoughBio) {
+                           return (
+                              <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed px-1 mx-auto max-w-[200px]" title={bio}>
+                                 {bio}
+                              </p>
+                           );
+                        }
+
+                        const artworkCount = user.artwork_count ?? user.num_artworks;
+                        const collectionCount = user.collection_count;
+                        const likeCount = user.like_artwork_count;
+                        const saveCount = user.save_collection_count;
+
+                        const hasCounters =
+                           artworkCount !== undefined ||
+                           collectionCount !== undefined ||
+                           likeCount !== undefined ||
+                           saveCount !== undefined;
+
+                        if (hasCounters) {
+                           const safeArtworkCount = artworkCount ?? 0;
+                           const safeCollectionCount = collectionCount ?? 0;
+                           const safeLikeCount = likeCount ?? 0;
+                           const artworkLabel =
+                              user.user_type === "COLLECTOR"
+                                 ? "Collected"
+                                 : safeArtworkCount === 1
+                                    ? "Artwork"
+                                    : "Artworks";
+                           const collectionLabel =
+                              safeCollectionCount === 1 ? "Collection" : "Collections";
+                           const likeLabel = safeLikeCount === 1 ? "Like" : "Likes";
+
+                           const secondaryValue =
+                              safeCollectionCount > 0 || safeLikeCount === 0
+                                 ? safeCollectionCount
+                                 : safeLikeCount;
+                           const secondaryLabel =
+                              safeCollectionCount > 0 || safeLikeCount === 0
+                                 ? collectionLabel
+                                 : likeLabel;
+
+                           return (
+                              <div className="flex items-center justify-center w-full px-1 text-center select-none">
+                                 {/* Mobile view (< sm): two metrics stacked vertically */}
+                                 <div className="sm:hidden flex flex-col items-center justify-center gap-1.5 text-xs">
+                                    <div className="flex items-center justify-center gap-1">
+                                       <span className="font-semibold text-foreground">
+                                          {safeArtworkCount}
+                                       </span>
+                                       <span className="text-muted-foreground">
+                                          {artworkLabel}
+                                       </span>
+                                    </div>
+                                    <div className="flex items-center justify-center gap-1 text-muted-foreground text-[11px]">
+                                       <span className="font-semibold text-foreground">
+                                          {secondaryValue}
+                                       </span>
+                                       <span>
+                                          {secondaryLabel}
+                                       </span>
+                                    </div>
+                                 </div>
+
+                                 {/* Desktop view (>= sm): two key metrics side-by-side */}
+                                 <div className="hidden sm:flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+                                    <span className="font-semibold text-foreground">
+                                       {safeArtworkCount}
+                                    </span>
+                                    <span>{artworkLabel}</span>
+                                    <span className="text-muted-foreground/40">•</span>
+                                    <span className="font-semibold text-foreground">
+                                       {secondaryValue}
+                                    </span>
+                                    <span>{secondaryLabel}</span>
+                                 </div>
+                              </div>
+                           );
+                        }
+
+                        return (
+                           <span className="capitalize text-muted-foreground/75 text-xs">
                               {user.user_type ? user.user_type.toLowerCase() : "Artist"}
                            </span>
-                        )}
-                     </p>
+                        );
+                     })()}
                   </div>
                </div>
 

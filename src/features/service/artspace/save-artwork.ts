@@ -21,7 +21,8 @@ export const saveArtwork = async ({
    artworkId: string;
    data?: SaveArtworkInput;
 }): Promise<any> => {
-   const payload = data?.collection_id ? { collection_id: data.collection_id } : {};
+   const targetId = data?.board_id || data?.collection_id;
+   const payload = targetId ? { collection_id: targetId, board_id: targetId } : {};
    const res = await api.post(
       `/artworks/save-for-later/artworks/${artworkId}/save/`,
       payload
@@ -49,9 +50,10 @@ export const useSaveArtwork = ({
          queryClient.invalidateQueries({
             queryKey: queryKeys.board.all,
          });
-         if (variables.data?.collection_id) {
+         const targetId = variables.data?.board_id || variables.data?.collection_id;
+         if (targetId) {
             queryClient.invalidateQueries({
-               queryKey: queryKeys.board.artworks.all(variables.data.collection_id),
+               queryKey: queryKeys.board.artworks.all(targetId),
             });
          }
          onSuccess?.(...args);
@@ -71,7 +73,8 @@ export const unsaveArtwork = async ({
    artworkId: string;
    data?: SaveArtworkInput;
 }): Promise<any> => {
-   const payload = data?.collection_id ? { collection_id: data.collection_id } : {};
+   const targetId = data?.board_id || data?.collection_id;
+   const payload = targetId ? { collection_id: targetId, board_id: targetId } : {};
    const res = await api.delete(
       `/artworks/save-for-later/artworks/${artworkId}/save/`,
       { data: payload }
@@ -99,9 +102,10 @@ export const useUnsaveArtwork = ({
          queryClient.invalidateQueries({
             queryKey: queryKeys.board.all,
          });
-         if (variables.data?.collection_id) {
+         const targetId = variables.data?.board_id || variables.data?.collection_id;
+         if (targetId) {
             queryClient.invalidateQueries({
-               queryKey: queryKeys.board.artworks.all(variables.data.collection_id),
+               queryKey: queryKeys.board.artworks.all(targetId),
             });
          }
          onSuccess?.(...args);

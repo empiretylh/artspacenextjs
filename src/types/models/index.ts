@@ -6,8 +6,14 @@ export interface User {
    email: string;
    first_name: string;
    last_name: string;
+   username?: string;
    user_type: "BUYER" | "COLLECTOR" | "ARTIST" | "GALLERY";
    profile: Profile;
+   artwork_count?: number;
+   collection_count?: number;
+   like_artwork_count?: number;
+   save_collection_count?: number;
+   num_artworks?: number;
 }
 
 export interface FeaturedPhoto {
@@ -140,6 +146,10 @@ export interface Artist {
    last_name: string;
    avatar?: string;
    num_artworks: number;
+   artwork_count?: number;
+   collection_count?: number;
+   like_artwork_count?: number;
+   save_collection_count?: number;
    popular_artworks: Artwork[];
    profile: Profile;
 }
@@ -149,6 +159,10 @@ export interface Collector {
    name: string;
    avatar?: string;
    num_artworks: number;
+   artwork_count?: number;
+   collection_count?: number;
+   like_artwork_count?: number;
+   save_collection_count?: number;
    popular_artworks: Artwork[];
 }
 
@@ -157,6 +171,10 @@ export interface Gallery {
    name: string;
    avatar?: string;
    num_artworks: number;
+   artwork_count?: number;
+   collection_count?: number;
+   like_artwork_count?: number;
+   save_collection_count?: number;
    popular_artworks: Artwork[];
 }
 

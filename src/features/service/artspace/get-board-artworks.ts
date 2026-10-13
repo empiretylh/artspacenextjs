@@ -57,7 +57,7 @@ export const getBoardArtworks = async ({
    }
 
    const res = await api.get(
-      `/artworks/save-for-later/collections/${boardId}/artworks/`,
+      `/artworks/boards/${boardId}/artworks/`,
       { params }
    );
 

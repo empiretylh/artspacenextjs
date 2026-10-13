@@ -70,7 +70,9 @@ export const SaveToBoardDialog: React.FC<SaveToBoardDialogProps> = ({
 
    const boards = extractBoards(boardsData);
    const savedCollectionIds = new Set(
-      saveStatus?.collections?.map((c) => String(c.id)) ?? []
+      ((saveStatus?.collections ?? saveStatus?.boards ?? []) as { id: string | number }[]).map(
+         (c) => String(c.id)
+      )
    );
 
    const handleToggleBoard = (boardId: string, isCurrentlySaved: boolean) => {
@@ -88,6 +90,16 @@ export const SaveToBoardDialog: React.FC<SaveToBoardDialogProps> = ({
                      message: "Artwork removed from board.",
                   });
                },
+               onError: (err: any) => {
+                  useNotifications.getState().addNotification({
+                     type: "error",
+                     title: "Failed to remove",
+                     message:
+                        err.response?.data?.detail ||
+                        err.message ||
+                        "Could not remove artwork from board.",
+                  });
+               },
             }
          );
       } else {
@@ -102,6 +114,16 @@ export const SaveToBoardDialog: React.FC<SaveToBoardDialogProps> = ({
                      type: "success",
                      title: "Saved to board",
                      message: "Artwork added to board.",
+                  });
+               },
+               onError: (err: any) => {
+                  useNotifications.getState().addNotification({
+                     type: "error",
+                     title: "Failed to save",
+                     message:
+                        err.response?.data?.detail ||
+                        err.message ||
+                        "Could not save artwork to board.",
                   });
                },
             }

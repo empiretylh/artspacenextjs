@@ -60,14 +60,30 @@ export default function UserSearchCard({ user, type }: UserSearchCardProps) {
                   <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/80">
                      {typeLabels[type]}
                   </span>
-                  {type !== "buyer" && (
-                     <>
-                        <span className="w-1 h-1 rounded-full bg-muted-foreground/30 shrink-0" />
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
-                           {user.num_artworks} {user.num_artworks === 1 ? "Artwork" : "Artworks"}
-                        </span>
-                     </>
-                  )}
+                  {(() => {
+                     const artworkCount = user.artwork_count ?? user.num_artworks;
+                     const artworkLabel = type === "collector" ? "Collected" : artworkCount === 1 ? "Artwork" : "Artworks";
+                     return (
+                        <>
+                           {artworkCount !== undefined && (
+                              <>
+                                 <span className="w-1 h-1 rounded-full bg-muted-foreground/30 shrink-0" />
+                                 <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                    {artworkCount} {artworkLabel}
+                                 </span>
+                              </>
+                           )}
+                           {user.collection_count !== undefined && user.collection_count > 0 && (
+                              <>
+                                 <span className="w-1 h-1 rounded-full bg-muted-foreground/30 shrink-0" />
+                                 <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                    {user.collection_count} {user.collection_count === 1 ? "Collection" : "Collections"}
+                                 </span>
+                              </>
+                           )}
+                        </>
+                     );
+                  })()}
                </div>
             </div>
          </HeaderWrapper>

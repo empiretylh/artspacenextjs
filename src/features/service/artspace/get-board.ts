@@ -10,7 +10,7 @@ export const getBoard = async ({
 }: {
    boardId: string;
 }): Promise<Board> => {
-   const res = await api.get(`/artworks/save-for-later/collections/${boardId}/`);
+   const res = await api.get(`/artworks/boards/${boardId}/`);
    return res.data;
 };
 

@@ -25,6 +25,7 @@ interface BoardArtworksViewProps {
    onBack: () => void;
    onEdit?: () => void;
    onDelete?: () => void;
+   isOwner?: boolean;
 }
 
 export const BoardArtworksView: React.FC<BoardArtworksViewProps> = ({
@@ -32,6 +33,7 @@ export const BoardArtworksView: React.FC<BoardArtworksViewProps> = ({
    onBack,
    onEdit,
    onDelete,
+   isOwner = true,
 }) => {
    const {
       data,
@@ -183,21 +185,23 @@ export const BoardArtworksView: React.FC<BoardArtworksViewProps> = ({
                      <div key={artwork.id} className="relative group">
                         <ArtworkCard artwork={artwork} publicCard={true} />
                         {/* Remove button overlay */}
-                        <div className="absolute top-2 left-2 z-20 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                           <Button
-                              size="icon"
-                              variant="destructive"
-                              className="h-8 w-8 rounded-full shadow-md"
-                              onClick={(e) => {
-                                 e.stopPropagation();
-                                 handleRemove(artwork.id, artwork.title);
-                              }}
-                              disabled={removeArtworkMutation.isPending}
-                              title="Remove from board"
-                           >
-                              <Trash2 className="h-4 w-4" />
-                           </Button>
-                        </div>
+                        {isOwner && (
+                           <div className="absolute top-2 left-2 z-20 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                              <Button
+                                 size="icon"
+                                 variant="destructive"
+                                 className="h-8 w-8 rounded-full shadow-md"
+                                 onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemove(artwork.id, artwork.title);
+                                 }}
+                                 disabled={removeArtworkMutation.isPending}
+                                 title="Remove from board"
+                              >
+                                 <Trash2 className="h-4 w-4" />
+                              </Button>
+                           </div>
+                        )}
                      </div>
                   ))}
                </div>

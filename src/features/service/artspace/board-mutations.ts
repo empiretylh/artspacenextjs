@@ -13,7 +13,7 @@ import { queryKeys } from "@/config/query-keys";
 // ----------------------------------------------------------------------
 
 export const createBoard = async (data: CreateBoardInput): Promise<Board> => {
-   const res = await api.post("/artworks/save-for-later/collections/", {
+   const res = await api.post("/artworks/boards/", {
       name: data.name.trim(),
       visibility: data.visibility || "PRIVATE",
    });
@@ -58,7 +58,7 @@ export const updateBoard = async ({
    if (data.visibility !== undefined) payload.visibility = data.visibility;
 
    const res = await api.patch(
-      `/artworks/save-for-later/collections/${boardId}/`,
+      `/artworks/boards/${boardId}/`,
       payload
    );
    return res.data;
@@ -99,7 +99,7 @@ export const deleteBoard = async ({
 }: {
    boardId: string;
 }): Promise<void> => {
-   await api.delete(`/artworks/save-for-later/collections/${boardId}/`);
+   await api.delete(`/artworks/boards/${boardId}/`);
 };
 
 type UseDeleteBoardOptions = {
@@ -136,7 +136,7 @@ export const addArtworkToBoard = async ({
    artworkId: string;
 }): Promise<any> => {
    const res = await api.post(
-      `/artworks/save-for-later/collections/${boardId}/artworks/`,
+      `/artworks/boards/${boardId}/artworks/`,
       { artwork_id: artworkId }
    );
    return res.data;
@@ -183,7 +183,7 @@ export const removeArtworkFromBoard = async ({
    artworkId: string;
 }): Promise<void> => {
    await api.delete(
-      `/artworks/save-for-later/collections/${boardId}/artworks/${artworkId}/`
+      `/artworks/boards/${boardId}/artworks/${artworkId}/`
    );
 };
 

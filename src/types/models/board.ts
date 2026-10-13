@@ -7,12 +7,14 @@ export interface Board {
    name: string;
    visibility: BoardVisibility;
    is_default: boolean;
+   artwork_count?: number;
    artworks_count?: number;
    cover_image?: string | null;
    created_at?: string;
    updated_at?: string;
    user?: User | number | string;
    artworks?: Artwork[];
+   items?: BoardItem[];
 }
 
 export interface BoardItem {
@@ -27,11 +29,13 @@ export interface ArtworkSaveStatusBoard {
    name: string;
    visibility: BoardVisibility;
    is_default: boolean;
+   artwork_count?: number;
 }
 
 export interface ArtworkSaveStatus {
    saved: boolean;
    collections: ArtworkSaveStatusBoard[];
+   boards?: ArtworkSaveStatusBoard[];
 }
 
 export interface CreateBoardInput {
@@ -46,4 +50,5 @@ export interface UpdateBoardInput {
 
 export interface SaveArtworkInput {
    collection_id?: string;
+   board_id?: string;
 }

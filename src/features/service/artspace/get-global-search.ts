@@ -18,6 +18,10 @@ export interface SearchUser {
    name: string;
    avatar: string | null;
    num_artworks: number;
+   artwork_count?: number;
+   collection_count?: number;
+   like_artwork_count?: number;
+   save_collection_count?: number;
    popular_artworks: SearchArtwork[];
 }
 

@@ -1,5 +1,6 @@
 'use client'
 import ArtistSummaryBadges from "@/components/app/profile/artist-summary-badges";
+import ProfileStatsSummary from "@/components/app/profile/profile-stats-summary";
 import { useProfileUser } from "@/components/providers/profile-user-provider";
 import { getImage, getUserRouteType } from "@/lib/utils";
 import { paths } from "@/config/paths";
@@ -29,14 +30,45 @@ const UserOverviewPage = () => {
                      {user?.profile?.about || "No about yet"}
                   </p>
                </div>
-               {user?.profile?.artist_badges && user.profile.artist_badges.length > 0 && (
-                  <div>
-                     <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground mb-4">
-                        Summary
-                     </h2>
-                     <ArtistSummaryBadges badges={user.profile.artist_badges} />
-                  </div>
-               )}
+                              {(() => {
+                  const hasStats =
+                     user?.artwork_count !== undefined ||
+                     user?.collection_count !== undefined ||
+                     user?.like_artwork_count !== undefined ||
+                     user?.save_collection_count !== undefined ||
+                     user?.num_artworks !== undefined;
+                  const hasBadges = Boolean(
+                     user?.profile?.artist_badges &&
+                     user.profile.artist_badges.length > 0
+                  );
+
+                  return (
+                     <>
+                        {hasStats && (
+                           <div>
+                              <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground mb-4">
+                                 Summary
+                              </h2>
+                              <ProfileStatsSummary
+                                 user={user}
+                                 isOwnProfile={false}
+                              />
+                           </div>
+                        )}
+
+                        {hasBadges && (
+                           <div>
+                              <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground mb-4">
+                                 Badges & Recognition
+                              </h2>
+                              <ArtistSummaryBadges
+                                 badges={user.profile.artist_badges}
+                              />
+                           </div>
+                        )}
+                     </>
+                  );
+               })()}
                {user?.profile?.features_photos && user.profile.features_photos.length > 0 && (
                   <div>
                      <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground mb-4">

@@ -44,7 +44,7 @@ export const getBoards = async (options: {
       params.search = search;
    }
 
-   const res = await api.get("/artworks/save-for-later/collections/", {
+   const res = await api.get("/artworks/boards/", {
       params,
    });
 
@@ -154,5 +154,37 @@ export const useGetBoardsInfinite = ({
       },
       initialPageParam: 1,
       enabled: enabled && !loading && !!accessToken,
+   });
+};
+
+// ----------------------------------------------------------------------
+// 5. GET USER PUBLIC BOARDS (API CALL & HOOK)
+// ----------------------------------------------------------------------
+
+export const getUserBoards = async (userId: string): Promise<Board[]> => {
+   const res = await api.get(`/artworks/boards/user/${userId}/`);
+   return Array.isArray(res.data) ? res.data : res.data?.results || [];
+};
+
+export const getUserBoardsQueryOptions = (userId: string) => {
+   return queryOptions({
+      queryKey: queryKeys.board.user(userId),
+      queryFn: () => getUserBoards(userId),
+   });
+};
+
+export const useGetUserBoards = ({
+   userId,
+   queryConfig,
+   enabled = true,
+}: {
+   userId: string;
+   queryConfig?: QueryConfig<typeof getUserBoardsQueryOptions>;
+   enabled?: boolean;
+}) => {
+   return useQuery({
+      ...getUserBoardsQueryOptions(userId),
+      enabled: enabled && !!userId,
+      ...queryConfig,
    });
 };
