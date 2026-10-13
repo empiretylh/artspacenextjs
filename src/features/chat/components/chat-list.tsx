@@ -16,7 +16,7 @@ type Props = {
  };
 
 export const ChatList = ({ activeId, onSelect }: Props) => {
-   const { conversations, loading } = useConversations();
+   const { conversations, loading, isTimedOut, retry } = useConversations();
    const { user: currentUser } = useAuth();
    const [searchQuery, setSearchQuery] = useState("");
    const [isSearching, setIsSearching] = useState(false);
@@ -97,6 +97,18 @@ export const ChatList = ({ activeId, onSelect }: Props) => {
             {loading ? (
                <div className="flex p-4 justify-center">
                   <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+               </div>
+            ) : isTimedOut ? (
+               <div className="p-8 text-center text-xs text-muted-foreground flex flex-col items-center gap-3">
+                  <p>Unable to connect to chat service.</p>
+                  <Button 
+                     variant="outline" 
+                     size="sm" 
+                     onClick={retry}
+                     className="text-xs h-7 rounded-full font-semibold"
+                  >
+                     Retry
+                  </Button>
                </div>
             ) : filteredConversations.length === 0 ? (
                <div className="p-8 text-center text-xs text-muted-foreground">

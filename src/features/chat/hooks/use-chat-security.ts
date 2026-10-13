@@ -27,7 +27,7 @@ export const useChatSecurity = (
    recipientId: string | null, 
    userType: UserRouteType = "artists"
 ) => {
-   const { user: currentUser } = useAuth();
+   const { user: currentUser, isFirebaseReady } = useAuth();
    const [isBlockedByMe, setIsBlockedByMe] = useState(false);
    const [hasBlockedMe, setHasBlockedMe] = useState(false);
    const [loading, setLoading] = useState(true);
@@ -42,8 +42,10 @@ export const useChatSecurity = (
    });
 
    useEffect(() => {
-      if (!recipientId || !currentUser?.id || !db) {
-         setLoading(false);
+      if (!recipientId || !currentUser?.id || !db || !isFirebaseReady) {
+         if (!recipientId || !currentUser?.id) {
+            setLoading(false);
+         }
          return;
       }
 
@@ -103,6 +105,8 @@ export const useChatSecurity = (
                // Might fail if user loses participant permission
             }
          }
+      }, (err) => {
+         console.warn("Failed to listen to private block status:", err);
       });
 
       // C. Listener: Monitor the Conversation document for block metadata
@@ -119,6 +123,8 @@ export const useChatSecurity = (
                const othersBlocked = Object.keys(blockedBy).some(uid => uid !== myId);
                setHasBlockedMe(othersBlocked);
             }
+         }, (err) => {
+            console.warn("Failed to listen to conversation block metadata:", err);
          });
       }
 
@@ -128,7 +134,7 @@ export const useChatSecurity = (
          unsubscribeMyBlock();
          unsubscribeConv();
       };
-   }, [recipientId, conversationId, currentUser?.id, backendIsBlocked]);
+   }, [recipientId, conversationId, currentUser?.id, backendIsBlocked, isFirebaseReady]);
 
    return {
       isBlockedByMe,

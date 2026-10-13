@@ -13,14 +13,14 @@ import { useDocumentVisibility } from "@/hooks/use-document-visibility";
  * Optimization: Only updates when the document is visible.
  */
 export const usePresence = () => {
-   const { user } = useAuth();
+   const { user, isFirebaseReady } = useAuth();
    const isVisible = useDocumentVisibility();
    const intervalRef = useRef<NodeJS.Timeout | null>(null);
    const lastUpdateRef = useRef<number>(0);
 
    useEffect(() => {
-      // Only run if feature is enabled, user is logged in, and tab is visible
-      if (!env.FIREBASE_ENABLE || !user?.id || !db || !isVisible) {
+      // Only run if feature is enabled, user is logged in, tab is visible, and Firebase credentials are authenticated
+      if (!env.FIREBASE_ENABLE || !user?.id || !db || !isVisible || !isFirebaseReady) {
          if (intervalRef.current) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
@@ -66,5 +66,5 @@ export const usePresence = () => {
             intervalRef.current = null;
          }
       };
-   }, [user?.id, isVisible]);
+   }, [user?.id, isVisible, isFirebaseReady]);
 };

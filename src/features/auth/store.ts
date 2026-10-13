@@ -40,6 +40,8 @@ export type State = {
    logout: () => Promise<boolean>;
    init: (data: { user: User | null; accessToken: string | null; firebaseToken: string | null }) => void;
    updateUser: (user: User) => void;
+   isFirebaseReady: boolean;
+   setFirebaseReady: (isReady: boolean) => void;
    isBuyer: boolean;
    isArtist: boolean;
    isCollector: boolean;
@@ -65,6 +67,8 @@ export const useAuth = create<State>((set, get) => {
       accessToken: stored.accessToken,
       firebaseToken: stored.firebaseToken,
       loading: true,
+      isFirebaseReady: false,
+      setFirebaseReady: (isReady) => set({ isFirebaseReady: isReady }),
       isBuyer: stored?.user?.user_type === "BUYER",
       isArtist: stored?.user?.user_type === "ARTIST",
       isCollector: stored?.user?.user_type === "COLLECTOR",
@@ -95,6 +99,7 @@ export const useAuth = create<State>((set, get) => {
                accessToken: data.access,
                firebaseToken: data.firebaseToken,
                user: data.user,
+               isFirebaseReady: true,
                isBuyer: data.user.user_type === "BUYER",
                isArtist: data.user.user_type === "ARTIST",
                isCollector: data.user.user_type === "COLLECTOR",
@@ -129,6 +134,7 @@ export const useAuth = create<State>((set, get) => {
                accessToken: data.access,
                firebaseToken: data.firebaseToken,
                user: data.user,
+               isFirebaseReady: true,
                isBuyer: data.user.user_type === "BUYER",
                isArtist: data.user.user_type === "ARTIST",
                isCollector: data.user.user_type === "COLLECTOR",
@@ -201,13 +207,15 @@ export const useAuth = create<State>((set, get) => {
          set({
             user: null,
             accessToken: null,
+            firebaseToken: null,
+            isFirebaseReady: false,
             loading: false,
          });
 
          return true;
       },
 
-      init: (data: { user: User | null, accessToken: string | null }) => {
+      init: (data: { user: User | null; accessToken: string | null; firebaseToken?: string | null }) => {
          set({
             ...data,
             isBuyer: data.user?.user_type === "BUYER",

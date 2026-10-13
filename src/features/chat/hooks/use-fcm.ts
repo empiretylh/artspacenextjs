@@ -6,10 +6,10 @@ import { useAuth } from '@/features/auth/store';
 import { env } from '@/config/env';
 
 export const useFcm = () => {
-   const { user } = useAuth();
+   const { user, isFirebaseReady } = useAuth();
 
    const registerToken = useCallback(async () => {
-      if (!messaging || !db || !user?.id) return;
+      if (!messaging || !db || !user?.id || !isFirebaseReady) return;
       if (typeof window === "undefined" || typeof Notification === "undefined") return;
 
       try {
@@ -30,13 +30,13 @@ export const useFcm = () => {
       } catch (error) {
          console.error('Error registering FCM token:', error);
       }
-   }, [user?.id]);
+   }, [user?.id, isFirebaseReady]);
 
    useEffect(() => {
-      if (user?.id) {
+      if (user?.id && isFirebaseReady) {
          registerToken();
       }
-   }, [user?.id, registerToken]);
+   }, [user?.id, isFirebaseReady, registerToken]);
 
    useEffect(() => {
       if (!messaging) return;

@@ -3,9 +3,9 @@ import {
    collection, 
    query, 
    orderBy, 
-   onSnapshot,
-   limit,
-   type QuerySnapshot
+   onSnapshot, 
+   limit, 
+   type QuerySnapshot 
 } from "firebase/firestore";
 import { db, auth } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
@@ -13,7 +13,7 @@ import { useDocumentVisibility } from "@/hooks/use-document-visibility";
 import type { Message } from "../types";
 
 export const useMessages = (conversationId: string | null) => {
-   const { user } = useAuth();
+   const { user, isFirebaseReady } = useAuth();
    const isVisible = useDocumentVisibility();
    const [messages, setMessages] = useState<Message[]>([]);
    const [loading, setLoading] = useState(false);
@@ -23,14 +23,17 @@ export const useMessages = (conversationId: string | null) => {
 
    useEffect(() => {
       // 1. Reset messages if no conversation
-      if (!conversationId || !db || !auth?.currentUser) {
+      if (!conversationId) {
          setMessages([]);
          setLoading(false);
          return;
       }
 
-      // 2. Pause if not visible
-      if (!isVisible) {
+      // 2. Pause if not visible or waiting for Firebase auth
+      if (!db || !isVisible || !isFirebaseReady || !auth?.currentUser) {
+         if (user?.id && !isFirebaseReady) {
+            setLoading(true);
+         }
          return;
       }
 
@@ -87,7 +90,7 @@ export const useMessages = (conversationId: string | null) => {
             console.log(`Chat: Messages listener unsubscribed for ${conversationId}`);
          }
       };
-   }, [conversationId, auth?.currentUser?.uid, limitAmount, db, isVisible]);
+   }, [conversationId, limitAmount, db, isVisible, isFirebaseReady, user?.id]);
 
    // Reset pagination state on conversation switch
    const [prevConversationId, setPrevConversationId] = useState(conversationId);

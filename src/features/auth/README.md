@@ -28,7 +28,7 @@ This project uses a **Dual-Token Handshake** system:
 | `FIREBASE_ENABLE` | Toggle for Firebase synchronization. |
 
 ## ⚠️ Known Gotchas for AI
-- **Firebase Re-sync**: Firebase sessions are synchronized *silently* during both manual login and automatic initialization. Do not implement separate Firebase login UI unless requested.
+- **Firebase Re-sync & `isFirebaseReady`**: Firebase sessions are synchronized *silently* during both manual login and automatic initialization. A reactive `isFirebaseReady` boolean in `useAuth` tracks when the client-side Firebase token handshake is fully authenticated (verified via `onAuthStateChanged`). Real-time features (Chat, Presence, FCM) MUST gate their Firestore listeners on `isFirebaseReady` to prevent permission-denied errors and race conditions on page refresh.
 - **User Types**: The `user_type` (BUYER, ARTIST, COLLECTOR, GALLERY) drives a lot of UI logic. Always check the `isBuyer`, `isArtist`, etc. flags in the `useAuth` store.
 - **Privacy Settings**: The `User` model's `Profile` object now includes privacy preferences (e.g., `show_email`, `hide_collector_name`). These are managed in `src/features/settings` but impact components across the app. Always respect these flags when displaying user data.
 - **Google Login**: The `loginWithGoogle` method in the store expects a token from the Google Auth flow and exchanges it directly with our backend, NOT directly with Firebase.
