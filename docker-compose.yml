@@ -10,7 +10,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - .env
+      - .env.production
     environment:
       - NODE_ENV=production
       # - PORT=3000 # Default is already 3000
