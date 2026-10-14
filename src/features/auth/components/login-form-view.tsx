@@ -15,10 +15,10 @@ import { Input } from "@/components/ui/input";
 import { paths } from "@/config/paths";
 import { Eye, EyeOff } from "lucide-react";
 import type { UseFormReturn } from "react-hook-form";
-import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { useTranslations } from "next-intl";
 
 import type { LoginFormValues } from "../hooks/use-login-form";
+import GoogleAuthButton from "./google-auth-button";
 
 type Props = {
   form: UseFormReturn<LoginFormValues>;
@@ -27,7 +27,7 @@ type Props = {
   reason?: "session_expired" | undefined;
   showPassword: boolean;
   setShowPassword: (v: boolean | ((prev: boolean) => boolean)) => void;
-  handleGoogleSuccess: (credentialResponse: CredentialResponse) => Promise<void>;
+  handleGoogleSuccess: (idToken: string) => Promise<void>;
 };
 
 export default function LoginFormView({
@@ -130,18 +130,15 @@ export default function LoginFormView({
               </div>
             </div>
 
-            <div className="flex justify-center w-full overflow-hidden">
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={() => {
-                  console.error("Google Login Failed");
-                }}
-                useOneTap
-                theme="outline"
-                shape="rectangular"
-                width="100%"
-              />
-            </div>
+          <div className="flex justify-center w-full overflow-hidden">
+            <GoogleAuthButton
+              onIdToken={handleGoogleSuccess}
+              onError={() => {
+                console.error("Google Login Failed");
+              }}
+              label="Continue with Google"
+            />
+          </div>
 
             <FieldDescription className="text-center">
               {t("dontHaveAccount")}{" "}

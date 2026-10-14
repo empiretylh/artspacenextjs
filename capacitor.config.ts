@@ -4,6 +4,16 @@ const config: CapacitorConfig = {
   appId: "co.median.android.krrajyp",
   appName: "Myanmar Art Space",
   webDir: "out",
+  plugins: {
+    SocialLogin: {
+      providers: {
+        google: true,
+        facebook: false,
+        apple: true,
+        twitter: false,
+      },
+    },
+  },
   ...(process.env.CAPACITOR_SERVER_URL || "https://myanmarartspace.net"
     ? {
         server: {

@@ -12,7 +12,6 @@ import { handleFormError } from "@/lib/utils";
 import { accessAnalytics, authAnalytics, UserType } from "@/lib/analytics";
 import { useAuth } from "../store";
 import { User } from "@/types";
-import type { CredentialResponse } from "@react-oauth/google";
 
 export const loginSchema = z.object({
   email: z
@@ -72,8 +71,7 @@ export function useLoginForm({ returnTo }: { returnTo?: string } = {}) {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
-    const idToken = credentialResponse.credential;
+  const handleGoogleSuccess = async (idToken: string) => {
     if (!idToken) return;
 
     try {

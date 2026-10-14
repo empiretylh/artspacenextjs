@@ -25,7 +25,7 @@ import { useTranslations } from "next-intl";
 
 import { paths } from "@/config/paths";
 import type { RegisterFormValues } from "../hooks/use-register-form";
-import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
+import GoogleAuthButton from "./google-auth-button";
 
 type Props = {
   form: UseFormReturn<RegisterFormValues>;
@@ -37,7 +37,7 @@ type Props = {
 
   showConfirmPassword: boolean;
   setShowConfirmPassword: (v: boolean) => void;
-  handleGoogleSuccess: (credentialResponse: CredentialResponse) => Promise<void>;
+  handleGoogleSuccess: (idToken: string) => Promise<void>;
 };
 
 export default function RegisterFormView({
@@ -284,15 +284,12 @@ export default function RegisterFormView({
           </div>
 
           <div className="flex justify-center w-full overflow-hidden">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
+            <GoogleAuthButton
+              onIdToken={handleGoogleSuccess}
               onError={() => {
                 console.error("Google Registration Failed");
               }}
-              useOneTap
-              theme="outline"
-              shape="rectangular"
-              width="100%"
+              label="Continue with Google"
             />
           </div>
 
