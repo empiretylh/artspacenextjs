@@ -52,6 +52,7 @@ export interface Profile {
    is_following: boolean;
    isBlocked: boolean;
    artist_badges?: ArtistBadge[];
+   follower_count?: number;
 }
 
 export interface Category {

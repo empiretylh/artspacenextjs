@@ -12,7 +12,7 @@ import LoadingPage from "@/components/page/loading-page";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getImage } from "@/lib/utils";
-import { Check, Pencil, User, UserCircle2, X } from "lucide-react";
+import { Camera, Check, User, UserCircle2, X } from "lucide-react";
 import { useChangeProfileCover } from "../api/change-profile-cover";
 import { useChangeProfilePicture } from "../api/change-profile-picture";
 import { useGetProfile } from "../api/get-profile";
@@ -352,80 +352,96 @@ export const ProfileMedia: React.FC = () => {
             </div>
          )}
 
-         {/* Avatar */}
-         <div className="flex gap-6 items-center">
-            <div className="relative">
-               <Avatar className="w-24 h-24">
-                  {profile_picture ? (
-                     <AppImage
-                        src={getImage(profile_picture)}
-                        alt={fullName}
-                        width={96}
-                        height={96}
-                        className="rounded-full" // Ensure image stays circular
-                     />
-                  ) : (
-                     <AvatarFallback className="text-2xl">
-                        {first_name?.[0]?.toUpperCase() || <User />}
-                     </AvatarFallback>
-                  )}
-               </Avatar>
+         {/* Hero Card Container */}
+         <div className="rounded-2xl border border-border/70 bg-card overflow-hidden shadow-xs">
+            {/* Banner */}
+            <div className="relative w-full aspect-21/9 sm:aspect-3/1 bg-muted/40 overflow-hidden group">
+               <AppImage
+                  src={cover_photo ? getImage(cover_photo) : "/assets/profile-cover-default.jpg"}
+                  alt="Cover"
+                  fill
+                  preload
+                  containerClassName="w-full h-full"
+                  className="object-cover transition-transform duration-700 group-hover:scale-102"
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent pointer-events-none" />
 
                <input
-                  ref={profileInput}
+                  ref={bannerInput}
                   type="file"
                   hidden
                   accept="image/*"
-                  onChange={(e) => onSelectFile(e, "avatar")}
+                  onChange={(e) => onSelectFile(e, "banner")}
                />
 
                <Button
-                  size="icon"
-                  className="absolute -bottom-1 -right-1 rounded-full"
-                  loading={changeProfilePictureMutation.isPending}
-                  onClick={() => profileInput.current?.click()}
+                  type="button"
+                  size="sm"
+                  className="absolute top-3 right-3 sm:top-4 sm:right-4 rounded-full bg-black/60 hover:bg-black/80 text-white text-xs font-medium shadow-md backdrop-blur-md border border-white/20 gap-1.5 transition-all"
+                  loading={changeProfileCoverMutation.isPending}
+                  onClick={() => bannerInput.current?.click()}
                >
-                  <Pencil className="w-4 h-4" />
+                  <Camera className="w-3.5 h-3.5 text-white" />
+                  <span className="hidden sm:inline">Change Cover</span>
                </Button>
             </div>
 
-            <div>
-               <h1 className="text-2xl sm:text-3xl font-semibold font-display tracking-tight text-foreground">{fullName}</h1>
-               <p className="text-sm text-muted-foreground">{email}</p>
-               <div className="inline-flex items-center gap-1 mt-2 px-3 py-1 rounded-full bg-muted text-sm">
-                  <UserCircle2 className="w-4 h-4" />
-                  {user_type}
+            {/* Profile Info & Avatar */}
+            <div className="px-5 sm:px-8 pb-6 pt-0">
+               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  {/* Left: Avatar overlapping banner */}
+                  <div className="relative group shrink-0 -mt-12 sm:-mt-14">
+                     <Avatar className="w-24 h-24 sm:w-28 sm:h-28 ring-4 ring-card rounded-full shadow-lg bg-background">
+                        {profile_picture ? (
+                           <AppImage
+                              src={getImage(profile_picture)}
+                              alt={fullName}
+                              width={112}
+                              height={112}
+                              className="rounded-full object-cover"
+                           />
+                        ) : (
+                           <AvatarFallback className="text-3xl font-semibold bg-muted">
+                              {first_name?.[0]?.toUpperCase() || <User className="w-10 h-10 text-muted-foreground" />}
+                           </AvatarFallback>
+                        )}
+                     </Avatar>
+
+                     <input
+                        ref={profileInput}
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={(e) => onSelectFile(e, "avatar")}
+                     />
+
+                     <Button
+                        type="button"
+                        size="icon"
+                        className="absolute bottom-1 right-1 h-8 w-8 rounded-full shadow-md bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-card"
+                        loading={changeProfilePictureMutation.isPending}
+                        onClick={() => profileInput.current?.click()}
+                        title="Change profile picture"
+                     >
+                        <Camera className="w-3.5 h-3.5" />
+                     </Button>
+                  </div>
+
+                  {/* Name, role badge, email positioned below banner */}
+                  <div className="space-y-1 pt-1 sm:pt-3">
+                     <div className="flex items-center gap-2.5 flex-wrap">
+                        <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground">
+                           {fullName}
+                        </h2>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                           <UserCircle2 className="w-3 h-3" />
+                           {user_type}
+                        </span>
+                     </div>
+                     <p className="text-xs sm:text-sm text-muted-foreground">{email}</p>
+                  </div>
                </div>
             </div>
-         </div>
-
-         {/* Banner */}
-         <div className="relative h-full">
-            <AppImage
-               src={cover_photo ? getImage(cover_photo) : "/assets/profile-cover-default.jpg"}
-               alt="Cover"
-               fill
-               preload
-               containerClassName="aspect-8/3 rounded-xl overflow-hidden"
-               className="object-cover"
-            />
-
-            <input
-               ref={bannerInput}
-               type="file"
-               hidden
-               accept="image/*"
-               onChange={(e) => onSelectFile(e, "banner")}
-            />
-
-            <Button
-               size="icon"
-               className="absolute bottom-4 right-4 rounded-full"
-               loading={changeProfileCoverMutation.isPending}
-               onClick={() => bannerInput.current?.click()}
-            >
-               <Pencil className="w-4 h-4" />
-            </Button>
          </div>
       </div>
    );

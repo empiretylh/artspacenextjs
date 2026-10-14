@@ -30,6 +30,11 @@ const ArtworkDetailPageSkeleton = () => {
                   </div>
                </div>
 
+               {/* Mobile Product Info Skeleton */}
+               <div className="block lg:hidden">
+                  <ProductInfoCardSkeleton />
+               </div>
+
                {/* Description Skeleton */}
                <div>
                   <Skeleton className="h-7 w-36 mb-4" />
@@ -45,7 +50,7 @@ const ArtworkDetailPageSkeleton = () => {
             </div>
 
             {/* Right Column (Sticky) Skeleton */}
-            <div className="lg:col-span-1 space-y-6 sticky top-16 self-start">
+            <div className="hidden lg:block lg:col-span-1 space-y-6 sticky top-16 self-start">
                <ProductInfoCardSkeleton />
             </div>
          </div>

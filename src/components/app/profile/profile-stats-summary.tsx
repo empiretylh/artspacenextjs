@@ -1,7 +1,7 @@
 import ArtworksIcon from "@/components/icons/artworks-icon";
 import BookmarkIcon from "@/components/icons/bookmark-icon";
 import CollectionIcon from "@/components/icons/collection-icon";
-import HeartIcon from "@/components/icons/heart-icon";
+import { Users } from "lucide-react";
 import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
 import { cn, getUserRouteType } from "@/lib/utils";
@@ -22,20 +22,20 @@ export function ProfileStatsSummary({
 
    const artworkCount = user.artwork_count ?? user.num_artworks;
    const collectionCount = user.collection_count;
-   const likeCount = user.like_artwork_count;
+   const followerCount = user.profile?.follower_count;
    const saveCount = user.save_collection_count;
 
    const hasCounters =
       artworkCount !== undefined ||
       collectionCount !== undefined ||
-      likeCount !== undefined ||
+      followerCount !== undefined ||
       saveCount !== undefined;
 
    if (!hasCounters) return null;
 
    const safeArtworkCount = artworkCount ?? 0;
    const safeCollectionCount = collectionCount ?? 0;
-   const safeLikeCount = likeCount ?? 0;
+   const safeFollowerCount = followerCount ?? 0;
    const safeSaveCount = saveCount ?? 0;
 
    const userRouteType = user.user_type ? getUserRouteType(user.user_type) : "artists";
@@ -48,16 +48,14 @@ export function ProfileStatsSummary({
       ? paths.profile.collections.path
       : paths[userRouteType]?.collections?.getHref(String(user.id));
 
-   const likeHref = isOwnProfile
-      ? paths.profile.likedArtworks.path
-      : paths[userRouteType]?.likedArtworks?.getHref(String(user.id));
-
    const saveHref = isOwnProfile
       ? paths.profile.save.path
       : paths[userRouteType]?.save?.getHref(String(user.id));
 
    const artworkLabel =
       user.user_type === "COLLECTOR" ? "Collected Artworks" : "Artworks";
+
+   const followerLabel = safeFollowerCount === 1 ? "Follower" : "Followers";
 
    const items = [
       {
@@ -73,10 +71,10 @@ export function ProfileStatsSummary({
          href: collectionHref,
       },
       {
-         label: "Liked Artworks",
-         value: safeLikeCount,
-         icon: <HeartIcon />,
-         href: likeHref,
+         label: followerLabel,
+         value: safeFollowerCount,
+         icon: <Users className="w-4 h-4" />,
+         href: undefined,
       },
       {
          label: "Boards",

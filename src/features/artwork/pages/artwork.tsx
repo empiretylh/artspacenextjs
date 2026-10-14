@@ -1,6 +1,5 @@
 'use client'
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useGetArtwork } from "@/features/service/artspace/get-artwork";
 import "viewerjs/dist/viewer.css";
 import { ArtistProfile } from "../components/artist-profile";
@@ -36,7 +35,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
          const item = itemFromArtwork(artwork);
          ecommerceAnalytics.viewItem(artwork.currency.code || 'MMK', Number(artwork.price), [item], source)
       }
-   }, [artwork]);
+   }, [artwork, source]);
 
    if (artworkQuery.isLoading || authLoading) {
       return <ArtworkDetailPageSkeleton />;
@@ -105,7 +104,12 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                      </>
                   )}
 
-               {/* Mobile Description */}
+               {/* Mobile Product Info */}
+               <div className="block lg:hidden">
+                  <ProductInfoCard artwork={artwork} />
+               </div>
+
+               {/* Description */}
                <section aria-labelledby="artwork-description">
                   <h2 id="artwork-description" className="font-bold text-xl mb-2 font-display">
                      Description
@@ -124,7 +128,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
 
             {/* Purchase Info + Artist */}
             <aside
-               className="lg:col-span-1 space-y-6 sticky top-16 self-start"
+               className="hidden lg:block lg:col-span-1 space-y-6 sticky top-16 self-start"
                aria-label="Purchase details"
             >
                <ProductInfoCard artwork={artwork} />

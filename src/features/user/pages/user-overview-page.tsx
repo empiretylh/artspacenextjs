@@ -34,7 +34,7 @@ const UserOverviewPage = () => {
                   const hasStats =
                      user?.artwork_count !== undefined ||
                      user?.collection_count !== undefined ||
-                     user?.like_artwork_count !== undefined ||
+                     user?.profile?.follower_count !== undefined ||
                      user?.save_collection_count !== undefined ||
                      user?.num_artworks !== undefined;
                   const hasBadges = Boolean(
