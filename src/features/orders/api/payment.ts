@@ -1,6 +1,6 @@
 'use server'
 
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { env } from '@/config/env';
 
 export type PaymentIntentResponse = {
@@ -23,18 +23,43 @@ export const createPaymentIntent = async ({
     throw new Error('Payment API token is missing in environment variables');
   }
 
-  const response = await axios.post(
-    url,
-    {
-      amount,
-      description,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
+  try {
+    const response = await axios.post(
+      url,
+      {
+        amount,
+        description,
       },
-    }
-  );
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-  return response.data;
+    console.log('Payment API Response:', response.data);
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      console.error('Payment Gateway API Error Details:', {
+        url,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+      });
+
+      const detail =
+        error.response?.data?.message ||
+        error.response?.data?.detail ||
+        error.response?.data?.error ||
+        (typeof error.response?.data === 'string' ? error.response?.data : null) ||
+        JSON.stringify(error.response?.data) ||
+        error.message;
+
+      throw new Error(`Payment Gateway Error (${error.response?.status}): ${detail}`);
+    }
+
+    throw error;
+  }
 };
+

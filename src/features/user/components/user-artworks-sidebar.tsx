@@ -7,8 +7,9 @@ import Link from "@/components/common/link";
 import ArtworkCard from "@/components/app/artwork-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/features/auth/store";
 import { useGetArtworksByUserIdInfinite } from "@/features/service/artspace/get-artworks-by-user-id";
-import { useGetUploadedArtworksInfinite } from "@/features/service/artspace/get-uploaded-artworks";
+import EmptyState from "@/components/common/empty-state";
 import type { Artwork } from "@/types";
 
 interface UserArtworksSidebarProps {
@@ -30,17 +31,8 @@ export const UserArtworksSidebar: React.FC<UserArtworksSidebarProps> = ({
    const loadingLockRef = useRef(false);
    const lockTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-   // Fetch public artworks by userId or private uploaded artworks for own profile
-   const publicArtworksQuery = useGetArtworksByUserIdInfinite({
-      userId: userId || "",
-      limit: 6,
-      enabled: !isOwnProfile && !!userId,
-   });
-
-   const ownArtworksQuery = useGetUploadedArtworksInfinite({
-      limit: 6,
-      enabled: isOwnProfile,
-   });
+   const authUser = useAuth((state) => state.user);
+   const targetUserId = userId || (isOwnProfile && authUser?.id ? String(authUser.id) : "");
 
    const {
       data,
@@ -48,7 +40,11 @@ export const UserArtworksSidebar: React.FC<UserArtworksSidebarProps> = ({
       fetchNextPage,
       hasNextPage,
       isFetchingNextPage,
-   } = isOwnProfile ? ownArtworksQuery : publicArtworksQuery;
+   } = useGetArtworksByUserIdInfinite({
+      userId: targetUserId,
+      limit: 6,
+      enabled: !!targetUserId,
+   });
 
    useEffect(() => {
       if (
@@ -125,24 +121,23 @@ export const UserArtworksSidebar: React.FC<UserArtworksSidebarProps> = ({
 
          {/* Empty State */}
          {!isLoading && allArtworks.length === 0 && (
-            <div className="flex flex-col items-center justify-center p-8 rounded-xl border border-dashed border-border bg-card/30 text-center space-y-3">
-               <div className="p-3 bg-muted rounded-full text-muted-foreground">
-                  <ImageOff className="w-6 h-6" />
-               </div>
-               <p className="text-sm font-medium text-foreground">No artworks yet</p>
-               <p className="text-xs text-muted-foreground max-w-xs">
-                  {isOwnProfile
-                     ? "Upload artworks to showcase them on your profile."
-                     : "This user hasn't published any artworks yet."}
-               </p>
-               {isOwnProfile && viewAllHref && (
-                  <Link to={viewAllHref}>
-                     <Badge variant="outline" className="cursor-pointer hover:bg-muted">
-                        Go to Artworks tab
-                     </Badge>
-                  </Link>
-               )}
-            </div>
+            <EmptyState
+               title="No artworks yet"
+               description={
+                  isOwnProfile
+                     ? "Upload or collect artworks to showcase them on your profile."
+                     : "This user hasn't published any artworks yet."
+               }
+               action={
+                  isOwnProfile && viewAllHref ? (
+                     <Link to={viewAllHref}>
+                        <Badge variant="outline" className="cursor-pointer hover:bg-muted">
+                           Go to Artworks tab
+                        </Badge>
+                     </Link>
+                  ) : undefined
+               }
+            />
          )}
 
          {/* 1-Column Artwork List */}

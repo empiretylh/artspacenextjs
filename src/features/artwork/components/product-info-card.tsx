@@ -1,21 +1,22 @@
 import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
 import Price from "@/components/common/price";
-import DeliverIcon from "@/components/icons/deliver-icon";
 import SecureIcon from "@/components/icons/secure-icon";
 import VerifyIcon from "@/components/icons/verify-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { paths } from "@/config/paths";
 import { useAuth } from "@/features/auth/store";
-import { getImage, getUserRouteType, timeAgo } from "@/lib/utils";
+import { cn, getImage, getUserDisplayName, getUserRouteType, timeAgo } from "@/lib/utils";
 import type { Artwork } from "@/types";
 import { useRouter } from "@/i18n/routing";
 import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
 import { useTranslations } from "next-intl";
-import { useEffect, useTransition } from "react";
-import { Loader2 } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import { Loader2, Bookmark } from "lucide-react";
+import { SaveToBoardDialog } from "@/features/boards/components/save-to-board-dialog";
+import { useGetArtworkSaveStatus } from "@/features/service/artspace/save-artwork";
 
 export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
    const router = useRouter();
@@ -23,6 +24,12 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
    const { source } = useSource();
    const t = useTranslations("Artwork.detail");
    const [isPending, startTransition] = useTransition();
+   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+
+   const { data: saveStatus } = useGetArtworkSaveStatus({
+      artworkId: String(artwork.id),
+      enabled: !!user,
+   });
 
    const orderHref = paths.artworks.order.getHref(artwork.id);
 
@@ -64,7 +71,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   )}
                   width={48}
                   height={48}
-                  alt={`${artwork.current_owner_display?.first_name || ''} ${artwork.current_owner_display?.last_name || ''} profile picture`}
+                  alt={`${getUserDisplayName(artwork.current_owner_display)} profile picture`}
                   containerClassName="w-12 h-12 rounded-full overflow-hidden"
                   className="object-cover"
                />
@@ -78,8 +85,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                            )}
                         >
                            <p className="flex items-center hover:underline gap-2 text-muted-foreground font-semibold text-sm">
-                              {artwork.current_owner_display.first_name}{" "}
-                              {artwork.current_owner_display.last_name}
+                              {getUserDisplayName(artwork.current_owner_display)}
                               {/* <span>
                         <Home className="w-4 h-4" />
                      </span> */}
@@ -139,11 +145,34 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                </Button>
 
                <Button
-                  disabled
                   variant="outline"
-                  className="w-full text-base rounded-md font-medium font-display border-2 border-border text-foreground/80"
+                  onClick={() => {
+                     if (!user) {
+                        router.push(
+                           `${paths.auth.login.getHref()}?redirectTo=${encodeURIComponent(
+                              window.location.pathname
+                           )}`
+                        );
+                        return;
+                     }
+                     setIsSaveModalOpen(true);
+                  }}
+                  className={cn(
+                     "w-full text-base rounded-md font-medium font-display border-2 gap-2 cursor-pointer transition-colors",
+                     saveStatus?.saved
+                        ? "border-primary/50 bg-primary/10 text-foreground hover:bg-primary/20"
+                        : "border-border text-foreground/80 hover:text-foreground hover:bg-muted/40"
+                  )}
                >
-                  {t("saveForLater")}
+                  <Bookmark
+                     className={cn(
+                        "w-4 h-4 transition-transform",
+                        saveStatus?.saved
+                           ? "fill-primary text-primary"
+                           : "text-muted-foreground"
+                     )}
+                  />
+                  {saveStatus?.saved ? "Saved to Boards" : t("saveForLater")}
                </Button>
 
                <Button
@@ -154,6 +183,12 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   {t("needHelp")}
                </Button>
             </div>
+
+            <SaveToBoardDialog
+               isOpen={isSaveModalOpen}
+               onClose={() => setIsSaveModalOpen(false)}
+               artwork={artwork}
+            />
 
             {/* Details */}
             <div className="space-y-4">
@@ -172,13 +207,6 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                      <SecureIcon />
                   </span>
                   <p className="text-xs">{t("securePayment")}</p>
-               </div>
-
-               <div className="flex items-center space-x-3 md:space-x-4">
-                  <span className="text-primary">
-                     <DeliverIcon />
-                  </span>
-                  <p className="text-xs">{t("freeReturns")}</p>
                </div>
             </div>
          </CardContent>

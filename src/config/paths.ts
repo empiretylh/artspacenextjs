@@ -173,7 +173,6 @@ export const paths = {
       collections: {
          path: "/buyers/:id/collections",
          getHref: (id: string) => `/buyers/${id}/collections`,
-         disabled: true,
       },
       save: {
          path: "/buyers/:id/save",
@@ -334,6 +333,10 @@ export const paths = {
    privacyPolicy: {
       path: "/privacy-policy",
       getHref: () => "/privacy-policy",
+   },
+   notifications: {
+      path: "/notifications",
+      getHref: () => "/notifications",
    },
    notFound: {
       path: "*",

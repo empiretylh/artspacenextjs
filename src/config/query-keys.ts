@@ -221,6 +221,25 @@ export const queryKeys = {
                normalizeParams(params),
             ],
       },
+
+      /* =======================
+       * COLLECTIONS BY USER
+       * ======================= */
+      collectionsByUser: {
+         all: ["artworks", "collections-by-user"],
+
+         list: (userId: string, params?: QueryKeys) =>
+            ["artworks", "collections-by-user", userId, normalizeParams(params)],
+
+         infinite: (userId: string, params?: QueryKeys) =>
+            [
+               "artworks",
+               "collections-by-user",
+               userId,
+               "infinite",
+               normalizeParams(params),
+            ],
+      },
    },
 
    /* =======================
@@ -346,5 +365,40 @@ export const queryKeys = {
          all: ["blog", "tags"],
          list: () => ["blog", "tags", "list"],
       },
+   },
+
+   /* =======================
+    * BOARDS (SAVE FOR LATER)
+    * ======================= */
+   board: {
+      all: ["boards"],
+
+      list: (params?: QueryKeys) =>
+         ["boards", "list", normalizeParams(params)],
+
+      infinite: (params?: QueryKeys) =>
+         ["boards", "infinite", normalizeParams(params)],
+
+      detail: (id: string) => ["boards", "detail", id],
+
+      artworks: {
+         all: (boardId: string) => ["boards", boardId, "artworks"],
+         list: (boardId: string, params?: QueryKeys) =>
+            ["boards", boardId, "artworks", "list", normalizeParams(params)],
+         infinite: (boardId: string, params?: QueryKeys) =>
+            ["boards", boardId, "artworks", "infinite", normalizeParams(params)],
+      },
+
+      saveStatus: (artworkId: string) => ["boards", "save-status", artworkId],
+      user: (userId: string) => ["boards", "user", userId],
+   },
+
+   /* =======================
+    * NOTIFICATIONS
+    * ======================= */
+   notification: {
+      all: ["notifications"],
+      list: () => ["notifications", "list"],
+      detail: (id: number) => ["notifications", "detail", id],
    },
 };

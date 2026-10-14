@@ -6,7 +6,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: "standalone",
+  output: process.env.NODE_ENV === 'development' ? undefined : "standalone",
   reactStrictMode: true,
   productionBrowserSourceMaps: process.env.NODE_ENV === 'development',
   typescript: {

@@ -20,6 +20,7 @@ import { useSafeBack } from "@/hooks/use-safe-back";
 import { paths } from "@/config/paths";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/features/auth/store";
+import { getUserDisplayName } from "@/lib/utils";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
    const t = useTranslations("Artwork.detail");
@@ -83,7 +84,7 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                   category={artwork.category}
                   categoryName={artwork.category_name}
                   artistName={artwork.artist_name || "N/A"}
-                  currentOwner={artwork.current_owner_name ? artwork.current_owner_name : artwork.current_owner_display?.first_name + " " + artwork.current_owner_display?.last_name}
+                  currentOwner={artwork.current_owner_name ? artwork.current_owner_name : (artwork.current_owner_display ? getUserDisplayName(artwork.current_owner_display) : "N/A")}
                />
 
                {artwork.search_keywords &&

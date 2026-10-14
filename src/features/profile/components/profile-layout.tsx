@@ -32,7 +32,6 @@ const ProfileDetailLayout = ({ children }: { children: React.ReactNode }) => {
          title: "Collections",
          href: paths.profile.collections.path,
          icon: "collections",
-         disabled: true,
       },
       {
          title: "Like artworks",
@@ -40,10 +39,9 @@ const ProfileDetailLayout = ({ children }: { children: React.ReactNode }) => {
          icon: "likes",
       },
       {
-         title: "Save",
+         title: "Boards",
          href: paths.profile.save.path,
          icon: "save",
-         disabled: true,
       },
    ];
 

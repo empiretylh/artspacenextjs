@@ -140,13 +140,20 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
 
             <div className="h-4 w-px bg-border/60 shrink-0 hidden sm:block" />
 
-            <Link
-              to={paths.artworks.detail.getHref(artwork.id)}
-              className="inline-flex items-center text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors gap-1.5 truncate group"
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== 'undefined' && window.history.length > 1) {
+                  router.back()
+                } else {
+                  router.push(paths.artworks.detail.getHref(artwork.id))
+                }
+              }}
+              className="inline-flex items-center text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors gap-1.5 truncate group cursor-pointer bg-transparent border-0 p-0"
             >
               <ArrowLeft className="h-4 w-4 shrink-0 group-hover:-translate-x-0.5 transition-transform" />
               <span className="truncate">Back to artwork</span>
-            </Link>
+            </button>
           </div>
 
           {/* Right: Simple Secure Badge & Theme Switcher */}

@@ -93,7 +93,11 @@ export function useRegisterForm() {
 
       router.push(paths.auth.login.path);
     } else {
-      handleFormError(response, form);
+      handleFormError(response, form, {
+        fallbackTitle: "Registration Failed",
+        fallbackMessage: "Failed to create account. Please check your information and try again.",
+        showNotification: true,
+      });
     }
   };
 

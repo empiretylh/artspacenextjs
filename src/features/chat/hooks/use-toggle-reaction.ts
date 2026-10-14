@@ -2,6 +2,7 @@ import { doc, updateDoc, deleteField } from "firebase/firestore";
 import { db } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
 import type { Message } from "../types";
+import { getUserDisplayName } from "@/lib/utils";
 
 export const useToggleReaction = (conversationId: string | null) => {
    const { user } = useAuth();
@@ -42,7 +43,7 @@ export const useToggleReaction = (conversationId: string | null) => {
 
          // Trigger notification only if reacting to someone else's message and NOT removing
          if (message.senderId !== String(user.id) && !isRemoving) {
-            const senderName = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email;
+            const senderName = getUserDisplayName(user, user.email);
             
             fetch('/api/chat/notify', {
                method: 'POST',

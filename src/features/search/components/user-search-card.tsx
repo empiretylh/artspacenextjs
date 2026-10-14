@@ -40,13 +40,17 @@ export default function UserSearchCard({ user, type }: UserSearchCardProps) {
       return <div className="flex items-center gap-3">{children}</div>;
    };
 
+   const displayName =
+      user.name?.trim() ||
+      (type === "collector" && user.hide_collector_name ? "Anonymous" : "User");
+
    return (
       <div className="flex flex-col h-full border border-border rounded-xl p-4 bg-card/30 hover:bg-card/60 transition-all duration-300 shadow-xs">
          <HeaderWrapper>
             <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 bg-muted">
                <AppImage
                   src={avatarSrc}
-                  alt={user.name}
+                  alt={displayName}
                   width={48}
                   height={48}
                   className="object-cover"
@@ -54,20 +58,36 @@ export default function UserSearchCard({ user, type }: UserSearchCardProps) {
             </div>
             <div className="min-w-0 flex-1">
                <h3 className="font-semibold text-sm sm:text-base font-display truncate group-hover/header:text-primary transition-colors">
-                  {user.name}
+                  {displayName}
                </h3>
                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
                   <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/80">
                      {typeLabels[type]}
                   </span>
-                  {type !== "buyer" && (
-                     <>
-                        <span className="w-1 h-1 rounded-full bg-muted-foreground/30 shrink-0" />
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
-                           {user.num_artworks} {user.num_artworks === 1 ? "Artwork" : "Artworks"}
-                        </span>
-                     </>
-                  )}
+                  {(() => {
+                     const artworkCount = user.artwork_count ?? user.num_artworks;
+                     const artworkLabel = type === "collector" ? "Collected" : artworkCount === 1 ? "Artwork" : "Artworks";
+                     return (
+                        <>
+                           {artworkCount !== undefined && (
+                              <>
+                                 <span className="w-1 h-1 rounded-full bg-muted-foreground/30 shrink-0" />
+                                 <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                    {artworkCount} {artworkLabel}
+                                 </span>
+                              </>
+                           )}
+                           {user.collection_count !== undefined && user.collection_count > 0 && (
+                              <>
+                                 <span className="w-1 h-1 rounded-full bg-muted-foreground/30 shrink-0" />
+                                 <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                    {user.collection_count} {user.collection_count === 1 ? "Collection" : "Collections"}
+                                 </span>
+                              </>
+                           )}
+                        </>
+                     );
+                  })()}
                </div>
             </div>
          </HeaderWrapper>

@@ -7,7 +7,7 @@ import { env } from "@/config/env";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useAuth } from "@/features/auth/store";
-import { cn, getImage, getUserIcon } from "@/lib/utils";
+import { cn, getImage, getUserDisplayName, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
 import { redirect } from "next/navigation";
 import { usePathname } from "@/i18n/routing";
@@ -104,7 +104,9 @@ const ProfileLayoutView = ({
       : "/assets/profile-default.png";
 
    const fullName =
-      `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() || "User";
+      variant === "profile"
+         ? [user?.first_name?.trim(), user?.last_name?.trim()].filter(Boolean).join(" ") || "User"
+         : getUserDisplayName(user);
 
    return (
       <div>
@@ -194,6 +196,108 @@ const ProfileLayoutView = ({
                ) : variant === "profile" ? (
                   <p className="text-sm max-w-md mx-auto whitespace-pre-wrap text-muted-foreground/60 italic">No bio yet. Add one in settings!</p>
                ) : null}
+
+               {/* Profile Counters */}
+               {(() => {
+                  const artworkCount = user?.artwork_count ?? user?.num_artworks;
+                  const collectionCount = user?.collection_count;
+                  const likeCount = user?.like_artwork_count;
+                  const saveCount = user?.save_collection_count;
+
+                  const hasCounters =
+                     artworkCount !== undefined ||
+                     collectionCount !== undefined ||
+                     likeCount !== undefined ||
+                     saveCount !== undefined;
+
+                  if (!hasCounters) return null;
+
+                  const safeArtworkCount = artworkCount ?? 0;
+                  const safeCollectionCount = collectionCount ?? 0;
+                  const safeLikeCount = likeCount ?? 0;
+                  const safeSaveCount = saveCount ?? 0;
+
+                  const artworkHref =
+                     variant === "profile"
+                        ? paths.profile.artworks.path
+                        : paths[userType]?.artworks?.getHref(String(user.id));
+
+                  const collectionHref =
+                     variant === "profile"
+                        ? paths.profile.collections.path
+                        : paths[userType]?.collections?.getHref(String(user.id));
+
+                  const likeHref =
+                     variant === "profile"
+                        ? paths.profile.likedArtworks.path
+                        : paths[userType]?.likedArtworks?.getHref(String(user.id));
+
+                  const saveHref =
+                     variant === "profile"
+                        ? paths.profile.save.path
+                        : paths[userType]?.save?.getHref(String(user.id));
+
+                  const artworkLabel =
+                     user.user_type === "COLLECTOR"
+                        ? "Collected"
+                        : safeArtworkCount === 1
+                           ? "Artwork"
+                           : "Artworks";
+
+                  const collectionLabel =
+                     safeCollectionCount === 1 ? "Collection" : "Collections";
+
+                  const likeLabel = safeLikeCount === 1 ? "Like" : "Likes";
+                  const boardLabel = safeSaveCount === 1 ? "Board" : "Boards";
+
+                  const statItems = [
+                     {
+                        value: safeArtworkCount,
+                        label: artworkLabel,
+                        href: artworkHref,
+                     },
+                     {
+                        value: safeCollectionCount,
+                        label: collectionLabel,
+                        href: collectionHref,
+                     },
+                     {
+                        value: safeLikeCount,
+                        label: likeLabel,
+                        href: likeHref,
+                     },
+                     {
+                        value: safeSaveCount,
+                        label: boardLabel,
+                        href: saveHref,
+                     },
+                  ];
+
+                  return (
+                     <div className="flex items-center justify-center gap-5 sm:gap-8 pt-2.5 pb-1 select-none">
+                        {statItems.map((item, idx) => {
+                           const inner = (
+                              <div className="flex flex-col items-center justify-center px-1.5 py-1 rounded-md transition-colors group min-w-[56px] sm:min-w-[64px]">
+                                 <span className="text-base sm:text-lg font-semibold font-display tracking-tight text-foreground group-hover:text-primary transition-colors leading-tight">
+                                    {item.value}
+                                 </span>
+                                 <span className="text-[11px] sm:text-xs text-muted-foreground group-hover:text-primary/80 transition-colors mt-1 font-medium leading-tight">
+                                    {item.label}
+                                 </span>
+                              </div>
+                           );
+
+                           return item.href ? (
+                              <Link key={idx} to={item.href} className="focus:outline-none">
+                                 {inner}
+                              </Link>
+                           ) : (
+                              <div key={idx}>{inner}</div>
+                           );
+                        })}
+                     </div>
+                  );
+               })()}
 
                <div className="mt-3 flex justify-center items-center gap-2">
                   <ShareButton

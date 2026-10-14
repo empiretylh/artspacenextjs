@@ -28,6 +28,8 @@ import {
 import { SidebarTrigger } from "../ui/sidebar";
 import { SourceProvider } from "@/lib/analytics-source";
 import { useTranslations, useLocale } from "next-intl";
+import { NotificationDropdown, useNotifications } from "@/features/notifications";
+import { useRouter } from "@/i18n/routing";
 
 export function SiteHeader() {
    const t = useTranslations("Header");
@@ -42,6 +44,8 @@ export function SiteHeader() {
    const handleMobileSearchClose = () => setMobileSearchOpen(false);
    const { user } = useAuth();
    const isLoggedIn = !!user;
+   const router = useRouter();
+   const { unreadCount } = useNotifications();
 
    return (
       <SourceProvider value={{ source: "header" }}>
@@ -92,15 +96,7 @@ export function SiteHeader() {
                         <Search className="size-6" />
                      </Button>
  
-                     <Button
-                        variant="ghost"
-                        className="h-8 w-8 p-0 relative hidden lg:flex"
-                     >
-                        <span className="absolute text-xs text-primary-foreground p-1 w-5 h-5 flex items-center justify-center -top-2 right-0 bg-primary rounded-full">
-                           0
-                        </span>
-                        <Bell className="h-4 w-4" />
-                     </Button>
+                     <NotificationDropdown className="hidden lg:flex" />
  
                      {isLoggedIn && (
                         <Button
@@ -182,14 +178,19 @@ export function SiteHeader() {
                                     </DropdownMenuItem>
                                  </>
                               )}
-                              <DropdownMenuItem className={cn("cursor-pointer flex justify-between items-center focus:text-accent-foreground", isMy ? "xl:hidden" : "lg:hidden")}>
+                              <DropdownMenuItem
+                                 onClick={() => router.push(paths.notifications.path as any)}
+                                 className={cn("cursor-pointer flex justify-between items-center focus:text-accent-foreground", isMy ? "xl:hidden" : "lg:hidden")}
+                              >
                                  <div className="flex items-center gap-2">
                                     <Bell className="h-4 w-4 text-muted-foreground" />
                                     <span>{t("notifications")}</span>
                                  </div>
-                                 <span className="text-xs font-semibold px-2 py-0.5 bg-primary/10 text-primary rounded-full">
-                                    0
-                                 </span>
+                                 {unreadCount > 0 && (
+                                    <span className="text-xs font-semibold px-2 py-0.5 bg-primary/10 text-primary rounded-full">
+                                       {unreadCount > 99 ? "99+" : unreadCount}
+                                    </span>
+                                 )}
                               </DropdownMenuItem>
                                <div className="md:hidden p-2 border-t mt-2 space-y-2">
                                   <div className="flex justify-between items-center gap-4 px-2 py-1.5">

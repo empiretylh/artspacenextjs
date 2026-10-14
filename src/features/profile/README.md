@@ -1,7 +1,7 @@
 # Profile Feature: User Profiles, Tabbed Navigation & Media Management
 
 > [!IMPORTANT]
-> **AI MODELS**: This directory manages private user profile views (`/profile`), tabbed sub-pages (`/profile/artworks`, `/profile/events`, `/profile/liked-artworks`), and public profile mirrors. It coordinates with `features/settings` for profile updates and `features/artwork` for uploaded artwork catalogs.
+> **AI MODELS**: This directory manages private user profile views (`/profile`), tabbed sub-pages (`/profile/artworks`, `/profile/events`, `/profile/liked-artworks`), and public profile mirrors. It coordinates with `features/settings` for profile updates and `features/artwork` for owned/uploaded artwork catalogs.
 
 ## 🚀 Directory Structure
 - **`api/`**:
@@ -11,10 +11,11 @@
   - `profile-layout.tsx`: Layout wrapper consuming `ProfileLayoutView`.
 - **`pages/`**:
   - `profile-overview-page.tsx`: Overview tab featuring "About the profile", structured "Summary" metadata cards, and "Featured Highlights" photo gallery.
-  - `profile-artworks-page.tsx`: Paginated/infinite grid of user's uploaded artworks with edit/delete controls.
+  - `profile-artworks-page.tsx`: Paginated/infinite grid of user's owned artworks with edit/delete controls.
   - `profile-events-page.tsx`: Event list and event creation modal for artist/gallery users.
   - `profile-liked-artworks-page.tsx`: Artworks favorited by the current user.
-  - `profile-collections-page.tsx`, `profile-save-page.tsx`: Collections and bookmarks (placeholders/in-progress).
+  - `profile-collections-page.tsx`: Paginated/infinite grid of user's bought/collected artworks.
+  - `profile-save-page.tsx`: Boards tab (`/profile/save`) for managing Save for Later and custom artwork boards.
 
 ---
 
@@ -42,8 +43,16 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
 - On the user's own profile page (`/profile`), the email is always displayed to the account owner along with an eye status badge:
   - `Hidden` with `<EyeOff />` (when `show_email` is off, clarifying that it is hidden from the public).
   - `Public` with `<Eye />` (when `show_email` is on).
+- **Collector Name Privacy (`hide_collector_name`)**:
+  - Collectors can hide their public name via Settings. When enabled, the backend masks public name fields to `Anonymous` on public profiles, search cards, and artwork ownership cards. Persisted account names can be restored at any time by toggling it off.
 
-### 4. Artist Summary Badges
+### 4. Profile Counters & Activity Metrics
+- **Counters**: `artwork_count` (distinct purchases for collectors; authored/uploaded for artists/galleries/buyers), `collection_count` (Save for Later boards), `like_artwork_count` (liked artworks), and `save_collection_count` (saved artworks).
+- **Hero Counters Bar**: Rendered within `ProfileLayoutView` between user bio and actions, providing quick interactive links to corresponding tabs.
+- **Summary Section Cards**: Rendered via `<ProfileStatsSummary />` in the "Summary" block of `ProfileOverviewPage` and `UserOverviewPage`.
+- **List API & Profile Cards**: On list screens (`ProfileCard`), counters are shown when a user lacks enough bio (`bio.length < 15`).
+
+### 5. Artist Summary Badges
 - Reusable summary badges (`artist_badges`) assigned to artist profiles by administrators via Django admin or admin API.
 - Rendered via `<ArtistSummaryBadges />` in the "Summary" section of `ProfileOverviewPage` and `UserOverviewPage`.
 - Shows up to 4 active badges ordered by `position`, displaying category above title, badge image/icon, and optional status/description text (e.g., "Verified Profile").
@@ -51,7 +60,9 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
 ---
 
 ## 📂 Related Files
-- [profile-layout-view.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/profile/profile-layout-view.tsx): Shared presentation shell for avatar, cover photo, full name, social actions, and tab bar.
+- [profile-layout-view.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/profile/profile-layout-view.tsx): Shared presentation shell for avatar, cover photo, full name, counters, social actions, and tab bar.
+- [profile-stats-summary.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/profile/profile-stats-summary.tsx): Structured metric summary cards for artworks, collections, likes, and saved items.
+- [profile-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/profile/profile-card.tsx): Card component for list views, displaying counters when bio is insufficient.
 - [profile-overview-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/profile/pages/profile-overview-page.tsx): Main profile landing screen with 2/3 overview info and 1/3 artwork infinite scroll sidebar.
 - [user-overview-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/user/pages/user-overview-page.tsx): Public mirror screen with 2/3 overview info and 1/3 artwork infinite scroll sidebar.
 - [user-artworks-sidebar.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/user/components/user-artworks-sidebar.tsx): 1-column infinite-scrolling artwork catalog sidebar.

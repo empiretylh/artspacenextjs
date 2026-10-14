@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { useAuth } from "./store";
 import { accessAnalytics, UserType } from "@/lib/analytics";
 import { auth as firebaseAuth } from "@/features/service/firebase/firebase"; // Your client config
-import { signInWithCustomToken } from "firebase/auth";
+import { signInWithCustomToken, onAuthStateChanged } from "firebase/auth";
 import { env } from "@/config/env";
 import { useSyncUserProfile } from "../chat/hooks/use-sync-user-profile";
 import { usePresence } from "../chat/hooks/use-presence";
@@ -13,6 +13,26 @@ export function AuthInitializer() {
   const { syncProfile } = useSyncUserProfile();
   usePresence();
 
+  // 1. Reactive Firebase Auth State Listener
+  useEffect(() => {
+    if (!env.FIREBASE_ENABLE || !firebaseAuth) {
+      useAuth.getState().setFirebaseReady(true);
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (firebaseUser) => {
+      const currentUser = useAuth.getState().user;
+      if (firebaseUser && currentUser?.id && firebaseUser.uid === String(currentUser.id)) {
+        useAuth.getState().setFirebaseReady(true);
+      } else if (!firebaseUser) {
+        useAuth.getState().setFirebaseReady(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // 2. Initial Handshake & Silent Firebase Sync
   useEffect(() => {
     const sync = async () => {
       try {
@@ -34,28 +54,31 @@ export function AuthInitializer() {
           );
 
           // 3. SILENT FIREBASE SYNC
-          // If we have a token and Firebase isn't already logged in
-          if (env.FIREBASE_ENABLE && firebaseAuth && data.firebaseToken && !firebaseAuth.currentUser) {
-            await signInWithCustomToken(firebaseAuth, data.firebaseToken);
-            
-            // 4. Initial Sync of Profile to Firestore
-            syncProfile();
+          if (env.FIREBASE_ENABLE && firebaseAuth) {
+            if (data.firebaseToken && !firebaseAuth.currentUser) {
+              await signInWithCustomToken(firebaseAuth, data.firebaseToken);
+              useAuth.getState().setFirebaseReady(true);
+              syncProfile();
 
-            if (env.NODE_ENV === 'development') {
-              console.log("Firebase session re-synced from auth initializer");
+              if (env.NODE_ENV === 'development') {
+                console.log("Firebase session re-synced from auth initializer");
+              }
+            } else if (firebaseAuth.currentUser && firebaseAuth.currentUser.uid === String(data.user.id)) {
+              useAuth.getState().setFirebaseReady(true);
+              syncProfile();
             }
           }
         }
       } catch (error) {
         console.error("Auth initialization failed:", error);
       }
-    }
+    };
 
     if (!initialized.current) {
       sync();
       initialized.current = true;
     }
-  }, []);
+  }, [syncProfile]);
 
   return null;
 }

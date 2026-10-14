@@ -24,6 +24,7 @@ export function getMinimalUser(user: any): User | null {
       profile_picture: user.profile.profile_picture || null,
       cover_photo: user.profile.cover_photo || null,
       show_email: !!user.profile.show_email,
+      hide_collector_name: !!user.profile.hide_collector_name,
       is_following: false,
       isBlocked: false,
     } : {
@@ -32,6 +33,7 @@ export function getMinimalUser(user: any): User | null {
       profile_picture: null,
       cover_photo: null,
       show_email: false,
+      hide_collector_name: false,
       is_following: false,
       isBlocked: false,
     }

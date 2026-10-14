@@ -74,6 +74,7 @@ erDiagram
 2. **Lazy Creation**: Conversations are only saved to Firestore when the first message is sent.
 3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore. 
     - **Optimization**: These listeners now call `unsubscribe()` when the browser tab is hidden and re-sync automatically upon focus. This significantly reduces Firestore read billing for background tabs.
+    - **Authentication Guard (`isFirebaseReady`)**: All Firestore listeners and presence/block sync hooks strictly gate their queries on `isFirebaseReady` from `useAuth()`. This prevents premature empty states or `Missing or insufficient permissions` errors during page refresh while client Firebase credentials settle. Loading states stay active until the first snapshot arrives, with an 8-second safety timeout fallback.
 4. **Pagination**: Messages are fetched in batches (default: 10) starting from the most recent. This is managed via `useMessages` by increasing the Firestore `limit()` on-demand.
 5. **Infinite Scroll**: The `ChatMessages` component implements an automated pagination trigger using an `IntersectionObserver`.
 6. **Grouped Media Gallery**:

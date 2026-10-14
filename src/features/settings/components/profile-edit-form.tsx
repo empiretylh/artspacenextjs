@@ -57,6 +57,7 @@ export default function ProfileEditForm({
          website: profile?.profile?.website ?? "",
          about: profile?.profile?.about ?? "",
          show_email: profile?.profile?.show_email ?? false,
+         hide_collector_name: (profile as any)?.hide_collector_name ?? profile?.profile?.hide_collector_name ?? false,
       },
    });
 
@@ -204,6 +205,28 @@ export default function ProfileEditForm({
                   </FormItem>
                )}
             />
+            {profile?.user_type === "COLLECTOR" && (
+               <FormField
+                  control={form.control}
+                  name="hide_collector_name"
+                  render={({ field }) => (
+                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm">
+                        <div className="space-y-0.5">
+                           <FormLabel>{t("hideCollectorName")}</FormLabel>
+                           <FormDescription>
+                              {t("hideCollectorNameDesc")}
+                           </FormDescription>
+                        </div>
+                        <FormControl>
+                           <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                           />
+                        </FormControl>
+                     </FormItem>
+                  )}
+               />
+            )}
             <div className="border-t py-4 space-x-2">
                <Button type="submit" loading={updateProfileMutation.isPending}>
                   {t("save")}

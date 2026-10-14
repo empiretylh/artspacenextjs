@@ -36,28 +36,6 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
       initialLiked: artwork.is_liked,
    });
    const { source } = useSource();
-   const router = useRouter();
-   const [collections, setCollections] = useState<
-      {
-         id: number;
-         name: string;
-         items: string[];
-      }[]
-   >([
-      { id: 1, name: "Favorites", items: [] },
-      { id: 2, name: "Inspiration", items: [] },
-   ]);
-
-   const toggleCollection = (collectionId: number) => {
-      alert("toggle collection " + collectionId);
-   };
-
-   const createCollection = () => {
-      const name = prompt("Collection name?");
-      if (!name) return;
-      setCollections((prev) => [...prev, { id: Date.now(), name, items: [] }]);
-   };
-
    const masonrySizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1536px) 20vw, 300px";
    const defaultSizes = "(max-width: 768px) 100vw, 400px"; // Adjust based on your fixed-height row layout
 
@@ -114,7 +92,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
             <div className="pt-3 space-y-1">
                <div className="space-y-0.5">
                   <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
-                     <h3 className="font-bold text-sm hover:text-primary transition-colors font-display line-clamp-1">
+                     <h3 className="font-semibold text-sm hover:text-primary transition-colors font-display line-clamp-1 leading-[1.65] pb-0.5">
                         {artwork.title}
                      </h3>
                   </Link>

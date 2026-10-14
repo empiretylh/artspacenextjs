@@ -64,10 +64,13 @@ To guarantee premium presentation on platforms like Telegram, Facebook, LinkedIn
 - **Auth-Aware Hydration & Private Artwork Guard**: `ArtworkDetailPage` and `useGetArtwork` reactively observe `auth.loading` so that direct URL navigation and page reloads for private artworks do not prematurely trigger 404 `notFound()` before user credentials/session finish initializing.
 
 ## 📂 Key Files
-- [artwork.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/pages/artwork.tsx): Artwork detail page component featuring smart back navigation (`useSafeBack`) and auth-synchronized loading gates.
+- [artwork.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/pages/artwork.tsx): Artwork detail page component featuring smart back navigation (`useSafeBack` with loop prevention against `/order` routes) and auth-synchronized loading gates.
 - [artist-profile.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artist-profile.tsx): "About the Artist" section rendering artist info and dynamic artist summary badges (`artist_badges`).
-- [artwork-create-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-create-form.tsx): The 300+ line form handling multi-step artwork entry.
+- [artwork-create-modal.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-create-modal.tsx): Modal wrapper rendering `ArtworkCreateForm`.
+- [artwork-create-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-create-form.tsx): Section-based artwork creation form powered by generalized `FormDialog` and `FormSection` with external sticky footer, semi-bold typography, and boards-dialog visual standards.
+- [artwork-update-modal.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-update-modal.tsx): Modal wrapper rendering `ArtworkUpdateForm`.
+- [artwork-update-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-update-form.tsx): Section-based artwork update form powered by generalized `FormDialog` and `FormSection`.
 - [artwork-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/artwork-card.tsx): The primary UI card used in the responsive grid layout.
-- [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The detail view info card used on the artwork page with instant checkout transition.
+- [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The detail view info card used on the artwork page with instant checkout transition and Save to Boards (`SaveToBoardDialog`) action.
 - [route.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/app/api/og/route.tsx): Unified, dynamic, high-fidelity Open Graph image generator API.
 

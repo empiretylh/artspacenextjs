@@ -1,7 +1,7 @@
 import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { AuthInitializer } from "@/features/auth/auth-initializer";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit, Fraunces, Noto_Sans_Myanmar, Noto_Serif_Myanmar } from "next/font/google";
 import localFont from "next/font/local";
 import "@/app/globals.css";
@@ -12,6 +12,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { FcmManager } from "@/features/chat/components/fcm-manager";
+import { NotificationListener } from "@/features/notifications/components/notification-listener";
 import NextTopLoader from "nextjs-toploader";
 
 const outfitSans = Outfit({
@@ -41,6 +42,13 @@ const masterpieceUniRound = localFont({
   variable: "--font-masterpiece-round",
   display: "swap",
 })
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: {
@@ -96,6 +104,7 @@ export default async function RootLayout({
           <AppProvider>
             <AuthInitializer />
             <FcmManager />
+            <NotificationListener />
             <ScrollToTop />
             {children}
           </AppProvider>

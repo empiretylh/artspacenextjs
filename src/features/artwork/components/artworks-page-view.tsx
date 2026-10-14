@@ -27,6 +27,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ArtworkCard from "@/components/app/artwork-card";
 import { useInView } from "react-intersection-observer";
 import LoadingPage from "@/components/page/loading-page";
+import EmptyState from "@/components/common/empty-state";
+import type { LucideIcon } from "lucide-react";
 
 interface ArtworksPageViewOptions {
    enableFilters?: boolean;
@@ -52,11 +54,19 @@ interface ArtworksPageViewProps {
    artworkCard: (artwork: Artwork) => React.JSX.Element;
    options?: ArtworksPageViewOptions;
    priceRanges?: { value: string; label: string; }[];
+   emptyTitle?: string;
+   emptyDescription?: string;
+   emptyIcon?: LucideIcon | React.ReactNode;
+   emptyAction?: React.ReactNode;
 }
 
 const ArtworksPageView = ({
    title,
    titleClassName,
+   emptyTitle,
+   emptyDescription,
+   emptyIcon,
+   emptyAction,
    isLoading,
    isFetching: _isFetching = false,
    pagesToRender,
@@ -281,10 +291,16 @@ const ArtworksPageView = ({
                      <div>
                         {pagesToRender?.[0]?.results?.length <= 0 &&
                            !isLoading && (
-                              <div className="flex items-center justify-center h-60">
-                                 <p className="text-sm text-muted-foreground font-medium italic">
-                                    We couldn't find any artworks matching your selection.
-                                 </p>
+                              <div className="py-12">
+                                 <EmptyState
+                                    icon={emptyIcon}
+                                    title={emptyTitle}
+                                    description={
+                                       emptyDescription ??
+                                       "We couldn't find any artworks matching your selection."
+                                    }
+                                    action={emptyAction}
+                                 />
                               </div>
                            )}
                      </div>

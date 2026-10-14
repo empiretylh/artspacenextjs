@@ -24,10 +24,17 @@ Most files in `artspace/` follow a strict three-layer pattern to ensure consiste
 
 ## 📂 Featured Service Hubs
 - [get-artworks.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-artworks.tsx): The central service for all artwork discovery, filtering, and sorting.
+- [get-artworks-by-user-id.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-artworks-by-user-id.ts): Retrieves owned artworks for specific user profiles (`/artworks/artworks/owned/user/${userId}/`).
+- [get-collections-by-user-id.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-collections-by-user-id.ts): Retrieves bought / collected artworks for specific user profiles (`/artworks/artworks/collections/user/${userId}/`).
 - [get-users.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-users.tsx): A polymorphic service that handles "artists," "galleries," and "collectors" via a `userType` parameter.
 - [get-blog-posts.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-blog-posts.ts): Central service for the public editorial magazine, articles, taxonomy filtering, and infinite feed.
 - [get-blog-post.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-blog-post.ts): Single blog article reader lookup and prefetching.
 - [get-blog-taxonomies.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-blog-taxonomies.ts): Public categories and tags lookups with active post counts.
+- [get-boards.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-boards.ts): Retrieves user's boards (save-for-later custom & default boards at `/artworks/boards/` and public user boards at `/artworks/boards/user/${userId}/`).
+- [get-board.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-board.ts): Single board reader lookup for owned or public boards (`/artworks/boards/${id}/`).
+- [get-board-artworks.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-board-artworks.ts): Paginated artwork members inside a specific board (`/artworks/boards/${id}/artworks/`).
+- [board-mutations.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/board-mutations.ts): Create, update, delete boards and add/remove artwork membership via `/artworks/boards/`.
+- [save-artwork.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/save-artwork.ts): Default save / unsave shortcuts (`/artworks/${id}/save/`) and save-status checker for artworks (`/artworks/${id}/save-status/`).
 
 ## ⚠️ Known Gotchas for AI
 - **Polymorphism**: Many entity types (Artists, Galleries) use the same `useGetUsers` hook with different `userType` parameters. Always look for existing generic services before creating new ones.

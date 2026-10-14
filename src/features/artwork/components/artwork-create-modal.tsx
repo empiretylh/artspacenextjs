@@ -1,8 +1,7 @@
-'use client'
-import { BaseDialog } from "@/components/common/dialogs/base-dialog";
+'use client';
+
+import React, { useEffect, useState } from "react";
 import { ArtworkCreateForm } from "./artwork-create-form";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEffect, useState } from "react";
 
 type ArtworkCreateProps = {
    isArtworkCreateModalOpen: boolean;
@@ -13,31 +12,26 @@ const ArtworkCreateModal = ({
    isArtworkCreateModalOpen,
    setIsArtworkCreateModalOpen,
 }: ArtworkCreateProps) => {
-   const [isMounted, setIsMounted] = useState(false)
+   const [isMounted, setIsMounted] = useState(false);
 
    useEffect(() => {
-      setIsMounted(true)
-   }, [])
+      setIsMounted(true);
+   }, []);
 
    if (!isMounted) {
-      return null
+      return null;
    }
 
+   const handleClose = () => {
+      setIsArtworkCreateModalOpen(false);
+   };
+
    return (
-      <div>
-         <BaseDialog
-            title={`Artwork Create Form`}
-            description="Fill out the form below to create a new artwork."
-            isOpen={isArtworkCreateModalOpen}
-            onClose={() => setIsArtworkCreateModalOpen(false)}
-         >
-            <div>
-               <ScrollArea className="h-[600px]">
-                  <ArtworkCreateForm onCreateSuccess={() => setIsArtworkCreateModalOpen(false)} />
-               </ScrollArea>
-            </div>
-         </BaseDialog>
-      </div>
+      <ArtworkCreateForm
+         isOpen={isArtworkCreateModalOpen}
+         onClose={handleClose}
+         onCreateSuccess={handleClose}
+      />
    );
 };
 

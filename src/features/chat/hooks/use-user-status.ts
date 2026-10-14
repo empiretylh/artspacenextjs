@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/features/service/firebase/firebase";
+import { useAuth } from "@/features/auth/store";
 import { useDocumentVisibility } from "@/hooks/use-document-visibility";
 import type { UserDocument } from "../types";
 import { formatDistanceToNow } from "date-fns";
@@ -10,6 +11,7 @@ import { formatDistanceToNow } from "date-fns";
  * Optimization: Only listens when the document is visible.
  */
 export const useUserStatus = (userId: string | null) => {
+   const { isFirebaseReady } = useAuth();
    const isVisible = useDocumentVisibility();
    const [data, setData] = useState<{ status: string; isOnline: boolean }>({
       status: "Offline",
@@ -17,7 +19,7 @@ export const useUserStatus = (userId: string | null) => {
    });
 
    useEffect(() => {
-      if (!userId || !db || !isVisible) return;
+      if (!userId || !db || !isVisible || !isFirebaseReady) return;
 
       const userRef = doc(db, "users", userId);
 
@@ -48,7 +50,7 @@ export const useUserStatus = (userId: string | null) => {
       });
 
       return () => unsubscribe();
-   }, [userId, isVisible]);
+   }, [userId, isVisible, isFirebaseReady]);
 
    return data;
 };

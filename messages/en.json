@@ -10,6 +10,18 @@
     "joinNow": "Join Now",
     "notifications": "Notifications"
   },
+  "Notifications": {
+    "title": "Notifications",
+    "subtitle": "Stay updated on your orders, artworks, and followers",
+    "all": "All",
+    "unread": "Unread",
+    "new": "new",
+    "empty": "No notifications yet",
+    "emptyDescription": "When someone follows you, purchases your art, or updates an order, you'll see it here.",
+    "markAllAsRead": "Mark all as read",
+    "viewAll": "View all notifications",
+    "loading": "Loading notifications..."
+  },
   "Navigation": {
     "home": "Home",
     "artwork": "Artwork",
@@ -94,7 +106,6 @@
       "saveForLater": "Save for Later",
       "needHelp": "Need Help?",
       "securePayment": "Secure payment",
-      "freeReturns": "Free and easy 14 days returns",
       "characteristicsTitle": "Characteristics of the Painting",
       "yearOfCreation": "Year of Creation",
       "dimensions": "Dimensions",
@@ -186,7 +197,8 @@
     "artworks": "Artworks",
     "noArtworks": "No artworks available.",
     "images": "Images",
-    "noImages": "No images available."
+    "noImages": "No images available.",
+    "createEvent": "Create Event"
   },
   "Settings": {
     "title": "Settings",
@@ -213,6 +225,8 @@
     "website": "Website",
     "showEmail": "Show Email on Public Profile",
     "showEmailDesc": "Toggle whether your primary email address is visible on your public profile.",
+    "hideCollectorName": "Hide Collector Name",
+    "hideCollectorNameDesc": "When enabled, your name appears as Anonymous on public profiles, search results, and artwork ownership.",
     "save": "Save",
     "cancel": "Cancel",
     "success": "Success",

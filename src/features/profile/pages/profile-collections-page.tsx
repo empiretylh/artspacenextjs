@@ -1,5 +1,191 @@
-const ProfileCollectionsPage = () => {
-   return <div>ProfileCollectionsPage</div>;
+'use client'
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import type { Artwork, ColumnFiltersState, SortingState } from "@/types";
+import ArtworksPageView from "@/features/artwork/components/artworks-page-view";
+import ArtworkCard from "@/components/app/artwork-card";
+import { useGetCollectionsByUserIdInfinite } from "@/features/service/artspace/get-collections-by-user-id";
+import { useGetProfile } from "../api/get-profile";
+import { useAuth } from "@/features/auth/store";
+import { useSource } from "@/lib/analytics-source";
+import { ecommerceAnalytics, itemsFromArtworks } from "@/lib/analytics";
+import { snakeToNormal } from "@/lib/utils";
+
+type ControlledArtworkCardProps = {
+   artwork: Artwork;
+};
+
+const ControlledArtworkCard: React.FC<ControlledArtworkCardProps> = ({
+   artwork,
+}) => {
+   return (
+      <div className="relative group w-full">
+         <ArtworkCard
+            publicCard={true}
+            className="w-full"
+            artwork={artwork}
+         />
+      </div>
+   );
+};
+
+function parseSearchParams(sp: ReturnType<typeof useSearchParams>) {
+   const page = Number(sp.get("page")) || 1;
+   const limit = Number(sp.get("limit")) || 12;
+   const search = sp.get("search") || "";
+
+   const filters: ColumnFiltersState = [];
+   sp.forEach((value, key) => {
+      if (!["page", "limit", "search", "sort"].includes(key)) {
+         if (key === "price_range") {
+            if (value) filters.push({ id: key, value });
+         } else {
+            String(value)
+               .split(",")
+               .filter(Boolean)
+               .forEach((v) => filters.push({ id: key, value: v }));
+         }
+      }
+   });
+
+   const sorts: SortingState = [];
+   const sortParam = sp.get("sort");
+   if (sortParam) {
+      const [id, order] = sortParam.split("-");
+      if (id) sorts.push({ id, desc: order === "desc" });
+   }
+
+   return { page, limit, search, filters, sorts };
+}
+
+function buildSearchParams(input: {
+   page: number;
+   limit: number;
+   search: string;
+   filters: ColumnFiltersState;
+   sorts: SortingState;
+}) {
+   const sp = new URLSearchParams();
+
+   if (input.page !== 1) sp.set("page", String(input.page));
+   if (input.limit !== 12) sp.set("limit", String(input.limit));
+   if (input.search) sp.set("search", input.search);
+
+   const groups: Record<string, Set<string>> = {};
+   for (const f of input.filters) {
+      if (!f?.id || f.value == null) continue;
+      (groups[f.id] ??= new Set()).add(String(f.value));
+   }
+
+   if (input.filters.some((f) => f.id === "price_range")) {
+      const last = input.filters.filter((f) => f.id === "price_range").at(-1);
+      if (last?.value != null) groups["price_range"] = new Set([String(last.value)]);
+   }
+
+   for (const [key, set] of Object.entries(groups)) {
+      const values = Array.from(set);
+      sp.set(key, key === "price_range" ? (values[0] ?? "") : values.join(","));
+   }
+
+   if (input.sorts.length) {
+      const s = input.sorts[0];
+      sp.set("sort", `${s.id}-${s.desc ? "desc" : "asc"}`);
+   }
+
+   return sp;
+}
+
+export const ProfileCollectionsPage = () => {
+   const searchParams = useSearchParams();
+   const pathname = usePathname();
+   const { replace } = useRouter();
+   const { source } = useSource();
+
+   const urlState = useMemo(() => parseSearchParams(searchParams), [searchParams]);
+   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+   const { data: profileRes, isLoading: isProfileLoading } = useGetProfile();
+   const authUser = useAuth((state) => state.user);
+   const currentUserId = profileRes?.data?.id ?? authUser?.id;
+
+   // Fetch Collections
+   const { isLoading: isCollectionsLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+      useGetCollectionsByUserIdInfinite({
+         userId: currentUserId ? String(currentUserId) : "",
+         page: urlState.page,
+         search: urlState.search,
+         filters: [...urlState.filters].filter(Boolean) as ColumnFiltersState,
+         sorts: urlState.sorts,
+         limit: urlState.limit,
+         enabled: !!currentUserId,
+      });
+
+   const isLoading = isCollectionsLoading || (!currentUserId && isProfileLoading);
+
+   useEffect(() => {
+      if (!isLoading && data) {
+         const newArtworks = data.pages.at(-1)?.results ?? [];
+         if (newArtworks.length > 0) {
+            const items = itemsFromArtworks(newArtworks);
+            ecommerceAnalytics.viewItemList(newArtworks[0]?.currency?.code || "MMK", source, snakeToNormal(source), items, source);
+         }
+      }
+   }, [data, isLoading, source]);
+
+   const updateUrl = (next: Partial<typeof urlState>) => {
+      const merged = {
+         page: next.page ?? urlState.page,
+         limit: next.limit ?? urlState.limit,
+         search: next.search ?? urlState.search,
+         filters: next.filters ?? urlState.filters,
+         sorts: next.sorts ?? urlState.sorts,
+      };
+      const sp = buildSearchParams(merged);
+      const nextUrl = sp.toString() ? `${pathname}?${sp.toString()}` : pathname;
+      replace(nextUrl);
+   };
+
+   const removeFromFilter = (filterId: string, key: string) => {
+      const nextFilters = urlState.filters.filter((f) =>
+         f.id === filterId ? String(f.value) !== String(key) : true
+      );
+      updateUrl({ filters: nextFilters, page: 1 });
+   };
+
+   return (
+      <ArtworksPageView
+         title="Collected Artworks"
+         titleClassName="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground"
+         emptyTitle="No collected artworks yet"
+         emptyDescription="Artworks you purchase or collect will appear here in your collection."
+         isLoading={isLoading}
+         pagesToRender={data?.pages || []}
+         filters={urlState.filters}
+         setFilters={(next) => {
+            const resolved =
+               typeof next === "function"
+                  ? (next as (prev: ColumnFiltersState) => ColumnFiltersState)(urlState.filters)
+                  : next;
+
+            updateUrl({ filters: resolved, page: 1 });
+         }}
+         sorts={urlState.sorts}
+         setSorts={(next) => updateUrl({ sorts: next, page: 1 })}
+         isSidebarOpen={isSidebarOpen}
+         setIsSidebarOpen={setIsSidebarOpen}
+         fetchNextPage={fetchNextPage}
+         hasNextPage={hasNextPage}
+         isFetchingNextPage={isFetchingNextPage}
+         removeFromFilter={removeFromFilter}
+         artworkCard={(artwork) => {
+            return <ControlledArtworkCard artwork={artwork} />;
+         }}
+         options={{
+            enableFilters: false,
+            enableSorting: false,
+         }}
+      />
+   );
 };
 
 export default ProfileCollectionsPage;

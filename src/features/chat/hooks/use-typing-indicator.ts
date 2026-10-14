@@ -16,7 +16,7 @@ const STALE_TIMEOUT = 5000;  // 5 seconds old timestamp is considered stale
 const THROTTLE_INTERVAL = 2000; // Only update Firestore once every 2 seconds
 
 export const useTypingIndicator = (conversationId: string | null) => {
-   const { user } = useAuth();
+   const { user, isFirebaseReady } = useAuth();
    const isVisible = useDocumentVisibility();
    const [isOtherTyping, setIsOtherTyping] = useState(false);
    const lastUpdateRef = useRef<number>(0);
@@ -24,39 +24,46 @@ export const useTypingIndicator = (conversationId: string | null) => {
 
    // 1. Recipient side: Listen to the conversation document
    useEffect(() => {
-      if (!conversationId || !db || !user?.id || !isVisible) {
+      if (!conversationId || !db || !user?.id || !isVisible || !isFirebaseReady) {
          setIsOtherTyping(false);
          return;
       }
 
       const convRef = doc(db, "conversations", conversationId);
-      const unsubscribe = onSnapshot(convRef, (snapshot) => {
-         const data = snapshot.data() as Conversation;
-         if (!data?.typing) {
+      const unsubscribe = onSnapshot(
+         convRef, 
+         (snapshot) => {
+            const data = snapshot.data() as Conversation;
+            if (!data?.typing) {
+               setIsOtherTyping(false);
+               return;
+            }
+
+            // Find other participants who are typing
+            const now = Date.now();
+            const otherTyping = Object.entries(data.typing).some(([uid, timestamp]) => {
+               if (uid === String(user.id)) return false;
+               if (!timestamp) return false;
+               
+               // Convert Firestore Timestamp to JS Date
+               const lastActive = timestamp.toMillis();
+               return (now - lastActive) < STALE_TIMEOUT;
+            });
+
+            setIsOtherTyping(otherTyping);
+         },
+         (error) => {
+            console.error("Error listening to typing indicator:", error);
             setIsOtherTyping(false);
-            return;
          }
-
-         // Find other participants who are typing
-         const now = Date.now();
-         const otherTyping = Object.entries(data.typing).some(([uid, timestamp]) => {
-            if (uid === String(user.id)) return false;
-            if (!timestamp) return false;
-            
-            // Convert Firestore Timestamp to JS Date
-            const lastActive = timestamp.toMillis();
-            return (now - lastActive) < STALE_TIMEOUT;
-         });
-
-         setIsOtherTyping(otherTyping);
-      });
+      );
 
       return () => unsubscribe();
-   }, [conversationId, user?.id, isVisible]);
+   }, [conversationId, user?.id, isVisible, isFirebaseReady]);
 
    // 2. Sender side: Function to update my typing status
    const setTyping = async (typing: boolean) => {
-      if (!conversationId || !db || !user?.id) return;
+      if (!conversationId || !db || !user?.id || !isFirebaseReady) return;
 
       // Logic for stopping typing
       if (!typing) {

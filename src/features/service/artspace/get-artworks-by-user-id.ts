@@ -79,7 +79,7 @@ export const getArtworksByUserId = async ({
       params.ordering = sorts?.[0].desc ? `-${sorts?.[0].id}` : sorts?.[0].id;
    }
 
-   const res = await api.get(`/artworks/uploaded/user/${userId}/`, { params });
+   const res = await api.get(`/artworks/artworks/owned/user/${userId}/`, { params });
 
    return res.data;
 };

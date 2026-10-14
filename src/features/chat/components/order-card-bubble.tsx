@@ -66,7 +66,7 @@ export const OrderCardBubble = ({ orderCard, isMine }: Props) => {
         <div className="flex flex-col min-w-0 flex-1">
           <h4
             className={cn(
-              "font-semibold text-xs sm:text-sm line-clamp-1 leading-snug font-sans",
+              "font-semibold text-xs sm:text-sm line-clamp-1 leading-normal pb-0.5 font-sans",
               isMine ? "text-primary-foreground" : "text-foreground"
             )}
           >
