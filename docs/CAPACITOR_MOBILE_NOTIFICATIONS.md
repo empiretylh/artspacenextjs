@@ -36,7 +36,7 @@ Do not commit this file if the project policy treats Firebase configuration as p
 
 ## Build and run
 
-Capacitor 8's generated Android project requires Java 21. Android Studio's bundled JDK can be used on macOS:
+The generated Android project currently requires Java 21. Android Studio's bundled JDK can be used on macOS:
 
 ```bash
 export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
