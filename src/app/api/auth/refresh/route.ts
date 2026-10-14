@@ -29,8 +29,10 @@ export async function POST() {
 
       cookieStore.set("artspace_auth_session", JSON.stringify({ ...authSession, accessToken: data.access }), {
         httpOnly: false,
-        // secure: true,
-        // sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 90,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
       });
     }
 
