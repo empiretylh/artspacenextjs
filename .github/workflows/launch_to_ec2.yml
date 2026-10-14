@@ -80,10 +80,10 @@ jobs:
           fi
 
           echo "🛑 Stopping existing containers..."
-          $DC down || true
+          sudo $DC down || true
 
           echo "🚀 Building and starting containers..."
-          $DC up --build -d
+          sudo $DC up --build -d
 
           echo "📊 Container status:"
           $DC ps
