@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "mm.illuminati.artspace"
+    namespace = "co.median.android.krrajyp"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "mm.illuminati.artspace"
+        applicationId "co.median.android.krrajyp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

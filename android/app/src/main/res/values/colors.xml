@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="splash_background">#FFFFFF</color>
+
+    <color name="offline_background">#FFFFFF</color>
+    <color name="offline_foreground">#111827</color>
+    <color name="offline_muted">#6B7280</color>
+    <color name="offline_icon_background">#F3F4F6</color>
+    <color name="offline_button_background">#003F1D</color>
+    <color name="offline_button_text">#FFFFFF</color>
+</resources>
