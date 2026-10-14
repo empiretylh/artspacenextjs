@@ -43,12 +43,18 @@ export async function POST(request: Request) {
     console.error("Firebase token generation failed:", error);
   }
 
-  // 3. Set your existing cookies
-  cookieStore.set("artspace_refresh_token", data.refresh, { httpOnly: true });
+  // 3. Set persistent cookies so the WebView survives force-close/reopen.
+  const cookieOptions = {
+    maxAge: 60 * 60 * 24 * 90,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+  };
+  cookieStore.set("artspace_refresh_token", data.refresh, { ...cookieOptions, httpOnly: true });
   cookieStore.set("artspace_auth_session", JSON.stringify({
     accessToken: data.access,
     user: getMinimalUser(data.user)
-  }), { httpOnly: false });
+  }), { ...cookieOptions, httpOnly: false });
 
   // 4. Return EVERYTHING to the frontend, including the Firebase token
   return NextResponse.json({

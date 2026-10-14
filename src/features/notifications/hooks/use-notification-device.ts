@@ -8,6 +8,8 @@ import { env } from "@/config/env";
 import { registerNotificationDevice } from "../api/register-device";
 import { deactivateNotificationDevice } from "../api/deactivate-device";
 import { recordNotificationEvent } from "../api/record-notification-event";
+import { Capacitor } from "@capacitor/core";
+import { PushNotifications } from "@capacitor/push-notifications";
 
 declare global {
    interface Window {
@@ -47,6 +49,64 @@ export const useNotificationDevice = () => {
       }
 
       if (typeof window === "undefined") return;
+
+      if (Capacitor.isNativePlatform()) {
+         let registrationListener: { remove: () => Promise<void> } | undefined;
+         let receivedListener: { remove: () => Promise<void> } | undefined;
+         let clickedListener: { remove: () => Promise<void> } | undefined;
+
+         const platform = Capacitor.getPlatform() === "ios" ? "IOS" : "ANDROID";
+         const registerNativeToken = (token: string) => {
+            registeredTokenRef.current = token;
+            registerNotificationDevice({
+               token,
+               platform,
+               app_version: window.MAS_APP_VERSION || "1.0.0",
+            }).catch(console.warn);
+         };
+
+         const setupCapacitorPush = async () => {
+            let permission = await PushNotifications.checkPermissions();
+            if (permission.receive === "prompt") {
+               permission = await PushNotifications.requestPermissions();
+            }
+            if (permission.receive !== "granted") return;
+
+            registrationListener = await PushNotifications.addListener("registration", ({ value }) => {
+               registerNativeToken(value);
+            });
+            receivedListener = await PushNotifications.addListener("pushNotificationReceived", (notification) => {
+               const id = Number(notification.data?.notification_id ?? notification.data?.id);
+               if (Number.isInteger(id) && id > 0) {
+                  recordNotificationEvent(id, {
+                     event_type: "RECEIVED",
+                     metadata: { source: "CAPACITOR_PUSH" },
+                  }).catch(console.warn);
+               }
+            });
+            clickedListener = await PushNotifications.addListener("pushNotificationActionPerformed", ({ notification }) => {
+               const id = Number(notification.data?.notification_id ?? notification.data?.id);
+               if (Number.isInteger(id) && id > 0) {
+                  recordNotificationEvent(id, {
+                     event_type: "OPENED",
+                     metadata: { source: "CAPACITOR_PUSH", web_route: notification.data?.web_route || "" },
+                  }).catch(console.warn);
+               }
+               const route = notification.data?.web_route;
+               if (route) window.location.assign(route);
+            });
+
+            await PushNotifications.register();
+         };
+
+         setupCapacitorPush().catch((error) => console.warn("Failed registering Capacitor push notifications:", error));
+
+         return () => {
+            registrationListener?.remove();
+            receivedListener?.remove();
+            clickedListener?.remove();
+         };
+      }
 
       // 1. Check if running inside Median shell
       if (window.median?.firebaseMessaging) {

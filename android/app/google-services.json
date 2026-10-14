@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "559270098351",
+    "project_id": "myanmarartspace",
+    "storage_bucket": "myanmarartspace.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559270098351:android:f257bb63f709825fe0eb5a",
+        "android_client_info": {
+          "package_name": "co.median.android.krrajyp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "559270098351-i2e0n2q32ts9em32224gs2rdo193nr93.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD46HL4P8Fug34jkx5XyRvncKL7CN1QeNE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "559270098351-i2e0n2q32ts9em32224gs2rdo193nr93.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "559270098351-88vq66sodu4oa065bvrc40f3bisos703.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.median.ios.krrajyp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559270098351:android:281cbd7a2c59ff24e0eb5a",
+        "android_client_info": {
+          "package_name": "mm.illuminati.artspace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "559270098351-i2e0n2q32ts9em32224gs2rdo193nr93.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD46HL4P8Fug34jkx5XyRvncKL7CN1QeNE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "559270098351-i2e0n2q32ts9em32224gs2rdo193nr93.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "559270098351-88vq66sodu4oa065bvrc40f3bisos703.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.median.ios.krrajyp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
