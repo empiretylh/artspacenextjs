@@ -201,20 +201,20 @@ const ProfileLayoutView = ({
                {(() => {
                   const artworkCount = user?.artwork_count ?? user?.num_artworks;
                   const collectionCount = user?.collection_count;
-                  const likeCount = user?.like_artwork_count;
+                  const followerCount = user?.profile?.follower_count;
                   const saveCount = user?.save_collection_count;
 
                   const hasCounters =
                      artworkCount !== undefined ||
                      collectionCount !== undefined ||
-                     likeCount !== undefined ||
+                     followerCount !== undefined ||
                      saveCount !== undefined;
 
                   if (!hasCounters) return null;
 
                   const safeArtworkCount = artworkCount ?? 0;
                   const safeCollectionCount = collectionCount ?? 0;
-                  const safeLikeCount = likeCount ?? 0;
+                  const safeFollowerCount = followerCount ?? 0;
                   const safeSaveCount = saveCount ?? 0;
 
                   const artworkHref =
@@ -226,11 +226,6 @@ const ProfileLayoutView = ({
                      variant === "profile"
                         ? paths.profile.collections.path
                         : paths[userType]?.collections?.getHref(String(user.id));
-
-                  const likeHref =
-                     variant === "profile"
-                        ? paths.profile.likedArtworks.path
-                        : paths[userType]?.likedArtworks?.getHref(String(user.id));
 
                   const saveHref =
                      variant === "profile"
@@ -247,7 +242,7 @@ const ProfileLayoutView = ({
                   const collectionLabel =
                      safeCollectionCount === 1 ? "Collection" : "Collections";
 
-                  const likeLabel = safeLikeCount === 1 ? "Like" : "Likes";
+                  const followerLabel = safeFollowerCount === 1 ? "Follower" : "Followers";
                   const boardLabel = safeSaveCount === 1 ? "Board" : "Boards";
 
                   const statItems = [
@@ -262,9 +257,9 @@ const ProfileLayoutView = ({
                         href: collectionHref,
                      },
                      {
-                        value: safeLikeCount,
-                        label: likeLabel,
-                        href: likeHref,
+                        value: safeFollowerCount,
+                        label: followerLabel,
+                        href: undefined,
                      },
                      {
                         value: safeSaveCount,

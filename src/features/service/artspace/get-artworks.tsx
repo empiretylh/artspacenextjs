@@ -1,4 +1,5 @@
 import { api } from "@/lib/api-client";
+import { normalizeListResponse } from "@/lib/utils";
 import type { QueryConfig } from "@/lib/react-query";
 import {
    queryOptions,
@@ -71,7 +72,7 @@ export const getArtworksOg = async ({
 
    const res = await api.get(`/artworks/artworks/`, { params });
 
-   return res.data
+   return normalizeListResponse<Artwork>(res.data);
 };
 
 // ----------------------------------------------------------------------
@@ -136,7 +137,7 @@ export const getArtworks = async ({
 
    const res = await api.get(`/artworks/artworks/`, { params });
 
-   return res.data
+   return normalizeListResponse<Artwork>(res.data);
 };
 
 // ----------------------------------------------------------------------
@@ -222,7 +223,7 @@ export const useGetArtworksInfinite = ({
       queryFn: ({ pageParam = 1 }) =>
          getArtworks({ filters, sorts, page: pageParam, limit, search }),
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.count;
+         const total = lastPage?.count ?? (Array.isArray(lastPage) ? (lastPage as any).length : 0);
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },

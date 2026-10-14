@@ -1,4 +1,5 @@
 import { api } from "@/lib/api-client";
+import { normalizeListResponse } from "@/lib/utils";
 import type { QueryConfig } from "@/lib/react-query";
 import type {
    ColumnFiltersState,
@@ -137,7 +138,7 @@ export const getUserOrders = async (userId: number, page: number = 1, filters: R
          return searchParams.toString();
       }
    });
-   return res.data;
+   return normalizeListResponse<Order>(res.data);
 };
 
 export const useGetUserOrders = (userId: number, page: number = 1, filters: Record<string, any> = {}) => {

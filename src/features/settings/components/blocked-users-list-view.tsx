@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, extractListItems } from "@/lib/utils";
 import { XIcon } from "lucide-react";
 
 import { EmptyState } from "@/components/layout/empty-state";
@@ -106,23 +106,27 @@ const BlockedUsersListView = ({
                                     "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2"
                                  )}
                               >
-                                 {pagesToRender.map((page) => (
-                                    <Fragment key={page.data.next}>
-                                       {page.data.results.map(
-                                          (blockedUser: any) => (
-                                             <UnblockUserListCard
-                                                border
-                                                key={blockedUser.id}
-                                                user={blockedUser}
-                                                onClick={() => {
-                                                   setSelectedUser(blockedUser);
-                                                   setIsUnblockModalOpen(true);
-                                                 }}
-                                             />
-                                          )
-                                       )}
-                                    </Fragment>
-                                 ))}
+                                 {pagesToRender.map((page, pageIdx) => {
+                                    const rawPage = page?.data ?? page;
+                                    const blockedUsers = extractListItems<any>(rawPage);
+                                    return (
+                                       <Fragment key={rawPage?.next ?? pageIdx}>
+                                          {blockedUsers.map(
+                                             (blockedUser: any) => (
+                                                <UnblockUserListCard
+                                                   border
+                                                   key={blockedUser.id}
+                                                   user={blockedUser}
+                                                   onClick={() => {
+                                                      setSelectedUser(blockedUser);
+                                                      setIsUnblockModalOpen(true);
+                                                   }}
+                                                />
+                                             )
+                                          )}
+                                       </Fragment>
+                                    );
+                                 })}
                               </div>
 
                               <div className="flex justify-center my-2">

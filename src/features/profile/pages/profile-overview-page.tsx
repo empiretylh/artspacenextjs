@@ -108,7 +108,7 @@ const ProfileOverviewPage = () => {
                   const hasStats =
                      userProfile.artwork_count !== undefined ||
                      userProfile.collection_count !== undefined ||
-                     userProfile.like_artwork_count !== undefined ||
+                     userProfile.profile?.follower_count !== undefined ||
                      userProfile.save_collection_count !== undefined ||
                      userProfile.num_artworks !== undefined;
                   const hasBadges = Boolean(

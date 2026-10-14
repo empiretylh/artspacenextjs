@@ -11,6 +11,7 @@ import type {
 } from "@/types";
 
 import { useGetEventsInfinite } from "@/features/service/artspace/get-events";
+import { extractListItems } from "@/lib/utils";
 
 export const useEventsListInfinite = () => {
    const searchParams = useSearchParams();
@@ -180,7 +181,7 @@ export const useEventsListInfinite = () => {
       setSorts(newSorts);
    }, []);
 
-   const isDataEmpty = () => pagesToRender[0]?.results?.length <= 0;
+   const isDataEmpty = () => extractListItems(pagesToRender[0]).length <= 0;
 
    // -----------------------------------------
    // Public API

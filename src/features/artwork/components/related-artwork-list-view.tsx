@@ -1,8 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
-
-
-import { cn } from "@/lib/utils";
-
+import { cn, extractListItems } from "@/lib/utils";
 import type { Artwork } from "@/types";
 import ArtworkCard from "@/components/app/artwork-card";
 import { useInView } from "react-intersection-observer";
@@ -19,7 +16,7 @@ interface RelatedArtworksListViewProps {
    fetchNextPage: () => void;
    hasNextPage: boolean | undefined;
    isFetchingNextPage: boolean;
-   artworkCard: (artwork: Artwork) => React.JSX.Element;
+   artworkCard?: (artwork: Artwork) => React.JSX.Element;
    options?: RelatedArtworksListViewOptions;
 }
 
@@ -45,6 +42,10 @@ const RelatedArtworksListView = ({
       setTimeout(() => setLoadingLock(false), 500); // throttle 500ms
    }, [inView, hasNextPage, isFetchingNextPage, loadingLock, fetchNextPage]);
 
+   const firstPageArtworks = extractListItems<Artwork>(
+      pagesToRender?.[0]?.data ?? pagesToRender?.[0]
+   );
+
    return (
       <div className="flex-grow transition-all duration-300">
          <div className="flex flex-col lg:flex-row transition-all duration-300">
@@ -53,7 +54,7 @@ const RelatedArtworksListView = ({
                {/* {isLoading && <Skeleton className="h-7 w-48 rounded-md" />} */}
 
                <div>
-                  {pagesToRender?.[0]?.data?.results?.length <= 0 &&
+                  {firstPageArtworks.length <= 0 &&
                      !isLoading && (
                         <div className="flex items-center justify-center h-40">
                            <p className="text-sm text-muted-foreground">
@@ -69,28 +70,32 @@ const RelatedArtworksListView = ({
                         "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
                      )}
                   >
-                     {pagesToRender?.map((page) => (
-                        <Fragment key={page.data.next}>
-                           {page.data.results.map((artwork: Artwork) => (
-                              <div key={artwork.id}>
-                                 {artworkCard ? (
-                                    artworkCard(artwork)
-                                 ) : (
-                                    <ArtworkCard
-                                       className="w-full"
-                                       artwork={artwork}
-                                    />
-                                 )}
-                              </div>
-                           ))}
-                        </Fragment>
-                     ))}
+                     {pagesToRender?.map((page, pageIdx) => {
+                        const rawPage = page?.data ?? page;
+                        const artworks = extractListItems<Artwork>(rawPage);
+                        return (
+                           <Fragment key={rawPage?.next ?? pageIdx}>
+                              {artworks.map((artwork: Artwork) => (
+                                 <div key={artwork.id}>
+                                    {artworkCard ? (
+                                       artworkCard(artwork)
+                                    ) : (
+                                       <ArtworkCard
+                                          className="w-full"
+                                          artwork={artwork}
+                                       />
+                                    )}
+                                 </div>
+                              ))}
+                           </Fragment>
+                        );
+                     })}
                   </div>
 
                   {/* Infinite scroll sentinel */}
                   {hasNextPage &&
                      !isFetchingNextPage &&
-                     pagesToRender?.[0]?.data?.results?.length > 0 && (
+                     firstPageArtworks.length > 0 && (
                         <div ref={loadMoreRef} className="h-1" />
                      )}
 
@@ -102,7 +107,7 @@ const RelatedArtworksListView = ({
 
                   {!hasNextPage &&
                      !isFetchingNextPage &&
-                     pagesToRender?.[0]?.data?.results?.length > 0 && (
+                     firstPageArtworks.length > 0 && (
                         <div className="flex justify-center my-2 text-sm text-muted-foreground">
                            Nothing more to load
                         </div>

@@ -47,8 +47,8 @@ To maintain consistent visual hierarchy on both desktop and mobile without compe
   - Collectors can hide their public name via Settings. When enabled, the backend masks public name fields to `Anonymous` on public profiles, search cards, and artwork ownership cards. Persisted account names can be restored at any time by toggling it off.
 
 ### 4. Profile Counters & Activity Metrics
-- **Counters**: `artwork_count` (distinct purchases for collectors; authored/uploaded for artists/galleries/buyers), `collection_count` (Save for Later boards), `like_artwork_count` (liked artworks), and `save_collection_count` (saved artworks).
-- **Hero Counters Bar**: Rendered within `ProfileLayoutView` between user bio and actions, providing quick interactive links to corresponding tabs.
+- **Counters**: `artwork_count` (distinct purchases for collectors; authored/uploaded for artists/galleries/buyers), `collection_count` (Save for Later boards), `profile.follower_count` (total profile followers), and `save_collection_count` (saved artworks).
+- **Hero Counters Bar**: Rendered within `ProfileLayoutView` between user bio and actions, providing quick interactive links and follower counts.
 - **Summary Section Cards**: Rendered via `<ProfileStatsSummary />` in the "Summary" block of `ProfileOverviewPage` and `UserOverviewPage`.
 - **List API & Profile Cards**: On list screens (`ProfileCard`), counters are shown when a user lacks enough bio (`bio.length < 15`).
 

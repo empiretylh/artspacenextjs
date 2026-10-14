@@ -52,8 +52,6 @@ function InputWithLeftSelect({
       const queryString = params.toString();
       let finalUrl = `${basePath}${queryString ? `?${queryString}` : ""}`;
 
-      console.log(pathname)
-
       if (pathname === basePath) {
          finalUrl = `${basePath}${queryString ? `?${queryString}` : ""}`
       } else {
@@ -73,10 +71,8 @@ function InputWithLeftSelect({
    }, []);
 
    React.useEffect(() => {
-      const matched = Object.entries(routeMap).find(([, path]) => path === pathname);
-      if (matched) setSelectedOption(matched[0]);
       setSearch(searchParam);
-   }, [pathname, searchParam]);
+   }, [searchParam]);
 
    // If not mounted yet, return a placeholder with the EXACT same height/width
 

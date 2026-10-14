@@ -1,4 +1,5 @@
 import { api } from "@/lib/api-client";
+import { normalizeListResponse } from "@/lib/utils";
 import type { QueryConfig } from "@/lib/react-query";
 import {
    queryOptions,
@@ -33,7 +34,7 @@ export const getArtspaceCollections = async ({
 
    const res = await api.get(`/artworks/mmartspace-collected-artworks/`, { params });
 
-   return res.data;
+   return normalizeListResponse<{ id: number; artwork: Artwork }>(res.data);
    // return dummyArtworks;
 };
 
@@ -118,7 +119,7 @@ export const useGetArtspaceCollectionsInfinite = ({
       queryFn: ({ pageParam = 1 }) =>
          getArtspaceCollections({ filters, sorts, page: pageParam, limit, search }),
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.count;
+         const total = lastPage?.count ?? (Array.isArray(lastPage) ? (lastPage as any).length : 0);
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },

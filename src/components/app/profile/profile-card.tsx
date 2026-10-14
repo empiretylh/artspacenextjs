@@ -87,19 +87,19 @@ export default function ProfileCard({ user }: { user: User }) {
 
                         const artworkCount = user.artwork_count ?? user.num_artworks;
                         const collectionCount = user.collection_count;
-                        const likeCount = user.like_artwork_count;
+                        const followerCount = user.profile?.follower_count;
                         const saveCount = user.save_collection_count;
 
                         const hasCounters =
                            artworkCount !== undefined ||
                            collectionCount !== undefined ||
-                           likeCount !== undefined ||
+                           followerCount !== undefined ||
                            saveCount !== undefined;
 
                         if (hasCounters) {
                            const safeArtworkCount = artworkCount ?? 0;
                            const safeCollectionCount = collectionCount ?? 0;
-                           const safeLikeCount = likeCount ?? 0;
+                           const safeFollowerCount = followerCount ?? 0;
                            const artworkLabel =
                               user.user_type === "COLLECTOR"
                                  ? "Collected"
@@ -108,16 +108,17 @@ export default function ProfileCard({ user }: { user: User }) {
                                     : "Artworks";
                            const collectionLabel =
                               safeCollectionCount === 1 ? "Collection" : "Collections";
-                           const likeLabel = safeLikeCount === 1 ? "Like" : "Likes";
+                           const followerLabel =
+                              safeFollowerCount === 1 ? "Follower" : "Followers";
 
                            const secondaryValue =
-                              safeCollectionCount > 0 || safeLikeCount === 0
+                              safeCollectionCount > 0 || safeFollowerCount === 0
                                  ? safeCollectionCount
-                                 : safeLikeCount;
+                                 : safeFollowerCount;
                            const secondaryLabel =
-                              safeCollectionCount > 0 || safeLikeCount === 0
+                              safeCollectionCount > 0 || safeFollowerCount === 0
                                  ? collectionLabel
-                                 : likeLabel;
+                                 : followerLabel;
 
                            return (
                               <div className="flex items-center justify-center w-full px-1 text-center select-none">

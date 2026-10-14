@@ -62,6 +62,7 @@ To guarantee premium presentation on platforms like Telegram, Facebook, LinkedIn
 - **Checkout Prefetching**: [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx) uses `@/i18n/routing` router prefetching on mount/available status to eliminate navigation latency when moving to `/artworks/:id/order`.
 - **Immediate Transition**: Uses React `useTransition` to provide instant pending feedback and spinner states on the "Collect Now" button during navigation.
 - **Auth-Aware Hydration & Private Artwork Guard**: `ArtworkDetailPage` and `useGetArtwork` reactively observe `auth.loading` so that direct URL navigation and page reloads for private artworks do not prematurely trigger 404 `notFound()` before user credentials/session finish initializing.
+- **Resilient List Normalization**: Uses `normalizeListResponse` and `extractListItems` across `ArtworksPageView`, `RelatedArtworksListView`, and artwork queries to seamlessly handle both standard DRF paginated objects (`{ count, results: [] }`) and unpaginated arrays (`[]`) without runtime crashes.
 
 ## 📂 Key Files
 - [artwork.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/pages/artwork.tsx): Artwork detail page component featuring smart back navigation (`useSafeBack` with loop prevention against `/order` routes) and auth-synchronized loading gates.
