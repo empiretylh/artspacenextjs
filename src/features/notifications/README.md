@@ -7,8 +7,9 @@ The Notifications feature provides persisted in-app notifications, realtime upda
 - **Pillar**: 2 (Feature Muscles)
 - **Base Endpoint**: `/api/v1/orders/notifications/` and `/api/v1/orders/notification-devices/`
 - **Realtime Stream**: Foreground Server-Sent Events (SSE) via `fetch` streaming with exponential backoff and offline recovery.
-- **Push Layer**: Web FCM + Median.co JavaScript Bridge (`median.firebaseMessaging`) for native iOS/Android shells.
+- **Push Layer**: Web FCM + Median.co JavaScript Bridge (`median.firebaseMessaging`) for native iOS/Android shells. Median obtains the native token; the client registers that token with the backend device endpoint.
 - **Analytics Funnel**: Records `RECEIVED`, `OPENED`, `DISMISSED`, `DEEPLINK_OPENED`, and `SSE_RECEIVED` events via `/orders/notifications/{id}/events/`.
+- **Median setup**: Enable Median's Firebase Cloud Messaging plugin, upload `google-services.json` and `GoogleService-Info.plist`, configure APNs in Firebase, and rebuild the app. See the repository notification API documentation for the full setup checklist.
 
 ## 📦 Directory Structure
 

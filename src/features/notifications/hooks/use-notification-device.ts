@@ -7,6 +7,7 @@ import { useAuth } from "@/features/auth/store";
 import { env } from "@/config/env";
 import { registerNotificationDevice } from "../api/register-device";
 import { deactivateNotificationDevice } from "../api/deactivate-device";
+import { recordNotificationEvent } from "../api/record-notification-event";
 
 declare global {
    interface Window {
@@ -14,14 +15,16 @@ declare global {
          firebaseMessaging?: {
             getToken: (options: { callback: (res: { token?: string }) => void }) => void;
             requestPermission?: (options: { callback: (res: { granted?: boolean }) => void }) => void;
-            register?: (options: { callback: () => void }) => void;
-            deleteToken?: () => void;
+            register?: (options: { callback: (res?: { token?: string; success?: boolean }) => void }) => void;
+            deleteToken?: (options?: { callback?: (res: { success?: boolean }) => void }) => void;
             disableForegroundBanners?: () => void;
             notificationReceived?: {
                addListener: (cb: (payload: any) => void) => string;
+               removeListener?: (id: string) => void;
             };
             notificationClicked?: {
                addListener: (cb: (payload: any) => void) => string;
+               removeListener?: (id: string) => void;
             };
          };
       };
@@ -37,6 +40,7 @@ export const useNotificationDevice = () => {
       if (!user?.id || !accessToken) {
          if (registeredTokenRef.current) {
             deactivateNotificationDevice(registeredTokenRef.current).catch(console.warn);
+            window.median?.firebaseMessaging?.deleteToken?.();
             registeredTokenRef.current = null;
          }
          return;
@@ -46,28 +50,75 @@ export const useNotificationDevice = () => {
 
       // 1. Check if running inside Median shell
       if (window.median?.firebaseMessaging) {
-         try {
-            window.median.firebaseMessaging.disableForegroundBanners?.();
-            window.median.firebaseMessaging.getToken({
-               callback: async (result) => {
-                  if (result?.token) {
-                     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                     const platform = isIos ? "IOS" : "ANDROID";
-                     const token = result.token;
-                     registeredTokenRef.current = token;
+         const medianMessaging = window.median.firebaseMessaging;
+         let receivedListenerId: string | undefined;
+         let clickedListenerId: string | undefined;
 
-                     await registerNotificationDevice({
-                        token,
-                        platform,
-                        app_version: window.MAS_APP_VERSION || "1.0.0",
-                     }).catch(console.warn);
-                  }
+         const registerMedianToken = (token?: string) => {
+            if (!token) return;
+
+            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            registeredTokenRef.current = token;
+            registerNotificationDevice({
+               token,
+               platform: isIos ? "IOS" : "ANDROID",
+               app_version: window.MAS_APP_VERSION || "1.0.0",
+            }).catch(console.warn);
+         };
+
+         const notificationId = (payload: any) => {
+            const value = payload?.notification_id ?? payload?.id;
+            const parsed = Number(value);
+            return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+         };
+
+         try {
+            medianMessaging.disableForegroundBanners?.();
+
+            receivedListenerId = medianMessaging.notificationReceived?.addListener((payload) => {
+               const id = notificationId(payload);
+               if (id) {
+                  recordNotificationEvent(id, {
+                     event_type: "RECEIVED",
+                     metadata: { source: "MEDIAN_PUSH" },
+                  }).catch(console.warn);
+               }
+            });
+
+            clickedListenerId = medianMessaging.notificationClicked?.addListener((payload) => {
+               const id = notificationId(payload);
+               if (id) {
+                  recordNotificationEvent(id, {
+                     event_type: "OPENED",
+                     metadata: { source: "MEDIAN_PUSH", web_route: payload?.web_route || "" },
+                  }).catch(console.warn);
+               }
+            });
+
+            medianMessaging.getToken({
+               callback: async (result) => {
+                  if (result?.token) return registerMedianToken(result.token);
+
+                  // Median may require an explicit permission/register flow when
+                  // automatic registration is disabled in App Studio.
+                  medianMessaging.requestPermission?.({
+                     callback: (permission) => {
+                        if (!permission?.granted) return;
+                        medianMessaging.register?.({
+                           callback: (registration) => registerMedianToken(registration?.token),
+                        });
+                     },
+                  });
                },
             });
          } catch (err) {
             console.warn("Failed registering device via Median bridge:", err);
          }
-         return;
+
+         return () => {
+            if (receivedListenerId) medianMessaging.notificationReceived?.removeListener?.(receivedListenerId);
+            if (clickedListenerId) medianMessaging.notificationClicked?.removeListener?.(clickedListenerId);
+         };
       }
 
       // 2. Standard Web Browser FCM Registration

@@ -2,6 +2,7 @@ export type NotificationType =
    | "NEW_ARTWORK_FROM_FOLLOWED_ARTIST"
    | "NEW_FOLLOWER"
    | "NEW_EVENT"
+   | "NEW_BLOG_POST"
    | "ORDER_PAYMENT_COMPLETED"
    | "ARTWORK_SOLD"
    | "ORDER_STATUS_CHANGED"
