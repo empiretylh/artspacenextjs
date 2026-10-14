@@ -23,7 +23,7 @@ android/
 Create a Firebase Android app using the Capacitor application ID:
 
 ```text
-mm.illuminati.artspace
+co.median.android.krrajyp
 ```
 
 Download `google-services.json` from Firebase and place it at:

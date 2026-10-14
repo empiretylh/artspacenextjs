@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="offline_background">#0F0F0F</color>
+    <color name="offline_foreground">#F5F5F5</color>
+    <color name="offline_muted">#9CA3AF</color>
+    <color name="offline_icon_background">#1F1F1F</color>
+    <color name="offline_button_background">#FBBF24</color>
+    <color name="offline_button_text">#111827</color>
+</resources>
