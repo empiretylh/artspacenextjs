@@ -65,8 +65,8 @@ jobs:
           cd "$PROJECT_PATH"
 
           echo "🔄 Pulling latest code..."
-          git fetch https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git production
-          git checkout production
+          git fetch "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" production
+          git checkout -B production FETCH_HEAD
           git reset --hard FETCH_HEAD
 
           echo "🐳 Detecting docker compose..."
