@@ -1,4 +1,5 @@
 import { api } from "@/lib/api-client";
+import { normalizeListResponse } from "@/lib/utils";
 import type { QueryConfig } from "@/lib/react-query";
 import {
    queryOptions,
@@ -90,7 +91,7 @@ export const getCollectionsByUserId = async ({
       params,
    });
 
-   return res.data;
+   return normalizeListResponse<Artwork>(res.data);
 };
 
 // ----------------------------------------------------------------------
@@ -204,7 +205,7 @@ export const useGetCollectionsByUserIdInfinite = ({
             search,
          }),
       getNextPageParam: (lastPage, pages) => {
-         const total = lastPage.count;
+         const total = lastPage?.count ?? (Array.isArray(lastPage) ? (lastPage as any).length : 0);
          const currentPage = pages.length;
          return total > currentPage * limit ? currentPage + 1 : undefined;
       },

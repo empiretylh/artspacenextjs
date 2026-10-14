@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Price from '@/components/common/price'
 import AppImage from '@/components/common/app-image'
-import { getImage, getRelativeImagePath } from '@/lib/utils'
+import { getImage, getRelativeImagePath, extractListItems } from '@/lib/utils'
 import { format } from 'date-fns'
 import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
@@ -69,7 +69,9 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
     )
   }
 
-  if (!orders || orders.results.length === 0) {
+  const orderList = extractListItems<any>(orders)
+
+  if (!orders || orderList.length === 0) {
     return (
       <Card className="text-center py-16 border border-border/60 bg-muted/10 rounded-2xl">
         <CardContent className="flex flex-col items-center gap-4 max-w-sm mx-auto">
@@ -112,7 +114,7 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        {orders.results.map((order) => {
+        {orderList.map((order) => {
           const status = order.order_status || order.status || 'PENDING'
           const paymentStatus = order.payment_status || 'PENDING'
           const firstItem = order.items?.[0]
@@ -273,10 +275,10 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
       })}
       </div>
 
-      {orders && orders.count > 0 && (
+      {orders && (orders.count ?? orderList.length) > 0 && (
         <div className="pt-2">
           <Pagination
-            total={orders.count}
+            total={orders.count ?? orderList.length}
             page={page}
             limit={limit}
             onPageChange={setPage}

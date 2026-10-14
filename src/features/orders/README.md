@@ -32,6 +32,7 @@
 ### 3. Order History & Pagination
 - [user-order-list.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/user-order-list.tsx) renders order cards using a responsive 2-column grid on wide screens (`grid-cols-1 xl:grid-cols-2 gap-4`), eliminating empty horizontal voids and presenting compact, high-density order cards with status badges and action blocks.
 - It uses the shared [pagination.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/common/pagination.tsx) component for navigating through order history.
+- **Response Normalization**: Safely handles both DRF paginated payloads (`{ count, results: [] }`) and unpaginated arrays (`[]`) via `extractListItems` and `normalizeListResponse`, preventing empty-state and pagination crashes.
 
 ### 4. Communication
 - **Contact Seller / Support**: Orders provide a direct entry point to the Chat feature via a "Contact Seller" button.

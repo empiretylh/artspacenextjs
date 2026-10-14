@@ -1,7 +1,7 @@
 'use client'
 import { Fragment, useEffect, useState } from "react";
 
-import { cn } from "@/lib/utils";
+import { cn, extractListItems } from "@/lib/utils";
 
 import { EmptyState } from "@/components/layout/empty-state";
 
@@ -60,6 +60,8 @@ const EventsPageView = ({
       setTimeout(() => setLoadingLock(false), 1000); // throttle 500ms
    }, [inView, hasNextPage, isFetchingNextPage, loadingLock, fetchNextPage]);
 
+   const firstPageEvents = extractListItems<any>(pagesToRender?.[0]);
+
    return (
       <div className="flex-grow transition-all duration-300">
          <div className="flex flex-col lg:flex-row transition-all duration-300">
@@ -86,32 +88,35 @@ const EventsPageView = ({
                                     layoutClasses ? layoutClasses : "grid gap-2"
                                  )}
                               >
-                                 {pagesToRender.map((page) => (
-                                    <Fragment key={page.next}>
-                                       {page.results.map((event: any) => {
-                                          if (renderEventCard) {
-                                             return (
-                                                <div key={"event-" + event.id}>
-                                                   {renderEventCard(event)}
-                                                </div>
-                                             );
-                                          } else {
-                                             return (
-                                                <EventSmallCard
-                                                   key={event.id}
-                                                   event={event}
-                                                />
-                                             );
-                                          }
-                                       })}
-                                    </Fragment>
-                                 ))}
+                                 {pagesToRender.map((page, pageIdx) => {
+                                    const events = extractListItems<any>(page);
+                                    return (
+                                       <Fragment key={(page as any)?.next ?? pageIdx}>
+                                          {events.map((event: any) => {
+                                             if (renderEventCard) {
+                                                return (
+                                                   <div key={"event-" + event.id}>
+                                                      {renderEventCard(event)}
+                                                   </div>
+                                                );
+                                             } else {
+                                                return (
+                                                   <EventSmallCard
+                                                      key={event.id}
+                                                      event={event}
+                                                   />
+                                                );
+                                             }
+                                          })}
+                                       </Fragment>
+                                    );
+                                 })}
                               </div>
 
                               {/* Infinite scroll sentinel */}
                               {hasNextPage &&
                                  !isFetchingNextPage &&
-                                 pagesToRender?.[0]?.results?.length > 0 && (
+                                 firstPageEvents.length > 0 && (
                                     <div
                                        ref={loadMoreRef}
                                        className="flex justify-center my-2 text-sm text-muted-foreground"
@@ -129,7 +134,7 @@ const EventsPageView = ({
 
                               {!hasNextPage &&
                                  !isFetchingNextPage &&
-                                 pagesToRender?.[0]?.data?.results?.length > 0 && (
+                                 firstPageEvents.length > 0 && (
                                     <div className="flex justify-center my-2 text-sm text-muted-foreground">
                                        {t("nothingMore")}
                                     </div>

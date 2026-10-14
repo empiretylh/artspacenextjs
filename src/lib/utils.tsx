@@ -2,7 +2,7 @@ import Image from "next/image";
 import { env } from "@/config/env";
 import { paths } from "@/config/paths";
 import { UserRouteType } from "@/features/service/artspace/get-users";
-import type { ApiErrorResponse, Currency, User } from "@/types";
+import type { ApiErrorResponse, Currency, ListApiResponse, User } from "@/types";
 import { useNotifications } from "@/components/ui/notifications";
 import { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
@@ -460,3 +460,42 @@ export const getPriceParts = (
 
    return formatter.formatToParts(numericPrice);
 };
+
+export function normalizeListResponse<T>(data: any): ListApiResponse<T> {
+   if (!data) {
+      return {
+         results: [],
+         count: 0,
+         next: null,
+         previous: null,
+      };
+   }
+   if (Array.isArray(data)) {
+      return {
+         results: data,
+         count: data.length,
+         next: null,
+         previous: null,
+      };
+   }
+   return {
+      ...data,
+      results: Array.isArray(data.results) ? data.results : [],
+      count:
+         typeof data.count === "number"
+            ? data.count
+            : Array.isArray(data.results)
+              ? data.results.length
+              : 0,
+      next: data.next ?? null,
+      previous: data.previous ?? null,
+   };
+}
+
+export function extractListItems<T>(pageOrList: any): T[] {
+   if (!pageOrList) return [];
+   if (Array.isArray(pageOrList)) return pageOrList;
+   if (Array.isArray(pageOrList.results)) return pageOrList.results;
+   return [];
+}
+

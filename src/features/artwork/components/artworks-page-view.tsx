@@ -12,7 +12,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { cn, extractListItems } from "@/lib/utils";
 
 import { FilterRow } from "../components/filter-row";
 import { FilterSidebar } from "../components/filter-sidebar";
@@ -40,7 +40,7 @@ interface ArtworksPageViewProps {
    titleClassName?: string;
    isLoading: boolean;
    isFetching?: boolean;
-   pagesToRender: ListApiResponse<Artwork>[];
+   pagesToRender: (ListApiResponse<Artwork> | Artwork[] | any)[];
    filters: ColumnFiltersState;
    setFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
    isSidebarOpen: boolean;
@@ -89,6 +89,7 @@ const ArtworksPageView = ({
    });
    const loadingLockRef = useRef(false);
    const lockTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+   const firstPageArtworks = extractListItems<Artwork>(pagesToRender?.[0]);
 
    useEffect(() => {
       if (
@@ -289,7 +290,7 @@ const ArtworksPageView = ({
                      )}
 
                      <div>
-                        {pagesToRender?.[0]?.results?.length <= 0 &&
+                        {firstPageArtworks.length <= 0 &&
                            !isLoading && (
                               <div className="py-12">
                                  <EmptyState
@@ -313,29 +314,32 @@ const ArtworksPageView = ({
                               "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-6 md:gap-y-10"
                            )}
                         >
-                           {pagesToRender?.map((page) => (
-                              <Fragment key={page.next}>
-                                 {page.results.map((artwork: Artwork) => (
-                                    <div key={artwork.id}>
-                                       {artworkCard ? (
-                                          artworkCard(artwork)
-                                       ) : (
-                                          <ArtworkCard
-                                             className="w-full"
-                                             artwork={artwork}
-                                          />
-                                       )}
-                                    </div>
-                                 ))}
-                              </Fragment>
-                           ))}
+                           {pagesToRender?.map((page, pageIdx) => {
+                              const artworks = extractListItems<Artwork>(page);
+                              return (
+                                 <Fragment key={(page as any)?.next ?? pageIdx}>
+                                    {artworks.map((artwork: Artwork) => (
+                                       <div key={artwork.id}>
+                                          {artworkCard ? (
+                                             artworkCard(artwork)
+                                          ) : (
+                                             <ArtworkCard
+                                                className="w-full"
+                                                artwork={artwork}
+                                             />
+                                          )}
+                                       </div>
+                                    ))}
+                                 </Fragment>
+                              );
+                           })}
                         </div>
                      </div>
 
                      {/* Infinite scroll sentinel */}
                      {hasNextPage &&
                         !isFetchingNextPage &&
-                        pagesToRender?.[0]?.results?.length > 0 && (
+                        firstPageArtworks.length > 0 && (
                            <div
                               ref={loadMoreRef}
                               className="flex justify-center my-8 text-sm font-bold uppercase tracking-widest text-muted-foreground/50 animate-pulse"
@@ -352,7 +356,7 @@ const ArtworksPageView = ({
 
                      {!hasNextPage &&
                         !isFetchingNextPage &&
-                        pagesToRender?.[0]?.results?.length > 0 && (
+                        firstPageArtworks.length > 0 && (
                            <div className="flex justify-center my-8 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/30">
                               End of Collection
                            </div>
