@@ -27,6 +27,7 @@ async function ensureInitialized(): Promise<void> {
       google: {
          webClientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
          iOSClientId: env.NEXT_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+         iOSServerClientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
          mode: "online",
       },
    });

@@ -45,3 +45,9 @@ Typical request lifecycle:
 
 ## 📜 Repository Rules
 Check [AGENTS.md](file:///d:/data/learning/work/real-work/art-space-next/AGENTS.md) for mandatory project coding rules.
+
+## 📱 Native Shell (Capacitor)
+The production site is also wrapped by Capacitor (`server.url` -> the live site), so native-only behaviour must be gated at runtime.
+
+- **Safe areas (notch / status bar / home indicator)**: The app sets `viewport-fit=cover` (see `app/[locale]/layout.tsx`) and `AppProvider` adds a `capacitor-native` class to `<html>` only inside the native shell. `src/app/globals.css` then applies `env(safe-area-inset-*)` padding and shrinks `h-screen`/`min-h-*` utilities accordingly, scoped to `.capacitor-native` so the website is untouched. Android also uses `android.adjustMarginsForEdgeToEdge: "force"` in `capacitor.config.ts` to keep the WebView clear of the system bars.
+- **Google Sign-In**: See [src/features/auth/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/auth/README.md) (`GoogleAuthButton` uses GIS on web, `@capgo/capacitor-social-login` in the app).
