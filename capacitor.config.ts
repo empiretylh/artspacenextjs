@@ -14,6 +14,9 @@ const config: CapacitorConfig = {
       },
     },
   },
+  android: {
+    adjustMarginsForEdgeToEdge: "force",
+  },
   ...(process.env.CAPACITOR_SERVER_URL || "https://myanmarartspace.net"
     ? {
         server: {

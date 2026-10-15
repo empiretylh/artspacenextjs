@@ -10,6 +10,7 @@ import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Toaster } from "sonner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Capacitor } from "@capacitor/core";
 import { env } from "@/config/env";
 
 interface IProviderProps {
@@ -23,6 +24,18 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
    * which would be inefficient and could lead to unexpected behavior. 💁‍♂️
    */
   const queryClient = getQueryClient();
+
+  /**
+   * Tag the document when running inside the Capacitor shell so that
+   * safe-area (notch/status bar/home indicator) styles apply only in the app
+   * and never on the regular website.
+   */
+  React.useEffect(() => {
+    document.documentElement.classList.toggle(
+      "capacitor-native",
+      Capacitor.isNativePlatform()
+    );
+  }, []);
 
   return (
     <GoogleOAuthProvider clientId={env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
