@@ -13,6 +13,9 @@ const config: CapacitorConfig = {
         twitter: false,
       },
     },
+    FirebaseMessaging: {
+      presentationOptions: ["alert", "badge", "sound"],
+    },
   },
   android: {
     adjustMarginsForEdgeToEdge: "force",

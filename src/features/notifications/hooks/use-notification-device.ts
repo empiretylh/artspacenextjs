@@ -9,7 +9,7 @@ import { registerNotificationDevice } from "../api/register-device";
 import { deactivateNotificationDevice } from "../api/deactivate-device";
 import { recordNotificationEvent } from "../api/record-notification-event";
 import { Capacitor } from "@capacitor/core";
-import { PushNotifications } from "@capacitor/push-notifications";
+import { FirebaseMessaging } from "@capacitor-firebase/messaging";
 
 declare global {
    interface Window {
@@ -43,6 +43,9 @@ export const useNotificationDevice = () => {
          if (registeredTokenRef.current) {
             deactivateNotificationDevice(registeredTokenRef.current).catch(console.warn);
             window.median?.firebaseMessaging?.deleteToken?.();
+            if (Capacitor.isNativePlatform()) {
+               FirebaseMessaging.deleteToken().catch(console.warn);
+            }
             registeredTokenRef.current = null;
          }
          return;
@@ -51,12 +54,13 @@ export const useNotificationDevice = () => {
       if (typeof window === "undefined") return;
 
       if (Capacitor.isNativePlatform()) {
-         let registrationListener: { remove: () => Promise<void> } | undefined;
+         let tokenListener: { remove: () => Promise<void> } | undefined;
          let receivedListener: { remove: () => Promise<void> } | undefined;
          let clickedListener: { remove: () => Promise<void> } | undefined;
 
          const platform = Capacitor.getPlatform() === "ios" ? "IOS" : "ANDROID";
          const registerNativeToken = (token: string) => {
+            if (!token || registeredTokenRef.current === token) return;
             registeredTokenRef.current = token;
             registerNotificationDevice({
                token,
@@ -65,44 +69,52 @@ export const useNotificationDevice = () => {
             }).catch(console.warn);
          };
 
-         const setupCapacitorPush = async () => {
-            let permission = await PushNotifications.checkPermissions();
+         const notificationId = (data: unknown) => {
+            const payload = (data ?? {}) as Record<string, unknown>;
+            const id = Number(payload.notification_id ?? payload.id);
+            return Number.isInteger(id) && id > 0 ? id : null;
+         };
+
+         const setupFirebaseMessaging = async () => {
+            let permission = await FirebaseMessaging.checkPermissions();
             if (permission.receive === "prompt") {
-               permission = await PushNotifications.requestPermissions();
+               permission = await FirebaseMessaging.requestPermissions();
             }
             if (permission.receive !== "granted") return;
 
-            registrationListener = await PushNotifications.addListener("registration", ({ value }) => {
-               registerNativeToken(value);
+            tokenListener = await FirebaseMessaging.addListener("tokenReceived", ({ token }) => {
+               registerNativeToken(token);
             });
-            receivedListener = await PushNotifications.addListener("pushNotificationReceived", (notification) => {
-               const id = Number(notification.data?.notification_id ?? notification.data?.id);
-               if (Number.isInteger(id) && id > 0) {
+            receivedListener = await FirebaseMessaging.addListener("notificationReceived", ({ notification }) => {
+               const id = notificationId(notification.data);
+               if (id) {
                   recordNotificationEvent(id, {
                      event_type: "RECEIVED",
-                     metadata: { source: "CAPACITOR_PUSH" },
+                     metadata: { source: "FCM" },
                   }).catch(console.warn);
                }
             });
-            clickedListener = await PushNotifications.addListener("pushNotificationActionPerformed", ({ notification }) => {
-               const id = Number(notification.data?.notification_id ?? notification.data?.id);
-               if (Number.isInteger(id) && id > 0) {
+            clickedListener = await FirebaseMessaging.addListener("notificationActionPerformed", ({ notification }) => {
+               const data = (notification.data ?? {}) as Record<string, unknown>;
+               const id = notificationId(notification.data);
+               if (id) {
                   recordNotificationEvent(id, {
                      event_type: "OPENED",
-                     metadata: { source: "CAPACITOR_PUSH", web_route: notification.data?.web_route || "" },
+                     metadata: { source: "FCM", web_route: data.web_route || "" },
                   }).catch(console.warn);
                }
-               const route = notification.data?.web_route;
-               if (route) window.location.assign(route);
+               const route = data.web_route;
+               if (typeof route === "string" && route) window.location.assign(route);
             });
 
-            await PushNotifications.register();
+            const { token } = await FirebaseMessaging.getToken();
+            registerNativeToken(token);
          };
 
-         setupCapacitorPush().catch((error) => console.warn("Failed registering Capacitor push notifications:", error));
+         setupFirebaseMessaging().catch((error) => console.warn("Failed registering Firebase Messaging:", error));
 
          return () => {
-            registrationListener?.remove();
+            tokenListener?.remove();
             receivedListener?.remove();
             clickedListener?.remove();
          };
