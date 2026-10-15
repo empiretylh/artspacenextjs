@@ -7,10 +7,11 @@ The Notifications feature provides persisted in-app notifications, realtime upda
 - **Pillar**: 2 (Feature Muscles)
 - **Base Endpoint**: `/api/v1/orders/notifications/` and `/api/v1/orders/notification-devices/`
 - **Realtime Stream**: Foreground Server-Sent Events (SSE) via `fetch` streaming with exponential backoff and offline recovery.
-- **Push Layer**: Web FCM + Capacitor Push Notifications for native iOS/Android shells. A legacy Median bridge remains supported for existing builds. Native tokens are registered with the backend device endpoint.
+- **Push Layer**: Web FCM (browser) + `@capacitor-firebase/messaging` for the native iOS/Android shells. The native plugin returns a real **FCM registration token** on both platforms (Android delegates to `FirebaseMessaging`, iOS bridges APNs -> FCM), which is what the backend `firebase_admin.messaging.send(token=...)` requires. A legacy Median bridge remains supported for existing builds. Tokens are registered with the backend device endpoint.
 - **Analytics Funnel**: Records `RECEIVED`, `OPENED`, `DISMISSED`, `DEEPLINK_OPENED`, and `SSE_RECEIVED` events via `/orders/notifications/{id}/events/`.
 - **Median setup**: Enable Median's Firebase Cloud Messaging plugin, upload `google-services.json` and `GoogleService-Info.plist`, configure APNs in Firebase, and rebuild the app. See the repository notification API documentation for the full setup checklist.
-- **Capacitor setup**: Run `npx cap add android`, configure Firebase Android services, then run `npm run build && npx cap sync android`. Use `CAPACITOR_SERVER_URL` when the native shell should load the deployed Next.js site.
+- **Capacitor setup (Android)**: Requires `android/app/google-services.json`; `android/app/build.gradle` applies `com.google.gms.google-services` when it exists. Run `npx cap sync android`. Use `CAPACITOR_SERVER_URL` when the native shell should load a non-production Next.js site.
+- **Capacitor setup (iOS)**: `@capacitor-firebase/messaging` pulls the `FirebaseMessaging` pod. Required native config (already applied): `ios/App/App/App.entitlements` with `aps-environment`, the Push Notifications capability (`CODE_SIGN_ENTITLEMENTS` + `SystemCapabilities.com.apple.Push` in `project.pbxproj`), `UIBackgroundModes: [remote-notification]` in `Info.plist`, `GoogleService-Info.plist` in `ios/App/App/`, and `AppDelegate.swift` forwarding `didRegisterForRemoteNotificationsWithDeviceToken` / `didFailToRegister...` / `didReceiveRemoteNotification` to the plugin via `NotificationCenter`. An APNs Auth Key (`.p8`) must be uploaded to Firebase Console -> Project Settings -> Cloud Messaging. **A physical device is required**: the iOS Simulator cannot obtain a real APNs/FCM token.
 
 ## 📦 Directory Structure
 
