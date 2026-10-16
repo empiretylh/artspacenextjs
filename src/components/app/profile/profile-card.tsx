@@ -101,11 +101,7 @@ export default function ProfileCard({ user }: { user: User }) {
                            const safeCollectionCount = collectionCount ?? 0;
                            const safeFollowerCount = followerCount ?? 0;
                            const artworkLabel =
-                              user.user_type === "COLLECTOR"
-                                 ? "Collected"
-                                 : safeArtworkCount === 1
-                                    ? "Artwork"
-                                    : "Artworks";
+                              safeArtworkCount === 1 ? "Artwork" : "Artworks";
                            const collectionLabel =
                               safeCollectionCount === 1 ? "Collection" : "Collections";
                            const followerLabel =

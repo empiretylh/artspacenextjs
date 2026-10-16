@@ -81,10 +81,20 @@ export const FeaturedArtworksSection = () => {
                   </Button>
                </Link>
                <div className="flex gap-1">
-                  <Button variant="outline" size="icon" className="h-8 w-8 rounded-full swiper-artwork-prev">
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     aria-label={t("previousSlide")}
+                     className="h-8 w-8 rounded-full swiper-artwork-prev"
+                  >
                      <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon" className="h-8 w-8 rounded-full swiper-artwork-next">
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     aria-label={t("nextSlide")}
+                     className="h-8 w-8 rounded-full swiper-artwork-next"
+                  >
                      <ChevronRight className="h-4 w-4" />
                   </Button>
                </div>
@@ -125,7 +135,7 @@ export const FeaturedArtworksSection = () => {
             <div className="md:hidden px-4 mt-4">
                <Link to={paths.artworks.path}>
                   <Button variant="outline" className="w-full">
-                     Explore All Artworks
+                     {t("exploreAllArtworks")}
                   </Button>
                </Link>
             </div>

@@ -6,11 +6,15 @@ import { BellOff, Loader2 } from "lucide-react";
 import type { AppNotification } from "@/types";
 import { useTranslations } from "next-intl";
 
+import { cn } from "@/lib/utils";
+
 interface NotificationListProps {
    notifications: AppNotification[];
    isLoading?: boolean;
-   onItemClick?: (notification: AppNotification) => void;
+   onItemClick?: (notification: AppNotification, e?: React.MouseEvent) => void;
    emptyMessage?: string;
+   className?: string;
+   compact?: boolean;
 }
 
 export const NotificationList: React.FC<NotificationListProps> = ({
@@ -18,6 +22,8 @@ export const NotificationList: React.FC<NotificationListProps> = ({
    isLoading = false,
    onItemClick,
    emptyMessage,
+   className,
+   compact = false,
 }) => {
    const t = useTranslations("Notifications");
 
@@ -45,12 +51,13 @@ export const NotificationList: React.FC<NotificationListProps> = ({
    }
 
    return (
-      <div className="flex flex-col divide-y divide-border/30">
+      <div className={cn("flex flex-col gap-2", className)}>
          {notifications.map((notification) => (
             <NotificationItem
                key={notification.id}
                notification={notification}
                onItemClick={onItemClick}
+               compact={compact}
             />
          ))}
       </div>

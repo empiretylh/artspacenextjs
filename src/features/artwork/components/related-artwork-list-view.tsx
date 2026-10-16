@@ -46,24 +46,15 @@ const RelatedArtworksListView = ({
       pagesToRender?.[0]?.data ?? pagesToRender?.[0]
    );
 
+   if (!isLoading && firstPageArtworks.length <= 0) {
+      return null;
+   }
+
    return (
       <div className="flex-grow transition-all duration-300">
          <div className="flex flex-col lg:flex-row transition-all duration-300">
             {/* Artworks Grid */}
             <div className="transition-all duration-300 w-full space-y-3">
-               {/* {isLoading && <Skeleton className="h-7 w-48 rounded-md" />} */}
-
-               <div>
-                  {firstPageArtworks.length <= 0 &&
-                     !isLoading && (
-                        <div className="flex items-center justify-center h-40">
-                           <p className="text-sm text-muted-foreground">
-                              No results found
-                           </p>
-                        </div>
-                     )}
-               </div>
-
                <div className="mb-4">
                   <div
                      className={cn(

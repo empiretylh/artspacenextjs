@@ -5,6 +5,7 @@ import { X, Sparkles, Paintbrush, Landmark, ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
+import { motion, AnimatePresence } from "framer-motion";
 
 const STORAGE_KEY = "mas_intro_dismissed";
 
@@ -27,12 +28,20 @@ export function MasIntroBanner() {
   };
 
   // Prevent hydration mismatch by only rendering after client mount
-  if (!mounted || !isVisible) {
+  if (!mounted) {
     return null;
   }
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-r from-card/90 via-card/70 to-card/90 p-5 sm:p-6 transition-all duration-300 shadow-sm backdrop-blur-sm">
+    <AnimatePresence>
+      {isVisible && (
+        <motion.section
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, height: 0, overflow: "hidden", marginBottom: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-r from-card/90 via-card/70 to-card/90 p-5 sm:p-6 shadow-xs backdrop-blur-sm"
+        >
       {/* Decorative ambient background */}
       <div className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-primary/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 -left-24 size-72 rounded-full bg-primary/5 blur-3xl" />
@@ -93,6 +102,8 @@ export function MasIntroBanner() {
           </Link>
         </div>
       </div>
-    </section>
+    </motion.section>
+  )}
+</AnimatePresence>
   );
 }

@@ -25,8 +25,8 @@ The Notifications feature provides persisted in-app notifications, realtime upda
   - `use-notification-stream.ts`: Resilient SSE reader connecting to `/api/v1/orders/notifications/stream/` with automatic cache updates and toasts.
   - `use-notification-device.ts`: Automatically handles FCM and Median push token lifecycle.
 - `components/`:
-  - `notification-dropdown.tsx`: Interactive Popover on Bell click with unread badge, tabs (All / Unread), and quick actions.
-  - `notification-item.tsx`: Notification card with contextual icons by type, relative time, and thumbnail support.
+  - `notification-dropdown.tsx`: Interactive Popover on Bell click with unread badge, tabs (All / Unread), and quick actions (preserves open state on new-tab interactions).
+  - `notification-item.tsx`: Notification card rendering semantic `<Link>` or `<a>` when `web_route` is present, supporting browser link preview on hover, native new-tab middle clicks, and contextual icons.
   - `notification-list.tsx`: Reusable list with empty and loading states.
   - `notification-listener.tsx`: Headless component mounted globally in root layout to manage SSE and device tokens.
 - `pages/`:
@@ -42,8 +42,9 @@ The Notifications feature provides persisted in-app notifications, realtime upda
    - Fire a `Sonner` toast with a direct action link to `web_route`.
    - Send `SSE_RECEIVED` analytics event.
 3. **User Interaction**:
-   - Clicking a notification triggers `markAsRead({ id })` with optimistic UI update and logs an `OPENED` analytics event.
-   - Navigates immediately to the `web_route`.
+   - Items render as semantic localized `<Link href={web_route}>` (or external `<a>`), showing browser URL preview on hover.
+   - Clicking (or middle-clicking) triggers `markAsRead({ id })` with optimistic UI update and logs an `OPENED` analytics event.
+   - Left-clicks close the dropdown and navigate; middle-click / new-tab clicks keep the dropdown open.
 4. **Offline Recovery**: If the SSE stream disconnects, it reconnects using exponential backoff (1s up to 30s) and automatically re-fetches the notification list to recover any missed events.
 
 ## 🔔 Push Notifications & Service Worker

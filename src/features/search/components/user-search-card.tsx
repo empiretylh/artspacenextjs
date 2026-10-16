@@ -66,7 +66,7 @@ export default function UserSearchCard({ user, type }: UserSearchCardProps) {
                   </span>
                   {(() => {
                      const artworkCount = user.artwork_count ?? user.num_artworks;
-                     const artworkLabel = type === "collector" ? "Collected" : artworkCount === 1 ? "Artwork" : "Artworks";
+                     const artworkLabel = artworkCount === 1 ? "Artwork" : "Artworks";
                      return (
                         <>
                            {artworkCount !== undefined && (

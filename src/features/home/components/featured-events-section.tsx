@@ -81,10 +81,20 @@ export const FeaturedEventsSection = () => {
                   </Button>
                </Link>
                <div className="flex gap-1">
-                  <Button variant="outline" size="icon" className="h-8 w-8 rounded-full swiper-event-prev">
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     aria-label={t("previousSlide")}
+                     className="h-8 w-8 rounded-full swiper-event-prev"
+                  >
                      <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon" className="h-8 w-8 rounded-full swiper-event-next">
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     aria-label={t("nextSlide")}
+                     className="h-8 w-8 rounded-full swiper-event-next"
+                  >
                      <ChevronRight className="h-4 w-4" />
                   </Button>
                </div>
@@ -125,7 +135,7 @@ export const FeaturedEventsSection = () => {
             <div className="md:hidden px-4 mt-4">
                <Link to={paths.events.path}>
                   <Button variant="outline" className="w-full">
-                     View All Events
+                     {t("viewAllEvents")}
                   </Button>
                </Link>
             </div>

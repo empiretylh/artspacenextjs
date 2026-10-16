@@ -67,38 +67,46 @@ export const FeaturedGalleriesSlider = () => {
          initial="hidden"
          whileInView="show"
          viewport={{ once: true, margin: "-100px" }}
+         className="space-y-6"
       >
-         <motion.div variants={titleVariants} className="flex justify-between items-end mb-4">
+         <motion.div variants={titleVariants} className="flex justify-between items-center">
             <div>
                <SectionTitle>{t("galleries")}</SectionTitle>
+               <p className="text-sm text-muted-foreground mt-1">{t("featuredGalleriesSubtitle")}</p>
             </div>
-            <Link to={paths.galleries.path}>
-               <Button variant="ghost" className="flex">
-                  {t("viewAll")} <ArrowRight className="ml-2 h-4 w-4" />
-               </Button>
-            </Link>
+            <div className="flex gap-2">
+               <Link to={paths.galleries.path}>
+                  <Button variant="link" className="hidden md:flex text-primary">
+                     {t("viewAll")} <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+               </Link>
+               <div className="flex gap-1">
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     aria-label={t("previousSlide")}
+                     className="h-8 w-8 rounded-full swiper-gallery-button-prev-custom"
+                  >
+                     <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     aria-label={t("nextSlide")}
+                     className="h-8 w-8 rounded-full swiper-gallery-button-next-custom"
+                  >
+                     <ChevronRight className="h-4 w-4" />
+                  </Button>
+               </div>
+            </div>
          </motion.div>
          
          <motion.div variants={contentVariants}>
-            <div className="flex gap-2 mb-4">
-               <Button
-                  variant="outline"
-                  className="swiper-gallery-button-prev-custom"
-               >
-                  <ChevronLeft />
-               </Button>
-               <Button
-                  variant="outline"
-                  className="swiper-gallery-button-next-custom"
-               >
-                  <ChevronRight />
-               </Button>
-            </div>
-
-            <div className="overflow-hidden">
+            <div className="-mx-4 md:mx-0 overflow-hidden">
                <Swiper
                   modules={[Navigation]}
                   slidesPerView="auto"
+                  slidesPerGroup={1}
                   spaceBetween={8}
                   watchSlidesProgress
                   touchStartPreventDefault={false}
@@ -106,7 +114,7 @@ export const FeaturedGalleriesSlider = () => {
                      nextEl: ".swiper-gallery-button-next-custom",
                      prevEl: ".swiper-gallery-button-prev-custom",
                   }}
-                  className="!overflow-visible"
+                  className="!px-4 md:!px-0 !overflow-visible"
                >
                   {featuredGalleries.map((gallery) => (
                      <SwiperSlide key={gallery.id} className="!w-auto">
@@ -116,6 +124,14 @@ export const FeaturedGalleriesSlider = () => {
                      </SwiperSlide>
                   ))}
                </Swiper>
+            </div>
+
+            <div className="md:hidden px-4 mt-4">
+               <Link to={paths.galleries.path}>
+                  <Button variant="outline" className="w-full">
+                     {t("viewAll")}
+                  </Button>
+               </Link>
             </div>
          </motion.div>
       </motion.section>

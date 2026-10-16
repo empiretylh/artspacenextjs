@@ -155,7 +155,6 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-size-adjust: 0.48;
     line-height: 1.8;
   }
 
@@ -165,7 +164,6 @@
   button,
   select {
     font-family: inherit;
-    font-size-adjust: inherit;
   }
 
   /* Provide safe line height for text entry to avoid clipping top/bottom diacritics */

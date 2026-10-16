@@ -13,36 +13,36 @@ import {
    Radio,
    Bell,
 } from "lucide-react";
-import { cn, getUserRouteType } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import type { AppNotification, NotificationType } from "@/types";
-import { useRouter } from "@/i18n/routing";
-import { getUser } from "@/features/service/artspace/get-user";
+import { Link } from "@/i18n/routing";
 
 interface NotificationItemProps {
    notification: AppNotification;
-   onItemClick?: (notification: AppNotification) => void;
+   onItemClick?: (notification: AppNotification, e?: React.MouseEvent) => void;
    compact?: boolean;
 }
 
-const getNotificationIcon = (type: NotificationType) => {
+const getNotificationIcon = (type: NotificationType, compact = false) => {
+   const sizeClass = compact ? "w-3.5 h-3.5" : "w-4 h-4";
    switch (type) {
       case "NEW_ARTWORK_FROM_FOLLOWED_ARTIST":
-         return <Palette className="w-4 h-4 text-purple-500" />;
+         return <Palette className={cn(sizeClass, "text-purple-500")} />;
       case "NEW_FOLLOWER":
-         return <UserPlus className="w-4 h-4 text-blue-500" />;
+         return <UserPlus className={cn(sizeClass, "text-blue-500")} />;
       case "NEW_EVENT":
-         return <Calendar className="w-4 h-4 text-amber-500" />;
+         return <Calendar className={cn(sizeClass, "text-amber-500")} />;
       case "ORDER_PAYMENT_COMPLETED":
-         return <CreditCard className="w-4 h-4 text-emerald-500" />;
+         return <CreditCard className={cn(sizeClass, "text-emerald-500")} />;
       case "ARTWORK_SOLD":
-         return <Tag className="w-4 h-4 text-emerald-600" />;
+         return <Tag className={cn(sizeClass, "text-emerald-600")} />;
       case "ORDER_STATUS_CHANGED":
-         return <RefreshCw className="w-4 h-4 text-indigo-500" />;
+         return <RefreshCw className={cn(sizeClass, "text-indigo-500")} />;
       case "ADMIN_BROADCAST":
-         return <Radio className="w-4 h-4 text-rose-500" />;
+         return <Radio className={cn(sizeClass, "text-rose-500")} />;
       case "SYSTEM":
       default:
-         return <Bell className="w-4 h-4 text-primary" />;
+         return <Bell className={cn(sizeClass, "text-primary")} />;
    }
 };
 
@@ -51,30 +51,14 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
    onItemClick,
    compact = false,
 }) => {
-   const router = useRouter();
+   const handleClick = (e: React.MouseEvent) => {
+      onItemClick?.(notification, e);
+   };
 
-   const handleClick = async () => {
-      onItemClick?.(notification);
-
-      if (notification.web_route) {
-         let targetRoute = notification.web_route;
-
-         // If the backend sent a generic /users/:id link, resolve the real user route directly (e.g. /artists/1)
-         const match = targetRoute.match(/^\/users\/(\d+)\/?$/);
-         if (match) {
-            try {
-               const userId = match[1];
-               const userData = await getUser({ userId });
-               if (userData?.user_type) {
-                  const userTypeRoute = getUserRouteType(userData.user_type);
-                  targetRoute = `/${userTypeRoute}/${userId}`;
-               }
-            } catch (err) {
-               console.warn("Could not pre-resolve user route:", err);
-            }
-         }
-
-         router.push(targetRoute as any);
+   const handleAuxClick = (e: React.MouseEvent) => {
+      // Middle click (button 1) opens in new tab - mark as read
+      if (e.button === 1) {
+         onItemClick?.(notification, e);
       }
    };
 
@@ -87,19 +71,25 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       timeAgo = notification.created_at;
    }
 
-   return (
-      <div
-         onClick={handleClick}
-         className={cn(
-            "group relative flex items-start gap-3 p-3 transition-colors cursor-pointer select-none rounded-lg",
-            "hover:bg-muted/60",
-            !notification.is_read ? "bg-primary/5" : "bg-transparent"
-         )}
-      >
+   const containerClasses = cn(
+      "group relative flex items-start transition-all duration-200 cursor-pointer select-none rounded-xl no-underline text-inherit",
+      compact ? "gap-2.5 p-2.5" : "gap-3 p-3 sm:p-3.5",
+      !notification.is_read
+         ? "bg-primary/[0.04] border border-primary/15 hover:bg-primary/[0.08] hover:border-primary/25 shadow-2xs"
+         : "bg-background/40 hover:bg-muted/50 border border-border/40 hover:border-border/70"
+   );
+
+   const innerContent = (
+      <>
          {/* Icon or Thumbnail */}
          <div className="relative shrink-0 mt-0.5">
             {notification.image_url ? (
-               <div className="relative w-10 h-10 rounded-full overflow-hidden border border-border/50">
+               <div
+                  className={cn(
+                     "relative rounded-full overflow-hidden border border-border/50 shrink-0",
+                     compact ? "w-8 h-8" : "w-10 h-10"
+                  )}
+               >
                   <Image
                      src={notification.image_url}
                      alt={notification.title}
@@ -109,8 +99,16 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
                   />
                </div>
             ) : (
-               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted border border-border/50">
-                  {getNotificationIcon(notification.type)}
+               <div
+                  className={cn(
+                     "flex items-center justify-center rounded-full border transition-colors shrink-0",
+                     compact ? "w-8 h-8" : "w-10 h-10",
+                     !notification.is_read
+                        ? "bg-primary/10 border-primary/20 text-primary"
+                        : "bg-muted/60 border-border/50 text-muted-foreground"
+                  )}
+               >
+                  {getNotificationIcon(notification.type, compact)}
                </div>
             )}
             {!notification.is_read && (
@@ -144,6 +142,46 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
                {notification.message}
             </p>
          </div>
+      </>
+   );
+
+   if (notification.web_route) {
+      const isExternal = /^https?:\/\//i.test(notification.web_route);
+
+      if (isExternal) {
+         return (
+            <a
+               href={notification.web_route}
+               target="_blank"
+               rel="noopener noreferrer"
+               onClick={handleClick}
+               onAuxClick={handleAuxClick}
+               className={containerClasses}
+            >
+               {innerContent}
+            </a>
+         );
+      }
+
+      return (
+         <Link
+            href={notification.web_route as any}
+            onClick={handleClick}
+            onAuxClick={handleAuxClick}
+            className={containerClasses}
+         >
+            {innerContent}
+         </Link>
+      );
+   }
+
+   return (
+      <div
+         onClick={handleClick}
+         onAuxClick={handleAuxClick}
+         className={containerClasses}
+      >
+         {innerContent}
       </div>
    );
 };

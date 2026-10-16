@@ -41,11 +41,17 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
    const displayedNotifications =
       activeTab === "unread" ? unreadNotifications : notifications;
 
-   const handleItemClick = (notification: AppNotification) => {
+   const handleItemClick = (
+      notification: AppNotification,
+      e?: React.MouseEvent
+   ) => {
       if (!notification.is_read) {
          markAsRead({ id: notification.id });
       }
-      setOpen(false);
+      const isNewTab = e && (e.button === 1 || e.ctrlKey || e.metaKey);
+      if (!isNewTab) {
+         setOpen(false);
+      }
    };
 
    const handleViewAll = () => {
@@ -78,7 +84,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border/60 bg-muted/20">
                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-sm">{t("title")}</h3>
+                  <h3 className="font-semibold text-sm font-display tracking-tight">{t("title")}</h3>
                   {unreadCount > 0 && (
                      <span className="text-[11px] font-semibold px-2 py-0.5 bg-primary/10 text-primary rounded-full">
                         {unreadCount} {t("new")}
@@ -129,11 +135,13 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             </div>
 
             {/* Scrollable List */}
-            <div className="max-h-[380px] overflow-y-auto px-1 py-1 divide-y divide-border/20">
+            <div className="max-h-[380px] overflow-y-auto p-2">
                <NotificationList
                   notifications={displayedNotifications.slice(0, 15)}
                   isLoading={isLoading}
                   onItemClick={handleItemClick}
+                  compact
+                  className="gap-1.5"
                />
             </div>
 

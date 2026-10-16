@@ -78,9 +78,9 @@ export const StylesList = () => {
                            />
 
                            <div className="absolute left-2 bottom-2 right-2 flex items-end p-2 bg-black/60 border border-white/10 rounded-xl">
-                              <h1 className="text-sm font-semibold truncate text-white">
+                              <span className="text-sm font-semibold truncate text-white">
                                  {style.style.name}
-                              </h1>
+                              </span>
                            </div>
                         </div>
                      </Link>

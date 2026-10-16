@@ -3,7 +3,7 @@
 
 import AppImage from "@/components/common/app-image"
 import { getImage } from "@/lib/utils"
-import Link from "next/link"
+import Link from "@/components/common/link"
 import { Autoplay, Pagination } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -55,35 +55,53 @@ export default function BannerSlider({ banners }: Props) {
         watchSlidesProgress
         className="w-full h-full"
       >
-        {activeBanners.map((banner, index) => (
-          <SwiperSlide key={banner.id}>
-            <Link href={banner.link} target="_blank">
-              <div className="relative h-full w-full aspect-2/1 md:aspect-8/3">
-                {isMobile ? (
-                  /* Mobile Image */
-                  <AppImage
-                    src={banner.image_mobile ? getImage(banner.image_mobile) : getImage(banner.image)}
-                    alt={banner.title}
-                    fill
-                    priority={index === 0}
-                    sizes="100vw"
-                    className="object-cover"
-                  />
-                ) : (
-                  /* Desktop Image */
-                  <AppImage
-                    src={banner.image_desktop ? getImage(banner.image_desktop) : getImage(banner.image)}
-                    alt={banner.title}
-                    fill
-                    priority={index === 0}
-                    sizes="100vw"
-                    className="object-cover"
-                  />
-                )}
-              </div>
-            </Link>
-          </SwiperSlide>
-        ))}
+        {activeBanners.map((banner, index) => {
+          const isExternal = Boolean(
+            banner.link && (banner.link.startsWith("http://") || banner.link.startsWith("https://") || banner.link.startsWith("//"))
+          );
+
+          const content = (
+            <div className="relative h-full w-full aspect-2/1 md:aspect-8/3">
+              {isMobile ? (
+                /* Mobile Image */
+                <AppImage
+                  src={banner.image_mobile ? getImage(banner.image_mobile) : getImage(banner.image)}
+                  alt={banner.title}
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  className="object-cover"
+                />
+              ) : (
+                /* Desktop Image */
+                <AppImage
+                  src={banner.image_desktop ? getImage(banner.image_desktop) : getImage(banner.image)}
+                  alt={banner.title}
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  className="object-cover"
+                />
+              )}
+            </div>
+          );
+
+          return (
+            <SwiperSlide key={banner.id}>
+              {isExternal ? (
+                <a href={banner.link} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                  {content}
+                </a>
+              ) : banner.link ? (
+                <Link to={banner.link} className="block w-full h-full">
+                  {content}
+                </Link>
+              ) : (
+                content
+              )}
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
     </motion.section>
   )

@@ -233,11 +233,7 @@ const ProfileLayoutView = ({
                         : paths[userType]?.save?.getHref(String(user.id));
 
                   const artworkLabel =
-                     user.user_type === "COLLECTOR"
-                        ? "Collected"
-                        : safeArtworkCount === 1
-                           ? "Artwork"
-                           : "Artworks";
+                     safeArtworkCount === 1 ? "Artwork" : "Artworks";
 
                   const collectionLabel =
                      safeCollectionCount === 1 ? "Collection" : "Collections";

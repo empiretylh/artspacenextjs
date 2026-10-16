@@ -1,4 +1,5 @@
 'use client'
+
 import { useEffect, useState } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
 import type { Artwork, ListApiResponse } from "@/types";
@@ -6,27 +7,21 @@ import type { AxiosResponse } from "axios";
 import ArtworkCard from "@/components/app/artwork-card";
 import RelatedArtworksListView from "./related-artwork-list-view";
 import { useGetRelatedArtworksInfinite } from "@/features/service/artspace/get-related-artworks";
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { extractListItems } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 const RelatedArtworkListContainer = ({ artwork }: { artwork: Artwork }) => {
-   const searchParams = useSearchParams();
-   const pathname = usePathname();
-   const { replace } = useRouter();
-
-   // State
+   const t = useTranslations("Artwork.detail");
    const [oldData, setOldData] = useState<
       AxiosResponse<ListApiResponse<Artwork>, any>[]
    >([]);
-   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
-   const [limit, setLimit] = useState(Number(searchParams.get("limit")) || 10);
 
-   // Fetch Artworks
+   // Fetch Related Artworks via infinite scroll without modifying window URL
    const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
       useGetRelatedArtworksInfinite({
          artworkId: artwork.id,
-         page,
-         search: searchParams.get("search") || "",
-         limit,
+         page: 1,
+         limit: 10,
          queryConfig: { placeholderData: keepPreviousData },
       });
 
@@ -35,58 +30,29 @@ const RelatedArtworkListContainer = ({ artwork }: { artwork: Artwork }) => {
    }, [data, isLoading]);
 
    const pagesToRender = isLoading ? oldData : data?.pages || [];
+   const firstPageArtworks = extractListItems<Artwork>(
+      pagesToRender?.[0]?.data ?? pagesToRender?.[0]
+   );
+   const hasArtworks = firstPageArtworks.length > 0;
 
-   const buildParams = () => {
-      const params: Record<string, string> = {};
-      if (page && page !== 1) params.page = page.toString();
-      if (limit && limit !== 10) params.limit = limit.toString();
-
-      return params;
-   };
-
-   // Update URL when state changes
-   useEffect(() => {
-      const params = buildParams();
-      // setSearchParams(
-      //    decodeURI(
-      //       Object.entries(params)
-      //          .map(([k, v]) => `${k}=${v}`)
-      //          .join("&")
-      //    ),
-      //    { replace: true }
-      // );
-      replace(`${pathname}?${decodeURI(
-         Object.entries(params)
-            .map(([k, v]) => `${k}=${v}`)
-            .join("&")
-      )}`);
-   }, [page, limit]);
-
-   // Parse URL on mount
-   useEffect(() => {
-      const newPage = Number(searchParams.get("page")) || 1;
-      const newLimit = Number(searchParams.get("limit")) || 10;
-
-      setPage(newPage);
-      setLimit(newLimit);
-   }, []);
+   if (!isLoading && !hasArtworks) {
+      return null;
+   }
 
    return (
-      <div>
-         {pagesToRender.length > 0 && (
-            <h3 className="text-2xl font-display font-bold my-4">
-               You may also like
+      <div className="pt-10 border-t border-border/70 mt-14">
+         {hasArtworks && (
+            <h3 className="text-xl md:text-2xl font-display font-semibold mb-6 tracking-tight">
+               {t("youMayAlsoLike")}
             </h3>
          )}
          <RelatedArtworksListView
-            artworkCard={(artwork: Artwork) => {
-               return (
-                  <ArtworkCard
-                     className="w-full"
-                     artwork={artwork}
-                  />
-               );
-            }}
+            artworkCard={(artwork: Artwork) => (
+               <ArtworkCard
+                  className="w-full"
+                  artwork={artwork}
+               />
+            )}
             isLoading={isLoading}
             pagesToRender={pagesToRender}
             fetchNextPage={fetchNextPage}
