@@ -261,3 +261,35 @@ html[lang="my"] [data-slot="sidebar-menu-sub-button"] > span:last-child {
 /* body[data-scroll-locked] [data-slot="sidebar-inset"] {
   margin-right: 4px !important;
 } */
+
+/*
+ * Native app safe areas (notch / status bar / home indicator).
+ * Scoped to the Capacitor shell via the `capacitor-native` class added in
+ * providers.tsx so the regular website layout is never affected.
+ * Requires `viewport-fit=cover` (set in app/[locale]/layout.tsx).
+ */
+html.capacitor-native {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html.capacitor-native body {
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+html.capacitor-native .h-screen,
+html.capacitor-native .h-svh,
+html.capacitor-native .h-dvh,
+html.capacitor-native .h-lvh {
+  height: calc(100vh - var(--safe-top) - var(--safe-bottom));
+}
+
+html.capacitor-native .min-h-screen,
+html.capacitor-native .min-h-svh,
+html.capacitor-native .min-h-dvh,
+html.capacitor-native .min-h-lvh {
+  min-height: calc(100vh - var(--safe-top) - var(--safe-bottom));
+}

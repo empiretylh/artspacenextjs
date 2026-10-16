@@ -20,6 +20,7 @@ The project follows a "Feature-Sliced" inspired architecture:
     - [src/features/profile/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/profile/README.md): User profile pages, tabbed navigation, and editorial layout standards.
     - [src/features/orders/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/README.md): Transaction lifecycle, checkout flow, order stepper, and tracking engine.
     - [src/features/notifications/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/notifications/README.md): In-app notifications, realtime SSE stream, device push tokens, and analytics.
+    - [src/features/network/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/network/README.md): Connectivity tracking and the native/web offline experience.
 
 3.  **`components/` (The Skin)**:
     - Shared UI atoms and molecules (Shadcn UI).
@@ -44,3 +45,10 @@ Typical request lifecycle:
 
 ## 📜 Repository Rules
 Check [AGENTS.md](file:///d:/data/learning/work/real-work/art-space-next/AGENTS.md) for mandatory project coding rules.
+
+## 📱 Native Shell (Capacitor)
+The production site is also wrapped by Capacitor (`server.url` -> the live site), so native-only behaviour must be gated at runtime.
+
+- **Safe areas (notch / status bar / home indicator)**: The app sets `viewport-fit=cover` (see `app/[locale]/layout.tsx`) and `AppProvider` adds a `capacitor-native` class to `<html>` only inside the native shell. `src/app/globals.css` then applies `env(safe-area-inset-*)` padding and shrinks `h-screen`/`min-h-*` utilities accordingly, scoped to `.capacitor-native` so the website is untouched. Android also uses `android.adjustMarginsForEdgeToEdge: "force"` in `capacitor.config.ts` to keep the WebView clear of the system bars.
+- **Google Sign-In**: See [src/features/auth/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/auth/README.md) (`GoogleAuthButton` uses GIS on web, `@capgo/capacitor-social-login` in the app).
+- **Push notifications**: Native shells use `@capacitor-firebase/messaging` (FCM token on iOS + Android). iOS requires the Push Notifications capability (`App.entitlements`), `UIBackgroundModes: [remote-notification]`, an APNs `.p8` key uploaded to Firebase, and a physical device. See [src/features/notifications/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/notifications/README.md).

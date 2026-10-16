@@ -31,7 +31,9 @@ const getNotificationIcon = (type: NotificationType, compact = false) => {
       case "NEW_FOLLOWER":
          return <UserPlus className={cn(sizeClass, "text-blue-500")} />;
       case "NEW_EVENT":
-         return <Calendar className={cn(sizeClass, "text-amber-500")} />;
+         return <Calendar className="w-4 h-4 text-amber-500" />;
+      case "NEW_BLOG_POST":
+         return <Radio className="w-4 h-4 text-rose-500" />;
       case "ORDER_PAYMENT_COMPLETED":
          return <CreditCard className={cn(sizeClass, "text-emerald-500")} />;
       case "ARTWORK_SOLD":

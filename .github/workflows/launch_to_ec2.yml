@@ -1,0 +1,93 @@
+name: LAUNCH TO EC2
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ production ]
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Setup SSH key
+      - name: Setup SSH
+        env:
+          EC2_SSH_PASSPHRASE: ${{ secrets.EC2_SSH_PASSPHRASE }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          export SSH_AUTH_SOCK="$RUNNER_TEMP/ssh-agent.sock"
+          eval "$(ssh-agent -a "$SSH_AUTH_SOCK")"
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+          cat > ~/.ssh/askpass.sh <<'EOF'
+          #!/bin/sh
+          printf '%s' "$EC2_SSH_PASSPHRASE"
+          EOF
+          chmod 700 ~/.ssh/askpass.sh
+          export SSH_ASKPASS=~/.ssh/askpass.sh
+          export SSH_ASKPASS_REQUIRE=force
+          export DISPLAY=:0
+          setsid ssh-add ~/.ssh/id_rsa < /dev/null
+
+          # Only the bastion is reachable directly from the GitHub runner.
+          ssh-keyscan -H ${{ secrets.BASTION_HOST }} >> ~/.ssh/known_hosts
+
+      # 2. Deploy via bastion jump (same as your local command)
+      - name: Deploy to EC2 via Bastion
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+        run: |
+          ssh -A \
+              -o StrictHostKeyChecking=no \
+              -o UserKnownHostsFile=/dev/null \
+              -J ${{ secrets.EC2_USER }}@${{ secrets.BASTION_HOST }} \
+              ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+
+          set -e
+
+          PROJECT_PATH="${{ secrets.EC2_PROJECT_PATH }}"
+
+          if [ -z "$PROJECT_PATH" ]; then
+            echo "EC2_PROJECT_PATH is not set"
+            exit 1
+          fi
+
+          cd "$PROJECT_PATH"
+
+          echo "🔄 Pulling latest code..."
+          git fetch "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" production
+          git checkout -B production FETCH_HEAD
+          git reset --hard FETCH_HEAD
+
+          echo "🐳 Detecting docker compose..."
+          if docker compose version >/dev/null 2>&1; then
+            DC="docker compose"
+          elif command -v docker-compose >/dev/null 2>&1; then
+            DC="docker-compose"
+          else
+            echo "docker compose not found"
+            exit 1
+          fi
+
+          echo "🛑 Stopping existing containers..."
+          sudo $DC down || true
+
+          echo "🚀 Building and starting containers..."
+          sudo $DC up --build -d
+
+          echo "📊 Container status:"
+          $DC ps
+
+          echo "✅ Deployment completed"
+
+          EOF
