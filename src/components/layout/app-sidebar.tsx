@@ -15,7 +15,6 @@ import {
    SidebarMenuButton,
    SidebarMenuItem,
    SidebarSeparator,
-   SidebarTrigger,
    useSidebar
 } from "../ui/sidebar";
 import AppSidebarFooter from "./app-sidbar-footer";
@@ -29,7 +28,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
    const pathname = usePathname();
    const t = useTranslations("Header");
 
-   if (pathname?.includes('/artworks/') && pathname?.includes('/order')) {
+   const isDistractionFree = Boolean(
+      (pathname?.includes('/artworks/') && pathname?.includes('/order')) ||
+      (pathname?.includes('/orders/') && pathname?.includes('/payment'))
+   );
+
+   if (isDistractionFree) {
       return null;
    }
 

@@ -78,10 +78,10 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: isDev
-      ? 'npm run dev'
-      : 'npm run build && npm run start',
-    port: 3000,
-    reuseExistingServer: isDev && !isCI,
+      ? 'pnpm run dev'
+      : 'pnpm run build && pnpm run start',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !isCI,
     timeout: 120 * 1000,
   },
 });

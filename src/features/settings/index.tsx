@@ -1,6 +1,7 @@
 'use client'
 import ProfileEditForm from "./components/profile-edit-form";
 import { ProfileMedia } from "./components/profile-media";
+import { SavedAddressesCard } from "./components/saved-addresses-card";
 import { paths } from "@/config/paths";
 import Link from "@/components/common/link";
 import { useTranslations } from "next-intl";
@@ -47,7 +48,10 @@ const SettingsPage = () => {
             </CardContent>
          </Card>
 
-         {/* 3. Account & Security Card */}
+         {/* 3. Saved Delivery Addresses Card */}
+         <SavedAddressesCard />
+
+         {/* 4. Account & Security Card */}
          <Card className="border border-border/70 shadow-xs gap-0 py-0 overflow-hidden">
             <CardHeader className="p-5 sm:p-6 border-b border-border/60">
                <CardTitle className="text-lg font-semibold font-display">

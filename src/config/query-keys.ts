@@ -401,4 +401,13 @@ export const queryKeys = {
       list: () => ["notifications", "list"],
       detail: (id: number) => ["notifications", "detail", id],
    },
+
+   /* =======================
+    * CUSTOMER CHECKOUT DETAILS
+    * ======================= */
+   customerDetails: {
+      all: ["customer-details"],
+      list: () => ["customer-details", "list"],
+      detail: (id: number) => ["customer-details", "detail", id],
+   },
 };

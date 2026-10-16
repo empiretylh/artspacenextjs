@@ -1,6 +1,7 @@
 export * from "./post";
 export * from "./board";
 export * from "./notification";
+export * from "./customer-checkout-details";
 
 export interface User {
    id: number;
