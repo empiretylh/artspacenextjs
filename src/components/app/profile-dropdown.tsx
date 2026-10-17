@@ -47,15 +47,15 @@ export function ProfileDropdown() {
                className="relative border h-10 w-10 md:h-8 md:w-8 rounded-full transition-transform duration-300 hover:scale-105 active:scale-95 cursor-pointer select-none"
             >
                <Avatar className="h-10 w-10 md:h-8 md:w-8">
-                  {user?.profile.profile_picture ? (
+                  {user?.profile?.profile_picture ? (
                      <AvatarImage
-                        src={getImage(user?.profile.profile_picture)}
+                        src={getImage(user?.profile?.profile_picture)}
                         alt={user.first_name + " " + user?.last_name}
                      />
                   ) : (
                      <AvatarFallback>
-                        {user?.first_name.charAt(0)}
-                        {user?.last_name.charAt(0)}
+                        {user?.first_name?.charAt(0)}
+                        {user?.last_name?.charAt(0)}
                      </AvatarFallback>
                   )}
                </Avatar>

@@ -31,8 +31,8 @@ const UnblockUserListCard = ({
          <div className="flex items-center shrink gap-2 min-w-0">
             <AppImage
                src={
-                  user.profile.profile_picture
-                     ? getImage(user.profile.profile_picture)
+                  user?.profile?.profile_picture
+                     ? getImage(user.profile?.profile_picture)
                      : "/assets/profile-default.png"
                }
                width={40}

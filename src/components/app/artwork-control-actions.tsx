@@ -17,7 +17,7 @@ export function ArtworkControlActions({
    return (
       <DropdownMenu>
          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" data-testid="artwork-control-menu-trigger">
                <MoreVertical className="h-4 w-4 text-white" />
             </Button>
          </DropdownMenuTrigger>
@@ -29,6 +29,7 @@ export function ArtworkControlActions({
                   variant="ghost"
                   className="p-1 text-foreground w-full justify-start"
                   onClick={onUpdateButtonClick}
+                  data-testid="artwork-control-edit-button"
                >
                   <Edit className="w-4 h-4" /> Edit
                </Button>
@@ -39,6 +40,7 @@ export function ArtworkControlActions({
                   variant="ghost"
                   className="p-1 text-foreground w-full justify-start"
                   onClick={onDeleteButtonClick}
+                  data-testid="artwork-control-delete-button"
                >
                   <Trash className="w-4 h-4" /> Delete
                </Button>

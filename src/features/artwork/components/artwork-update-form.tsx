@@ -107,7 +107,10 @@ export const ArtworkUpdateForm: React.FC<ArtworkUpdateFormProps> = ({
       ? artistsOldData
       : artistsInfiniteQuery.data?.pages || [];
 
-   const artists = artistsPagesToRender.flatMap((page) => page.results) ?? [];
+   const artists =
+      artistsPagesToRender
+         .flatMap((page) => (page && 'results' in page && Array.isArray((page as any).results) ? (page as any).results : (Array.isArray(page) ? page : [])))
+         .filter(Boolean) ?? [];
 
    // Mutations
    const imageUploadMutation = useImageUpload();
@@ -682,6 +685,7 @@ export const ArtworkUpdateForm: React.FC<ArtworkUpdateFormProps> = ({
                                        step={1}
                                        className="h-10 text-sm bg-background border-border/80 font-mono"
                                        {...field}
+                                       value={field.value ?? ""}
                                        onChange={(e) =>
                                           field.onChange(
                                              e.target.value === ""

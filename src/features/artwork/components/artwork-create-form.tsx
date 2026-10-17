@@ -108,7 +108,10 @@ export const ArtworkCreateForm: React.FC<ArtworkCreateFormProps> = ({
       ? artistsOldData
       : artistsInfiniteQuery.data?.pages || [];
 
-   const artists = artistsPagesToRender.flatMap((page) => page.results) ?? [];
+   const artists =
+      artistsPagesToRender
+         .flatMap((page) => (page && 'results' in page && Array.isArray((page as any).results) ? (page as any).results : (Array.isArray(page) ? page : [])))
+         .filter(Boolean) ?? [];
 
    // Mutations
    const imageUploadMutation = useImageUpload();
@@ -665,6 +668,7 @@ export const ArtworkCreateForm: React.FC<ArtworkCreateFormProps> = ({
                                        step={1}
                                        className="h-10 text-sm bg-background border-border/80 font-mono"
                                        {...field}
+                                       value={field.value ?? ""}
                                        onChange={(e) =>
                                           field.onChange(
                                              e.target.value === ""
@@ -710,8 +714,8 @@ export const ArtworkCreateForm: React.FC<ArtworkCreateFormProps> = ({
                                        }
                                     }}
                                     options={artists.map((a) => ({
-                                       label: `${a.first_name || ""} ${a.last_name || ""}`.trim() || a.username || "Artist",
-                                       value: String(a.id),
+                                       label: `${a?.first_name || ""} ${a?.last_name || ""}`.trim() || a?.username || "Artist",
+                                       value: String(a?.id),
                                     }))}
                                     onSearchChange={(value: string) => {
                                        setArtistSearch(value);
