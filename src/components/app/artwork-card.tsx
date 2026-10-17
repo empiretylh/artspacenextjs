@@ -1,4 +1,5 @@
 'use client'
+import { useTranslations } from "next-intl";
 import { paths } from "@/config/paths";
 import { cn, getImage, snakeToNormal } from "@/lib/utils";
 import React, { useState } from "react";
@@ -31,6 +32,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    publicCard = true,
    pure = false,
 }) => {
+   const t = useTranslations("Artwork.catalog");
    const { isLiked, handleLike } = useLike({
       artworkId: String(artwork.id),
       initialLiked: artwork.is_liked,
@@ -131,7 +133,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                      disabled
                      className="w-full mt-2 text-[10px] font-bold uppercase tracking-widest h-8"
                   >
-                     Inquiry Only
+                     {t("inquiryOnly")}
                   </Button>
                )}
             </div>

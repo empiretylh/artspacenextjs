@@ -1,5 +1,6 @@
 'use client'
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import {
    Select,
    SelectContent,
@@ -33,6 +34,7 @@ function InputWithLeftSelect({
    ...props
 }: React.ComponentProps<"input">) {
    const [selectedOption, setSelectedOption] = React.useState("all");
+   const t = useTranslations("Header");
    const [search, setSearch] = React.useState("");
    const searchParams = useSearchParams();
    const router = useRouter();
@@ -95,26 +97,26 @@ function InputWithLeftSelect({
             onValueChange={(value) => setSelectedOption(value)}
          >
             <SelectTrigger className="w-18 md:w-20 lg:w-auto lg:max-w-28 rounded-full bg-primary! text-primary-foreground [&>svg]:stroke-primary-foreground">
-               <SelectValue placeholder="Select" />
+               <SelectValue placeholder={t("searchSelect")} />
             </SelectTrigger>
             <SelectContent defaultValue={"all"} className="rounded-2xl">
                <SelectItem className="rounded-2xl" value="all">
-                  All
+                  {t("searchAll")}
                </SelectItem>
                <SelectItem className="rounded-2xl" value="artists">
-                  Artists
+                  {t("searchArtists")}
                </SelectItem>
                <SelectItem className="rounded-2xl" value="artworks">
-                  Artworks
+                  {t("searchArtworks")}
                </SelectItem>
                <SelectItem className="rounded-2xl" value="collectors">
-                  Collectors
+                  {t("searchCollectors")}
                </SelectItem>
                <SelectItem className="rounded-2xl" value="galleries">
-                  Galleries
+                  {t("searchGalleries")}
                </SelectItem>
                <SelectItem className="rounded-2xl" value="events">
-                  Events
+                  {t("searchEvents")}
                </SelectItem>
             </SelectContent>
          </Select>
@@ -123,7 +125,7 @@ function InputWithLeftSelect({
             type={type}
             data-slot="input"
             data-testid="global-search-input"
-            placeholder="Search"
+            placeholder={t("search")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {

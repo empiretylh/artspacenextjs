@@ -1,5 +1,6 @@
 'use client'
 import { Fragment, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -84,6 +85,8 @@ const ArtworksPageView = ({
    options = { enableFilters: true, enableSorting: true },
    priceRanges = [],
 }: ArtworksPageViewProps) => {
+   const tCatalog = useTranslations("Artwork.catalog");
+   const tFilters = useTranslations("Artwork.filters");
    const { ref: loadMoreRef, inView } = useInView({
       threshold: 0,
    });
@@ -153,7 +156,7 @@ const ArtworksPageView = ({
                                  titleClassName
                               )}
                            >
-                              {title ?? "Artworks"}
+                              {title ?? tCatalog("title")}
                            </h2>
                         </div>
                      )}
@@ -161,7 +164,7 @@ const ArtworksPageView = ({
                      {options.enableFilters && filters.length > 0 && !isLoading && (
                         <div className="animate-in fade-in slide-in-from-top-1 duration-300">
                            <div className="flex flex-wrap gap-2.5 mb-5 items-center">
-                              <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground mr-1">Active Filters:</span>
+                              <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground mr-1">{tCatalog("activeFilters")}</span>
                               {filters.map((f) => {
                                  const getFilterLabel = (id: string, val: string) => {
                                     if (id === "currency") {
@@ -174,18 +177,18 @@ const ArtworksPageView = ({
                                     if (id === "price_min") {
                                        const currencyVal = filters.find((fl) => fl.id === "currency")?.value as string || "USD";
                                        const symbol = currencyVal === "MMK" ? "Ks" : "$";
-                                       return `Min: ${symbol}${val}`;
+                                       return `${tCatalog("min")}: ${symbol}${val}`;
                                     }
                                     if (id === "price_max") {
                                        const currencyVal = filters.find((fl) => fl.id === "currency")?.value as string || "USD";
                                        const symbol = currencyVal === "MMK" ? "Ks" : "$";
-                                       return `Max: ${symbol}${val}`;
+                                       return `${tCatalog("max")}: ${symbol}${val}`;
                                     }
                                     if (id === "status") {
-                                       if (val === "AVAILABLE") return "Available";
-                                       if (val === "SOLD") return "Sold";
-                                       if (val === "NOT_FOR_SALE") return "Not for Sale";
-                                       if (val === "SOLD_OUT") return "Sold Out";
+                                       if (val === "AVAILABLE") return tFilters("available");
+                                       if (val === "SOLD") return tFilters("sold");
+                                       if (val === "NOT_FOR_SALE") return tFilters("notForSale");
+                                       if (val === "SOLD_OUT") return tFilters("soldOut");
                                     }
                                     return val.toLowerCase().replace(/_/g, " ");
                                  };
@@ -203,7 +206,7 @@ const ArtworksPageView = ({
                                              removeFromFilter(f.id, String(f.value))
                                           }
                                           className="p-0.5 hover:bg-primary/20 rounded-full transition-all group/close"
-                                          aria-label="Remove filter"
+                                          aria-label={tCatalog("removeFilter")}
                                        >
                                           <XIcon className="size-3 text-primary/60 group-hover/close:text-primary transition-colors" />
                                        </button>
@@ -216,7 +219,7 @@ const ArtworksPageView = ({
                                  className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-destructive h-8 px-2 transition-colors"
                                  onClick={() => setFilters([])}
                               >
-                                 Clear All
+                                 {tCatalog("clearAll")}
                               </Button>
                            </div>
                         </div>
@@ -235,7 +238,7 @@ const ArtworksPageView = ({
                            {options.enableSorting && (
                               <div className="inline-flex gap-3 items-center">
                                  <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                                    Sort By
+                                    {tCatalog("sortBy")}
                                  </Label>
                                  <Select
                                     value={
@@ -253,22 +256,22 @@ const ArtworksPageView = ({
                                        className="w-[180px] h-10 rounded-full bg-background dark:bg-background border border-input shadow-xs text-foreground data-[placeholder]:text-foreground [&_svg]:text-foreground [&_svg]:opacity-100 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent transition-all font-semibold focus:ring-primary/20"
                                        data-testid="artworks-sort-select"
                                     >
-                                       <SelectValue placeholder="Sort by" />
+                                       <SelectValue placeholder={tCatalog("sortPlaceholder")} />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-xl border border-border/80 shadow-lg p-1.5 min-w-[180px]">
                                        <SelectGroup>
-                                          <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Ordering</SelectLabel>
+                                          <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">{tCatalog("ordering")}</SelectLabel>
                                           <SelectItem value="created_at-desc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
-                                             Date: Newest
+                                             {tCatalog("sortDateNewest")}
                                           </SelectItem>
                                           <SelectItem value="created_at-asc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
-                                             Date: Oldest
+                                             {tCatalog("sortDateOldest")}
                                           </SelectItem>
                                           <SelectItem value="price-desc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
-                                             Price: High to Low
+                                             {tCatalog("sortPriceHighLow")}
                                           </SelectItem>
                                           <SelectItem value="price-asc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
-                                             Price: Low to High
+                                             {tCatalog("sortPriceLowHigh")}
                                           </SelectItem>
                                        </SelectGroup>
                                     </SelectContent>
@@ -283,7 +286,7 @@ const ArtworksPageView = ({
                                  className="flex items-center gap-2 rounded-full h-10 px-6 bg-background border border-input shadow-xs hover:bg-accent hover:text-accent-foreground transition-all font-semibold"
                               >
                                  <FilterIcon className="h-4 w-4" />
-                                 <span className="hidden md:inline">More Filters</span>
+                                 <span className="hidden md:inline">{tCatalog("moreFilters")}</span>
                               </Button>
                            )}
                         </div>
@@ -298,7 +301,7 @@ const ArtworksPageView = ({
                                     title={emptyTitle}
                                     description={
                                        emptyDescription ??
-                                       "We couldn't find any artworks matching your selection."
+                                       tCatalog("empty")
                                     }
                                     action={emptyAction}
                                  />
@@ -344,13 +347,13 @@ const ArtworksPageView = ({
                               ref={loadMoreRef}
                               className="flex justify-center my-8 text-sm font-bold uppercase tracking-widest text-muted-foreground/50 animate-pulse"
                            >
-                              Load More
+                              {tCatalog("loadMore")}
                            </div>
                         )}
 
                      {isFetchingNextPage && (
                         <div className="flex justify-center my-8 text-sm font-medium text-muted-foreground">
-                           Discovering more masterpieces...
+                           {tCatalog("loadingMore")}
                         </div>
                      )}
 
@@ -358,7 +361,7 @@ const ArtworksPageView = ({
                         !isFetchingNextPage &&
                         firstPageArtworks.length > 0 && (
                            <div className="flex justify-center my-8 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/30">
-                              End of Collection
+                              {tCatalog("endOfCollection")}
                            </div>
                         )}
                   </div>

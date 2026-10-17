@@ -245,6 +245,20 @@ html[lang="my"] [data-slot="sidebar-menu-sub-button"] > span:last-child {
   overflow: visible !important;
 }
 
+/* Ensure Burmese lower vocal marks and descenders (ု, ူ, ့, ှ, ြ, ျ, ္) are not clipped in select triggers and dropdowns without affecting English UI */
+html[lang="my"] [data-slot="select-trigger"],
+html[lang="my"] [data-slot="select-value"],
+html[lang="my"] [data-slot="select-trigger"] > [data-slot="select-value"],
+html[lang="my"] [data-slot="dropdown-menu-trigger"] {
+  overflow: visible !important;
+  line-height: normal !important;
+}
+
+html[lang="my"] [data-slot="select-item"],
+html[lang="my"] [data-slot="dropdown-menu-item"] {
+  line-height: 1.6;
+}
+
 /* Ensure Burmese lower vocal marks and descenders (ု, ူ, ့, ှ, ြ, ျ) are not clipped in clamped titles across all locales */
 .font-display.line-clamp-1,
 .line-clamp-1.font-display {

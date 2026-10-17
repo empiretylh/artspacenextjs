@@ -64,6 +64,15 @@ To guarantee premium presentation on platforms like Telegram, Facebook, LinkedIn
 - **Auth-Aware Hydration & Private Artwork Guard**: `ArtworkDetailPage` and `useGetArtwork` reactively observe `auth.loading` so that direct URL navigation and page reloads for private artworks do not prematurely trigger 404 `notFound()` before user credentials/session finish initializing.
 - **Resilient List Normalization**: Uses `normalizeListResponse` and `extractListItems` across `ArtworksPageView`, `RelatedArtworksListView`, and artwork queries to seamlessly handle both standard DRF paginated objects (`{ count, results: [] }`) and unpaginated arrays (`[]`) without runtime crashes.
 
+## 🌐 Localization
+- **Namespaces**:
+  - `Artwork.catalog`: Translates catalog title, active filters bar, sorting dropdown options, empty state fallbacks, infinite scroll sentinels, and inquiry button.
+  - `Artwork.filters`: Translates filter sheet drawer headers, section titles (Currency, Value Range, Availability, Art Forms, Art Genres, Art Styles), quick toggle row, and status enum labels.
+  - `Artwork.detail`: Translates the full artwork detail view (specifications, buy box, artist info, authenticity certificate).
+  - `Artwork.metadata`: Dynamic localized SEO titles and OpenGraph descriptions.
+- **Burmese Typography & Diacritics Protection**:
+  - `FilterRow` and `ArtworksPageView` dropdown triggers (`SelectTrigger`) use locale-scoped CSS rules (`html[lang="my"] [data-slot="select-value"]`) in `src/app/globals.css` with `overflow: visible !important` and `line-height: normal !important`. This prevents lower medials and subscripts (` ု`, ` ူ`, ` ျ`, ` ွ`, ` ္`) from being clipped by single-line clamp containers, while leaving English layout and vertical centering 100% unaffected.
+
 ## 📂 Key Files
 - [artwork.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/pages/artwork.tsx): Artwork detail page component featuring editorial header hierarchy (Artist Link + Title + Year), smart back navigation (`useSafeBack`), auth-synchronized loading gates, responsive mobile-first buy box placement, like toggle, and clickable tag filters.
 - [artwork-image.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-image.tsx): Expanded gallery viewport with studio canvas framing, ViewerJS integration, and interactive "Click to expand & zoom" affordance pill.

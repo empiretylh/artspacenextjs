@@ -3,80 +3,66 @@ import { env } from "@/config/env";
 import ArtworksPage from "@/features/artwork/pages/artworks-page";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(env.APP_URL),
-  title: "Artworks",
-  description:
-    "Browse curated artworks on Myanmar Art Space and discover new pieces from artists in the community.",
-  alternates: {
-    canonical: `${env.APP_URL}/artworks`,
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
-  openGraph: {
-    type: "website",
-    url: `${env.APP_URL}/artworks`,
-    title: "Artworks",
-    description:
-      "Browse curated artworks on Myanmar Art Space and discover new pieces from artists in the community.",
-    siteName: "Myanmar Art Space",
-    images: [
-      {
-        url: `${env.APP_URL}/og-images/opengraph-image.png`,
-        width: 1920,
-        height: 1080,
-        alt: "Artworks - Myanmar Art Space",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Artworks",
-    description:
-      "Browse curated artworks on Myanmar Art Space and discover new pieces from artists in the community.",
-    images: [`${env.APP_URL}/og-images/opengraph-image.png`],
-  },
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-const ArtWorksRoute = async () => {
-  // 1. MUST use prefetchInfiniteQuery
-  // 2. MUST await the call
-  // await queryClient.prefetchInfiniteQuery({
-  //   queryKey: queryKeys.artwork.infinite({
-  //     // Ensure these match your hook's default props EXACTLY
-  //     page: 1,
-  //     limit: 10,
-  //     filters: [],
-  //     sorts: [],
-  //     search: ''
-  //   }),
-  //   queryFn: ({ pageParam = 1 }) =>
-  //     getArtworks({
-  //       page: pageParam as number,
-  //       limit: 10,
-  //       filters: [],
-  //       sorts: [],
-  //       search: ''
-  //     }),
-  //   initialPageParam: 1,
-  // });
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Artwork.metadata" });
+
+  return {
+    metadataBase: new URL(env.APP_URL),
+    title: t("title"),
+    description: t("description"),
+    alternates: {
+      canonical: `${env.APP_URL}/artworks`,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+    openGraph: {
+      type: "website",
+      url: `${env.APP_URL}/artworks`,
+      title: t("title"),
+      description: t("description"),
+      siteName: "Myanmar Art Space",
+      images: [
+        {
+          url: `${env.APP_URL}/og-images/opengraph-image.png`,
+          width: 1920,
+          height: 1080,
+          alt: `${t("title")} - Myanmar Art Space`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("description"),
+      images: [`${env.APP_URL}/og-images/opengraph-image.png`],
+    },
+  };
+}
+
+const ArtWorksRoute = async ({ params }: Props) => {
+  const { locale } = await params;
+  setRequestLocale(locale);
 
   return (
-    // <HydrationBoundary state={dehydrate(queryClient)}>
     <Suspense fallback={<LoadingPage />}>
       <ArtworksPage />
     </Suspense>
-    // </HydrationBoundary>
   );
 };
 
