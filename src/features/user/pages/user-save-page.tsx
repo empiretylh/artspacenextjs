@@ -25,7 +25,7 @@ const UserSavePage = () => {
 
    if (selectedBoard) {
       return (
-         <div className="container mx-auto px-4 py-4 sm:py-6 max-w-7xl">
+         <div className="w-full">
             <BoardArtworksView
                board={selectedBoard}
                onBack={() => setSelectedBoardId(null)}
@@ -36,7 +36,7 @@ const UserSavePage = () => {
    }
 
    return (
-      <div className="container mx-auto px-4 py-4 sm:py-6 max-w-7xl space-y-6">
+      <div className="w-full space-y-6">
          {/* Top Header */}
          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b">
             <div>

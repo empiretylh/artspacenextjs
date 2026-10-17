@@ -69,7 +69,13 @@ export function SiteHeader() {
                   {/* Left Section (Logo + Sidebar Trigger) */}
                   <div className="flex gap-2 items-center md:hidden min-w-0">
                      <SidebarTrigger className="-ml-1 shrink-0" />
-                     <Link to={"/"} className="uppercase font-display font-bold text-sm whitespace-nowrap truncate max-w-[150px] xs:max-w-none">
+                     <Link
+                        to={"/"}
+                        className={cn(
+                           "uppercase font-display font-bold text-sm whitespace-nowrap truncate max-w-[150px] xs:max-w-none",
+                           isMy ? "leading-relaxed py-1 pb-1.5" : "leading-normal py-0.5"
+                        )}
+                     >
                         {t("title")}
                      </Link>
                   </div>
