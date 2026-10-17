@@ -79,14 +79,14 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
          <PopoverContent
             align="end"
             sideOffset={8}
-            className="w-80 sm:w-96 p-0 shadow-xl border-border/80 bg-background/95 backdrop-blur-md rounded-xl overflow-hidden"
+            className="w-[calc(100vw-1.5rem)] sm:w-[420px] max-w-[420px] p-0 shadow-xl border-border/80 bg-background/95 backdrop-blur-md rounded-xl overflow-hidden"
          >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border/60 bg-muted/20">
-               <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-sm font-display tracking-tight">{t("title")}</h3>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border/60 bg-muted/20 gap-2">
+               <div className="flex items-center gap-2 min-w-0 shrink-0">
+                  <h3 className="font-semibold text-sm font-display whitespace-nowrap">{t("title")}</h3>
                   {unreadCount > 0 && (
-                     <span className="text-[11px] font-semibold px-2 py-0.5 bg-primary/10 text-primary rounded-full">
+                     <span className="text-[11px] font-semibold px-2 py-0.5 bg-primary/10 text-primary rounded-full whitespace-nowrap shrink-0">
                         {unreadCount} {t("new")}
                      </span>
                   )}
@@ -98,10 +98,11 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                      size="sm"
                      onClick={() => markAllAsRead()}
                      disabled={isMarkingAllAsRead}
-                     className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer flex items-center gap-1"
+                     className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer flex items-center gap-1.5 shrink-0"
+                     title={t("markAllAsRead")}
                   >
-                     <CheckCheck className="w-3.5 h-3.5" />
-                     <span>{t("markAllAsRead")}</span>
+                     <CheckCheck className="w-3.5 h-3.5 shrink-0" />
+                     <span className="whitespace-nowrap">{t("markAllAsRead")}</span>
                   </Button>
                )}
             </div>
@@ -112,7 +113,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                   type="button"
                   onClick={() => setActiveTab("all")}
                   className={cn(
-                     "pb-2 font-medium border-b-2 transition-colors cursor-pointer",
+                     "pb-2 font-medium border-b-2 transition-colors cursor-pointer whitespace-nowrap",
                      activeTab === "all"
                         ? "border-primary text-foreground"
                         : "border-transparent text-muted-foreground hover:text-foreground"
@@ -124,7 +125,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                   type="button"
                   onClick={() => setActiveTab("unread")}
                   className={cn(
-                     "pb-2 font-medium border-b-2 transition-colors cursor-pointer",
+                     "pb-2 font-medium border-b-2 transition-colors cursor-pointer whitespace-nowrap",
                      activeTab === "unread"
                         ? "border-primary text-foreground"
                         : "border-transparent text-muted-foreground hover:text-foreground"

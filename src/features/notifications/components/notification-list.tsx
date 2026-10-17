@@ -43,7 +43,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
                <BellOff className="w-5 h-5 text-muted-foreground/60" />
             </div>
             <p className="text-sm font-medium">{emptyMessage || t("empty")}</p>
-            <p className="text-xs text-muted-foreground/80 max-w-[220px]">
+            <p className="text-xs text-muted-foreground/80 max-w-[260px] leading-relaxed">
                {t("emptyDescription")}
             </p>
          </div>

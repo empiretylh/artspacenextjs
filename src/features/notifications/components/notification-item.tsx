@@ -123,7 +123,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             <div className="flex items-start justify-between gap-2">
                <p
                   className={cn(
-                     "text-sm leading-tight truncate",
+                     "text-sm leading-snug truncate",
                      !notification.is_read
                         ? "font-semibold text-foreground"
                         : "font-medium text-foreground/80"
@@ -131,7 +131,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
                >
                   {notification.title}
                </p>
-               <span className="text-[11px] text-muted-foreground whitespace-nowrap shrink-0">
+               <span className="text-[11px] text-muted-foreground whitespace-nowrap shrink-0 mt-0.5">
                   {timeAgo}
                </span>
             </div>
