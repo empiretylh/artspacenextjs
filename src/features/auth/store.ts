@@ -8,6 +8,7 @@ import { create } from "zustand";
 import { auth as firebaseAuth, db } from "@/features/service/firebase/firebase";
 import { doc, setDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { env } from "@/config/env";
+import { useChatStore } from "@/features/chat/store";
 
 interface RegisterForm {
    email: string;
@@ -205,6 +206,12 @@ export const useAuth = create<State>((set, get) => {
          }
 
          authAnalytics.logout('profile_menu')
+
+         // Clear chat state and session flags on logout
+         useChatStore.getState().closeChat();
+         if (typeof window !== "undefined") {
+            sessionStorage.removeItem("artspace_chats_visited");
+         }
 
          set({
             user: null,

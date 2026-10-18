@@ -17,6 +17,8 @@ import { useMarkRead } from "../hooks/use-mark-read";
 import { useChatSecurity } from "../hooks/use-chat-security";
 import type { ChatUser, OrderCardData } from "../types";
 import { useEffect, useState, useRef } from "react";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/features/service/firebase/firebase";
 import {
    Sheet,
    SheetContent,
@@ -140,6 +142,41 @@ export const ChatWindow = ({
          markAsRead(conversationId);
       }
    }, [conversationId, currentUnreadCount, markAsRead]);
+
+   const healedParticipantRef = useRef<Record<string, string>>({});
+
+   // Self-heal stale participant details in Firestore if API returns updated name or avatar
+   useEffect(() => {
+      if (!conversationId || !finalRecipientId || !recipientUser?.name || !activeConversation || !db) return;
+
+      const nameMismatch = !displayUser?.name || recipientUser.name !== displayUser.name;
+      const avatarMismatch = Boolean(recipientUser.avatar && recipientUser.avatar !== displayUser?.avatar);
+
+      const healKey = `${conversationId}-${finalRecipientId}`;
+      if ((nameMismatch || avatarMismatch) && healedParticipantRef.current[healKey] !== recipientUser.name) {
+         healedParticipantRef.current[healKey] = recipientUser.name;
+         const convRef = doc(db, "conversations", conversationId);
+         updateDoc(convRef, {
+            [`participantDetails.${finalRecipientId}.id`]: finalRecipientId,
+            [`participantDetails.${finalRecipientId}.name`]: recipientUser.name,
+            [`participantDetails.${finalRecipientId}.avatar`]: recipientUser.avatar,
+            ...(recipientUser.user_type && { [`participantDetails.${finalRecipientId}.user_type`]: recipientUser.user_type }),
+         }).catch((err) => {
+            if (process.env.NODE_ENV === "development") {
+               console.warn("Could not self-heal participantDetails in conversation:", err);
+            }
+         });
+      }
+   }, [
+      conversationId,
+      finalRecipientId,
+      recipientUser?.name,
+      recipientUser?.avatar,
+      recipientUser?.user_type,
+      displayUser?.name,
+      displayUser?.avatar,
+      activeConversation,
+   ]);
 
    if (!conversationId && !recipientId) {
       return (

@@ -1,6 +1,7 @@
 import Axios, { type InternalAxiosRequestConfig } from "axios";
 import { env } from "@/config/env";
 import { useAuth } from "@/features/auth/store";
+import { useChatStore } from "@/features/chat/store";
 import { useNotifications } from "@/components/ui/notifications";
 import Cookies from "js-cookie";
 
@@ -101,6 +102,10 @@ api.interceptors.response.use(
                // if (typeof window !== "undefined") {
 
                useAuth.setState({ accessToken: null, user: null });
+               useChatStore.getState().closeChat();
+               if (typeof window !== "undefined") {
+                  sessionStorage.removeItem("artspace_chats_visited");
+               }
                window.location.replace("/sign-in?reason=session_expired&return=" + window.location.pathname);
                // }
             } finally {

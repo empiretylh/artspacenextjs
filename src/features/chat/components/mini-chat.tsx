@@ -33,6 +33,12 @@ export const MiniChat = () => {
   } = useChatStore();
 
   const [hasVisitedChats, setHasVisitedChats] = useState(false);
+  const syncUserSession = useChatStore((state) => state.syncUserSession);
+
+  // Sync user session with persisted chat state (resets if logged out or user switched)
+  useEffect(() => {
+    syncUserSession(user?.id ? String(user.id) : null);
+  }, [user?.id, syncUserSession]);
 
   // Prevent SSR hydration mismatch and check sessionStorage
   useEffect(() => {

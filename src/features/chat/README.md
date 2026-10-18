@@ -88,7 +88,7 @@ erDiagram
     - **Online Status**: Real-time status (Active now vs Last seen) is determined via `useUserStatus` hook with a 3-minute activity threshold.
     - **Logout Sync**: Explicitly sets `lastSeen` to the past on logout for immediate offline appearance across devices.
     - **Retroactive Sync**: Updating a profile in Settings automatically triggers a batch update for the current user's entry in their top 50 most recent conversations.
-    - **Self-Healing**: Every message sent refreshes the sender's metadata in the conversation to ensure long-term consistency.
+    - **Self-Healing**: Every message sent refreshes the sender's metadata in the conversation. Additionally, when a conversation is opened in `ChatWindow`, any stale participant metadata in Firestore is reconciled against the fresh Backend API profile, and `ChatListItem` hydrates instantly from the React Query cache.
 8. **Unread Tracking**:
     - **Logic**: A `runTransaction` in `useSendMessage` atomically increments the `unreadCount` Map for participants.
     - **Resolution**: The `useMarkRead` hook resets the count and cleans up legacy fields.
@@ -164,7 +164,8 @@ The application features a floating **Mini-Chat Widget** (`MiniChat`) that persi
 
 Global chat state is centralized in `src/features/chat/store.ts` using **Zustand**.
 
-- **Persistence**: The state (active conversation, visibility, minimized status) is persisted in `localStorage` using the `persist` middleware. This allows chat windows to remain open and active even after a page refresh.
+- **Persistence**: The state (active conversation, visibility, minimized status, and user ID) is persisted in `localStorage` using the `persist` middleware. This allows chat windows to remain open and active across page refreshes during an active user session.
+- **Session Isolation & Logout Cleanup**: Persisted chat state is strictly bounded to the active authenticated user ID. Logging out (or session expiration) invokes `closeChat()` and purges session flags, and `syncUserSession` resets any orphaned state if the user changes or logs out, preventing previously opened chats from leaking across sessions.
 - **Atomic Actions**:
     - `openConversation(id)`: Immediately switches the widget to a specific chat and maximizes it.
     - `setShowList(true)`: Triggers the drill-down "Back" behavior to show the conversation list.
