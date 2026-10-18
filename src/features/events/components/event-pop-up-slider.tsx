@@ -10,7 +10,8 @@ import {
    CarouselPrevious,
    type CarouselApi,
 } from "@/components/ui/carousel";
-import { cn, getDate, getImage } from "@/lib/utils";
+import { cn, extractListItems, getDate, getImage } from "@/lib/utils";
+import type { Event } from "@/types";
 import { paths } from "@/config/paths";
 import Link from "@/components/common/link";
 import { useRouter } from "next/navigation";
@@ -27,8 +28,7 @@ export default function EventPopupSlider() {
       queryFn: () => getPopUpEvents(),
    });
 
-   const events = popUpEventsQuery.data || [];
-   // const events = [];
+   const events = extractListItems<Event>(popUpEventsQuery.data);
    const [api, setApi] = React.useState<CarouselApi>();
    const [current, setCurrent] = React.useState(0);
    const [count, setCount] = React.useState(0);
@@ -68,7 +68,7 @@ export default function EventPopupSlider() {
    useEffect(() => {
       const hasSeen = sessionStorage.getItem("artspace:firstLoadPopup");
 
-      if (popUpEventsQuery.data && popUpEventsQuery.data.length > 0 && !hasSeen) {
+      if (events.length > 0 && !hasSeen) {
          const timer = setTimeout(() => {
             setOpen(true);
             sessionStorage.setItem("artspace:firstLoadPopup", "true");
@@ -76,7 +76,7 @@ export default function EventPopupSlider() {
 
          return () => clearTimeout(timer);
       }
-   }, [popUpEventsQuery.data]);
+   }, [events.length]);
 
    return (
       <>
