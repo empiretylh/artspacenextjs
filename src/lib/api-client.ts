@@ -4,8 +4,22 @@ import { useAuth } from "@/features/auth/store";
 import { useNotifications } from "@/components/ui/notifications";
 import Cookies from "js-cookie";
 
+function parseAuthCookie() {
+   try {
+      const raw = Cookies.get('artspace_auth_session');
+      if (!raw) return {};
+      try {
+         return JSON.parse(raw);
+      } catch {
+         return JSON.parse(decodeURIComponent(raw));
+      }
+   } catch {
+      return {};
+   }
+}
+
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
-   const cookie = JSON.parse(Cookies.get('artspace_auth_session') || "{}");
+   const cookie = parseAuthCookie();
    const token = useAuth.getState().accessToken || cookie.accessToken;
    if (config.headers) {
       config.headers.Accept = "application/json";
@@ -60,7 +74,7 @@ api.interceptors.response.use(
          !original.url?.includes("/sign-in") &&
          !original.url?.includes("/refresh")
       ) {
-         const cookie = JSON.parse(Cookies.get('artspace_auth_session') || "{}");
+         const cookie = parseAuthCookie();
 
          if (!useAuth.getState().accessToken && !cookie.accessToken) {
             return Promise.reject(error);

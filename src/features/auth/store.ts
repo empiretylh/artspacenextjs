@@ -110,6 +110,8 @@ export const useAuth = create<State>((set, get) => {
             queryClient.invalidateQueries();
 
             return data.user as User
+         } catch (error) {
+            return error as AxiosError<{ message: string }>;
          } finally {
             set({ loading: false });
          }
