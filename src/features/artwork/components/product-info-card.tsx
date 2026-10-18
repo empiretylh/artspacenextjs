@@ -231,8 +231,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                   <div className="flex items-center space-x-3 min-w-0">
                      <AppImage
                         src={getImage(
-                           artwork.current_owner_display?.profile?.profile_picture ||
-                           artwork?.artist_profile?.profile?.profile_picture
+                           artwork.current_owner_display?.profile?.profile_picture
                         )}
                         width={40}
                         height={40}
