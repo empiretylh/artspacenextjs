@@ -64,14 +64,47 @@ To guarantee premium presentation on platforms like Telegram, Facebook, LinkedIn
 - **Auth-Aware Hydration & Private Artwork Guard**: `ArtworkDetailPage` and `useGetArtwork` reactively observe `auth.loading` so that direct URL navigation and page reloads for private artworks do not prematurely trigger 404 `notFound()` before user credentials/session finish initializing.
 - **Resilient List Normalization**: Uses `normalizeListResponse` and `extractListItems` across `ArtworksPageView`, `RelatedArtworksListView`, and artwork queries to seamlessly handle both standard DRF paginated objects (`{ count, results: [] }`) and unpaginated arrays (`[]`) without runtime crashes.
 
+## 🌐 Localization
+- **Namespaces**:
+  - `Artwork.catalog`: Translates catalog title, active filters bar, sorting dropdown options, empty state fallbacks, infinite scroll sentinels, and inquiry button.
+  - `Artwork.filters`: Translates filter sheet drawer headers, section titles (Currency, Value Range, Availability, Art Forms, Art Genres, Art Styles), quick toggle row, and status enum labels.
+  - `Artwork.detail`: Translates the full artwork detail view (specifications, buy box, artist info, authenticity certificate).
+  - `Artwork.metadata`: Dynamic localized SEO titles and OpenGraph descriptions.
+- **Burmese Typography & Diacritics Protection**:
+  - `FilterRow` and `ArtworksPageView` dropdown triggers (`SelectTrigger`) use locale-scoped CSS rules (`html[lang="my"] [data-slot="select-value"]`) in `src/app/globals.css` with `overflow: visible !important` and `line-height: normal !important`. This prevents lower medials and subscripts (` ု`, ` ူ`, ` ျ`, ` ွ`, ` ္`) from being clipped by single-line clamp containers, while leaving English layout and vertical centering 100% unaffected.
+
+## 🧪 Testing & E2E Coverage
+The artwork creation, update, and deletion flows are covered by targeted Playwright end-to-end tests:
+- [e2e/artwork-create-form.spec.ts](file:///d:/data/learning/work/real-work/art-space-next/e2e/artwork-create-form.spec.ts): Comprehensive tests for new artwork creation.
+- [e2e/artwork-update-form.spec.ts](file:///d:/data/learning/work/real-work/art-space-next/e2e/artwork-update-form.spec.ts): Targeted tests for updating existing artworks.
+- [e2e/artwork-delete.spec.ts](file:///d:/data/learning/work/real-work/art-space-next/e2e/artwork-delete.spec.ts): Targeted tests for artwork deletion and cancellation flows.
+
+### Key Creation Test Scenarios (`artwork-create-form.spec.ts`)
+1. **Schema & Required Fields Validation**: Validates all required field constraints on empty submit (Image, Title, Category, Genre, Medium, Dimensions, Styles) and price lower-bound validation (`min(1)`).
+2. **Complete Creation Submission**: Simulates an end-to-end creation flow including image upload mock via explicit `input[type="file"]`, category/genre selection, style tags with safe popover dismissal, visibility changes, price, description, search keywords, asserting both the dispatched POST payload and success toast notification.
+
+### Key Update Test Scenarios (`artwork-update-form.spec.ts`)
+1. **Pre-population, Field & Custody Modifications, and PATCH Submission**: Navigates to `/en/profile/artworks`, hovers over the target artwork card to reveal control actions, clicks the 3-dot trigger (`artwork-control-menu-trigger`) without `{ force: true }`, waits for "Edit" (`artwork-control-edit-button`) to be visible, and opens the update modal. Verifies initial pre-population of Title, Medium, Dimensions, Price, and Account Owner custody. Modifies Title, Price, Status to "Sold", unchecks account ownership to assign custody to custom holding gallery ('Yangon Heritage Gallery'), submits "Save Changes", and strictly asserts the captured `PATCH /artworks/artworks/:id/` payload, success toast notification, and dialog closure.
+
+### Key Deletion Test Scenarios (`artwork-delete.spec.ts`)
+1. **Confirmation Dialog & Cancellation**: Navigates to `/en/profile/artworks`, triggers card actions dropdown, clicks "Delete" (`artwork-control-delete-button`), and verifies the `DeleteConfirmDialog` opens with the artwork's title and description. Clicking "Cancel" closes the dialog and keeps the artwork intact on the page.
+2. **Confirmed Deletion & Invalidation**: Confirms deletion from the dialog, asserts that `DELETE /artworks/artworks/:id/` is invoked, and confirms that the deleted artwork is removed from the list.
+
 ## 📂 Key Files
-- [artwork.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/pages/artwork.tsx): Artwork detail page component featuring smart back navigation (`useSafeBack` with loop prevention against `/order` routes) and auth-synchronized loading gates.
-- [artist-profile.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artist-profile.tsx): "About the Artist" section rendering artist info and dynamic artist summary badges (`artist_badges`).
+- [artwork.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/pages/artwork.tsx): Artwork detail page component featuring editorial header hierarchy (Artist Link + Title + Year), smart back navigation (`useSafeBack`), auth-synchronized loading gates, responsive mobile-first buy box placement, like toggle, and clickable tag filters.
+- [artwork-image.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-image.tsx): Expanded gallery viewport with studio canvas framing, ViewerJS integration, and interactive "Click to expand & zoom" affordance pill.
+- [artist-profile.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artist-profile.tsx): "About the Artist" section rendering artist info, dynamic artist summary badges (`artist_badges`), follow toggle, and direct messaging.
+- [artwork-characteristics-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-characteristics-card.tsx): Structured artwork specification card with clickable artist profile links and category/style navigation.
+- [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The detail view info card featuring instant checkout transition, active price inquiry routing with pre-populated chat context, Save to Boards (`SaveToBoardDialog`), and authenticity reassurance.
+- [related-artwork-list-container.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/related-artwork-list-container.tsx): Infinite-scrolling recommendation container with URL-isolated state management.
 - [artwork-create-modal.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-create-modal.tsx): Modal wrapper rendering `ArtworkCreateForm`.
 - [artwork-create-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-create-form.tsx): Section-based artwork creation form powered by generalized `FormDialog` and `FormSection` with external sticky footer, semi-bold typography, and boards-dialog visual standards.
 - [artwork-update-modal.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-update-modal.tsx): Modal wrapper rendering `ArtworkUpdateForm`.
 - [artwork-update-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/artwork-update-form.tsx): Section-based artwork update form powered by generalized `FormDialog` and `FormSection`.
+- [delete-confirm-dialog.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/common/dialogs/delete-confirm-dialog.tsx): Framer-motion animated delete confirmation dialog.
 - [artwork-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/components/app/artwork-card.tsx): The primary UI card used in the responsive grid layout.
-- [product-info-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/artwork/components/product-info-card.tsx): The detail view info card used on the artwork page with instant checkout transition and Save to Boards (`SaveToBoardDialog`) action.
 - [route.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/app/api/og/route.tsx): Unified, dynamic, high-fidelity Open Graph image generator API.
+- [artwork-create-form.spec.ts](file:///d:/data/learning/work/real-work/art-space-next/e2e/artwork-create-form.spec.ts): Comprehensive Playwright E2E test suite for ArtworkCreateForm.
+- [artwork-update-form.spec.ts](file:///d:/data/learning/work/real-work/art-space-next/e2e/artwork-update-form.spec.ts): Targeted Playwright E2E test suite for ArtworkUpdateForm.
+- [artwork-delete.spec.ts](file:///d:/data/learning/work/real-work/art-space-next/e2e/artwork-delete.spec.ts): Targeted Playwright E2E test suite for artwork deletion flow.
 

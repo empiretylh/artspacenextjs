@@ -1,3 +1,5 @@
+'use client'
+
 import FollowButton from "@/components/app/follow-button";
 import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
@@ -8,40 +10,44 @@ import { paths } from "@/config/paths";
 import { getImage, getUserIcon } from "@/lib/utils";
 import type { User } from "@/types";
 import ArtistSummaryBadges from "@/components/app/profile/artist-summary-badges";
+import { useTranslations } from "next-intl";
+import { MessageSquare } from "lucide-react";
 
 export function ArtistProfile({ artist }: { artist: User }) {
+   const t = useTranslations("Artwork.detail");
+
    return (
-      <Card className="border border-border/80 bg-card/65 dark:bg-card backdrop-blur-md rounded-xl shadow-xs transition-all duration-300 hover:shadow-sm">
+      <Card className="gap-0 py-0 border border-border/70 bg-card/65 dark:bg-card backdrop-blur-md rounded-xl shadow-xs transition-all duration-300 hover:shadow-sm">
          {/* Header */}
-         <CardHeader>
-            <h2 className="text-xl font-semibold font-display tracking-tight text-foreground/90">
-               About the Artist
+         <CardHeader className="p-5 pb-3">
+            <h2 className="text-lg md:text-xl font-semibold font-display tracking-tight text-foreground/90">
+               {t("aboutArtist")}
             </h2>
          </CardHeader>
 
          {/* Content */}
-         <CardContent className="space-y-6">
+         <CardContent className="p-5 pt-0 space-y-5">
             {/* Artist Info */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pb-4 border-b border-border/50">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 pb-5 border-b border-border/50">
                {/* Avatar + Name */}
                <div className="flex items-center space-x-4">
                   <AppImage
                      src={getImage(artist?.profile?.profile_picture)}
-                     alt={artist.first_name + " " + artist.last_name}
+                     alt={`${artist.first_name} ${artist.last_name}`}
                      width={56}
                      height={56}
                      containerClassName="w-14 h-14 rounded-full overflow-hidden ring-2 ring-primary/10 shadow-xs"
                      className="object-cover"
                   />
 
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                      <Link to={paths.artists.detail.getHref(String(artist.id))}>
-                        <p className="flex items-center gap-1.5 font-bold hover:underline text-base text-foreground transition-colors">
-                           {artist.first_name + " " + artist.last_name}
+                        <p className="flex items-center gap-1.5 font-semibold hover:underline text-base text-foreground transition-colors">
+                           {artist.first_name} {artist.last_name}
                            <span>{getUserIcon(artist.user_type)}</span>
                         </p>
                      </Link>
-                     <p className="text-xs text-muted-foreground/85 font-medium capitalize">
+                     <p className="text-xs text-muted-foreground font-medium capitalize">
                         {artist.user_type ? artist.user_type.toLowerCase() : "Artist"}
                      </p>
                   </div>
@@ -58,12 +64,23 @@ export function ArtistProfile({ artist }: { artist: User }) {
                   />
 
                   {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
-                     <Link to={paths.chats.getHref({
-                        userId: artist.id,
-                        userType: artist.user_type === 'ARTIST' ? 'artists' : artist.user_type === 'GALLERY' ? 'galleries' : 'collectors'
-                     })}>
-                        <Button variant="outline" className="rounded-lg font-medium shadow-xs transition-transform duration-200 active:scale-95">
-                           Send Message
+                     <Link
+                        to={paths.chats.getHref({
+                           userId: artist.id,
+                           userType:
+                              artist.user_type === "ARTIST"
+                                 ? "artists"
+                                 : artist.user_type === "GALLERY"
+                                 ? "galleries"
+                                 : "collectors",
+                        })}
+                     >
+                        <Button
+                           variant="outline"
+                           className="rounded-lg font-medium shadow-xs transition-transform duration-200 active:scale-95 gap-1.5"
+                        >
+                           <MessageSquare className="w-3.5 h-3.5" />
+                           <span>Message</span>
                         </Button>
                      </Link>
                   )}
@@ -83,10 +100,10 @@ export function ArtistProfile({ artist }: { artist: User }) {
                )}
             </div>
 
-            {/* Summary */}
+            {/* Summary Badges */}
             {artist.profile?.artist_badges && artist.profile.artist_badges.length > 0 && (
                <div className="space-y-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
                      Summary
                   </h3>
                   <ArtistSummaryBadges badges={artist.profile.artist_badges} />

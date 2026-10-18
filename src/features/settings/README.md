@@ -28,8 +28,14 @@ This feature allows users to maintain their public presence and control their pr
     - Sent to `PATCH /api/v1/users/profile/me/`.
     - **UI Impact**: When enabled, the collector's name is rendered as `Anonymous` across public profile mirrors, collector list/cards (`ProfileCard`, `UserSearchCard`), and nested ownership representations (`ProductInfoCard`, `ArtworkCharacteristicsCard`), while persisted first and last names remain intact for account owners. In `ProfileEditForm`, changing first and last name is disabled while `hide_collector_name` is toggled on.
 
+### 3. Saved Delivery Addresses
+- Managed through [saved-addresses-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/settings/components/saved-addresses-card.tsx).
+- Allows users to maintain their shipping address book outside of the checkout workflow.
+- Supports adding new addresses, editing contacts, setting a preferred default address, and deletion with confirmation.
+
 ## 📂 Key Files
-- [index.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/settings/index.tsx): The settings page view orchestrating the hero studio banner, categorized profile details, and account safety cards.
+- [index.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/settings/index.tsx): The settings page view orchestrating the hero studio banner, categorized profile details, saved delivery addresses, and account safety cards.
+- [saved-addresses-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/settings/components/saved-addresses-card.tsx): Shipping addresses management card interfacing with customer checkout details API.
 - [profile-media.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/settings/components/profile-media.tsx): Integrated hero preview card featuring live cover photo and overlapping avatar uploads.
 - [profile-edit-form.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/settings/components/profile-edit-form.tsx): Segmented form with categorized sections (Public Info, Bio & Story with character counter, Website with URL adornment, and Privacy Toggles) submitting only dirty values.
 - [update-profile.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/settings/api/update-profile.tsx): The API mutation handler involving Zod validation and payload normalization.

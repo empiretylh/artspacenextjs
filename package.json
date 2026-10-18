@@ -16,7 +16,11 @@
     "lint:fix": "eslint --fix",
     "e2e": "playwright test",
     "typecheck": "tsc --noEmit",
-    "deploy:firebase": "firebase deploy --only firestore"
+    "deploy:firebase": "firebase deploy --only firestore",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:ui:debug": "playwright test --ui --debug",
+    "test:e2e:ui:debug-ui": "playwright test --ui --debug"
   },
   "dependencies": {
     "@capacitor-firebase/messaging": "^7.5.0",

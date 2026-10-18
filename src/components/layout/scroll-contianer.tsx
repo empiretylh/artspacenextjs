@@ -83,9 +83,12 @@ const ScrollContainer = ({ children, header }: { children: React.ReactNode; head
 
   const source = analyticSourceFromPathname(pathname);
 
-  const isCheckoutPage = Boolean(pathname?.includes('/artworks/') && pathname?.includes('/order'));
+  const isDistractionFreePage = Boolean(
+    (pathname?.includes('/artworks/') && pathname?.includes('/order')) ||
+    (pathname?.includes('/orders/') && pathname?.includes('/payment'))
+  );
 
-  if (isCheckoutPage) {
+  if (isDistractionFreePage) {
     return (
       <SourceProvider value={{ source }}>
         <div className="h-screen w-full bg-background flex flex-col overflow-y-auto">

@@ -41,7 +41,7 @@ export const NotificationsPage: React.FC = () => {
                   <Bell className="w-5 h-5" />
                </div>
                <div>
-                  <h1 className="text-2xl font-semibold text-foreground tracking-tight">
+                  <h1 className="text-2xl sm:text-3xl font-semibold font-display text-foreground tracking-tight">
                      {t("title")}
                   </h1>
                   <p className="text-xs text-muted-foreground mt-0.5">
@@ -93,7 +93,7 @@ export const NotificationsPage: React.FC = () => {
          </div>
 
          {/* Notifications List Container */}
-         <div className="bg-card rounded-xl border border-border/80 shadow-xs overflow-hidden">
+         <div className="bg-card rounded-2xl border border-border/80 shadow-xs p-2 sm:p-3">
             <NotificationList
                notifications={displayedNotifications}
                isLoading={isLoading}

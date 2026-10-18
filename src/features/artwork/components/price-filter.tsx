@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,7 @@ export const PriceFilter: React.FC<Props> = ({
    debounceTime = 500,
    isLoading = false,
 }) => {
+   const t = useTranslations("Artwork.catalog");
    const isInitialMount = useRef(true);
    const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -173,11 +175,11 @@ export const PriceFilter: React.FC<Props> = ({
          <div className="flex flex-col gap-3 pt-2">
             <div className="flex justify-between text-xs font-bold text-muted-foreground/80 uppercase tracking-wider">
                <Label className="text-xs font-bold cursor-default">
-                  Min: {currencySymbol}
+                  {t("min")}: {currencySymbol}
                   {sliderValue[0].toLocaleString()}
                </Label>
                <Label className="text-xs font-bold cursor-default">
-                  Max: {currencySymbol}
+                  {t("max")}: {currencySymbol}
                   {sliderValue[1].toLocaleString()}
                </Label>
             </div>

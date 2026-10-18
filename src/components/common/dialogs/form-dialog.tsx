@@ -87,6 +87,7 @@ export const FormDialog: React.FC<FormDialogProps> = ({
    return (
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
          <DialogContent
+            data-testid="form-dialog"
             className={cn(
                // Base Desktop modal layout
                "w-full p-0 overflow-hidden gap-0 border border-border/80 shadow-2xl bg-card flex flex-col",
@@ -160,6 +161,7 @@ export const FormDialog: React.FC<FormDialogProps> = ({
                               size="sm"
                               onClick={onReset}
                               disabled={isSubmitting}
+                              data-testid="form-dialog-reset-button"
                               className="text-xs text-muted-foreground hover:text-foreground cursor-pointer -ml-2"
                            >
                               {resetText}
@@ -172,6 +174,7 @@ export const FormDialog: React.FC<FormDialogProps> = ({
                               size="sm"
                               onClick={onClose}
                               disabled={isSubmitting}
+                              data-testid="form-dialog-cancel-button"
                               className="px-4 text-xs font-medium cursor-pointer"
                            >
                               {cancelText}
@@ -183,6 +186,7 @@ export const FormDialog: React.FC<FormDialogProps> = ({
                               onClick={onSubmit ? (e) => onSubmit(e) : undefined}
                               disabled={isSubmitting || isSubmitDisabled}
                               variant={submitVariant}
+                              data-testid="form-dialog-submit-button"
                               className="px-5 text-xs font-semibold cursor-pointer"
                            >
                               {isSubmitting && (

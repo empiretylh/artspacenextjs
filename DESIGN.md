@@ -4,14 +4,23 @@ This document establishes the official Design System and visual guidelines for t
 
 ---
 
-## 🎨 1. Design Philosophy: "Editorial Minimalist"
+## 🎨 1. Design Classification & Philosophy: "Editorial Minimalist"
 
-Artspace is a premium platform for showcasing and trading artwork. The visual language is modeled after high-end art galleries and modern art catalogs.
+Artspace uses an **Editorial Minimalist** design archetype, specifically engineered around a **Modern Art Gallery & Exhibition Catalog** visual language with **Subtle Glassmorphism** accents.
 
-1. **Content First**: The artwork is the hero. UI decorations (borders, shadows, backgrounds) must remain minimal to avoid competing with the art.
-2. **High-Contrast Elegance**: Clear typography, large margins, and generous line heights give an open, sophisticated feel.
-3. **Responsive Flow**: Seamless adaptation from mobile devices to ultra-wide desktop monitors (`3xl` / `4xl` breakpoints).
-4. **Burmese Script Inclusivity**: Specialized line height (1.6) and font stacks to ensure that the complex Burmese script displays without vertical clipping.
+### Visual Style Summary
+- **Primary Design Style**: **Editorial Minimalist** (contemporary art gallery, exhibition monograph, and luxury publication aesthetic).
+- **Secondary / Accent Style**: **Subtle Glassmorphism & Frosted Glass** (`backdrop-blur-md` / `backdrop-blur-xl` translucent surfaces on hero covers, floating controls, dialog backdrops, and the persisted chat widget).
+- **Component System Foundation**: **Shadcn UI** (Radix UI headless accessible primitives) styled via **Tailwind CSS v4** design tokens mapped to CSS custom variables in OKLCH and HSL.
+
+### Core Principles
+1. **Content First (Artwork as Hero)**: The artwork is the sole focal point. UI ornamentation (heavy borders, deep drop-shadows, saturated structural backgrounds) is minimized so the interface never competes with the artworks.
+2. **High-Contrast Editorial Elegance**: Refined pairing of editorial serif headings with clean geometric sans-serif controls, framed by generous whitespace and open line heights.
+3. **Dual Corner Radii Philosophy**:
+   - *Sharp & Classic Architectural*: Catalog cards, artwork frames, and exhibition grids use `rounded-sm` or crisp flat edges to emulate classic gallery picture frames.
+   - *Soft & Conversational*: Interactive tools, chat popups, buttons, and message bubbles use `rounded-xl`, `rounded-2xl`, and `rounded-full` for a warm, fluid touch.
+4. **Responsive Flow**: Seamless scaling across all screen sizes, from mobile devices to ultra-wide desktop monitors (`3xl` / `4xl` custom breakpoints).
+5. **Burmese Script & Multilingual Inclusivity**: Specialized line height (1.6) and dedicated font stacks ensure that Burmese diacritics and complex stacking marks display without vertical clipping.
 
 ---
 
@@ -72,6 +81,10 @@ To maintain typographic elegance while serving a multilingual user base, Artspac
 - **Form Controls (Inputs / Textareas)**: `line-height: 1.5` to prevent diacritics clipping.
 - **Burmese Locale (html[lang="my"])**: 
   - Adjusted globally to `line-height: 1.6` for all text blocks, headings, and paragraphs. This is **mandatory** because Burmese characters contain top and bottom vocal marks that get truncated under tight line heights.
+
+### Header Boldness & Weight Standards
+- **Mandatory Weight**: Top-level font weight across UI headers, page titles, dialog/modal titles, and card headings is strictly **semi-bold** (`font-semibold`).
+- **Stylistic Balance**: Using `font-semibold` instead of `font-bold` or `font-black` prevents heavy typography from overwhelming the delicate aesthetic of artwork catalogs while retaining crisp hierarchy.
 
 ---
 

@@ -69,7 +69,13 @@ export function SiteHeader() {
                   {/* Left Section (Logo + Sidebar Trigger) */}
                   <div className="flex gap-2 items-center md:hidden min-w-0">
                      <SidebarTrigger className="-ml-1 shrink-0" />
-                     <Link to={"/"} className="uppercase font-display font-bold text-sm whitespace-nowrap truncate max-w-[150px] xs:max-w-none">
+                     <Link
+                        to={"/"}
+                        className={cn(
+                           "uppercase font-display font-bold text-sm whitespace-nowrap truncate max-w-[150px] xs:max-w-none",
+                           isMy ? "leading-relaxed py-1 pb-1.5" : "leading-normal py-0.5"
+                        )}
+                     >
                         {t("title")}
                      </Link>
                   </div>
@@ -100,6 +106,7 @@ export function SiteHeader() {
  
                      {isLoggedIn && (
                         <Button
+                           data-testid="header-create-artwork-button"
                            onClick={() => setIsArtworkCreateModalOpen(true)}
                            className={cn(
                               "rounded-full font-semibold transition-all duration-300 hover:scale-105 active:scale-95 shadow-xs flex items-center gap-1.5 select-none cursor-pointer",
@@ -110,7 +117,7 @@ export function SiteHeader() {
                            <span>{t("create")}</span>
                         </Button>
                      )}
- 
+
                      {/* Auth Buttons / Profile */}
                      {!isLoggedIn ? (
                         <>
@@ -132,7 +139,7 @@ export function SiteHeader() {
                      ) : (
                         <ProfileDropdown />
                      )}
- 
+
                      <div
                         className={cn(
                            "flex items-center",
@@ -149,6 +156,7 @@ export function SiteHeader() {
                            <DropdownMenuContent align="end" className="w-56">
                               {isLoggedIn && (
                                  <DropdownMenuItem
+                                    data-testid="mobile-header-create-artwork-button"
                                     onClick={() =>
                                        setIsArtworkCreateModalOpen(true)
                                     }

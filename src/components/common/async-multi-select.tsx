@@ -300,7 +300,7 @@ const MultipleSelector = ({
                   value={inputValue}
                   onValueChange={(value) => setInputValue(value)}
                   onKeyDown={(e) => {
-                     if (e.key === "Tab") {
+                     if (e.key === "Tab" || e.key === "Escape") {
                         setOpen(false);
                      }
                   }}

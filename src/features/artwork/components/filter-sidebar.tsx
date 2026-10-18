@@ -1,5 +1,6 @@
 'use client'
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { FilterIcon } from "lucide-react";
 import { FilterSection } from "./filter-section";
@@ -36,6 +37,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
    isSidebarOpen = false,
    setIsSidebarOpen = () => { },
 }) => {
+   const t = useTranslations("Artwork.filters");
    const [openSections, setOpenSections] = useState({
       currency: true,
       price: true,
@@ -151,10 +153,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   <div className="space-y-1">
                      <SheetTitle className="text-2xl font-bold tracking-tight flex items-center gap-2.5">
                         <FilterIcon className="size-5 text-primary" />
-                        Refine Search
+                        {t("refineSearch")}
                      </SheetTitle>
                      <SheetDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground/70">
-                        Customize your discovery
+                        {t("customizeDiscovery")}
                      </SheetDescription>
                   </div>
                </div>
@@ -164,7 +166,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                <div className="flex flex-col gap-2">
                    {/* Currency Filter */}
                    <FilterSection
-                      title="Currency"
+                      title={t("currency")}
                       isOpen={openSections.currency}
                       onToggle={() => toggleSection("currency")}
                    >
@@ -176,14 +178,14 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                           <div className="flex items-center gap-3 group cursor-pointer" key="ALL">
                              <RadioGroupItem value="ALL" id="currency-ALL" className="size-5 border-muted-foreground/30 focus:border-primary" />
                              <Label htmlFor="currency-ALL" className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors">
-                                All Currencies (Default)
+                                {t("allCurrencies")}
                              </Label>
                           </div>
                           {activeCurrencies.map((curr: any) => (
                              <div className="flex items-center gap-3 group cursor-pointer" key={curr.code}>
                                 <RadioGroupItem value={curr.code} id={`currency-${curr.code}`} className="size-5 border-muted-foreground/30 focus:border-primary" />
                                 <Label htmlFor={`currency-${curr.code}`} className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors">
-                                   {curr.name} ({curr.code})
+                                   {curr.code === "USD" ? t("currencyUSD") : curr.code === "MMK" ? t("currencyMMK") : curr.name} ({curr.code})
                                 </Label>
                              </div>
                           ))}
@@ -192,7 +194,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
                    {/* Price Filter */}
                    <FilterSection
-                      title="Value Range"
+                      title={t("valueRange")}
                       isOpen={openSections.price}
                       onToggle={() => toggleSection("price")}
                    >
@@ -209,7 +211,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
                   {/* Status Filter */}
                   <FilterSection
-                     title="Availability"
+                     title={t("availability")}
                      isOpen={openSections.status}
                      onToggle={() => toggleSection("status")}
                   >
@@ -230,7 +232,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         <div className="flex items-center gap-3 group cursor-pointer">
                            <RadioGroupItem value="ALL" id="status-all" className="size-5 border-muted-foreground/30 focus:border-primary" />
                            <Label htmlFor="status-all" className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors">
-                              Show All Artworks
+                              {t("showAllArtworks")}
                            </Label>
                         </div>
                         {filterOptions.status.map((status) => (
@@ -240,10 +242,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                                  htmlFor={`status-${status}`}
                                  className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors"
                               >
-                                 {status === "AVAILABLE" ? "Available Now" :
-                                    status === "SOLD" ? "Recently Sold" :
-                                       status === "NOT_FOR_SALE" ? "Exhibition Only" :
-                                          status === "SOLD_OUT" ? "Sold Out" : status}
+                                 {status === "AVAILABLE" ? t("availableNow") :
+                                    status === "SOLD" ? t("recentlySold") :
+                                       status === "NOT_FOR_SALE" ? t("exhibitionOnly") :
+                                          status === "SOLD_OUT" ? t("soldOut") : status}
                               </Label>
                            </div>
                         ))}
@@ -252,7 +254,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
                   {/* Category Filter */}
                   <FilterSection
-                     title="Art Forms"
+                     title={t("artForms")}
                      isOpen={openSections.category}
                      onToggle={() => toggleSection("category")}
                   >
@@ -288,7 +290,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
                   {/* Genre Filter */}
                   <FilterSection
-                     title="Art Genres"
+                     title={t("artGenres")}
                      isOpen={openSections.genre}
                      onToggle={() => toggleSection("genre")}
                   >
@@ -324,7 +326,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
                   {/* Style Filter */}
                   <FilterSection
-                     title="Art Styles"
+                     title={t("artStyles")}
                      isOpen={openSections.style}
                      onToggle={() => toggleSection("style")}
                   >
@@ -366,14 +368,14 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   className="flex-1 rounded-full h-12 font-bold shadow-lg shadow-primary/20"
                   onClick={() => setIsSidebarOpen(false)}
                >
-                  Show Results
+                  {t("showResults")}
                </Button>
                <Button
                   variant="outline"
                   className="rounded-full h-12 px-6 font-bold"
                   onClick={() => setFilters([])}
                >
-                  Reset
+                  {t("reset")}
                </Button>
             </div>
          </SheetContent>

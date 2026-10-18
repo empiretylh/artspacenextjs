@@ -155,7 +155,6 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-size-adjust: 0.48;
     line-height: 1.8;
   }
 
@@ -165,7 +164,6 @@
   button,
   select {
     font-family: inherit;
-    font-size-adjust: inherit;
   }
 
   /* Provide safe line height for text entry to avoid clipping top/bottom diacritics */
@@ -245,6 +243,20 @@ html[lang="my"] [data-slot="sidebar-menu-button"] > span:last-child,
 html[lang="my"] [data-sidebar="menu-sub-button"] > span:last-child,
 html[lang="my"] [data-slot="sidebar-menu-sub-button"] > span:last-child {
   overflow: visible !important;
+}
+
+/* Ensure Burmese lower vocal marks and descenders (ု, ူ, ့, ှ, ြ, ျ, ္) are not clipped in select triggers and dropdowns without affecting English UI */
+html[lang="my"] [data-slot="select-trigger"],
+html[lang="my"] [data-slot="select-value"],
+html[lang="my"] [data-slot="select-trigger"] > [data-slot="select-value"],
+html[lang="my"] [data-slot="dropdown-menu-trigger"] {
+  overflow: visible !important;
+  line-height: normal !important;
+}
+
+html[lang="my"] [data-slot="select-item"],
+html[lang="my"] [data-slot="dropdown-menu-item"] {
+  line-height: 1.6;
 }
 
 /* Ensure Burmese lower vocal marks and descenders (ု, ူ, ့, ှ, ြ, ျ) are not clipped in clamped titles across all locales */

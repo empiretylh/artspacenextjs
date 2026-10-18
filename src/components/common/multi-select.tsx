@@ -260,6 +260,9 @@ const MultipleSelector = ({
             }
             // This is not a default behavior of the <input /> field
             if (e.key === "Escape") {
+               e.preventDefault();
+               e.stopPropagation();
+               setOpen(false);
                input.blur();
             }
          }

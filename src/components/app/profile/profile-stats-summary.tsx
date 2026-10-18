@@ -52,8 +52,7 @@ export function ProfileStatsSummary({
       ? paths.profile.save.path
       : paths[userRouteType]?.save?.getHref(String(user.id));
 
-   const artworkLabel =
-      user.user_type === "COLLECTOR" ? "Collected Artworks" : "Artworks";
+   const artworkLabel = "Artworks";
 
    const followerLabel = safeFollowerCount === 1 ? "Follower" : "Followers";
 

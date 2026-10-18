@@ -10,12 +10,16 @@
 
 ## 🏗️ Technical Logic: Performance & UX Optimization
 
-### 1. Swiper Configuration
-To ensure a premium feel and high information density, all home page carousels follow these rules:
+### 1. Swiper Configuration & Unified Header
+To ensure a premium feel, high information density, and visual cohesion, all home page carousels follow these rules:
+- **Unified Section Header**: Each slider features a responsive two-part header with Title and Subtitle on the left, plus a "View All" button and matching circular navigation buttons (`h-8 w-8 rounded-full`) on the right.
+- **Bleed & Peek Layout**: Outer containers apply `-mx-4 md:mx-0 overflow-hidden` with Swiper padding `!px-4 md:!px-0 !overflow-visible` to ensure smooth edge bleed on mobile devices without layout shifts.
 - **Navigation**: Advancing strictly one-by-one (`slidesPerGroup={1}`) via buttons or swipe gestures.
-- **Responsiveness**: Using numeric `slidesPerView` to create a "peek" effect (showing a partial next card) without dynamic width recalculation glitches.
+- **Responsiveness**: Using numeric `slidesPerView` to create a "peek" effect (showing a partial next card) without dynamic width recalculation glitches:
     - **Artworks**: Mobile (`2.2`), Tablet (`3.2`), Desktop (`4.2` - `5.2`).
+    - **Artists**: Mobile (`3`), Tablet (`3`), Desktop (`4` - `6`).
     - **Events**: Mobile (`1.2`), Tablet (`2.2`), Desktop (`2.8` - `3.5`).
+    - **Galleries & Collectors**: Auto-width cards (`slidesPerView="auto"`, `slidesPerGroup={1}`).
 - **Touch Responsiveness**: `watchSlidesProgress={true}` and `touchStartPreventDefault={false}` are enabled across all sliders to prevent touch event blocking on low-end mobile devices.
 
 ### 2. Client-Side Lazy Loading (`SectionLazyLoader`)
@@ -23,11 +27,12 @@ To minimize initial page payload and reduce TTFB, only essential above-the-fold 
 
 ### 3. Layout-Matched Skeletons (Zero CLS)
 To prevent Cumulative Layout Shift (CLS) when lazy-loaded sliders mount:
-- **Exact Width Calculations**: Skeletons use the exact same layout-matched responsive width percentages and gap structures calculated directly from the real Swiper `slidesPerView` values:
+- **Exact Width Calculations**: Skeletons use the exact same layout-matched responsive width percentages, edge padding, and gap structures calculated directly from the real Swiper `slidesPerView` values:
   - **Artists**: `w-[calc((100%-16px)/3)]` on mobile up to `2xl:w-[calc((100%-40px)/6)]`.
   - **Events**: `w-[calc((100%-12px)/1.2)]` on mobile up to `xl:w-[calc((100%-60px)/3.5)]`.
   - **Artworks**: `w-[calc((100%-12px)/2.2)]` on mobile up to `xl:w-[calc((100%-100px)/5.2)]`.
-- **Card Metrics**: Skeleton sub-components (avatar circles, titles, badges, and margins) are pixel-for-pixel matched to the real card elements (`UserSmallCard`, `ArtworkCard`, etc.).
+  - **Galleries & Collectors**: `w-[96px] sm:w-[110px] md:w-[130px]` matching `UserSmallCard`.
+- **Card Metrics**: Skeleton sub-components (avatar circles, titles, badges, and margins) are pixel-for-pixel matched to the real card elements (`UserSmallCard`, `ProfileCardSkeleton`, `ArtworkCard`, etc.).
 
 ### 4. ScrollArea Compatibility
 To maintain custom scrollbars on desktop via `ScrollArea`, the global `ScrollContainer` wraps all home content. On touch-enabled devices (e.g., mobile/tablet), the container dynamically swaps to a native fallback with momentum touch-scrolling (`-webkit-overflow-scrolling: touch`) to ensure butter-smooth frame rates.

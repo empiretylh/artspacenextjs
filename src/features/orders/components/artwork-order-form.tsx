@@ -29,7 +29,14 @@ import {
   createArtworkOrderInputSchema,
   CreateArtworkOrderInput,
 } from '../api/create-artwork-order'
-import type { Artwork } from '@/types'
+import {
+  useGetCustomerDetailsList,
+  useCreateCustomerDetails,
+  useUpdateCustomerDetails,
+} from '../api/customer-checkout-details'
+import { SavedDetailsSelector } from './saved-details-selector'
+import { Checkbox } from '@/components/ui/checkbox'
+import type { Artwork, CustomerCheckoutDetails } from '@/types'
 import Price from '@/components/common/price'
 import AppImage from '@/components/common/app-image'
 import { cn, getImage } from '@/lib/utils'
@@ -57,9 +64,20 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
   const router = useRouter()
   const { addNotification } = useNotifications()
   const { data: deliveryCharges, isLoading: isLoadingCharges } = useGetDeliveryCharges()
+  const { data: savedDetails = [], isLoading: isLoadingSavedDetails } = useGetCustomerDetailsList()
   const createOrderMutation = useCreateArtworkOrder()
+  const createCustomerDetailsMutation = useCreateCustomerDetails()
+  const updateCustomerDetailsMutation = useUpdateCustomerDetails()
   const { source } = useSource()
   const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false)
+
+  const [selectedDetailId, setSelectedDetailId] = useState<number | null>(null)
+  const [hasAutoSelected, setHasAutoSelected] = useState(false)
+  const [saveForFuture, setSaveForFuture] = useState(false)
+  const [savePresetLabel, setSavePresetLabel] = useState<string>('Home')
+  const [saveCustomLabel, setSaveCustomLabel] = useState('')
+  const [saveIsDefault, setSaveIsDefault] = useState(false)
+  const [updateSavedAddress, setUpdateSavedAddress] = useState(false)
 
   const form = useForm<CreateArtworkOrderInput>({
     resolver: zodResolver(createArtworkOrderInputSchema),
@@ -73,6 +91,93 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
     },
   })
 
+  // Auto-populate default or first saved address on initial load
+  React.useEffect(() => {
+    if (!hasAutoSelected && savedDetails.length > 0) {
+      const defaultEntry = savedDetails.find((d) => d.is_default) || savedDetails[0]
+      if (defaultEntry) {
+        setSelectedDetailId(defaultEntry.id)
+        const exactCity =
+          deliveryCharges?.find(
+            (c) => c.city.trim().toLowerCase() === defaultEntry.city.trim().toLowerCase()
+          )?.city || defaultEntry.city
+
+        form.reset({
+          artwork_id: artwork.id,
+          name: defaultEntry.name,
+          phone_number: defaultEntry.phone_number,
+          shipping_address: defaultEntry.shipping_address,
+          city: exactCity,
+          description: defaultEntry.description || '',
+        })
+        form.setValue('city', exactCity, { shouldValidate: true })
+      }
+      setHasAutoSelected(true)
+    }
+  }, [savedDetails, hasAutoSelected, form, artwork.id, deliveryCharges])
+
+  // Sync city selection if delivery charges load after the initial auto-selection
+  React.useEffect(() => {
+    if (selectedDetailId !== null && deliveryCharges && deliveryCharges.length > 0) {
+      const activeDetail = savedDetails.find((d) => d.id === selectedDetailId)
+      if (activeDetail) {
+        const currentCity = form.getValues('city')
+        const matched = deliveryCharges.find(
+          (c) => c.city.trim().toLowerCase() === activeDetail.city.trim().toLowerCase()
+        )
+        const targetCity = matched ? matched.city : activeDetail.city
+        if (!currentCity || currentCity !== targetCity) {
+          form.setValue('city', targetCity, { shouldValidate: true })
+        }
+      }
+    }
+  }, [deliveryCharges, selectedDetailId, savedDetails, form])
+
+  const selectedSavedDetail = useMemo(() => {
+    return savedDetails.find((d) => d.id === selectedDetailId) || null
+  }, [savedDetails, selectedDetailId])
+
+  const handleSelectDetail = (detail: CustomerCheckoutDetails | null) => {
+    if (detail) {
+      setSelectedDetailId(detail.id)
+      const exactCity =
+        deliveryCharges?.find(
+          (c) => c.city.trim().toLowerCase() === detail.city.trim().toLowerCase()
+        )?.city || detail.city
+
+      form.setValue('name', detail.name, { shouldValidate: true })
+      form.setValue('phone_number', detail.phone_number, { shouldValidate: true })
+      form.setValue('shipping_address', detail.shipping_address, { shouldValidate: true })
+      form.setValue('city', exactCity, { shouldValidate: true })
+      form.setValue('description', detail.description || '', { shouldValidate: true })
+      setUpdateSavedAddress(false)
+    } else {
+      setSelectedDetailId(null)
+      form.reset({
+        artwork_id: artwork.id,
+        name: '',
+        phone_number: '',
+        shipping_address: '',
+        city: '',
+        description: '',
+      })
+      setSaveForFuture(false)
+    }
+  }
+
+  // Detect whether values deviate from the selected saved address
+  const currentValues = form.watch()
+  const hasModifiedSavedAddress = useMemo(() => {
+    if (!selectedSavedDetail) return false
+    return (
+      currentValues.name !== selectedSavedDetail.name ||
+      currentValues.phone_number !== selectedSavedDetail.phone_number ||
+      currentValues.shipping_address !== selectedSavedDetail.shipping_address ||
+      currentValues.city !== selectedSavedDetail.city ||
+      (currentValues.description || '') !== (selectedSavedDetail.description || '')
+    )
+  }, [selectedSavedDetail, currentValues])
+
   const selectedCityName = form.watch('city')
   const selectedDelivery = useMemo(() => {
     return deliveryCharges?.find((d) => d.city === selectedCityName)
@@ -84,8 +189,54 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
     return artworkPrice + deliveryFee
   }, [artwork.price, selectedDelivery])
 
+  const isSubmitting =
+    createOrderMutation.isPending ||
+    createCustomerDetailsMutation.isPending ||
+    updateCustomerDetailsMutation.isPending
+
   const onSubmit = async (data: CreateArtworkOrderInput) => {
     try {
+      // 1. If user entered a new address and opted to save it for future checkouts
+      if (selectedDetailId === null && saveForFuture) {
+        const finalLabel =
+          savePresetLabel === 'Other'
+            ? saveCustomLabel.trim() || 'Other'
+            : savePresetLabel
+        try {
+          await createCustomerDetailsMutation.mutateAsync({
+            label: finalLabel,
+            name: data.name,
+            phone_number: data.phone_number,
+            shipping_address: data.shipping_address,
+            city: data.city,
+            description: data.description || '',
+            is_default: saveIsDefault,
+          })
+        } catch (saveErr) {
+          console.error('Failed to save customer details:', saveErr)
+          // Non-blocking: allow order to proceed
+        }
+      }
+
+      // 2. If user edited a saved address and opted to update the saved entry
+      if (selectedDetailId !== null && updateSavedAddress) {
+        try {
+          await updateCustomerDetailsMutation.mutateAsync({
+            id: selectedDetailId,
+            data: {
+              name: data.name,
+              phone_number: data.phone_number,
+              shipping_address: data.shipping_address,
+              city: data.city,
+              description: data.description || '',
+            },
+          })
+        } catch (updateErr) {
+          console.error('Failed to update saved customer details:', updateErr)
+        }
+      }
+
+      // 3. Place order snapshot
       const order = await createOrderMutation.mutateAsync(data)
 
       // Tracking: Add Shipping Info
@@ -264,6 +415,14 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
               </p>
             </div>
 
+            {/* Saved Addresses Section */}
+            <SavedDetailsSelector
+              savedDetails={savedDetails}
+              selectedId={selectedDetailId}
+              onSelect={handleSelectDetail}
+              isLoading={isLoadingSavedDetails}
+            />
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 {/* Full Name */}
@@ -312,13 +471,16 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
                       <FormItem>
                         <FormLabel className="text-sm font-medium">City / Township</FormLabel>
                         <Select
+                          key={`${field.value || 'empty'}-${deliveryCharges?.length || 0}`}
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          value={field.value || ''}
                           disabled={isLoadingCharges}
                         >
                           <FormControl>
                             <SelectTrigger className="w-full h-11">
-                              <SelectValue placeholder="Select delivery city" />
+                              <SelectValue placeholder="Select delivery city">
+                                {field.value || undefined}
+                              </SelectValue>
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -383,15 +545,104 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
                   )}
                 />
 
+                {/* Save as New Address Controls (Custom Mode) */}
+                {selectedDetailId === null && (
+                  <div className="space-y-3 p-3.5 rounded-xl border border-border/60 bg-muted/20">
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        id="save-for-future"
+                        checked={saveForFuture}
+                        onCheckedChange={(checked) => setSaveForFuture(!!checked)}
+                        className="mt-0.5"
+                      />
+                      <label htmlFor="save-for-future" className="text-xs space-y-0.5 cursor-pointer">
+                        <span className="font-medium text-foreground block">
+                          Save this address for future checkouts
+                        </span>
+                        <span className="text-muted-foreground block">
+                          Reusable delivery details securely linked to your account.
+                        </span>
+                      </label>
+                    </div>
+
+                    {saveForFuture && (
+                      <div className="pt-2 pl-7 space-y-3 border-t border-border/40">
+                        <div className="space-y-1.5">
+                          <span className="text-sm font-medium text-foreground">Address Label</span>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {(['Home', 'Work', 'Other'] as const).map((label) => (
+                              <button
+                                key={label}
+                                type="button"
+                                onClick={() => setSavePresetLabel(label)}
+                                className={cn(
+                                  'px-2.5 py-1 rounded-full text-xs font-medium transition-all border cursor-pointer',
+                                  savePresetLabel === label
+                                    ? 'bg-primary text-primary-foreground border-primary shadow-2xs'
+                                    : 'bg-background hover:bg-muted text-muted-foreground border-border/60'
+                                )}
+                              >
+                                {label}
+                              </button>
+                            ))}
+                          </div>
+                          {savePresetLabel === 'Other' && (
+                            <Input
+                              placeholder="e.g. Studio, Vacation Home"
+                              value={saveCustomLabel}
+                              onChange={(e) => setSaveCustomLabel(e.target.value)}
+                              className="h-9 text-xs mt-1.5"
+                            />
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-0.5">
+                          <Checkbox
+                            id="save-default-toggle"
+                            checked={saveIsDefault}
+                            onCheckedChange={(checked) => setSaveIsDefault(!!checked)}
+                          />
+                          <label
+                            htmlFor="save-default-toggle"
+                            className="text-xs font-medium text-muted-foreground cursor-pointer"
+                          >
+                            Set as default address
+                          </label>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Update Selected Address Controls (Modified Mode) */}
+                {selectedDetailId !== null && hasModifiedSavedAddress && (
+                  <div className="flex items-start gap-3 p-3 rounded-xl border border-primary/30 bg-primary/5">
+                    <Checkbox
+                      id="update-saved-address"
+                      checked={updateSavedAddress}
+                      onCheckedChange={(checked) => setUpdateSavedAddress(!!checked)}
+                      className="mt-0.5"
+                    />
+                    <label htmlFor="update-saved-address" className="text-xs space-y-0.5 cursor-pointer">
+                      <span className="font-medium text-foreground block">
+                        Update saved {selectedSavedDetail?.label || 'address'} with these changes
+                      </span>
+                      <span className="text-muted-foreground block">
+                        Keep these updated details in your saved address book for next time.
+                      </span>
+                    </label>
+                  </div>
+                )}
+
                 {/* Submit Action */}
                 <div className="pt-2">
                   <Button
                     type="submit"
                     size="lg"
                     className="w-full h-11 text-base font-semibold shadow-xs"
-                    disabled={createOrderMutation.isPending}
+                    disabled={isSubmitting}
                   >
-                    {createOrderMutation.isPending ? (
+                    {isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Placing Order...

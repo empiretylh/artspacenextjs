@@ -39,7 +39,8 @@ export const ProfileMedia: React.FC = () => {
 
    const user = getProfile.data.data;
    const { email, first_name, last_name, user_type, profile } = user;
-   const { profile_picture, cover_photo } = profile;
+   const profile_picture = profile?.profile_picture;
+   const cover_photo = profile?.cover_photo;
 
    const fullName =
       `${first_name || ""} ${last_name || ""}`.trim() || "Unnamed User";

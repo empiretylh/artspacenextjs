@@ -67,56 +67,69 @@ export const FeaturedArtistsSlider = () => {
          initial="hidden"
          whileInView="show"
          viewport={{ once: true, margin: "-100px" }}
+         className="space-y-6"
       >
-         <motion.div variants={titleVariants} className="flex justify-between items-end mb-4">
+         <motion.div variants={titleVariants} className="flex justify-between items-center">
             <div>
                <SectionTitle>{t("artists")}</SectionTitle>
+               <p className="text-sm text-muted-foreground mt-1">{t("featuredArtistsSubtitle")}</p>
             </div>
-            <Link to={paths.artists.path}>
-               <Button variant="ghost" className="flex">
-                  {t("viewAll")} <ArrowRight className="ml-2 h-4 w-4" />
-               </Button>
-            </Link>
+            <div className="flex gap-2">
+               <Link to={paths.artists.path}>
+                  <Button variant="link" className="hidden md:flex text-primary">
+                     {t("viewAll")} <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+               </Link>
+               <div className="flex gap-1">
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     aria-label={t("previousSlide")}
+                     className="h-8 w-8 rounded-full swiper-artist-button-prev-custom"
+                  >
+                     <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     aria-label={t("nextSlide")}
+                     className="h-8 w-8 rounded-full swiper-artist-button-next-custom"
+                  >
+                     <ChevronRight className="h-4 w-4" />
+                  </Button>
+               </div>
+            </div>
          </motion.div>
          
          <motion.div variants={contentVariants}>
-            <div className="flex gap-2 mb-4">
-               <Button
-                  variant="outline"
-                  className="swiper-artist-button-prev-custom"
-               >
-                  <ChevronLeft />
-               </Button>
-               <Button
-                  variant="outline"
-                  className="swiper-artist-button-next-custom"
-                >
-                  <ChevronRight />
-               </Button>
-            </div>
-
             <div className="overflow-hidden">
                <Swiper
                   modules={[Navigation]}
                   slidesPerView={3}
+                  slidesPerGroup={1}
                   spaceBetween={8}
                   watchSlidesProgress
                   touchStartPreventDefault={false}
                   breakpoints={{
                      640: {
                         slidesPerView: 3,
+                        spaceBetween: 8,
                      },
                      768: {
                         slidesPerView: 3,
+                        spaceBetween: 8,
                      },
                      1024: {
                         slidesPerView: 4,
+                        spaceBetween: 8,
                      },
                      1280: {
                         slidesPerView: 5,
+                        spaceBetween: 8,
                      },
                      1440: {
                         slidesPerView: 6,
+                        spaceBetween: 8,
                      },
                   }}
                   navigation={{
@@ -133,6 +146,14 @@ export const FeaturedArtistsSlider = () => {
                      </SwiperSlide>
                   ))}
                </Swiper>
+            </div>
+
+            <div className="md:hidden px-4 mt-4">
+               <Link to={paths.artists.path}>
+                  <Button variant="outline" className="w-full">
+                     {t("viewAll")}
+                  </Button>
+               </Link>
             </div>
          </motion.div>
       </motion.section>

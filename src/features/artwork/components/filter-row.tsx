@@ -1,4 +1,5 @@
 'use client'
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
@@ -22,6 +23,7 @@ interface FilterRowProps {
 }
 
 export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
+   const t = useTranslations("Artwork.filters");
    const categoriesQuery = useGetCategories();
    const genresQuery = useGetGenres();
    const stylesQuery = useGetStyles();
@@ -76,7 +78,7 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
                      }
                   }}
                >
-                  Available
+                  {t("available")}
                </Button>
 
                {/* STATUS SELECT */}
@@ -91,23 +93,23 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
                            getFilterValue("status") && getFilterValue("status") !== "ALL" ? activeFilterClass : inactiveFilterClass
                         )}
                      >
-                        <SelectValue placeholder="Status" />
+                        <SelectValue placeholder={t("status")} />
                      </SelectTrigger>
 
                      <SelectContent className="rounded-xl border-none shadow-2xl p-1.5 min-w-[180px]">
                         <SelectGroup>
-                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Search Status</SelectLabel>
-                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">All Statuses</SelectItem>
+                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">{t("searchStatus")}</SelectLabel>
+                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">{t("allStatuses")}</SelectItem>
                            {["AVAILABLE", "SOLD", "NOT_FOR_SALE", "SOLD_OUT"].map((s) => (
                               <SelectItem
                                  key={s}
                                  value={s}
                                  className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5"
                               >
-                                 {s === "AVAILABLE" ? "Available" :
-                                    s === "SOLD" ? "Sold" :
-                                       s === "NOT_FOR_SALE" ? "Not for Sale" :
-                                          s === "SOLD_OUT" ? "Sold Out" : s}
+                                 {s === "AVAILABLE" ? t("available") :
+                                    s === "SOLD" ? t("sold") :
+                                       s === "NOT_FOR_SALE" ? t("notForSale") :
+                                          s === "SOLD_OUT" ? t("soldOut") : s}
                               </SelectItem>
                            ))}
                         </SelectGroup>
@@ -127,13 +129,13 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
                            getFilterValue("category") && getFilterValue("category") !== "ALL" ? activeFilterClass : inactiveFilterClass
                         )}
                      >
-                        <SelectValue placeholder="Category" />
+                        <SelectValue placeholder={t("category")} />
                      </SelectTrigger>
 
                      <SelectContent className="rounded-xl border-none shadow-2xl p-1.5 min-w-[200px]">
                         <SelectGroup>
-                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Categories</SelectLabel>
-                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">All Categories</SelectItem>
+                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">{t("categories")}</SelectLabel>
+                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">{t("allCategories")}</SelectItem>
                            {categories.map((c: any) => (
                               <SelectItem key={c.id} value={c.slug} className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
                                  {c.name}
@@ -156,13 +158,13 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
                            getFilterValue("genre") && getFilterValue("genre") !== "ALL" ? activeFilterClass : inactiveFilterClass
                         )}
                      >
-                        <SelectValue placeholder="Genre" />
+                        <SelectValue placeholder={t("genre")} />
                      </SelectTrigger>
 
                      <SelectContent className="rounded-xl border-none shadow-2xl p-1.5 min-w-[180px]">
                         <SelectGroup>
-                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Genres</SelectLabel>
-                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">All Genres</SelectItem>
+                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">{t("genres")}</SelectLabel>
+                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">{t("allGenres")}</SelectItem>
                            {genres.map((g: any) => (
                               <SelectItem key={g.id} value={g.slug} className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
                                  {g.name}
@@ -185,13 +187,13 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
                            getFilterValue("style") && getFilterValue("style") !== "ALL" ? activeFilterClass : inactiveFilterClass
                         )}
                      >
-                        <SelectValue placeholder="Style" />
+                        <SelectValue placeholder={t("style")} />
                      </SelectTrigger>
 
                      <SelectContent className="rounded-xl border-none shadow-2xl p-1.5 min-w-[180px]">
                         <SelectGroup>
-                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Styles</SelectLabel>
-                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">All Styles</SelectItem>
+                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">{t("styles")}</SelectLabel>
+                           <SelectItem value="ALL" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">{t("allStyles")}</SelectItem>
                            {styles.map((s: any) => (
                               <SelectItem key={s.id} value={s.slug} className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
                                  {s.name}
