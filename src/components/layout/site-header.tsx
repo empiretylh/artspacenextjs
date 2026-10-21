@@ -109,7 +109,7 @@ export function SiteHeader() {
                            data-testid="header-create-artwork-button"
                            onClick={() => setIsArtworkCreateModalOpen(true)}
                            className={cn(
-                              "rounded-full font-semibold transition-all duration-300 hover:scale-105 active:scale-95 shadow-xs flex items-center gap-1.5 select-none cursor-pointer",
+                              "rounded-full font-semibold shadow-xs flex items-center gap-1.5 select-none cursor-pointer",
                               isMy ? "hidden xl:inline-flex h-9 px-4" : "hidden lg:inline-flex h-9 px-4"
                            )}
                         >

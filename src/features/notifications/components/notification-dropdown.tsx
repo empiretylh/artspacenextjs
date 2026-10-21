@@ -64,7 +64,11 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
          <PopoverTrigger asChild>
             <Button
                variant="ghost"
-               className={cn("h-8 w-8 p-0 relative cursor-pointer", className)}
+               size="icon"
+               className={cn(
+                  "rounded-full relative cursor-pointer data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
+                  className
+               )}
                aria-label={t("title")}
             >
                {unreadCount > 0 && (
@@ -141,6 +145,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                   notifications={displayedNotifications.slice(0, 15)}
                   isLoading={isLoading}
                   onItemClick={handleItemClick}
+                  onMarkAsRead={(n) => markAsRead({ id: n.id })}
                   compact
                   className="gap-1.5"
                />

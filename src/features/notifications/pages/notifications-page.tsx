@@ -98,6 +98,7 @@ export const NotificationsPage: React.FC = () => {
                notifications={displayedNotifications}
                isLoading={isLoading}
                onItemClick={handleItemClick}
+               onMarkAsRead={(n) => markAsRead({ id: n.id })}
             />
          </div>
       </div>
