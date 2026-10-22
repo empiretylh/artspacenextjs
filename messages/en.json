@@ -281,7 +281,16 @@
     "noArtworks": "No artworks available.",
     "images": "Images",
     "noImages": "No images available.",
-    "createEvent": "Create Event"
+    "createEvent": "Create Event",
+    "backToEvents": "Back to Events",
+    "ongoing": "Ongoing",
+    "upcoming": "Upcoming",
+    "concluded": "Concluded",
+    "eventOverview": "Exhibition Overview",
+    "dates": "Dates",
+    "type": "Format",
+    "artworksCount": "Artworks",
+    "viewFullImage": "View full image"
   },
   "Settings": {
     "title": "Settings",

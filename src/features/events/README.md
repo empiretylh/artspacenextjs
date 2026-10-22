@@ -19,6 +19,7 @@
 - **`pages/`**:
   - `events-page.tsx`: Public events feed page.
   - `event-detail-page.tsx`: Event detail view.
+  - `event-detail-skeleton.tsx`: Event detail loading skeleton.
 
 ## 🏗️ Technical Logic & Architecture
 

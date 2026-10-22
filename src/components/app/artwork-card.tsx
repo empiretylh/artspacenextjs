@@ -1,9 +1,9 @@
-'use client'
+'use client';
+
 import { useTranslations } from "next-intl";
 import { paths } from "@/config/paths";
 import { cn, getImage, snakeToNormal } from "@/lib/utils";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React from "react";
 import { Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ interface ArtworkCardProps {
    style?: React.CSSProperties;
    publicCard?: boolean;
    pure?: boolean;
+   showLikeButton?: boolean;
 }
 
 const ArtworkCard: React.FC<ArtworkCardProps> = ({
@@ -31,34 +32,34 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    style,
    publicCard = true,
    pure = false,
+   showLikeButton = true,
 }) => {
    const t = useTranslations("Artwork.catalog");
+   const shouldShowLike = showLikeButton && publicCard && !pure;
    const { isLiked, handleLike } = useLike({
       artworkId: String(artwork.id),
       initialLiked: artwork.is_liked,
    });
    const { source } = useSource();
+
    const masonrySizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1536px) 20vw, 300px";
    const defaultSizes = "(max-width: 768px) 100vw, 400px"; // Adjust based on your fixed-height row layout
 
    const handleOnClick = () => {
       const item = itemFromArtwork(artwork);
       ecommerceAnalytics.select_item(source, snakeToNormal(source), [item], source);
-   }
-
-   // if (!artwork.original_width || !artwork.original_height) return null
+   };
 
    return (
       <div style={style} className={cn("group relative w-full overflow-hidden transition-all duration-500", className)}>
          {/* Image + Hover Buttons */}
-
          <div className="relative aspect-square overflow-hidden rounded-sm cursor-pointer">
             {/* Mobile top shadow overlay */}
             <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-black/50 to-transparent z-10 md:hidden pointer-events-none" />
             
             <div className="absolute inset-0 z-10 bg-black/0 transition-colors duration-300 md:group-hover:bg-black/30 pointer-events-none" />
 
-            <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick} className="block w-full h-full">
+            <Link href={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick} className="block w-full h-full">
                <AppImage
                   src={getImage(artwork.image)}
                   alt={artwork.title}
@@ -79,10 +80,11 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
             </Link>
 
             {/* Actions */}
-            {publicCard && !pure && (
+            {shouldShowLike && (
                <button
                   className="absolute top-3 right-3 z-20 text-red-500 hover:text-red-600 focus:outline-none md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"
                   onClick={handleLike}
+                  aria-label="Like artwork"
                >
                   <Heart size={20} className={cn(isLiked ? "fill-red-500" : "fill-none")} />
                </button>
@@ -93,7 +95,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
          {!pure && (
             <div className="pt-3 space-y-1">
                <div className="space-y-0.5">
-                  <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
+                  <Link href={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
                      <h3 className="font-semibold text-sm hover:text-primary transition-colors font-display line-clamp-1 leading-[1.65] pb-0.5">
                         {artwork.title}
                      </h3>
@@ -153,6 +155,7 @@ export default React.memo(ArtworkCard, (prevProps, nextProps) => {
       prevProps.className === nextProps.className &&
       prevProps.variant === nextProps.variant &&
       prevProps.publicCard === nextProps.publicCard &&
-      prevProps.pure === nextProps.pure
+      prevProps.pure === nextProps.pure &&
+      prevProps.showLikeButton === nextProps.showLikeButton
    );
 });
