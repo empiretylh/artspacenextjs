@@ -71,10 +71,19 @@ export const ChatLayout = () => {
 
    // Only bind deep-linked initial context if the active conversation is the target of the deep link
    const activeConversation = conversations.find((c) => c.id === activeConversationId);
+   const activeOtherUserId = activeConversation?.participants.find(
+      (id) => id !== String(currentUser?.id)
+   ) || (activeConversationId?.startsWith("one-on-one-") 
+      ? activeConversationId.replace("one-on-one-", "").split("-").find(id => id !== String(currentUser?.id))
+      : null);
+
+   const chatTargetKey = pendingRecipientId || activeOtherUserId || activeConversationId || "empty";
+
    const isDeepLinkConversation = Boolean(
       userIdParam && (
          pendingRecipientId === userIdParam ||
-         (activeConversation && activeConversation.participants.includes(userIdParam))
+         (activeConversation && activeConversation.participants.includes(userIdParam)) ||
+         (activeConversationId && activeConversationId.includes(userIdParam))
       )
    );
 
@@ -111,7 +120,7 @@ export const ChatLayout = () => {
             `}
          >
             <ChatWindow
-               key={activeConversationId || pendingRecipientId || "empty"}
+               key={chatTargetKey}
                conversationId={activeConversationId}
                recipientId={pendingRecipientId}
                userType={userTypeForChat}

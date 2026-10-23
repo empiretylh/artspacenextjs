@@ -56,9 +56,19 @@ export const ChatWindow = ({
    variant = "default" 
 }: Props) => {
    const t = useTranslations("Chat");
-   const { activeConversationId: storeConvId, pendingRecipientId: storeRecipId } = useChatStore();
+   const { 
+      activeConversationId: storeConvId, 
+      pendingRecipientId: storeRecipId,
+      setActiveConversationId
+   } = useChatStore();
    
-   const conversationId = propConversationId !== undefined ? propConversationId : storeConvId;
+   const [localConvId, setLocalConvId] = useState<string | null>(null);
+
+   useEffect(() => {
+      setLocalConvId(null);
+   }, [propConversationId]);
+
+   const conversationId = propConversationId || localConvId || storeConvId;
    const recipientId = propRecipientId !== undefined ? propRecipientId : storeRecipId;
    
    const { user: currentUser } = useAuth();
@@ -80,9 +90,12 @@ export const ChatWindow = ({
    const { sendMessage } = useSendMessage(conversationId);
 
    const activeConversation = conversations.find((c) => c.id === conversationId);
+   const fallbackOtherUserId = conversationId?.startsWith("one-on-one-")
+      ? conversationId.replace("one-on-one-", "").split("-").find(id => id !== String(currentUser?.id))
+      : null;
    const otherUserId = activeConversation?.participants.find(
       (id) => id !== String(currentUser?.id)
-   );
+   ) || fallbackOtherUserId;
    const finalRecipientId = recipientId || otherUserId || null;
 
    const displayUser: ChatUser | null = activeConversation && otherUserId 
@@ -223,7 +236,7 @@ export const ChatWindow = ({
              </div>
           ) : (
              <ChatInput 
-                key={conversationId || recipientId || "chat-input"}
+                key={finalRecipientId || conversationId || "chat-input"}
                 conversationId={conversationId}
                 initialValue={initialMessage || undefined}
                 attachedOrder={activeOrderCard}
@@ -232,7 +245,18 @@ export const ChatWindow = ({
                    onClearOrderContext?.();
                 }}
                 onSend={async (text, type, mediaUrls, orderCard) => {
-                   await sendMessage(text, recipientUser || undefined, type, mediaUrls as any, orderCard);
+                   const targetRecipient = recipientUser || displayUser || (finalRecipientId ? {
+                      id: finalRecipientId,
+                      name: "User",
+                      avatar: null,
+                      user_type: userType || null,
+                      cover_photo: null,
+                   } : undefined);
+                   const newConvId = await sendMessage(text, targetRecipient, type, mediaUrls as any, orderCard);
+                   if (newConvId && !conversationId) {
+                      setLocalConvId(newConvId);
+                      setActiveConversationId(newConvId);
+                   }
                    setActiveOrderCard(null);
                    onClearOrderContext?.();
                 }} 
