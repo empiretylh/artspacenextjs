@@ -57,12 +57,25 @@ function resolveUrl(relativeUrl: string | null | undefined, baseUrl: string): st
    }
 }
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 export async function GET(req: NextRequest) {
    const { searchParams } = new URL(req.url);
    const targetUrl = searchParams.get("url");
 
    if (!targetUrl) {
-      return NextResponse.json({ error: "Missing url parameter" }, { status: 400 });
+      return NextResponse.json({ error: "Missing url parameter" }, { status: 400, headers: corsHeaders });
    }
 
    let parsedUrl: URL;
@@ -181,6 +194,7 @@ export async function GET(req: NextRequest) {
          },
          {
             headers: {
+               ...corsHeaders,
                "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
             },
          }
@@ -188,11 +202,14 @@ export async function GET(req: NextRequest) {
    } catch {
       clearTimeout(timeoutId);
       // Return a graceful fallback preview with the hostname
-      return NextResponse.json({
-         url: parsedUrl.href,
-         title: parsedUrl.hostname,
-         siteName: parsedUrl.hostname,
-         favicon: `https://www.google.com/s2/favicons?domain=${parsedUrl.hostname}&sz=64`,
-      });
+      return NextResponse.json(
+         {
+            url: parsedUrl.href,
+            title: parsedUrl.hostname,
+            siteName: parsedUrl.hostname,
+            favicon: `https://www.google.com/s2/favicons?domain=${parsedUrl.hostname}&sz=64`,
+         },
+         { headers: corsHeaders }
+      );
    }
 }
