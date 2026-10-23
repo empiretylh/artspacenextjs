@@ -70,7 +70,7 @@ erDiagram
 
 ## 🔃 Data Flow
 
-1. **Initiation**: Chats can be initiated by navigating to `/chats?userId=[id]&userType=[type]` or via the global `useChatStore`.
+1. **Initiation & Scoped Context**: Chats can be initiated by navigating to `/chats?userId=[id]&userType=[type]` or via the global `useChatStore`. Any incoming initial messages and order cards are strictly scoped to the targeted recipient (`userIdParam`); switching conversations in `ChatList` resets context, cleans deep-link query parameters, and remounts `ChatWindow`/`ChatInput` with clean state so uncommitted drafts never leak across chats.
 2. **Lazy Creation**: Conversations are only saved to Firestore when the first message is sent.
 3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore. 
     - **Optimization**: These listeners now call `unsubscribe()` when the browser tab is hidden and re-sync automatically upon focus. This significantly reduces Firestore read billing for background tabs.

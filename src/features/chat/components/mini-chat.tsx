@@ -115,6 +115,7 @@ export const MiniChat = () => {
                 </div>
               ) : (activeConversationId || pendingRecipientId) ? (
                 <ChatWindow
+                  key={activeConversationId || pendingRecipientId || "mini-chat"}
                   variant="mini"
                   onBack={() => setShowList(true)}
                 />

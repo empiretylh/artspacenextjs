@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { paths } from "@/config/paths";
 import { useAuth } from "@/features/auth/store";
 import { cn, getImage, getUserDisplayName, getUserRouteType, timeAgo } from "@/lib/utils";
-import type { Artwork } from "@/types";
+import type { Artwork, User } from "@/types";
 import { useRouter } from "@/i18n/routing";
 import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
@@ -63,15 +63,10 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
       });
    };
 
-   const handleInquire = () => {
-      const targetUser = artwork.artist_profile || artwork.current_owner_display;
-      const targetUserId = targetUser?.id;
-      const targetUserType =
-         targetUser?.user_type === "ARTIST"
-            ? "artists"
-            : targetUser?.user_type === "GALLERY"
-            ? "galleries"
-            : "collectors";
+   const startChatWithUser = (targetUser?: User | null) => {
+      const recipient = targetUser || artwork.current_owner_display || artwork.artist_profile;
+      const targetUserId = recipient?.id;
+      const targetUserType = recipient ? getUserRouteType(recipient.user_type) : undefined;
 
       if (targetUserId) {
          const chatHref = paths.chats.getHref({
@@ -94,6 +89,14 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
       } else {
          router.push(paths.faq.getHref());
       }
+   };
+
+   const handleInquire = () => {
+      startChatWithUser(artwork.current_owner_display || artwork.artist_profile);
+   };
+
+   const handleChatListedUser = () => {
+      startChatWithUser(artwork.current_owner_display);
    };
 
    const isAvailable = artwork.status === "AVAILABLE";
@@ -258,7 +261,7 @@ export function ProductInfoCard({ artwork }: { artwork: Artwork }) {
                      <Button
                         size="sm"
                         variant="ghost"
-                        onClick={handleInquire}
+                        onClick={handleChatListedUser}
                         className="text-xs font-medium text-primary hover:text-primary hover:bg-primary/10 shrink-0 cursor-pointer h-8 px-2.5 rounded-lg"
                      >
                         <MessageSquare className="w-3.5 h-3.5 mr-1.5" />

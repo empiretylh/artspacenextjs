@@ -59,7 +59,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
             
             <div className="absolute inset-0 z-10 bg-black/0 transition-colors duration-300 md:group-hover:bg-black/30 pointer-events-none" />
 
-            <Link href={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick} className="block w-full h-full">
+            <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick} className="block w-full h-full">
                <AppImage
                   src={getImage(artwork.image)}
                   alt={artwork.title}
@@ -95,7 +95,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
          {!pure && (
             <div className="pt-3 space-y-1">
                <div className="space-y-0.5">
-                  <Link href={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
+                  <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
                      <h3 className="font-semibold text-sm hover:text-primary transition-colors font-display line-clamp-1 leading-[1.65] pb-0.5">
                         {artwork.title}
                      </h3>

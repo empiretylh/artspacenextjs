@@ -70,7 +70,7 @@ export const ChatWindow = ({
 
    useEffect(() => {
       const currentKey = orderCard ? `${orderCard.orderId}-${orderCard.orderCode}` : null;
-      if (currentKey && currentKey !== lastLoadedOrderRef.current) {
+      if (currentKey !== lastLoadedOrderRef.current) {
          lastLoadedOrderRef.current = currentKey;
          setActiveOrderCard(orderCard || null);
       }
@@ -223,6 +223,7 @@ export const ChatWindow = ({
              </div>
           ) : (
              <ChatInput 
+                key={conversationId || recipientId || "chat-input"}
                 conversationId={conversationId}
                 initialValue={initialMessage || undefined}
                 attachedOrder={activeOrderCard}

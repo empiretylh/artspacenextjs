@@ -1,7 +1,7 @@
 // components/chat/chat-layout.tsx
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChatList } from "./chat-list";
 import { ChatWindow } from "./chat-window";
@@ -50,9 +50,12 @@ export const ChatLayout = () => {
 
    const effectiveInitialMessage = initialMessageParam || (orderCardData ? generateOrderInquiryMessage(orderCardData) : null);
 
+   const handledDeepLinkRef = useRef<string | null>(null);
+
    // Handle Deep Linking
    useEffect(() => {
       if (!userIdParam || conversationsLoading || !currentUser) return;
+      if (handledDeepLinkRef.current === userIdParam) return;
 
       const existingConv = conversations.find(c => 
          c.participants.includes(userIdParam) && c.participants.includes(String(currentUser.id))
@@ -63,7 +66,21 @@ export const ChatLayout = () => {
       } else {
          setPendingRecipientId(userIdParam);
       }
+      handledDeepLinkRef.current = userIdParam;
    }, [userIdParam, conversations, conversationsLoading, currentUser, setActiveConversationId, setPendingRecipientId]);
+
+   // Only bind deep-linked initial context if the active conversation is the target of the deep link
+   const activeConversation = conversations.find((c) => c.id === activeConversationId);
+   const isDeepLinkConversation = Boolean(
+      userIdParam && (
+         pendingRecipientId === userIdParam ||
+         (activeConversation && activeConversation.participants.includes(userIdParam))
+      )
+   );
+
+   const initialMessageForChat = isDeepLinkConversation ? effectiveInitialMessage : null;
+   const orderCardForChat = isDeepLinkConversation ? orderCardData : null;
+   const userTypeForChat = isDeepLinkConversation ? userTypeParam : null;
 
    return (
       <div className="relative flex h-[calc(100vh-12rem)] w-full overflow-hidden rounded-xl border border-border bg-background shadow-sm">
@@ -81,7 +98,7 @@ export const ChatLayout = () => {
                activeId={activeConversationId}
                onSelect={(id) => {
                   setActiveConversationId(id);
-                  if (userIdParam) router.replace("/chats");
+                  if (searchParams.toString()) router.replace("/chats");
                }}
             />
          </div>
@@ -94,17 +111,18 @@ export const ChatLayout = () => {
             `}
          >
             <ChatWindow
+               key={activeConversationId || pendingRecipientId || "empty"}
                conversationId={activeConversationId}
                recipientId={pendingRecipientId}
-               userType={userTypeParam}
-               initialMessage={effectiveInitialMessage}
-               orderCard={orderCardData}
+               userType={userTypeForChat}
+               initialMessage={initialMessageForChat}
+               orderCard={orderCardForChat}
                onClearOrderContext={() => {
-                  router.replace("/chats");
+                  if (searchParams.toString()) router.replace("/chats");
                }}
                onBack={() => {
                   setActiveConversationId(null);
-                  if (userIdParam) router.replace("/chats");
+                  if (searchParams.toString()) router.replace("/chats");
                }}
             />
          </div>
