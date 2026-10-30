@@ -23,11 +23,22 @@ let initialized = false;
 async function ensureInitialized(): Promise<void> {
    if (initialized) return;
 
+   const webClientId = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+   const iOSClientId = env.NEXT_PUBLIC_GOOGLE_IOS_CLIENT_ID;
+
+   // Without an iOS client ID the plugin silently skips Google initialization
+   // and `login` rejects with "No provider was initialized".
+   if (Capacitor.getPlatform() === "ios" && !iOSClientId) {
+      throw new Error(
+         "NEXT_PUBLIC_GOOGLE_IOS_CLIENT_ID is missing from this build; iOS Google sign-in cannot be initialized",
+      );
+   }
+
    await SocialLogin.initialize({
       google: {
-         webClientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-         iOSClientId: env.NEXT_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-         iOSServerClientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+         webClientId,
+         iOSClientId,
+         iOSServerClientId: webClientId,
          mode: "online",
       },
    });
