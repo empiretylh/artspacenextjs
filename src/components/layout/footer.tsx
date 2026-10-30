@@ -87,7 +87,7 @@ const Footer = ({ className, contentClassName, columnClassName, listClassName }:
 
    return (
       <footer className={cn("border-t border-border bg-background", className)}>
-         <div className={cn("mx-auto py-12 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10", contentClassName)}>
+         <div className={cn("mx-auto pt-12 pb-24 md:py-12 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10", contentClassName)}>
             {/* Navigation sections */}
             {Object.keys(navlinks).map((section) => (
                <div key={section} className={cn("space-y-3", columnClassName)}>

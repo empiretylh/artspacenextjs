@@ -22,7 +22,7 @@ const MainOutlet = ({ children }: MainOutletProps) => {
          //    "mx-auto w-full px-4 pt-4 pb-4 transition-all duration-300",
          //    getClasses()
          // )}
-         className="px-4 pt-4 pb-4"
+         className="px-4 pt-4 pb-20 md:pb-4"
       >
          {/* <Suspense fallback={<LoadingPage />}> */}
          {children}

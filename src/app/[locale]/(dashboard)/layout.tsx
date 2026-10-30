@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import ScrollContainer from "@/components/layout/scroll-contianer";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import EventPopupSlider from "@/features/events/components/event-pop-up-slider";
@@ -31,6 +32,7 @@ const DashboardLayout = async ({ children }: { children?: React.ReactNode }) => 
             {children}
           </ScrollContainer>
         </SidebarInset>
+        <MobileNav />
       </SidebarProvider>
       <EventPopupSlider />
       <MiniChat />
