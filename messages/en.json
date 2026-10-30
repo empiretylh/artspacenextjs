@@ -128,7 +128,11 @@
       "loadMore": "Load More",
       "loadingMore": "Discovering more masterpieces...",
       "endOfCollection": "End of Collection",
-      "inquiryOnly": "Inquiry Only"
+      "inquiryOnly": "Inquiry Only",
+      "available": "Available",
+      "notForSale": "Not for Sale",
+      "sold": "Sold",
+      "soldOut": "Sold Out"
     },
     "filters": {
       "refineSearch": "Refine Search",

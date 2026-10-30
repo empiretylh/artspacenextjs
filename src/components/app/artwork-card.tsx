@@ -23,7 +23,46 @@ interface ArtworkCardProps {
    publicCard?: boolean;
    pure?: boolean;
    showLikeButton?: boolean;
+   showStatus?: boolean;
 }
+
+const getStatusConfig = (
+   status?: string,
+   translate?: (key: string, fallback: string) => string
+) => {
+   if (!status) return null;
+   const normalized = status.toUpperCase();
+
+   const getLabel = (key: string, fallback: string) => {
+      if (translate) return translate(key, fallback);
+      return fallback;
+   };
+
+   switch (normalized) {
+      case "AVAILABLE":
+         return {
+            label: getLabel("available", "Available"),
+            badgeClass: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20",
+         };
+      case "NOT_FOR_SALE":
+         return {
+            label: getLabel("notForSale", "Not for Sale"),
+            badgeClass: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
+         };
+      case "SOLD_OUT":
+         return {
+            label: getLabel("soldOut", "Sold Out"),
+            badgeClass: "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20",
+         };
+      case "SOLD":
+         return {
+            label: getLabel("sold", "Sold"),
+            badgeClass: "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20",
+         };
+      default:
+         return null;
+   }
+};
 
 const ArtworkCard: React.FC<ArtworkCardProps> = ({
    artwork,
@@ -33,9 +72,30 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    publicCard = true,
    pure = false,
    showLikeButton = true,
+   showStatus = true,
 }) => {
    const t = useTranslations("Artwork.catalog");
+   const tFilters = useTranslations("Artwork.filters");
+
+   const translateStatus = React.useCallback((key: string, fallback: string): string => {
+      try {
+         const res = t(key);
+         if (res && typeof res === "string" && !res.startsWith("Artwork.") && !res.includes(".") && res !== key) {
+            return res;
+         }
+      } catch {}
+      try {
+         const res = tFilters(key);
+         if (res && typeof res === "string" && !res.startsWith("Artwork.") && !res.includes(".") && res !== key) {
+            return res;
+         }
+      } catch {}
+      return fallback;
+   }, [t, tFilters]);
+
    const shouldShowLike = showLikeButton && publicCard && !pure;
+   const shouldShowStatus = showStatus && !pure && !!artwork.status;
+   const statusConfig = shouldShowStatus ? getStatusConfig(artwork.status, translateStatus) : null;
    const { isLiked, handleLike } = useLike({
       artworkId: String(artwork.id),
       initialLiked: artwork.is_liked,
@@ -95,13 +155,25 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
          {!pure && (
             <div className="pt-3 space-y-1">
                <div className="space-y-0.5">
-                  <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
-                     <h3 className="font-semibold text-sm hover:text-primary transition-colors font-display line-clamp-1 leading-[1.65] pb-0.5">
-                        {artwork.title}
-                     </h3>
-                  </Link>
+                  <div className="flex items-center justify-between gap-1.5 min-w-0">
+                     <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick} className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-sm hover:text-primary transition-colors font-display truncate leading-[1.65] pb-0.5">
+                           {artwork.title}
+                        </h3>
+                     </Link>
+                     {shouldShowStatus && statusConfig && (
+                        <span
+                           className={cn(
+                              "inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-medium border shrink-0 tracking-tight select-none leading-none",
+                              statusConfig.badgeClass
+                           )}
+                        >
+                           {statusConfig.label}
+                        </span>
+                     )}
+                  </div>
                   {artwork.artist_name && (
-                     <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider">
+                     <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider truncate">
                         {artwork.artist_name}
                      </p>
                   )}
@@ -156,6 +228,7 @@ export default React.memo(ArtworkCard, (prevProps, nextProps) => {
       prevProps.variant === nextProps.variant &&
       prevProps.publicCard === nextProps.publicCard &&
       prevProps.pure === nextProps.pure &&
-      prevProps.showLikeButton === nextProps.showLikeButton
+      prevProps.showLikeButton === nextProps.showLikeButton &&
+      prevProps.showStatus === nextProps.showStatus
    );
 });
