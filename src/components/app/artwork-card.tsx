@@ -155,23 +155,11 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
          {!pure && (
             <div className="pt-3 space-y-1">
                <div className="space-y-0.5">
-                  <div className="flex items-center justify-between gap-1.5 min-w-0">
-                     <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick} className="min-w-0 flex-1">
-                        <h3 className="font-semibold text-sm hover:text-primary transition-colors font-display truncate leading-[1.65] pb-0.5">
-                           {artwork.title}
-                        </h3>
-                     </Link>
-                     {shouldShowStatus && statusConfig && (
-                        <span
-                           className={cn(
-                              "inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-medium border shrink-0 tracking-tight select-none leading-none",
-                              statusConfig.badgeClass
-                           )}
-                        >
-                           {statusConfig.label}
-                        </span>
-                     )}
-                  </div>
+                  <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
+                     <h3 className="font-semibold text-sm hover:text-primary transition-colors font-display line-clamp-1 leading-[1.65] pb-0.5">
+                        {artwork.title}
+                     </h3>
+                  </Link>
                   {artwork.artist_name && (
                      <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider truncate">
                         {artwork.artist_name}
@@ -179,18 +167,16 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                   )}
                </div>
 
-               {(artwork.category_name || artwork.dimensions) && (
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                     {artwork.category_name && (
-                        <span className="text-[9px] font-bold text-primary/80 bg-primary/5 border border-primary/10 px-1.5 py-0.5 rounded-full">
-                           {artwork.category_name}
-                        </span>
-                     )}
-                     {artwork.dimensions && (
-                        <span className="text-[9px] text-muted-foreground">
-                           {artwork.dimensions}
-                        </span>
-                     )}
+               {shouldShowStatus && statusConfig && (
+                  <div className="flex items-center">
+                     <span
+                        className={cn(
+                           "inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-medium border shrink-0 tracking-tight select-none leading-none",
+                           statusConfig.badgeClass
+                        )}
+                     >
+                        {statusConfig.label}
+                     </span>
                   </div>
                )}
 
