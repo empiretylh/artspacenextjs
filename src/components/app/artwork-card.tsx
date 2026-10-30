@@ -46,17 +46,17 @@ const getStatusConfig = (
          };
       case "NOT_FOR_SALE":
          return {
-            label: getLabel("notForSale", "Not for Sale"),
+            label: getLabel("notForSale", "Not for Collect"),
             badgeClass: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
          };
       case "SOLD_OUT":
          return {
-            label: getLabel("soldOut", "Sold Out"),
+            label: getLabel("soldOut", "Collected"),
             badgeClass: "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20",
          };
       case "SOLD":
          return {
-            label: getLabel("sold", "Sold"),
+            label: getLabel("sold", "Collected"),
             badgeClass: "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20",
          };
       default:
