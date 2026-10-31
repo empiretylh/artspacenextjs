@@ -1,7 +1,9 @@
 {
   "Common": {
     "title": "Myanmar Art Space",
-    "back": "Back"
+    "back": "Back",
+    "backToHome": "Back to Home",
+    "backToWebsite": "Back to website"
   },
   "Header": {
     "title": "Myanmar Art Space",
