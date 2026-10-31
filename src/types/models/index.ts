@@ -229,3 +229,17 @@ export interface Banner {
    created_at: string;
    updated_at: string;
 }
+
+
+export interface Report {
+   id: string;
+   reporter: number;
+   artwork?: string | null;
+   reported_user?: number | null;
+   reason: string;
+   created_at: string;
+   resolved: boolean;
+   resolved_by?: number | null;
+   resolved_at?: string | null;
+   admin_note?: string;
+}

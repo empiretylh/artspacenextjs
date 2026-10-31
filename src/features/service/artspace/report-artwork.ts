@@ -1,17 +1,18 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 import { api } from "@/lib/api-client";
-import type { Artwork } from "@/types";
+import type { Report } from "@/types";
 import type { MutationConfig } from "@/lib/react-query";
 
-export const reportArtwork = ({
+export const reportArtwork = async ({
    artworkId,
    report,
 }: {
    artworkId: string;
    report: string;
-}): Promise<Artwork> => {
-   return api.post(`/reports/artwork/`, { artwork: artworkId, reason: report });
+}): Promise<Report> => {
+   const res = await api.post(`/reports/artwork/`, { artwork: artworkId, reason: report });
+   return res.data;
 };
 
 type UseReportArtworkOptions = {
@@ -21,8 +22,6 @@ type UseReportArtworkOptions = {
 export const useReportArtwork = ({
    mutationConfig,
 }: UseReportArtworkOptions = {}) => {
-   const queryClient = useQueryClient();
-
    const { onSuccess, ...restConfig } = mutationConfig || {};
 
    return useMutation({
@@ -30,10 +29,6 @@ export const useReportArtwork = ({
 
       ...restConfig,
       onSuccess: (...args) => {
-         //  queryClient.invalidateQueries({
-         //     queryKey: queryKeys.artwork.all,
-         //  });
-
          onSuccess?.(...args);
       },
    });
