@@ -19,6 +19,9 @@ import { useTranslations } from "next-intl";
 
 import type { LoginFormValues } from "../hooks/use-login-form";
 import GoogleAuthButton from "./google-auth-button";
+import type { User } from "@/types";
+import { AccountTypeChooserDialog } from "./account-type-chooser-dialog";
+import type { SwitchableAccountType } from "@/features/settings/api/switch-account-type";
 
 type Props = {
   form: UseFormReturn<LoginFormValues>;
@@ -28,6 +31,12 @@ type Props = {
   showPassword: boolean;
   setShowPassword: (v: boolean | ((prev: boolean) => boolean)) => void;
   handleGoogleSuccess: (idToken: string) => Promise<void>;
+  onboardingUser?: User | null;
+  handleRoleSelect?: (role: SwitchableAccountType) => Promise<void>;
+  handleRoleSkip?: () => void;
+  isSwitchingRole?: boolean;
+  isRedirecting?: boolean;
+  triggerMockOnboarding?: () => void;
 };
 
 export default function LoginFormView({
@@ -38,6 +47,12 @@ export default function LoginFormView({
   setShowPassword,
   reason,
   handleGoogleSuccess,
+  onboardingUser,
+  handleRoleSelect,
+  handleRoleSkip,
+  isSwitchingRole = false,
+  isRedirecting = false,
+  triggerMockOnboarding,
 }: Props) {
   const t = useTranslations("Auth.login");
 
@@ -65,7 +80,7 @@ export default function LoginFormView({
       )}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
           {/* Email */}
           <FormField
             control={form.control}
@@ -74,7 +89,7 @@ export default function LoginFormView({
               <FormItem>
                 <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("emailLabel")}</FormLabel>
                 <FormControl>
-                  <Input type="email" aria-label="Email address" placeholder={t("emailPlaceholder")} {...field} />
+                  <Input type="email" placeholder={t("emailPlaceholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -92,7 +107,6 @@ export default function LoginFormView({
                   <FormControl>
                     <Input
                       type={showPassword ? "text" : "password"}
-                      aria-label="Password"
                       placeholder="••••••••"
                       {...field}
                       className="pr-10"
@@ -100,8 +114,6 @@ export default function LoginFormView({
                   </FormControl>
                   <button
                     type="button"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    aria-pressed={showPassword}
                     onClick={() => setShowPassword((prev) => !prev)}
                     className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
                   >
@@ -133,23 +145,53 @@ export default function LoginFormView({
               </div>
             </div>
 
-          <div className="flex justify-center w-full overflow-hidden">
-            <GoogleAuthButton
-              onIdToken={handleGoogleSuccess}
-              onError={() => {
-                console.error("Google Login Failed");
-              }}
-              label="Continue with Google"
-            />
-          </div>
+            <div className="flex justify-center w-full overflow-hidden">
+              <GoogleAuthButton
+                onIdToken={handleGoogleSuccess}
+                onError={() => {
+                  console.error("Google Login Failed");
+                }}
+                label="Continue with Google"
+              />
+            </div>
 
             <FieldDescription className="text-center">
               {t("dontHaveAccount")}{" "}
               <Link to={paths.auth.register.path}>{t("signUp")}</Link>
             </FieldDescription>
+
+            {/* Dev Mock Test Trigger (Automatically stripped in production) */}
+            {process.env.NODE_ENV !== "production" && triggerMockOnboarding && (
+              <div className="pt-3 border-t border-dashed border-border/70 flex flex-col items-center gap-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={triggerMockOnboarding}
+                  className="w-full text-xs h-8 border-dashed border-primary/40 text-primary hover:bg-primary/5 font-mono gap-1.5"
+                >
+                  <span>🧪</span>
+                  <span>Test Choose Role Modal (Mock)</span>
+                </Button>
+                <p className="text-[10px] text-muted-foreground/80 font-mono text-center">
+                  (Dev testing helper: test full-screen modal & redirecting flow without Gmail)
+                </p>
+              </div>
+            )}
           </Field>
         </form>
       </Form>
+
+      {/* Google Onboarding Role Chooser Modal */}
+      {onboardingUser && handleRoleSelect && handleRoleSkip && (
+        <AccountTypeChooserDialog
+          open={!!onboardingUser}
+          onSelectRole={handleRoleSelect}
+          onSkip={handleRoleSkip}
+          loading={isSwitchingRole}
+          isRedirecting={isRedirecting}
+        />
+      )}
     </div>
   );
 }

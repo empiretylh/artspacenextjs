@@ -2,12 +2,14 @@ import { doc, setDoc, serverTimestamp, getDocs, collection, query, where, writeB
 import { db } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
 import type { UserDocument } from "../types";
+import type { User } from "@/types";
 import { getUserDisplayName } from "@/lib/utils";
 
 export const useSyncUserProfile = () => {
-   const { user } = useAuth();
+   const { user: hookUser } = useAuth();
 
-   const syncProfile = async (retroactive = false) => {
+   const syncProfile = async (retroactive = false, overrideUser?: User | null) => {
+      const user = overrideUser || useAuth.getState().user || hookUser;
       if (!user?.id || !db) return;
 
       const userIdStr = String(user.id);

@@ -16,6 +16,12 @@ export default function RegisterForm() {
          setShowPassword={vm.setShowPassword}
          showConfirmPassword={vm.showConfirmPassword}
          setShowConfirmPassword={vm.setShowConfirmPassword}
+         onboardingUser={vm.onboardingUser}
+         handleRoleSelect={vm.handleRoleSelect}
+         handleRoleSkip={vm.handleRoleSkip}
+         isSwitchingRole={vm.isSwitchingRole}
+         isRedirecting={vm.isRedirecting}
+         triggerMockOnboarding={vm.triggerMockOnboarding}
       />
    );
 }

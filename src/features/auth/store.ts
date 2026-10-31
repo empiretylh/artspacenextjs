@@ -9,6 +9,7 @@ import { auth as firebaseAuth, db } from "@/features/service/firebase/firebase";
 import { doc, setDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { env } from "@/config/env";
 import { useChatStore } from "@/features/chat/store";
+import Cookies from "js-cookie";
 
 interface RegisterForm {
    email: string;
@@ -235,6 +236,28 @@ export const useAuth = create<State>((set, get) => {
          });
       },
       updateUser: (user: User) => {
+         try {
+            const raw = Cookies.get("artspace_auth_session");
+            if (raw) {
+               let parsed: any = {};
+               try {
+                  parsed = JSON.parse(raw);
+               } catch {
+                  parsed = JSON.parse(decodeURIComponent(raw));
+               }
+               Cookies.set("artspace_auth_session", JSON.stringify({
+                  ...parsed,
+                  user,
+               }), {
+                  expires: 90,
+                  sameSite: "lax",
+                  path: "/",
+               });
+            }
+         } catch (e) {
+            console.warn("Failed to update session cookie:", e);
+         }
+
          set({
             user,
             isBuyer: user.user_type === "BUYER",

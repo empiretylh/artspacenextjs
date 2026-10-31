@@ -9,7 +9,7 @@ export interface User {
    first_name: string;
    last_name: string;
    username?: string;
-   user_type: "BUYER" | "COLLECTOR" | "ARTIST" | "GALLERY";
+   user_type: "BUYER" | "COLLECTOR" | "ARTIST" | "GALLERY" | "ADMIN";
    profile: Profile;
    artwork_count?: number;
    collection_count?: number;

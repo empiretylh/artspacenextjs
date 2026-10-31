@@ -11,13 +11,19 @@ export default function LoginForm() {
 
    return (
       <LoginFormView
-         reason={searchParams.get('reason')}
+         reason={searchParams.get("reason")}
          form={vm.form}
          onSubmit={vm.onSubmit}
          handleGoogleSuccess={vm.handleGoogleSuccess}
          loading={vm.loading}
          showPassword={vm.showPassword}
          setShowPassword={vm.setShowPassword}
+         onboardingUser={vm.onboardingUser}
+         handleRoleSelect={vm.handleRoleSelect}
+         handleRoleSkip={vm.handleRoleSkip}
+         isSwitchingRole={vm.isSwitchingRole}
+         isRedirecting={vm.isRedirecting}
+         triggerMockOnboarding={vm.triggerMockOnboarding}
       />
    );
 }

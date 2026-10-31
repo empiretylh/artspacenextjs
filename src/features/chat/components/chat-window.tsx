@@ -33,6 +33,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getImage, getUserDisplayName, getUserRouteType } from "@/lib/utils";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useSyncUserProfile } from "../hooks/use-sync-user-profile";
 
 type Props = {
    conversationId?: string | null;
@@ -72,6 +73,7 @@ export const ChatWindow = ({
    const recipientId = propRecipientId !== undefined ? propRecipientId : storeRecipId;
    
    const { user: currentUser } = useAuth();
+   const { syncProfile } = useSyncUserProfile();
    const { conversations } = useConversations();
    const { markAsRead } = useMarkRead();
    const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -164,10 +166,12 @@ export const ChatWindow = ({
 
       const nameMismatch = !displayUser?.name || recipientUser.name !== displayUser.name;
       const avatarMismatch = Boolean(recipientUser.avatar && recipientUser.avatar !== displayUser?.avatar);
+      const userTypeMismatch = Boolean(recipientUser?.user_type && recipientUser.user_type !== displayUser?.user_type);
 
       const healKey = `${conversationId}-${finalRecipientId}`;
-      if ((nameMismatch || avatarMismatch) && healedParticipantRef.current[healKey] !== recipientUser.name) {
-         healedParticipantRef.current[healKey] = recipientUser.name;
+      const healStateSig = `${recipientUser.name}_${recipientUser.avatar || ""}_${recipientUser.user_type || ""}`;
+      if ((nameMismatch || avatarMismatch || userTypeMismatch) && healedParticipantRef.current[healKey] !== healStateSig) {
+         healedParticipantRef.current[healKey] = healStateSig;
          const convRef = doc(db, "conversations", conversationId);
          updateDoc(convRef, {
             [`participantDetails.${finalRecipientId}.id`]: finalRecipientId,
@@ -190,6 +194,45 @@ export const ChatWindow = ({
       displayUser?.avatar,
       activeConversation,
    ]);
+
+   // Self-heal current user's profile and participant details in Firestore if role/name/avatar changed
+   useEffect(() => {
+      if (!conversationId || !currentUser?.id || !activeConversation || !db) return;
+
+      const currentUserIdStr = String(currentUser.id);
+      const currentParticipant = activeConversation.participantDetails?.[currentUserIdStr];
+      const currentName = getUserDisplayName(currentUser, currentUser.email || "You");
+      const currentAvatar = currentUser.profile?.profile_picture || null;
+      const currentUserType = currentUser.user_type;
+
+      const myMismatch =
+         !currentParticipant ||
+         currentParticipant.name !== currentName ||
+         currentParticipant.avatar !== currentAvatar ||
+         (currentUserType && currentParticipant.user_type !== currentUserType);
+
+      const myHealKey = `${conversationId}-current-${currentUserIdStr}`;
+      const myHealStateSig = `${currentName}_${currentAvatar || ""}_${currentUserType || ""}`;
+
+      if (myMismatch && healedParticipantRef.current[myHealKey] !== myHealStateSig) {
+         healedParticipantRef.current[myHealKey] = myHealStateSig;
+         // Sync root profile to ensure /users/{uid} is fresh
+         syncProfile();
+
+         // Patch active conversation participantDetails
+         const convRef = doc(db, "conversations", conversationId);
+         updateDoc(convRef, {
+            [`participantDetails.${currentUserIdStr}.id`]: currentUserIdStr,
+            [`participantDetails.${currentUserIdStr}.name`]: currentName,
+            [`participantDetails.${currentUserIdStr}.avatar`]: currentAvatar,
+            ...(currentUserType && { [`participantDetails.${currentUserIdStr}.user_type`]: currentUserType }),
+         }).catch((err) => {
+            if (process.env.NODE_ENV === "development") {
+               console.warn("Could not self-heal current user participantDetails in conversation:", err);
+            }
+         });
+      }
+   }, [conversationId, currentUser, activeConversation, syncProfile]);
 
    if (!conversationId && !recipientId) {
       return (

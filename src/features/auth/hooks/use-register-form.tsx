@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -12,6 +12,8 @@ import { handleFormError } from "@/lib/utils";
 import { authAnalytics, accessAnalytics, UserType } from "@/lib/analytics";
 import { useAuth } from "../store";
 import type { User } from "@/types";
+import { switchAccountType, type SwitchableAccountType } from "@/features/settings/api/switch-account-type";
+import { useSyncUserProfile } from "@/features/chat/hooks/use-sync-user-profile";
 
 const myanmarPhoneRegex = /^(?:\+?95|0)9(?:2|3|4|5|6|7|8|9)\d{6,8}$/;
 
@@ -58,9 +60,46 @@ export function useRegisterForm() {
 
   const { addNotification } = useNotifications();
   const router = useRouter();
+  const { syncProfile } = useSyncUserProfile();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [onboardingUser, setOnboardingUser] = useState<User | null>(null);
+  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  const triggerMockOnboarding = () => {
+    setOnboardingUser({
+      id: 999999,
+      email: "mock.tester@example.com",
+      first_name: "Mock",
+      last_name: "Tester",
+      user_type: "BUYER",
+      profile: {
+        profile_picture: null,
+      },
+    } as any);
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
+      (window as any).__testRoleModal = triggerMockOnboarding;
+      (window as any).__resetRoleOnboarding = () => {
+        const u = useAuth.getState().user;
+        if (u?.id) {
+          localStorage.removeItem(`artspace_role_onboarding_${u.id}`);
+          console.log(`Cleared onboarding flag for user ${u.id}`);
+        }
+      };
+
+      const isTestParam =
+        window.location.hash.includes("testRoleModal=true") ||
+        window.location.search.includes("testRoleModal=true");
+      if (isTestParam && !onboardingUser) {
+        triggerMockOnboarding();
+      }
+    }
+  }, []);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -86,9 +125,6 @@ export function useRegisterForm() {
       });
 
       authAnalytics.signUp({ method: "email" });
-
-      // setRegisterDialogOpen(false);
-      // setLoginDialogOpen(true);
 
       router.push(paths.auth.login.path);
     } else {
@@ -118,6 +154,12 @@ export function useRegisterForm() {
         const { id, user_type } = response as User;
         accessAnalytics.setUser(String(id), user_type.toLocaleLowerCase() as UserType);
 
+        const hasCompletedOnboarding = typeof window !== "undefined" && localStorage.getItem(`artspace_role_onboarding_${id}`);
+        if ((!user_type || user_type === "BUYER") && !hasCompletedOnboarding) {
+          setOnboardingUser(response as User);
+          return;
+        }
+
         router.push(paths.root.path);
       } else {
         addNotification({
@@ -135,6 +177,59 @@ export function useRegisterForm() {
     }
   };
 
+  const handleRoleSelect = async (selectedType: SwitchableAccountType) => {
+    if (!onboardingUser) return;
+    try {
+      setIsSwitchingRole(true);
+
+      if (onboardingUser.id === 999999) {
+        // Mock network delay to demonstrate loading indicator & transitions without backend API requirement
+        await new Promise((resolve) => setTimeout(resolve, 1100));
+      } else {
+        const res = await switchAccountType({ data: { user_type: selectedType } });
+        if (res.data.user) {
+          useAuth.getState().updateUser(res.data.user);
+          syncProfile(true, res.data.user);
+        }
+      }
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem(`artspace_role_onboarding_${onboardingUser.id}`, "true");
+      }
+      setIsSwitchingRole(false);
+      setIsRedirecting(true);
+
+      addNotification({
+        title: "Account Ready!",
+        message: `Account type set to ${selectedType}`,
+        type: "success",
+      });
+
+      // Allow user to see loading / redirecting feedback before navigation
+      setTimeout(() => {
+        router.push(paths.root.path);
+      }, 700);
+    } catch (err: any) {
+      setIsSwitchingRole(false);
+      setIsRedirecting(false);
+      addNotification({
+        title: "Role Selection Error",
+        message: err.response?.data?.user_type?.[0] || err.message || "Failed to update role.",
+        type: "error",
+      });
+    }
+  };
+
+  const handleRoleSkip = () => {
+    if (onboardingUser && typeof window !== "undefined") {
+      localStorage.setItem(`artspace_role_onboarding_${onboardingUser.id}`, "true");
+    }
+    setIsRedirecting(true);
+    setTimeout(() => {
+      router.push(paths.root.path);
+    }, 500);
+  };
+
   return {
     // form + submit
     form,
@@ -145,12 +240,18 @@ export function useRegisterForm() {
     loading,
     showPassword,
     showConfirmPassword,
+    onboardingUser,
+    isSwitchingRole,
+    isRedirecting,
 
     // actions
     setShowPassword,
     setShowConfirmPassword,
+    handleRoleSelect,
+    handleRoleSkip,
+    triggerMockOnboarding,
 
-    // kept available (even if currently commented usage)
+    // kept available
     setRegisterDialogOpen,
     setLoginDialogOpen,
   };

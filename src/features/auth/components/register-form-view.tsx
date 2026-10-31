@@ -26,6 +26,9 @@ import { useTranslations } from "next-intl";
 import { paths } from "@/config/paths";
 import type { RegisterFormValues } from "../hooks/use-register-form";
 import GoogleAuthButton from "./google-auth-button";
+import type { User } from "@/types";
+import { AccountTypeChooserDialog } from "./account-type-chooser-dialog";
+import type { SwitchableAccountType } from "@/features/settings/api/switch-account-type";
 
 type Props = {
   form: UseFormReturn<RegisterFormValues>;
@@ -38,6 +41,13 @@ type Props = {
   showConfirmPassword: boolean;
   setShowConfirmPassword: (v: boolean) => void;
   handleGoogleSuccess: (idToken: string) => Promise<void>;
+
+  onboardingUser?: User | null;
+  handleRoleSelect?: (role: SwitchableAccountType) => Promise<void>;
+  handleRoleSkip?: () => void;
+  isSwitchingRole?: boolean;
+  isRedirecting?: boolean;
+  triggerMockOnboarding?: () => void;
 };
 
 export default function RegisterFormView({
@@ -49,6 +59,12 @@ export default function RegisterFormView({
   showConfirmPassword,
   setShowConfirmPassword,
   handleGoogleSuccess,
+  onboardingUser,
+  handleRoleSelect,
+  handleRoleSkip,
+  isSwitchingRole = false,
+  isRedirecting = false,
+  triggerMockOnboarding,
 }: Props) {
   const t = useTranslations("Auth.register");
 
@@ -297,8 +313,38 @@ export default function RegisterFormView({
             {t("alreadyHaveAccount")}{" "}
             <Link to={paths.auth.login.path}>{t("signIn")}</Link>
           </FieldDescription>
+
+          {/* Dev Mock Test Trigger (Automatically stripped in production) */}
+          {process.env.NODE_ENV !== "production" && triggerMockOnboarding && (
+            <div className="pt-3 border-t border-dashed border-border/70 flex flex-col items-center gap-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={triggerMockOnboarding}
+                className="w-full text-xs h-8 border-dashed border-primary/40 text-primary hover:bg-primary/5 font-mono gap-1.5"
+              >
+                <span>🧪</span>
+                <span>Test Choose Role Modal (Mock)</span>
+              </Button>
+              <p className="text-[10px] text-muted-foreground/80 font-mono text-center">
+                (Dev testing helper: test full-screen modal & redirecting flow without Gmail)
+              </p>
+            </div>
+          )}
         </form>
       </Form>
+
+      {/* Google Onboarding Role Chooser Modal */}
+      {onboardingUser && handleRoleSelect && handleRoleSkip && (
+        <AccountTypeChooserDialog
+          open={!!onboardingUser}
+          onSelectRole={handleRoleSelect}
+          onSkip={handleRoleSkip}
+          loading={isSwitchingRole}
+          isRedirecting={isRedirecting}
+        />
+      )}
     </div>
   );
 }

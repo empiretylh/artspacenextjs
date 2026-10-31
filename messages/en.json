@@ -176,6 +176,20 @@
       "showResults": "Show Results",
       "reset": "Reset"
     },
+    "savedToBoards": "Saved to boards",
+    "saveToBoards": "Save to boards",
+    "keywords": "Keywords",
+    "description": "Description",
+    "aboutArtist": "About the Artist",
+    "youMayAlsoLike": "You May Also Like",
+    "certificateOfAuthenticity": "Certificate of Authenticity",
+    "inquireArtwork": "Inquire to Collect",
+    "viewFullscreen": "Click to expand & zoom",
+    "like": "Like",
+    "liked": "Liked",
+    "share": "Share",
+    "report": "Report",
+    "noDescription": "No description provided.",
     "detail": {
       "backToArtworks": "Back to Artworks",
       "askForCollect": "Ask for collect",
@@ -184,23 +198,13 @@
       "soldOut": "Collected",
       "notForSale": "Not For Sale",
       "saveForLater": "Save for Later",
-      "needHelp": "Need Help?",
-      "securePayment": "Secure payment",
-      "characteristicsTitle": "Characteristics of the Painting",
-      "yearOfCreation": "Year of Creation",
-      "dimensions": "Dimensions",
-      "medium": "Medium",
-      "currentOwner": "Current owner",
-      "artist": "Artist",
-      "category": "Category",
-      "styles": "Styles",
-      "savedToBoards": "Saved to Boards",
-      "saveToBoards": "Save to Boards",
+      "savedToBoards": "Saved to boards",
+      "saveToBoards": "Save to boards",
       "keywords": "Keywords",
       "description": "Description",
       "aboutArtist": "About the Artist",
       "youMayAlsoLike": "You May Also Like",
-      "certificateOfAuthenticity": "Authentic original artwork",
+      "certificateOfAuthenticity": "Certificate of Authenticity",
       "inquireArtwork": "Inquire to Collect",
       "viewFullscreen": "Click to expand & zoom",
       "like": "Like",
@@ -208,7 +212,18 @@
       "share": "Share",
       "report": "Report",
       "views": "views",
-      "noDescription": "No description provided for this artwork."
+      "noDescription": "No description provided.",
+      "needHelp": "Need Help?",
+      "securePayment": "Secure payment",
+      "freeReturns": "Free and easy 14 days returns",
+      "characteristicsTitle": "Characteristics of the Painting",
+      "yearOfCreation": "Year of Creation",
+      "dimensions": "Dimensions",
+      "medium": "Medium",
+      "currentOwner": "Current owner",
+      "artist": "Artist",
+      "category": "Category",
+      "styles": "Styles"
     }
   },
   "Artist": {
@@ -349,15 +364,17 @@
     "shopByGenre": "Shop Paintings by Genre",
     "shopByCategoryAndStyle": "Shop Paintings by Category And Style",
     "artists": "Artists",
-    "featuredArtistsSubtitle": "Explore talented creators and their unique portfolios",
+    "featuredArtistsSubtitle": "Discover talented creators shaping the art landscape",
     "featuredEvents": "Featured Events",
     "featuredEventsSubtitle": "Discover latest art exhibitions and events",
     "featuredArtworks": "Featured Artworks",
     "featuredArtworksSubtitle": "Handpicked pieces from our top artists",
+    "featuredGalleries": "Featured Galleries",
+    "featuredGalleriesSubtitle": "Explore leading galleries and art institutions",
+    "featuredCollectors": "Featured Collectors",
+    "featuredCollectorsSubtitle": "Connect with passionate patrons and art collectors",
     "galleries": "Galleries",
-    "featuredGalleriesSubtitle": "Leading art galleries exhibiting contemporary and classical collections",
     "collectors": "Collectors",
-    "featuredCollectorsSubtitle": "Passionate art enthusiasts shaping the community",
     "category": "Category",
     "style": "Style",
     "exploreAllArtworks": "Explore All Artworks",
@@ -743,5 +760,52 @@
     "stillHaveQuestions": "Still have questions?",
     "contactSupportText": "Can't find the answer you're looking for? Reach out to our dedicated support team or explore our Help Center.",
     "contactSupportButton": "Contact Support"
+  },
+  "AccountType": {
+    "title": "Account Role",
+    "description": "Manage your community role and permissions on Myanmar Art Space.",
+    "currentRole": "Current Role",
+    "switchRole": "Switch Account Role",
+    "switchRoleDesc": "Select a new role to access different capabilities on the platform.",
+    "confirmDialogTitle": "Switch to {role} Account?",
+    "confirmDialogDesc": "Are you sure you want to change your account role to {role}? You will instantly gain access to {role} features. Your artworks, collections, orders, and existing data will remain completely intact.",
+    "confirmButton": "Confirm Switch",
+    "cancelButton": "Cancel",
+    "adminNotice": "Admin and staff accounts cannot switch account types.",
+    "onboardingTitle": "Choose Your MAS Role",
+    "onboardingSubtitle": "How would you like to participate in Myanmar Art Space? You can change this anytime in Settings.",
+    "confirmAndContinue": "Confirm & Continue",
+    "skipForNow": "Skip for now",
+    "buyerExplanation": "As a Buyer, you can browse, like, and purchase artworks. You can upgrade to Artist, Gallery, or Collector whenever you want from Settings.",
+    "switchSuccess": "Account type successfully changed to {role}.",
+    "settingUpAccount": "Preparing your Art Space...",
+    "redirectingNotice": "Customizing your workspace and redirecting you now...",
+    "roles": {
+      "BUYER": {
+        "title": "Buyer",
+        "badge": "Default",
+        "description": "Browse, discover, and purchase original artworks directly from creators."
+      },
+      "ARTIST": {
+        "title": "Artist",
+        "badge": "For Creators",
+        "description": "Showcase artworks, host exhibitions, and connect directly with art collectors."
+      },
+      "GALLERY": {
+        "title": "Gallery",
+        "badge": "For Exhibitors",
+        "description": "Represent artists, organize exhibitions, and manage gallery inventory."
+      },
+      "COLLECTOR": {
+        "title": "Collector",
+        "badge": "For Art Lovers",
+        "description": "Curate private collections, follow top creators, and collect verified art."
+      },
+      "ADMIN": {
+        "title": "Administrator",
+        "badge": "Staff",
+        "description": "System administrator with platform moderation and management privileges."
+      }
+    }
   }
 }
