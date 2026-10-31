@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Capacitor } from "@capacitor/core";
 import { GoogleLogin } from "@react-oauth/google";
 
+import GoogleIcon from "@/components/icons/google-icon";
 import { Button } from "@/components/ui/button";
 
 import { signInWithGoogleNative } from "../lib/native-google-auth";
@@ -74,6 +75,7 @@ export default function GoogleAuthButton({
          disabled={disabled || loading}
          onClick={handleNativeLogin}
       >
+         <GoogleIcon size={18} />
          {loading ? "Signing in..." : label}
       </Button>
    );
