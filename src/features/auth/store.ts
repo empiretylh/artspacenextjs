@@ -1,5 +1,6 @@
 import { authAnalytics } from "@/lib/analytics";
 import { getQueryClient } from "@/lib/get-query-client";
+import { clearPersistedQueryCache } from "@/lib/query-persistence";
 import type { User } from "@/types";
 import type { AxiosError } from "axios";
 import axios from "axios";
@@ -203,6 +204,10 @@ export const useAuth = create<State>((set, get) => {
          }
 
          authAnalytics.logout('profile_menu')
+
+         // Drop cached API data so the next session never sees the previous
+         // user's persisted queries.
+         clearPersistedQueryCache(getQueryClient());
 
          set({
             user: null,

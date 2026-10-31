@@ -4,8 +4,12 @@ import { ErrorFallback } from "@/components/error-fallback/error-fallback";
 import GlobalProvider from "@/components/providers/global-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { getQueryClient } from "@/lib/get-query-client";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import {
+  createQueryCachePersister,
+  QUERY_CACHE_BUSTER,
+  QUERY_CACHE_MAX_AGE,
+} from "@/lib/query-persistence";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Toaster } from "sonner";
@@ -26,6 +30,14 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
   const queryClient = getQueryClient();
 
   /**
+   * Restores the persisted cache before queries subscribe and saves it back on
+   * every cache change, so previously loaded screens stay usable offline.
+   * On the server this is a no-op persister; localStorage is only used in the
+   * browser / Capacitor WebView.
+   */
+  const [persister] = React.useState(createQueryCachePersister);
+
+  /**
    * Tag the document when running inside the Capacitor shell so that
    * safe-area (notch/status bar/home indicator) styles apply only in the app
    * and never on the regular website.
@@ -40,7 +52,14 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
   return (
     <GoogleOAuthProvider clientId={env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
       <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <QueryClientProvider client={queryClient}>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{
+            persister,
+            maxAge: QUERY_CACHE_MAX_AGE,
+            buster: QUERY_CACHE_BUSTER,
+          }}
+        >
           <Toaster richColors className="[&>li]:w-full" />
           <GlobalProvider>
             <ThemeProvider
@@ -52,8 +71,7 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
               {children}
             </ThemeProvider>
           </GlobalProvider>
-          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-        </QueryClientProvider>
+        </PersistQueryClientProvider>
       </ErrorBoundary>
     </GoogleOAuthProvider>
     // <Suspense fallback={<div>Loading...</div>}>

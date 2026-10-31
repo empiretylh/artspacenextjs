@@ -2,6 +2,8 @@ import Axios, { type InternalAxiosRequestConfig } from "axios";
 import { env } from "@/config/env";
 import { useAuth } from "@/features/auth/store";
 import { useNotifications } from "@/components/ui/notifications";
+import { getQueryClient } from "@/lib/get-query-client";
+import { clearPersistedQueryCache } from "@/lib/query-persistence";
 import Cookies from "js-cookie";
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
@@ -87,6 +89,7 @@ api.interceptors.response.use(
                // if (typeof window !== "undefined") {
 
                useAuth.setState({ accessToken: null, user: null });
+               clearPersistedQueryCache(getQueryClient());
                window.location.replace("/sign-in?reason=session_expired&return=" + window.location.pathname);
                // }
             } finally {

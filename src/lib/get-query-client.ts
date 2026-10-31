@@ -10,6 +10,7 @@ function makeQueryClient() {
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60,
+        gcTime: 1000 * 60 * 60 * 24, // keep restored data long enough to persist
         retry: false,               // <- stop automatic retries on failure
         refetchOnWindowFocus: false, // <- prevent auto refetch when user focuses window
         refetchOnReconnect: false,   // <- prevent auto refetch on network reconnect
