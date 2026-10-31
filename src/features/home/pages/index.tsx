@@ -15,6 +15,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/get-query-client";
 import BannerSliderContainer from "../components/banner-slider-container";
 import { MasIntroBanner } from "../components/mas-intro-banner";
+import { HomeSeenTracker } from "../components/home-seen-tracker";
 
 // --- Main App Component ---
 export default async function HomePage() {
@@ -25,6 +26,7 @@ export default async function HomePage() {
 
    return (
       <div className="space-y-9">
+         <HomeSeenTracker />
          <BannerSliderContainer />
          <MasIntroBanner />
          {/* <HeroSection /> */}
