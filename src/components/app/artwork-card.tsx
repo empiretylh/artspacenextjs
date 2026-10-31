@@ -96,6 +96,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    const shouldShowLike = showLikeButton && publicCard && !pure;
    const shouldShowStatus = showStatus && !pure && !!artwork.status;
    const statusConfig = shouldShowStatus ? getStatusConfig(artwork.status, translateStatus) : null;
+   const categoryName = artwork.category_name || artwork.category?.name;
    const { isLiked, handleLike } = useLike({
       artworkId: String(artwork.id),
       initialLiked: artwork.is_liked,
@@ -153,10 +154,10 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
 
          {/* Artwork Info */}
          {!pure && (
-            <div className="pt-3 space-y-1">
+            <div className="pt-2.5 space-y-1.5">
                <div className="space-y-0.5">
                   <Link to={paths.artworks.detail.getHref(artwork.id)} onClick={handleOnClick}>
-                     <h3 className="font-semibold text-sm hover:text-primary transition-colors font-display line-clamp-1 leading-[1.65] pb-0.5">
+                     <h3 className="font-semibold text-sm hover:text-primary transition-colors font-display line-clamp-1 leading-snug">
                         {artwork.title}
                      </h3>
                   </Link>
@@ -164,6 +165,23 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                      <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider truncate">
                         {artwork.artist_name}
                      </p>
+                  )}
+                  {(categoryName || artwork.dimensions) && (
+                     <div className="flex items-center gap-1.5 flex-wrap text-[10px] text-muted-foreground">
+                        {categoryName && (
+                           <span className="font-medium text-foreground/80 truncate">
+                              {categoryName}
+                           </span>
+                        )}
+                        {categoryName && artwork.dimensions && (
+                           <span className="text-muted-foreground/40 shrink-0">·</span>
+                        )}
+                        {artwork.dimensions && (
+                           <span className="truncate">
+                              {artwork.dimensions}
+                           </span>
+                        )}
+                     </div>
                   )}
                </div>
 
@@ -181,9 +199,14 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                )}
 
                {!(artwork.hide_price || !artwork.price || Number(artwork.price) <= 0) ? (
-                  <div className="flex justify-between items-center pt-0.5">
-                     <span className="font-semibold text-sm text-foreground">
-                        <Price currency={artwork.currency} price={artwork.price} uniform size="sm" />
+                  <div className="flex justify-between items-center">
+                     <span className="font-semibold text-sm text-foreground leading-tight">
+                        <Price
+                           currency={artwork.currency}
+                           price={artwork.price}
+                           uniform
+                           size="sm"
+                        />
                      </span>
                   </div>
                ) : (
@@ -210,6 +233,9 @@ export default React.memo(ArtworkCard, (prevProps, nextProps) => {
       prevProps.artwork.price === nextProps.artwork.price &&
       prevProps.artwork.title === nextProps.artwork.title &&
       prevProps.artwork.image === nextProps.artwork.image &&
+      (prevProps.artwork.category_name || prevProps.artwork.category?.name) ===
+         (nextProps.artwork.category_name || nextProps.artwork.category?.name) &&
+      prevProps.artwork.dimensions === nextProps.artwork.dimensions &&
       prevProps.className === nextProps.className &&
       prevProps.variant === nextProps.variant &&
       prevProps.publicCard === nextProps.publicCard &&

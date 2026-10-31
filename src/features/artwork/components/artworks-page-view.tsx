@@ -141,18 +141,18 @@ const ArtworksPageView = ({
                {/* Artworks Grid */}
                <div className="transition-all duration-300 w-full">
                   {options.enableFilters && (
-                     <div className="mb-6">
+                     <div className="mb-3 sm:mb-6">
                         <FilterRow filters={filters} setFilters={setFilters} />
                      </div>
                   )}
 
-                  <div className="space-y-4 px-1">
+                  <div className="space-y-3 sm:space-y-4 px-1">
                      {(isLoading) && <Skeleton className="h-9 w-64 rounded-xl" />}
                      {!isLoading && (
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center justify-between mb-3 sm:mb-6">
                            <h2
                               className={cn(
-                                 "text-3xl font-semibold font-display tracking-tight text-foreground",
+                                 "text-2xl sm:text-3xl font-semibold font-display tracking-tight text-foreground",
                                  titleClassName
                               )}
                            >
@@ -234,10 +234,10 @@ const ArtworksPageView = ({
                      )}
 
                      {(options.enableSorting || options.enableFilters) && (
-                        <div className="flex gap-3 items-center justify-end py-1">
+                        <div className="flex gap-2 sm:gap-3 items-center justify-end py-1">
                            {options.enableSorting && (
-                              <div className="inline-flex gap-3 items-center">
-                                 <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                              <div className="flex-1 sm:flex-initial inline-flex gap-2 sm:gap-3 items-center">
+                                 <Label className="hidden sm:inline-block text-[11px] font-bold uppercase tracking-widest text-muted-foreground whitespace-nowrap">
                                     {tCatalog("sortBy")}
                                  </Label>
                                  <Select
@@ -253,7 +253,7 @@ const ArtworksPageView = ({
                                     }}
                                  >
                                     <SelectTrigger
-                                       className="w-[180px] h-10 rounded-full bg-background dark:bg-background border border-input shadow-xs text-foreground data-[placeholder]:text-foreground [&_svg]:text-foreground [&_svg]:opacity-100 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent transition-all font-semibold focus:ring-primary/20"
+                                       className="w-full sm:w-[180px] h-10 rounded-full bg-background dark:bg-background border border-input shadow-xs text-foreground data-[placeholder]:text-foreground [&_svg]:text-foreground [&_svg]:opacity-100 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent transition-all font-semibold focus:ring-primary/20 text-xs sm:text-sm"
                                        data-testid="artworks-sort-select"
                                     >
                                        <SelectValue placeholder={tCatalog("sortPlaceholder")} />
@@ -283,10 +283,11 @@ const ArtworksPageView = ({
                               <Button
                                  variant="outline"
                                  onClick={() => setIsSidebarOpen(true)}
-                                 className="flex items-center gap-2 rounded-full h-10 px-6 bg-background border border-input shadow-xs hover:bg-accent hover:text-accent-foreground transition-all font-semibold"
+                                 className="flex items-center justify-center gap-2 rounded-full h-10 w-10 sm:w-auto p-0 sm:px-4 shrink-0 bg-background border border-input shadow-xs hover:bg-accent hover:text-accent-foreground transition-all font-semibold"
+                                 aria-label={tCatalog("moreFilters")}
                               >
                                  <FilterIcon className="h-4 w-4" />
-                                 <span className="hidden md:inline">{tCatalog("moreFilters")}</span>
+                                 <span className="hidden sm:inline">{tCatalog("moreFilters")}</span>
                               </Button>
                            )}
                         </div>

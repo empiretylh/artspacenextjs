@@ -59,9 +59,9 @@ export const FilterRow = ({ filters, setFilters }: FilterRowProps) => {
    const inactiveFilterClass = "bg-background dark:bg-background border border-input shadow-xs text-foreground data-[placeholder]:text-foreground [&_svg]:text-foreground [&_svg]:opacity-100 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent font-semibold transition-all";
 
    return (
-      <div className="w-full mb-6">
+      <div className="w-full">
          <ScrollArea className="w-full whitespace-nowrap">
-            <div className="flex w-max items-center space-x-3 py-2 px-1">
+            <div className="flex w-max items-center space-x-2.5 sm:space-x-3 py-1 sm:py-2 px-1">
                {/* QUICK TOGGLE — AVAILABLE */}
                <Button
                   variant="outline"

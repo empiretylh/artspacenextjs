@@ -132,7 +132,7 @@
       "available": "Available",
       "notForSale": "Not for Collect",
       "sold": "Collected",
-      "soldOut": "Sold Out"
+      "soldOut": "Collected"
     },
     "filters": {
       "refineSearch": "Refine Search",
