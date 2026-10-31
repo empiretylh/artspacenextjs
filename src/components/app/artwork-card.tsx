@@ -32,10 +32,9 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    pure = false,
 }) => {
    const t = useTranslations("Artwork.catalog");
-   const { isLiked, count, handleLike } = useLike({
+   const { isLiked, handleLike } = useLike({
       artworkId: String(artwork.id),
       initialLiked: artwork.is_liked,
-      initialCount: artwork.like_count ?? 0,
    });
    const { source } = useSource();
    const masonrySizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1536px) 20vw, 300px";
@@ -98,20 +97,10 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                         {artwork.title}
                      </h3>
                   </Link>
-                  {(artwork.artist_name || count > 0) && (
-                     <div className="flex items-center justify-between gap-2">
-                        {artwork.artist_name && (
-                           <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider">
-                              {artwork.artist_name}
-                           </p>
-                        )}
-                        {count > 0 && (
-                           <span className="inline-flex shrink-0 items-center gap-1 text-[10px] font-medium text-muted-foreground/80">
-                              <Heart size={10} className="fill-red-500/80 text-red-500/80" />
-                              {count.toLocaleString()}
-                           </span>
-                        )}
-                     </div>
+                  {artwork.artist_name && (
+                     <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider">
+                        {artwork.artist_name}
+                     </p>
                   )}
                </div>
 
@@ -156,7 +145,6 @@ export default React.memo(ArtworkCard, (prevProps, nextProps) => {
    return (
       prevProps.artwork.id === nextProps.artwork.id &&
       prevProps.artwork.is_liked === nextProps.artwork.is_liked &&
-      prevProps.artwork.like_count === nextProps.artwork.like_count &&
       prevProps.artwork.status === nextProps.artwork.status &&
       prevProps.artwork.price === nextProps.artwork.price &&
       prevProps.artwork.title === nextProps.artwork.title &&

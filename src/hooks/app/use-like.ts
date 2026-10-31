@@ -10,14 +10,12 @@ import { useSource } from "@/lib/analytics-source";
 interface UseLikeOptions {
    artworkId: string; // postId, commentId, etc.
    initialLiked: boolean;
-   initialCount?: number;
    debounceMs?: number; // optional debounce duration
 }
 
 export function useLike({
    artworkId,
    initialLiked,
-   initialCount = 0,
    debounceMs = 300,
 }: UseLikeOptions) {
    const router = useRouter();
@@ -38,7 +36,6 @@ export function useLike({
    const { mutate } = likeMutation;
 
    const [isLiked, setIsLiked] = useState(initialLiked);
-   const [count, setCount] = useState(initialCount);
 
    // Refs to avoid stale closures inside debounce
    const userRef = useRef(user);
@@ -67,10 +64,7 @@ export function useLike({
          {
             onError: () => {
                // rollback optimistic UI
-               const reverted = !isLikedRef.current;
-               isLikedRef.current = reverted;
-               setIsLiked(reverted);
-               setCount((prev) => Math.max(0, prev + (reverted ? 1 : -1)));
+               setIsLiked((prev) => !prev);
             },
          }
       );
@@ -89,10 +83,8 @@ export function useLike({
          routerRef.current.push(paths.auth.login.path);
          return;
       }
-      const nextLiked = !isLikedRef.current;
-      isLikedRef.current = nextLiked;
-      setIsLiked(nextLiked);
-      setCount((prev) => Math.max(0, prev + (nextLiked ? 1 : -1)));
+      setIsLiked((prev) => !prev);
+      isLikedRef.current = !isLikedRef.current;
       debouncedLikeRef.current?.();
    };
 
@@ -101,13 +93,8 @@ export function useLike({
       setIsLiked(initialLiked);
    }, [initialLiked]);
 
-   useEffect(() => {
-      setCount(initialCount);
-   }, [initialCount]);
-
    return {
       isLiked,
-      count,
       handleLike,
       isMutating: likeMutation.isPending,
    };

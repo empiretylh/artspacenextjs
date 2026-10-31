@@ -64,8 +64,7 @@ The `/artworks` catalog opens as a ranked **Recommended** feed instead of newest
 ### Engagement counts
 `Artwork` payloads now include `view_count`, `like_count` and `save_count` (all optional in the TS type for cached/older payloads):
 
-- `artwork-card.tsx` shows a small red heart + `like_count` when it is greater than zero; the count updates optimistically via `useLike({ initialCount })` and rolls back on mutation error.
-- The detail page shows a compact formatted view count next to the title.
+- The detail page shows a compact formatted view count next to the title. Like counts are intentionally not displayed on catalog cards.
 
 ### View tracking
 `src/features/service/artspace/track-artwork-view.ts` is a fire-and-forget tracker used by the detail page:
