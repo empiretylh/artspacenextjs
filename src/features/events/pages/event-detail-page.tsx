@@ -1,6 +1,7 @@
 'use client';
 
 import ArtworkCard from "@/components/app/artwork-card";
+import type { Artwork } from "@/types";
 import InterestEventButton from "@/components/app/interest-button";
 import AppImage from "@/components/common/app-image";
 import Link from "@/components/common/link";
@@ -74,6 +75,54 @@ export default function EventDetailPage() {
    const endDate = event.end_date
       ? format(new Date(event.end_date), "MMM dd, yyyy")
       : null;
+
+   const getArtworkArtistName = (artwork: Artwork): string | undefined => {
+      // 1. Direct artist_name string on artwork
+      if (artwork.artist_name && artwork.artist_name.trim() !== "") {
+         return artwork.artist_name.trim();
+      }
+
+      // 2. artist_profile User object
+      if (artwork.artist_profile) {
+         const name = getUserDisplayName(artwork.artist_profile, "");
+         if (name && name !== "User") return name;
+      }
+
+      // 3. Raw artist property (can be string or User/Artist object)
+      const rawArtist = (artwork as any).artist;
+      if (typeof rawArtist === "string" && rawArtist.trim() !== "") {
+         return rawArtist.trim();
+      }
+      if (rawArtist && typeof rawArtist === "object") {
+         const name = getUserDisplayName(rawArtist, "");
+         if (name && name !== "User") return name;
+      }
+
+      // 4. Match artist ID against event.artists if artist or artist_id is provided
+      const artistId =
+         (typeof rawArtist === "number" || typeof rawArtist === "string" ? rawArtist : undefined) ||
+         (artwork as any).artist_id ||
+         (artwork as any).artist_profile_id ||
+         (artwork as any).user_id ||
+         (artwork as any).user?.id ||
+         artwork.artist_profile?.id;
+
+      if (artistId !== undefined && event.artists && event.artists.length > 0) {
+         const matchedArtist = event.artists.find((a) => String(a.id) === String(artistId));
+         if (matchedArtist) {
+            const name = getUserDisplayName(matchedArtist, "");
+            if (name && name !== "User") return name;
+         }
+      }
+
+      // 5. Fallback for Solo event or when only 1 artist in event
+      if ((event.event_type?.toUpperCase() === "SOLO" || event.artists?.length === 1) && event.artists?.[0]) {
+         const name = getUserDisplayName(event.artists[0], "");
+         if (name && name !== "User") return name;
+      }
+
+      return undefined;
+   };
 
    return (
       <div className="pb-24 sm:pb-16">
@@ -272,14 +321,22 @@ export default function EventDetailPage() {
 
                   {event.artworks && event.artworks.length > 0 ? (
                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
-                        {event.artworks.map((artwork) => (
-                           <ArtworkCard
-                              key={artwork.id}
-                              artwork={artwork}
-                              showLikeButton={false}
-                              publicCard={false}
-                           />
-                        ))}
+                        {event.artworks.map((artwork) => {
+                           const resolvedArtistName = getArtworkArtistName(artwork);
+                           return (
+                              <ArtworkCard
+                                 key={artwork.id}
+                                 artwork={
+                                    resolvedArtistName && !artwork.artist_name
+                                       ? { ...artwork, artist_name: resolvedArtistName }
+                                       : artwork
+                                 }
+                                 artistName={resolvedArtistName}
+                                 showLikeButton={false}
+                                 publicCard={false}
+                              />
+                           );
+                        })}
                      </div>
                   ) : (
                      <div className="p-8 text-center rounded-xl border border-dashed border-border/70 bg-muted/20">

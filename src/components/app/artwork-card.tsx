@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { paths } from "@/config/paths";
-import { cn, getImage, snakeToNormal } from "@/lib/utils";
+import { cn, getImage, getUserDisplayName, snakeToNormal } from "@/lib/utils";
 import React from "react";
 import { Heart } from "lucide-react";
 
@@ -24,6 +24,7 @@ interface ArtworkCardProps {
    pure?: boolean;
    showLikeButton?: boolean;
    showStatus?: boolean;
+   artistName?: string;
 }
 
 const getStatusConfig = (
@@ -73,6 +74,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    pure = false,
    showLikeButton = true,
    showStatus = true,
+   artistName,
 }) => {
    const t = useTranslations("Artwork.catalog");
    const tFilters = useTranslations("Artwork.filters");
@@ -97,6 +99,20 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    const shouldShowStatus = showStatus && !pure && !!artwork.status;
    const statusConfig = shouldShowStatus ? getStatusConfig(artwork.status, translateStatus) : null;
    const categoryName = artwork.category_name || artwork.category?.name;
+   const displayArtistName =
+      artistName ||
+      artwork.artist_name ||
+      (artwork.artist_profile ? getUserDisplayName(artwork.artist_profile, "") : "") ||
+      (typeof (artwork as any).artist === "string"
+         ? (artwork as any).artist
+         : (artwork as any).artist
+         ? getUserDisplayName((artwork as any).artist, "")
+         : "") ||
+      (typeof (artwork as any).creator === "string"
+         ? (artwork as any).creator
+         : (artwork as any).creator
+         ? getUserDisplayName((artwork as any).creator, "")
+         : "");
    const { isLiked, count, handleLike } = useLike({
       artworkId: String(artwork.id),
       initialLiked: artwork.is_liked,
@@ -162,11 +178,11 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                         {artwork.title}
                      </h3>
                   </Link>
-                  {(artwork.artist_name || count > 0) && (
+                  {(displayArtistName || count > 0) && (
                      <div className="flex items-center justify-between gap-2">
-                        {artwork.artist_name && (
+                        {displayArtistName && (
                            <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider truncate">
-                              {artwork.artist_name}
+                              {displayArtistName}
                            </p>
                         )}
                         {count > 0 && (
@@ -239,6 +255,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
 export default React.memo(ArtworkCard, (prevProps, nextProps) => {
    return (
       prevProps.artwork.id === nextProps.artwork.id &&
+      prevProps.artistName === nextProps.artistName &&
       prevProps.artwork.is_liked === nextProps.artwork.is_liked &&
       prevProps.artwork.like_count === nextProps.artwork.like_count &&
       prevProps.artwork.status === nextProps.artwork.status &&
@@ -248,6 +265,7 @@ export default React.memo(ArtworkCard, (prevProps, nextProps) => {
       (prevProps.artwork.category_name || prevProps.artwork.category?.name) ===
          (nextProps.artwork.category_name || nextProps.artwork.category?.name) &&
       prevProps.artwork.dimensions === nextProps.artwork.dimensions &&
+      prevProps.artwork.artist_name === nextProps.artwork.artist_name &&
       prevProps.className === nextProps.className &&
       prevProps.variant === nextProps.variant &&
       prevProps.publicCard === nextProps.publicCard &&
