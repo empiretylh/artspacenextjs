@@ -48,6 +48,33 @@ To guarantee premium presentation on platforms like Telegram, Facebook, LinkedIn
   - Dual metadata fallback with explicit `image/png` MIME types and direct artwork image fallbacks.
 - **Unified API Route**: Located at [route.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/app/api/og/route.tsx) which is called with a dynamic artwork ID query parameter (e.g., `/api/og?id=[id]`) to inject crisp, high-fidelity sharing preview images into the page SEO metadata.
 
+## 🧭 Discovery Feed (Recommended / Trending / Most Liked / Most Viewed)
+
+The `/artworks` catalog opens as a ranked **Recommended** feed instead of newest-first. The URL stays the source of truth; ordering is driven entirely by the `ordering` query param.
+
+- **Default (no `ordering`, no `search`)**: backend ranks by `trending_score`, with light personalization for signed-in users (followed artists, category/genre/style affinity from recent likes, saves and views). Already liked/saved artworks are demoted. Anonymous visitors get the global trending order.
+- **Sort menu values** (see `artworks-page-view.tsx`):
+  - `recommended` → clears `sort` so the request omits `ordering`
+  - `trending_score-desc` → global trending
+  - `like_count-desc` / `view_count-desc` → lifetime Most Liked / Most Viewed
+  - `created_at-desc|asc`, `price-asc|desc` → existing behavior
+- **Search precedence**: when `search` is present, relevance ordering wins and the ranked feed is not applied.
+- **Homepage "Featured"** is pinned to `created_at desc` explicitly (`featured-artworks-section.tsx`) so it keeps its curated newest-first feel.
+
+### Engagement counts
+`Artwork` payloads now include `view_count`, `like_count` and `save_count` (all optional in the TS type for cached/older payloads):
+
+- `artwork-card.tsx` shows a small red heart + `like_count` when it is greater than zero; the count updates optimistically via `useLike({ initialCount })` and rolls back on mutation error.
+- The detail page shows a compact formatted view count next to the title.
+
+### View tracking
+`src/features/service/artspace/track-artwork-view.ts` is a fire-and-forget tracker used by the detail page:
+
+- `POST /artworks/artworks/:id/view/` with `{ visitor_id, source }`.
+- `visitor_id` is a UUID persisted in `localStorage` (`mas_visitor_id`); signed-in requests are keyed by the JWT user server-side.
+- The client guards with a module-level in-flight `Set` plus `sessionStorage["mas_viewed:<id>"]`, so a view is sent at most once per artwork per browser session. The backend additionally dedupes **one view per visitor per artwork per calendar day**, so repeat reloads never inflate the counter.
+- Private artworks are not tracked (the request is a no-op / not recorded).
+
 ## 📊 Model Enums
 | Property | Valid Values |
 | :--- | :--- |

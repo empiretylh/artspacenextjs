@@ -10,15 +10,16 @@ import ArtworkImage from "../components/artwork-image";
 import { ProductInfoCard } from "../components/product-info-card";
 import RelatedArtworkListContainer from "../components/related-artwork-list-container";
 import ArtworkDetailPageSkeleton from "./artwork-skeleton";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import LoadingPage from "@/components/page/loading-page";
 import { notFound } from "next/navigation";
 import { ecommerceAnalytics, itemFromArtwork } from "@/lib/analytics";
 import { useSource } from "@/lib/analytics-source";
-import { ArrowLeft, Heart } from "lucide-react";
+import { ArrowLeft, Eye, Heart } from "lucide-react";
+import { trackArtworkView } from "@/features/service/artspace/track-artwork-view";
 import { useSafeBack } from "@/hooks/use-safe-back";
 import { paths } from "@/config/paths";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useAuth } from "@/features/auth/store";
 import { getUserDisplayName, cn } from "@/lib/utils";
 import Link from "@/components/common/link";
@@ -26,15 +27,18 @@ import { useLike } from "@/hooks/app/use-like";
 
 const ArtworkDetailPage = ({ id }: { id: string }) => {
    const t = useTranslations("Artwork.detail");
+   const format = useFormatter();
    const { goBack } = useSafeBack(paths.artworks.path);
    const artworkQuery = useGetArtwork({ artworkId: id });
    const artwork = artworkQuery.data;
    const { source } = useSource();
    const { loading: authLoading } = useAuth();
+   const [viewCount, setViewCount] = useState<number | undefined>(undefined);
 
    const { isLiked, handleLike } = useLike({
       artworkId: String(id),
       initialLiked: Boolean(artwork?.is_liked),
+      initialCount: artwork?.like_count ?? 0,
    });
 
    useEffect(() => {
@@ -49,6 +53,25 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
       }
    }, [artwork, source]);
 
+   // Register a deduped view once the artwork is known. The server enforces
+   // one view per visitor per artwork per day, so a session guard is enough
+   // on the client to avoid redundant requests.
+   useEffect(() => {
+      setViewCount(undefined);
+      if (!artwork?.id) return;
+
+      let cancelled = false;
+      trackArtworkView(String(artwork.id)).then((count) => {
+         if (!cancelled && typeof count === "number") {
+            setViewCount(count);
+         }
+      });
+
+      return () => {
+         cancelled = true;
+      };
+   }, [artwork?.id]);
+
    if (artworkQuery.isLoading || authLoading) {
       return <ArtworkDetailPageSkeleton />;
    }
@@ -60,6 +83,10 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
    const artistDisplayName =
       artwork.artist_name ||
       (artwork.artist_profile ? getUserDisplayName(artwork.artist_profile) : null);
+
+   // Prefer the fresh count returned by the view endpoint; fall back to the
+   // value shipped with the artwork payload.
+   const displayedViews = viewCount ?? artwork.view_count ?? 0;
 
    return (
       <section aria-labelledby="artwork-title" className="pb-12">
@@ -100,6 +127,19 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
                      </span>
                   ) : null}
                </h1>
+
+               {displayedViews > 0 && (
+                  <p className="flex items-center gap-1.5 text-xs text-muted-foreground pt-0.5">
+                     <Eye className="w-3.5 h-3.5" aria-hidden="true" />
+                     <span>
+                        {format.number(displayedViews, {
+                           notation: "compact",
+                           maximumFractionDigits: 1,
+                        })}{" "}
+                        {t("views")}
+                     </span>
+                  </p>
+               )}
             </div>
          </div>
 

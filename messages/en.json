@@ -117,6 +117,11 @@
       "max": "Max",
       "sortBy": "Sort By",
       "sortPlaceholder": "Sort by",
+      "discover": "Discover",
+      "recommended": "Recommended",
+      "trending": "Trending",
+      "mostLiked": "Most Liked",
+      "mostViewed": "Most Viewed",
       "ordering": "Ordering",
       "sortDateNewest": "Date: Newest",
       "sortDateOldest": "Date: Oldest",
@@ -195,6 +200,7 @@
       "liked": "Liked",
       "share": "Share",
       "report": "Report",
+      "views": "views",
       "noDescription": "No description provided for this artwork."
     }
   },
