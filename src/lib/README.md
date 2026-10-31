@@ -21,5 +21,5 @@
 
 ## ⚠️ Known Gotchas for AI
 - **Authorization**: Do not manually set `Authorization` headers in components or services. The `api` client handles this globally.
-- **Refresh Flow**: The token refresh logic is "Silent" and "Queued"—multiple failing requests will wait for a single refresh call.
+- **Refresh Flow**: The token refresh logic is "Silent" and "Queued"—multiple failing requests will wait for a single refresh call. The user is signed out and redirected to `sign-in` **only** when `/api/auth/refresh` answers `401`; network errors and `503`s keep the existing session so transient backend outages cannot log people out.
 - **Analytics Sources**: When adding new buttons or links, always check the `AnalyticsSource` type in `analytics.ts` to ensure tracking consistency.

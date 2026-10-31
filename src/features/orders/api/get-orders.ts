@@ -1,4 +1,5 @@
 import { api } from "@/lib/api-client";
+import { isEndpointUnavailable } from "@/lib/api-unavailable";
 import { normalizeListResponse } from "@/lib/utils";
 import type { QueryConfig } from "@/lib/react-query";
 import type {
@@ -16,6 +17,10 @@ export const getOrders = (
    limit = 10,
    search = ""
 ): Promise<ListApiResponse<Order>> => {
+   if (isEndpointUnavailable("orders")) {
+      return Promise.resolve(normalizeListResponse<Order>(undefined));
+   }
+
    // Keep the existing mock logic for general getOrders if needed, 
    // but primarily we want the real API for the user list.
    return api.get(`/orders`, {
@@ -123,6 +128,10 @@ export const useGetOrders = ({
 };
 
 export const getUserOrders = async (userId: number, page: number = 1, filters: Record<string, any> = {}): Promise<ListApiResponse<Order>> => {
+   if (isEndpointUnavailable("orders")) {
+      return normalizeListResponse<Order>(undefined);
+   }
+
    const res = await api.get(`/orders/orders/`, {
       params: { user: userId, page, ...filters },
       paramsSerializer: (params) => {

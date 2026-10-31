@@ -3,6 +3,7 @@
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
 import { FieldDescription } from "@/components/ui/field";
+import { useNotifications } from "@/components/ui/notifications";
 import {
   Form,
   FormControl,
@@ -51,6 +52,7 @@ export default function RegisterFormView({
   handleGoogleSuccess,
 }: Props) {
   const t = useTranslations("Auth.register");
+  const { addNotification } = useNotifications();
 
   return (
     <div className="">
@@ -286,8 +288,12 @@ export default function RegisterFormView({
           <div className="flex justify-center w-full overflow-hidden">
             <GoogleAuthButton
               onIdToken={handleGoogleSuccess}
-              onError={() => {
-                console.error("Google Registration Failed");
+              onError={(message) => {
+                addNotification({
+                  type: "error",
+                  title: "Google sign-up failed",
+                  message: message || "Please try again.",
+                });
               }}
               label="Continue with Google"
             />

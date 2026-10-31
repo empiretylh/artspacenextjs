@@ -33,6 +33,11 @@ This feature allows users to maintain their public presence and control their pr
 - Allows users to maintain their shipping address book outside of the checkout workflow.
 - Supports adding new addresses, editing contacts, setting a preferred default address, and deletion with confirmation.
 
+### 4. Preferences (Mobile Only)
+- The mobile header exposes Search, Notifications, Create, and Profile icons directly; the previous three-dot menu (which held language and theme) was removed.
+- Language (`LanguageSwitcher`) and Theme (`ThemeSwitcher`) therefore live in a `md:hidden` **Preferences** card at the top of the settings page.
+- Guests cannot open `/settings` (protected route), so the mobile sidebar footer (`app-sidbar-footer.tsx`) renders the same two switchers below `md` as a fallback.
+
 ## 📂 Key Files
 - [index.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/settings/index.tsx): The settings page view orchestrating the hero studio banner, categorized profile details, saved delivery addresses, and account safety cards.
 - [saved-addresses-card.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/settings/components/saved-addresses-card.tsx): Shipping addresses management card interfacing with customer checkout details API.

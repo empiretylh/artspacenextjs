@@ -3,6 +3,7 @@ import { env } from "@/config/env";
 import { useAuth } from "@/features/auth/store";
 import { useChatStore } from "@/features/chat/store";
 import { useNotifications } from "@/components/ui/notifications";
+import { markUrlUnavailable } from "@/lib/api-unavailable";
 import Cookies from "js-cookie";
 
 function parseAuthCookie() {
@@ -87,27 +88,33 @@ api.interceptors.response.use(
          refreshing ??= (async () => {
             try {
                const res = await fetch("/api/auth/refresh", { method: "POST" });
+
+               if (res.status === 401) {
+                  // The backend explicitly rejected the refresh token: the
+                  // session is really over, so sign the user out.
+                  useAuth.setState({ accessToken: null, user: null });
+                  useChatStore.getState().closeChat();
+                  if (typeof window !== "undefined") {
+                     sessionStorage.removeItem("artspace_chats_visited");
+                     window.location.replace(
+                        "/sign-in?reason=session_expired&return=" + window.location.pathname,
+                     );
+                  }
+                  return null;
+               }
+
+               // 5xx / network hiccup: keep the session alive and let the
+               // request fail quietly instead of logging the user out.
+               if (!res.ok) return null;
+
                const data = await res.json();
+               if (!data?.access) return null;
 
-               if (!res.ok) throw new Error();
-
-               // Update Zustand with the new short-lived access token
-               // if (typeof window !== "undefined") {
                useAuth.setState({ accessToken: data.access });
-               // }
-
                return data.access;
             } catch {
-               // Global logout on failure
-               // if (typeof window !== "undefined") {
-
-               useAuth.setState({ accessToken: null, user: null });
-               useChatStore.getState().closeChat();
-               if (typeof window !== "undefined") {
-                  sessionStorage.removeItem("artspace_chats_visited");
-               }
-               window.location.replace("/sign-in?reason=session_expired&return=" + window.location.pathname);
-               // }
+               // Transport failure (offline, DNS, aborted): never sign out.
+               return null;
             } finally {
                refreshing = null;
             }
@@ -125,6 +132,11 @@ api.interceptors.response.use(
             // ✅ Return the retried request, don’t reject yet
             return api(retryConfig);
          }
+      }
+
+      if (error.response?.status === 503 && markUrlUnavailable(original?.url)) {
+         // The endpoint is down and has been disabled for this session; no toast.
+         return Promise.reject(error);
       }
 
       const message = error.response?.data?.detail || error.message;

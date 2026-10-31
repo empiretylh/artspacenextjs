@@ -141,7 +141,7 @@ const ArtworksPageView = ({
                {/* Artworks Grid */}
                <div className="transition-all duration-300 w-full">
                   {options.enableFilters && (
-                     <div className="mb-3 sm:mb-6">
+                     <div className="mb-3 sm:mb-6 hidden md:block">
                         <FilterRow filters={filters} setFilters={setFilters} />
                      </div>
                   )}
@@ -149,7 +149,7 @@ const ArtworksPageView = ({
                   <div className="space-y-3 sm:space-y-4 px-1">
                      {(isLoading) && <Skeleton className="h-9 w-64 rounded-xl" />}
                      {!isLoading && (
-                        <div className="flex items-center justify-between mb-3 sm:mb-6">
+                        <div className={cn("flex items-center justify-between mb-3 sm:mb-6", !title && "hidden md:flex")}>
                            <h2
                               className={cn(
                                  "text-2xl sm:text-3xl font-semibold font-display tracking-tight text-foreground",
@@ -255,7 +255,7 @@ const ArtworksPageView = ({
                                     }}
                                  >
                                     <SelectTrigger
-                                       className="w-full sm:w-[180px] h-10 rounded-full bg-background dark:bg-background border border-input shadow-xs text-foreground data-[placeholder]:text-foreground [&_svg]:text-foreground [&_svg]:opacity-100 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent transition-all font-semibold focus:ring-primary/20 text-xs sm:text-sm"
+                                       className="w-full sm:w-[180px] h-9 sm:h-10 rounded-full bg-background dark:bg-background border border-input shadow-xs text-foreground data-[placeholder]:text-foreground [&_svg]:text-foreground [&_svg]:opacity-100 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent transition-all font-semibold focus:ring-primary/20 text-xs sm:text-sm"
                                        data-testid="artworks-sort-select"
                                     >
                                        <SelectValue placeholder={tCatalog("sortPlaceholder")} />
@@ -300,7 +300,7 @@ const ArtworksPageView = ({
                               <Button
                                  variant="outline"
                                  onClick={() => setIsSidebarOpen(true)}
-                                 className="flex items-center justify-center gap-2 rounded-full h-10 w-10 sm:w-auto p-0 sm:px-4 shrink-0 bg-background border border-input shadow-xs hover:bg-accent hover:text-accent-foreground transition-all font-semibold"
+                                 className="flex items-center justify-center gap-2 rounded-full h-9 w-9 sm:h-10 sm:w-auto p-0 sm:px-4 shrink-0 bg-background border border-input shadow-xs hover:bg-accent hover:text-accent-foreground transition-all font-semibold"
                                  aria-label={tCatalog("moreFilters")}
                               >
                                  <FilterIcon className="h-4 w-4" />

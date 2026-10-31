@@ -3,13 +3,10 @@ import { Button } from "@/components/ui/button";
 import { paths } from "@/config/paths";
 import ArtworkCreateModal from "@/features/artwork/components/artwork-create-modal";
 import { useAuth } from "@/features/auth/store";
-import { useCartStore } from "@/features/cart/store/cart-store";
 import { cn } from "@/lib/utils";
 import AppImage from "@/components/common/app-image";
 import {
    ArrowLeft,
-   Bell,
-   MoreVerticalIcon,
    Search,
    Plus
 } from "lucide-react";
@@ -20,17 +17,10 @@ import { ProfileDropdown } from "../app/profile-dropdown";
 import Link from "../common/link";
 import { ThemeSwitcher } from "../theme-switcher";
 import { LanguageSwitcher } from "./language-switcher";
-import {
-   DropdownMenu,
-   DropdownMenuContent,
-   DropdownMenuItem,
-   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import { SidebarTrigger } from "../ui/sidebar";
 import { SourceProvider } from "@/lib/analytics-source";
 import { useTranslations, useLocale } from "next-intl";
-import { NotificationDropdown, useNotifications } from "@/features/notifications";
-import { useRouter } from "@/i18n/routing";
+import { NotificationDropdown } from "@/features/notifications";
 
 export function SiteHeader() {
    const t = useTranslations("Header");
@@ -39,14 +29,11 @@ export function SiteHeader() {
 
    const [isArtworkCreateModalOpen, setIsArtworkCreateModalOpen] =
       useState(false);
-   const { items } = useCartStore();
    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
    const handleMobileSearchOpen = () => setMobileSearchOpen(true);
    const handleMobileSearchClose = () => setMobileSearchOpen(false);
    const { user } = useAuth();
    const isLoggedIn = !!user;
-   const router = useRouter();
-   const { unreadCount } = useNotifications();
 
    return (
       <SourceProvider value={{ source: "header" }}>
@@ -58,6 +45,7 @@ export function SiteHeader() {
                      onClick={handleMobileSearchClose}
                      variant="ghost"
                      className="h-10 w-10 p-0"
+                     aria-label={t("search")}
                   >
                      <ArrowLeft className="size-6" />
                   </Button>
@@ -97,7 +85,7 @@ export function SiteHeader() {
                   </div>
  
                   {/* Right Section */}
-                  <div className="flex items-center justify-end gap-2 ml-auto">
+                  <div className="flex items-center justify-end gap-1 sm:gap-2 ml-auto">
                      {/* Mobile Search Icon */}
                      <Button
                         onClick={handleMobileSearchOpen}
@@ -105,122 +93,59 @@ export function SiteHeader() {
                         size="icon"
                         className="h-10 w-10 p-0 lg:hidden"
                         data-testid="open-search"
+                        aria-label={t("search")}
                      >
                         <Search className="size-6" />
                      </Button>
- 
-                     <NotificationDropdown className="hidden lg:flex" />
- 
+
                      {isLoggedIn && (
-                        <Button
-                           data-testid="header-create-artwork-button"
-                           onClick={() => setIsArtworkCreateModalOpen(true)}
-                           className={cn(
-                              "rounded-full font-semibold shadow-xs flex items-center gap-1.5 select-none cursor-pointer",
-                              isMy ? "hidden xl:inline-flex h-9 px-4" : "hidden lg:inline-flex h-9 px-4"
-                           )}
-                        >
-                           <Plus className="h-4 w-4 shrink-0" />
-                           <span>{t("create")}</span>
-                        </Button>
+                        <>
+                           <NotificationDropdown />
+
+                           {/* Compact Create (mobile / tablet) */}
+                           <Button
+                              data-testid="mobile-header-create-artwork-button"
+                              onClick={() => setIsArtworkCreateModalOpen(true)}
+                              variant="ghost"
+                              size="icon"
+                              aria-label={t("create")}
+                              className={cn(
+                                 "rounded-full h-10 w-10 p-0 cursor-pointer",
+                                 isMy ? "xl:hidden" : "lg:hidden"
+                              )}
+                           >
+                              <Plus className="size-6" />
+                           </Button>
+
+                           {/* Labeled Create (desktop) */}
+                           <Button
+                              data-testid="header-create-artwork-button"
+                              onClick={() => setIsArtworkCreateModalOpen(true)}
+                              className={cn(
+                                 "rounded-full font-semibold shadow-xs items-center gap-1.5 select-none cursor-pointer",
+                                 isMy ? "hidden xl:inline-flex h-9 px-4" : "hidden lg:inline-flex h-9 px-4"
+                              )}
+                           >
+                              <Plus className="h-4 w-4 shrink-0" />
+                              <span>{t("create")}</span>
+                           </Button>
+                        </>
                      )}
 
-                     {/* Auth Buttons / Profile */}
+                     {/* Auth Button / Profile */}
                      {!isLoggedIn ? (
-                        <>
-                           <Link
-                              to={paths.auth.login.path}
-                              className={cn(isMy ? "hidden 2xl:inline-flex" : "hidden xl:inline-flex")}
-                           >
-                              <Button className="rounded-full h-8">{t("signIn")}</Button>
-                           </Link>
-                           <Link
-                              to={paths.auth.register.path}
-                              className="inline-flex shrink-0"
-                           >
-                              <Button variant="outline" className="rounded-full h-8 px-3 sm:px-4 text-xs sm:text-sm font-medium">
-                                 {t("joinNow")}
-                              </Button>
-                           </Link>
-                        </>
+                        <Link
+                           to={paths.auth.login.path}
+                           className="inline-flex shrink-0"
+                        >
+                           <Button className="rounded-full h-8 px-3 sm:px-4 text-xs sm:text-sm font-semibold">
+                              {t("signIn")}
+                           </Button>
+                        </Link>
                      ) : (
                         <ProfileDropdown />
                      )}
 
-                     <div
-                        className={cn(
-                           "flex items-center",
-                           isLoggedIn && (isMy ? "xl:hidden" : "lg:hidden"),
-                           !isLoggedIn && (isMy ? "2xl:hidden" : "xl:hidden")
-                        )}
-                     >
-                        <DropdownMenu>
-                           <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-10 w-10 p-0">
-                                 <MoreVerticalIcon className="size-6" />
-                              </Button>
-                           </DropdownMenuTrigger>
-                           <DropdownMenuContent align="end" className="w-56">
-                              {isLoggedIn && (
-                                 <DropdownMenuItem
-                                    data-testid="mobile-header-create-artwork-button"
-                                    onClick={() =>
-                                       setIsArtworkCreateModalOpen(true)
-                                    }
-                                    className={cn("cursor-pointer flex items-center gap-2", isMy ? "xl:hidden" : "lg:hidden")}
-                                 >
-                                    <Plus className="h-4 w-4 text-muted-foreground" />
-                                    <span>{t("create")}</span>
-                                 </DropdownMenuItem>
-                              )}
-                              {!isLoggedIn && (
-                                 <>
-                                    <DropdownMenuItem>
-                                       <Link
-                                          className="w-full"
-                                          to={paths.auth.login.path}
-                                       >
-                                          {t("signIn")}
-                                       </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                       <Link
-                                          className="w-full"
-                                          to={paths.auth.register.path}
-                                       >
-                                          {t("joinNow")}
-                                       </Link>
-                                    </DropdownMenuItem>
-                                 </>
-                              )}
-                              <DropdownMenuItem
-                                 onClick={() => router.push(paths.notifications.path as any)}
-                                 className={cn("cursor-pointer flex justify-between items-center focus:text-accent-foreground", isMy ? "xl:hidden" : "lg:hidden")}
-                              >
-                                 <div className="flex items-center gap-2">
-                                    <Bell className="h-4 w-4 text-muted-foreground" />
-                                    <span>{t("notifications")}</span>
-                                 </div>
-                                 {unreadCount > 0 && (
-                                    <span className="text-xs font-semibold px-2 py-0.5 bg-primary/10 text-primary rounded-full">
-                                       {unreadCount > 99 ? "99+" : unreadCount}
-                                    </span>
-                                 )}
-                              </DropdownMenuItem>
-                               <div className="md:hidden p-2 border-t mt-2 space-y-2">
-                                  <div className="flex justify-between items-center gap-4 px-2 py-1.5">
-                                     <span className="text-xs font-medium text-muted-foreground">Language</span>
-                                     <LanguageSwitcher />
-                                  </div>
-                                  <div className="flex justify-between items-center gap-4 px-2 py-1.5">
-                                     <span className="text-xs font-medium text-muted-foreground">Theme</span>
-                                     <ThemeSwitcher />
-                                  </div>
-                               </div>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                     </div>
- 
                      <div className="hidden md:flex items-center gap-2">
                         <LanguageSwitcher />
                         <ThemeSwitcher />

@@ -3,6 +3,7 @@
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription } from "@/components/ui/field";
+import { useNotifications } from "@/components/ui/notifications";
 import {
   Form,
   FormControl,
@@ -40,6 +41,7 @@ export default function LoginFormView({
   handleGoogleSuccess,
 }: Props) {
   const t = useTranslations("Auth.login");
+  const { addNotification } = useNotifications();
 
   return (
     <div>
@@ -136,8 +138,12 @@ export default function LoginFormView({
           <div className="flex justify-center w-full overflow-hidden">
             <GoogleAuthButton
               onIdToken={handleGoogleSuccess}
-              onError={() => {
-                console.error("Google Login Failed");
+              onError={(message) => {
+                addNotification({
+                  type: "error",
+                  title: "Google sign-in failed",
+                  message: message || "Please try again.",
+                });
               }}
               label="Continue with Google"
             />

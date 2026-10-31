@@ -7,6 +7,7 @@ The Notifications feature provides persisted in-app notifications, realtime upda
 - **Pillar**: 2 (Feature Muscles)
 - **Base Endpoint**: `/api/v1/orders/notifications/` and `/api/v1/orders/notification-devices/`
 - **Realtime Stream**: Foreground Server-Sent Events (SSE) via `fetch` streaming with exponential backoff and offline recovery.
+- **Outage Circuit Breaker**: Any 503 from the notifications, notification-devices, or stream endpoints is recorded in `src/lib/api-unavailable.ts` (session-scoped, `sessionStorage`). The axios interceptor suppresses the generic error toast, the stream stops retrying, and every notification API returns a safe no-op (`[]`, echoed payload, or resolved `void`) for the rest of the session instead of hammering a down service.
 - **Push Layer**: Web FCM (browser) + `@capacitor-firebase/messaging` for the native iOS/Android shells. The native plugin returns a real **FCM registration token** on both platforms (Android delegates to `FirebaseMessaging`, iOS bridges APNs -> FCM), which is what the backend `firebase_admin.messaging.send(token=...)` requires. A legacy Median bridge remains supported for existing builds. Tokens are registered with the backend device endpoint.
 - **Analytics Funnel**: Records `RECEIVED`, `OPENED`, `DISMISSED`, `DEEPLINK_OPENED`, and `SSE_RECEIVED` events via `/orders/notifications/{id}/events/`.
 - **Median setup**: Enable Median's Firebase Cloud Messaging plugin, upload `google-services.json` and `GoogleService-Info.plist`, configure APNs in Firebase, and rebuild the app. See the repository notification API documentation for the full setup checklist.
@@ -49,7 +50,7 @@ The Notifications feature provides persisted in-app notifications, realtime upda
    - Clicking (or middle-clicking) triggers `markAsRead({ id })` with optimistic UI update and logs an `OPENED` analytics event.
    - Left-clicks close the dropdown and navigate; middle-click / new-tab clicks keep the dropdown open.
    - Per-item "Mark as read" checkmark button or unread dot tap calls `markAsRead({ id })` in-place with `stopPropagation()`, keeping the dropdown open for frictionless notification triage.
-4. **Offline Recovery**: If the SSE stream disconnects, it reconnects using exponential backoff (1s up to 30s) and automatically re-fetches the notification list to recover any missed events.
+4. **Offline Recovery**: If the SSE stream disconnects, it reconnects using exponential backoff (1s up to 30s) and automatically re-fetches the notification list to recover any missed events. A `503` stops reconnection for the session (see **Outage Circuit Breaker** above).
 
 ## 🔔 Push Notifications & Service Worker
 
