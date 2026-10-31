@@ -141,6 +141,9 @@ export interface Artwork {
    artist_profile: User;
    artwork_styles: Style[];
    is_liked: boolean;
+   view_count?: number;
+   like_count?: number;
+   save_count?: number;
 }
 
 export interface Artist {

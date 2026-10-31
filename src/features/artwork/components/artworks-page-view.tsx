@@ -244,10 +244,12 @@ const ArtworksPageView = ({
                                     value={
                                        sorts[0]?.id
                                           ? `${sorts[0]?.id}-${sorts[0]?.desc ? "desc" : "asc"}`
-                                          : ""
+                                          : "recommended"
                                     }
                                     onValueChange={(value) => {
-                                       if (!value) return setSorts([]);
+                                       if (!value || value === "recommended") {
+                                          return setSorts([]);
+                                       }
                                        const [id, order] = value.split("-");
                                        setSorts([{ id, desc: order === "desc" }]);
                                     }}
@@ -259,6 +261,21 @@ const ArtworksPageView = ({
                                        <SelectValue placeholder={tCatalog("sortPlaceholder")} />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-xl border border-border/80 shadow-lg p-1.5 min-w-[180px]">
+                                       <SelectGroup>
+                                          <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">{tCatalog("discover")}</SelectLabel>
+                                          <SelectItem value="recommended" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
+                                             {tCatalog("recommended")}
+                                          </SelectItem>
+                                          <SelectItem value="trending_score-desc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
+                                             {tCatalog("trending")}
+                                          </SelectItem>
+                                          <SelectItem value="like_count-desc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
+                                             {tCatalog("mostLiked")}
+                                          </SelectItem>
+                                          <SelectItem value="view_count-desc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">
+                                             {tCatalog("mostViewed")}
+                                          </SelectItem>
+                                       </SelectGroup>
                                        <SelectGroup>
                                           <SelectLabel className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">{tCatalog("ordering")}</SelectLabel>
                                           <SelectItem value="created_at-desc" className="rounded-lg focus:bg-primary focus:text-primary-foreground cursor-pointer py-1.5">

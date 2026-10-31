@@ -45,9 +45,12 @@ const cardVariants = {
 
 export const FeaturedArtworksSection = () => {
    const t = useTranslations("Home");
+   // The artwork list defaults to the ranked discovery feed; keep "Featured"
+   // as a newest-first showcase.
+   const featuredSorts = [{ id: "created_at", desc: true }];
    const artworksQuery = useQuery({
-      queryKey: queryKeys.artwork.list({ limit: 10 }),
-      queryFn: () => getArtworks({ limit: 10 }),
+      queryKey: queryKeys.artwork.list({ limit: 10, sorts: featuredSorts }),
+      queryFn: () => getArtworks({ limit: 10, sorts: featuredSorts }),
       staleTime: 1000 * 60 * 5, // 5 minutes
    })
 

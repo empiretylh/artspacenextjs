@@ -97,9 +97,10 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
    const shouldShowStatus = showStatus && !pure && !!artwork.status;
    const statusConfig = shouldShowStatus ? getStatusConfig(artwork.status, translateStatus) : null;
    const categoryName = artwork.category_name || artwork.category?.name;
-   const { isLiked, handleLike } = useLike({
+   const { isLiked, count, handleLike } = useLike({
       artworkId: String(artwork.id),
       initialLiked: artwork.is_liked,
+      initialCount: artwork.like_count ?? 0,
    });
    const { source } = useSource();
 
@@ -161,10 +162,20 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
                         {artwork.title}
                      </h3>
                   </Link>
-                  {artwork.artist_name && (
-                     <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider truncate">
-                        {artwork.artist_name}
-                     </p>
+                  {(artwork.artist_name || count > 0) && (
+                     <div className="flex items-center justify-between gap-2">
+                        {artwork.artist_name && (
+                           <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider truncate">
+                              {artwork.artist_name}
+                           </p>
+                        )}
+                        {count > 0 && (
+                           <span className="inline-flex shrink-0 items-center gap-1 text-[10px] font-medium text-muted-foreground/80">
+                              <Heart size={10} className="fill-red-500/80 text-red-500/80" />
+                              {count.toLocaleString()}
+                           </span>
+                        )}
+                     </div>
                   )}
                   {(categoryName || artwork.dimensions) && (
                      <div className="flex items-center gap-1.5 flex-wrap text-[10px] text-muted-foreground">
@@ -229,6 +240,7 @@ export default React.memo(ArtworkCard, (prevProps, nextProps) => {
    return (
       prevProps.artwork.id === nextProps.artwork.id &&
       prevProps.artwork.is_liked === nextProps.artwork.is_liked &&
+      prevProps.artwork.like_count === nextProps.artwork.like_count &&
       prevProps.artwork.status === nextProps.artwork.status &&
       prevProps.artwork.price === nextProps.artwork.price &&
       prevProps.artwork.title === nextProps.artwork.title &&
