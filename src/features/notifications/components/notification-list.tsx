@@ -5,6 +5,7 @@ import { NotificationItem } from "./notification-item";
 import { BellOff, Loader2 } from "lucide-react";
 import type { AppNotification } from "@/types";
 import { useTranslations } from "next-intl";
+import { useNotifications } from "../hooks/use-notifications";
 
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ interface NotificationListProps {
    notifications: AppNotification[];
    isLoading?: boolean;
    onItemClick?: (notification: AppNotification, e?: React.MouseEvent) => void;
+   onMarkAsRead?: (notification: AppNotification, e?: React.MouseEvent) => void;
    emptyMessage?: string;
    className?: string;
    compact?: boolean;
@@ -21,11 +23,19 @@ export const NotificationList: React.FC<NotificationListProps> = ({
    notifications,
    isLoading = false,
    onItemClick,
+   onMarkAsRead,
    emptyMessage,
    className,
    compact = false,
 }) => {
    const t = useTranslations("Notifications");
+   const { markAsRead } = useNotifications();
+
+   const handleMarkAsRead =
+      onMarkAsRead ||
+      ((notification: AppNotification) => {
+         markAsRead({ id: notification.id });
+      });
 
    if (isLoading) {
       return (
@@ -57,6 +67,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
                key={notification.id}
                notification={notification}
                onItemClick={onItemClick}
+               onMarkAsRead={handleMarkAsRead}
                compact={compact}
             />
          ))}

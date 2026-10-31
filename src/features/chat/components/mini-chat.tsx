@@ -33,6 +33,12 @@ export const MiniChat = () => {
   } = useChatStore();
 
   const [hasVisitedChats, setHasVisitedChats] = useState(false);
+  const syncUserSession = useChatStore((state) => state.syncUserSession);
+
+  // Sync user session with persisted chat state (resets if logged out or user switched)
+  useEffect(() => {
+    syncUserSession(user?.id ? String(user.id) : null);
+  }, [user?.id, syncUserSession]);
 
   // Prevent SSR hydration mismatch and check sessionStorage
   useEffect(() => {
@@ -62,7 +68,7 @@ export const MiniChat = () => {
   }, 0);
 
   return (
-    <div className="fixed bottom-3 right-3 z-50 flex flex-col items-end gap-4">
+    <div className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:bottom-3 right-3 z-40 md:z-50 flex flex-col items-end gap-4">
       <AnimatePresence>
         {isOpen && !isMinimized && (
           <motion.div
@@ -109,6 +115,7 @@ export const MiniChat = () => {
                 </div>
               ) : (activeConversationId || pendingRecipientId) ? (
                 <ChatWindow
+                  key={activeConversationId || pendingRecipientId || "mini-chat"}
                   variant="mini"
                   onBack={() => setShowList(true)}
                 />

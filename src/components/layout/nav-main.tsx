@@ -111,8 +111,8 @@ export function NavMain() {
    const { hasUnread } = useUnreadCount();
 
    const isActive = (url: string) => {
-      if (url === "/" || url === paths.home.path) {
-         return pathname === "/" || pathname === paths.home.path;
+      if (url === "/" || url === paths.home.path || url === "/home") {
+         return pathname === "/" || pathname === paths.home.path || pathname === "/home";
       }
       return pathname === url || pathname.startsWith(url + "/");
    };

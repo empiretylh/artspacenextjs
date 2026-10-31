@@ -94,11 +94,11 @@ export const ChatList = ({ activeId, onSelect }: Props) => {
          </div>
 
          <div className="flex-1 overflow-y-auto">
-            {loading ? (
+            {loading && conversations.length === 0 ? (
                <div className="flex p-4 justify-center">
                   <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                </div>
-            ) : isTimedOut ? (
+            ) : isTimedOut && conversations.length === 0 ? (
                <div className="p-8 text-center text-xs text-muted-foreground flex flex-col items-center gap-3">
                   <p>Unable to connect to chat service.</p>
                   <Button 

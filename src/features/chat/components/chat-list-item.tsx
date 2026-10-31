@@ -1,12 +1,14 @@
 // components/chat/chat-list-item.tsx
 "use client";
 
-import { cn, getImage } from "@/lib/utils";
+import { cn, getImage, getUserDisplayName } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/features/auth/store";
 import { useUserStatus } from "../hooks/use-user-status";
 import type { Conversation } from "../types";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/config/query-keys";
 
 type Props = {
    conversation: Conversation;
@@ -16,6 +18,7 @@ type Props = {
 
 export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
    const { user: currentUser } = useAuth();
+   const queryClient = useQueryClient();
 
    // Find the other participant
    const otherUserId = conversation.participants.find(
@@ -24,6 +27,17 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
    const otherUser = otherUserId ? conversation.participantDetails[otherUserId] : null;
    const { isOnline } = useUserStatus(otherUserId || null);
    const unreadCount = conversation.unreadCount?.[String(currentUser?.id)] || 0;
+
+   // Check React Query cache for fresh user data without triggering network requests
+   const cachedUser = otherUserId
+      ? (queryClient.getQueryData(queryKeys.user.publicProfile(otherUserId)) as any)
+      : null;
+
+   const displayName = cachedUser
+      ? getUserDisplayName(cachedUser, cachedUser.email)
+      : (otherUser?.name || "User");
+
+   const displayAvatar = cachedUser?.profile?.profile_picture ?? otherUser?.avatar ?? null;
 
    if (!otherUser) return null;
 
@@ -39,8 +53,10 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
       >
          <div className="relative">
             <Avatar className="border border-border/60">
-               <AvatarImage src={getImage(otherUser.avatar)} alt={otherUser.name} />
-               <AvatarFallback className="font-display font-semibold bg-primary/5 text-primary text-xs">{otherUser.name[0]}</AvatarFallback>
+               <AvatarImage src={getImage(displayAvatar)} alt={displayName} />
+               <AvatarFallback className="font-display font-semibold bg-primary/5 text-primary text-xs">
+                  {displayName[0] || "?"}
+               </AvatarFallback>
             </Avatar>
             <span 
                className={cn(
@@ -55,7 +71,7 @@ export const ChatListItem = ({ conversation, isActive, onClick }: Props) => {
                "truncate text-sm font-semibold font-display tracking-tight text-foreground/90",
                unreadCount > 0 && "text-foreground font-bold"
             )}>
-               {otherUser.name}
+               {displayName}
             </p>
             <p className={cn(
                "truncate text-xs text-muted-foreground/80 mt-0.5",

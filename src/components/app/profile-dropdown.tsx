@@ -44,7 +44,7 @@ export function ProfileDropdown() {
          <DropdownMenuTrigger asChild>
             <Button
                variant="ghost"
-               className="relative border h-10 w-10 md:h-8 md:w-8 rounded-full transition-transform duration-300 hover:scale-105 active:scale-95 cursor-pointer select-none"
+               className="relative border h-10 w-10 md:h-8 md:w-8 rounded-full cursor-pointer select-none"
             >
                <Avatar className="h-10 w-10 md:h-8 md:w-8">
                   {user?.profile?.profile_picture ? (

@@ -29,7 +29,7 @@ The Notifications feature provides persisted in-app notifications, realtime upda
   - `use-notification-device.ts`: Automatically handles FCM and Median push token lifecycle.
 - `components/`:
   - `notification-dropdown.tsx`: Interactive Popover on Bell click with unread badge, tabs (All / Unread), and quick actions (preserves open state on new-tab interactions).
-  - `notification-item.tsx`: Notification card rendering semantic `<Link>` or `<a>` when `web_route` is present, supporting browser link preview on hover, native new-tab middle clicks, and contextual icons.
+  - `notification-item.tsx`: Notification card rendering semantic `<Link>` or `<a>` when `web_route` is present, supporting browser link preview on hover, native new-tab middle clicks, contextual icons, and per-item inline "Mark as read" action (hover checkmark on desktop, tapable checkmark and unread dot on mobile).
   - `notification-list.tsx`: Reusable list with empty and loading states.
   - `notification-listener.tsx`: Headless component mounted globally in root layout to manage SSE and device tokens.
 - `pages/`:
@@ -48,6 +48,7 @@ The Notifications feature provides persisted in-app notifications, realtime upda
    - Items render as semantic localized `<Link href={web_route}>` (or external `<a>`), showing browser URL preview on hover.
    - Clicking (or middle-clicking) triggers `markAsRead({ id })` with optimistic UI update and logs an `OPENED` analytics event.
    - Left-clicks close the dropdown and navigate; middle-click / new-tab clicks keep the dropdown open.
+   - Per-item "Mark as read" checkmark button or unread dot tap calls `markAsRead({ id })` in-place with `stopPropagation()`, keeping the dropdown open for frictionless notification triage.
 4. **Offline Recovery**: If the SSE stream disconnects, it reconnects using exponential backoff (1s up to 30s) and automatically re-fetches the notification list to recover any missed events.
 
 ## 🔔 Push Notifications & Service Worker

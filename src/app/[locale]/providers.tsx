@@ -12,6 +12,7 @@ import { Toaster } from "sonner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Capacitor } from "@capacitor/core";
 import { env } from "@/config/env";
+import { NavigationHistoryTracker } from "@/hooks/use-safe-back";
 
 interface IProviderProps {
   children: React.ReactNode;
@@ -43,6 +44,7 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
         <QueryClientProvider client={queryClient}>
           <Toaster richColors className="[&>li]:w-full" />
           <GlobalProvider>
+            <NavigationHistoryTracker />
             <ThemeProvider
               attribute="class"
               defaultTheme="system"

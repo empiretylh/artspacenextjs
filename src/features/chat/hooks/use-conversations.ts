@@ -21,6 +21,7 @@ export const useConversations = () => {
    const [error, setError] = useState<Error | null>(null);
    const [isTimedOut, setIsTimedOut] = useState(false);
    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+   const initialLoadDoneRef = useRef(false);
 
    const retry = useCallback(async () => {
       setIsTimedOut(false);
@@ -70,6 +71,7 @@ export const useConversations = () => {
       if (!user?.id) {
          setLoading(false);
          setConversations([]);
+         initialLoadDoneRef.current = false;
          return;
       }
 
@@ -78,7 +80,10 @@ export const useConversations = () => {
          return;
       }
 
-      setLoading(true);
+      // Only show full loading spinner on initial load before any data is received
+      if (!initialLoadDoneRef.current && conversations.length === 0) {
+         setLoading(true);
+      }
 
       const q = query(
          collection(db, "conversations"),
@@ -97,6 +102,7 @@ export const useConversations = () => {
             setConversations(convs);
             setError(null);
             setLoading(false);
+            initialLoadDoneRef.current = true;
             if (process.env.NODE_ENV === "development") {
                console.log("Chat: Conversations listener active", convs.length);
             }

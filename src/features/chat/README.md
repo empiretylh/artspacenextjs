@@ -70,10 +70,10 @@ erDiagram
 
 ## 🔃 Data Flow
 
-1. **Initiation**: Chats can be initiated by navigating to `/chats?userId=[id]&userType=[type]` or via the global `useChatStore`.
-2. **Lazy Creation**: Conversations are only saved to Firestore when the first message is sent.
+1. **Initiation & Scoped Context**: Chats can be initiated by navigating to `/chats?userId=[id]&userType=[type]` or via the global `useChatStore`. Any incoming initial messages and order cards are strictly scoped to the targeted recipient (`userIdParam`); switching conversations in `ChatList` resets context, cleans deep-link query parameters, and remounts `ChatWindow`/`ChatInput` with clean state so uncommitted drafts never leak across chats.
+2. **Lazy Creation & Seamless Transition**: Conversations are only saved to Firestore when the first message is sent. When `sendMessage` creates the deterministic conversation, `ChatWindow` captures the newly created ID, synchronizes `activeConversationId` via `useChatStore` and local state, and immediately binds `useMessages` to the new thread so the sent message appears instantaneously without UI flickering or requiring manual conversation selection from `ChatList`.
 3. **Synchronization**: `useConversations` and `useMessages` maintain a real-time sync with Firestore. 
-    - **Optimization**: These listeners now call `unsubscribe()` when the browser tab is hidden and re-sync automatically upon focus. This significantly reduces Firestore read billing for background tabs.
+    - **Optimization & Seamless Focus Resumption**: These listeners call `unsubscribe()` when the browser tab is hidden and re-sync automatically upon focus to reduce Firestore billing. Re-syncing preserves existing in-memory conversations and messages without flashing loading spinners (`loading` states are strictly guarded for initial empty loads or switching to new conversation threads).
     - **Authentication Guard (`isFirebaseReady`)**: All Firestore listeners and presence/block sync hooks strictly gate their queries on `isFirebaseReady` from `useAuth()`. This prevents premature empty states or `Missing or insufficient permissions` errors during page refresh while client Firebase credentials settle. Loading states stay active until the first snapshot arrives, with an 8-second safety timeout fallback.
 4. **Pagination**: Messages are fetched in batches (default: 10) starting from the most recent. This is managed via `useMessages` by increasing the Firestore `limit()` on-demand.
 5. **Infinite Scroll**: The `ChatMessages` component implements an automated pagination trigger using an `IntersectionObserver`.
@@ -88,7 +88,7 @@ erDiagram
     - **Online Status**: Real-time status (Active now vs Last seen) is determined via `useUserStatus` hook with a 3-minute activity threshold.
     - **Logout Sync**: Explicitly sets `lastSeen` to the past on logout for immediate offline appearance across devices.
     - **Retroactive Sync**: Updating a profile in Settings automatically triggers a batch update for the current user's entry in their top 50 most recent conversations.
-    - **Self-Healing**: Every message sent refreshes the sender's metadata in the conversation to ensure long-term consistency.
+    - **Self-Healing**: Every message sent refreshes the sender's metadata in the conversation. Additionally, when a conversation is opened in `ChatWindow`, any stale participant metadata in Firestore is reconciled against the fresh Backend API profile, and `ChatListItem` hydrates instantly from the React Query cache.
 8. **Unread Tracking**:
     - **Logic**: A `runTransaction` in `useSendMessage` atomically increments the `unreadCount` Map for participants.
     - **Resolution**: The `useMarkRead` hook resets the count and cleans up legacy fields.
@@ -164,7 +164,8 @@ The application features a floating **Mini-Chat Widget** (`MiniChat`) that persi
 
 Global chat state is centralized in `src/features/chat/store.ts` using **Zustand**.
 
-- **Persistence**: The state (active conversation, visibility, minimized status) is persisted in `localStorage` using the `persist` middleware. This allows chat windows to remain open and active even after a page refresh.
+- **Persistence**: The state (active conversation, visibility, minimized status, and user ID) is persisted in `localStorage` using the `persist` middleware. This allows chat windows to remain open and active across page refreshes during an active user session.
+- **Session Isolation & Logout Cleanup**: Persisted chat state is strictly bounded to the active authenticated user ID. Logging out (or session expiration) invokes `closeChat()` and purges session flags, and `syncUserSession` resets any orphaned state if the user changes or logs out, preventing previously opened chats from leaking across sessions.
 - **Atomic Actions**:
     - `openConversation(id)`: Immediately switches the widget to a specific chat and maximizes it.
     - `setShowList(true)`: Triggers the drill-down "Back" behavior to show the conversation list.

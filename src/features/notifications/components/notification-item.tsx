@@ -12,14 +12,17 @@ import {
    RefreshCw,
    Radio,
    Bell,
+   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AppNotification, NotificationType } from "@/types";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 interface NotificationItemProps {
    notification: AppNotification;
    onItemClick?: (notification: AppNotification, e?: React.MouseEvent) => void;
+   onMarkAsRead?: (notification: AppNotification, e?: React.MouseEvent) => void;
    compact?: boolean;
 }
 
@@ -51,8 +54,11 @@ const getNotificationIcon = (type: NotificationType, compact = false) => {
 export const NotificationItem: React.FC<NotificationItemProps> = ({
    notification,
    onItemClick,
+   onMarkAsRead,
    compact = false,
 }) => {
+   const t = useTranslations("Notifications");
+
    const handleClick = (e: React.MouseEvent) => {
       onItemClick?.(notification, e);
    };
@@ -62,6 +68,12 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       if (e.button === 1) {
          onItemClick?.(notification, e);
       }
+   };
+
+   const handleMarkAsRead = (e: React.MouseEvent | React.KeyboardEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onMarkAsRead?.(notification, e as any);
    };
 
    let timeAgo = "";
@@ -114,7 +126,21 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
                </div>
             )}
             {!notification.is_read && (
-               <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-background" />
+               <span
+                  role="button"
+                  tabIndex={0}
+                  onClick={handleMarkAsRead}
+                  onKeyDown={(e) => {
+                     if (e.key === "Enter" || e.key === " ") {
+                        handleMarkAsRead(e);
+                     }
+                  }}
+                  title={t("markAsRead")}
+                  aria-label={t("markAsRead")}
+                  className="absolute -top-1.5 -right-1.5 p-1 rounded-full cursor-pointer z-10 touch-manipulation"
+               >
+                  <span className="block w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-background" />
+               </span>
             )}
          </div>
 
@@ -131,9 +157,33 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
                >
                   {notification.title}
                </p>
-               <span className="text-[11px] text-muted-foreground whitespace-nowrap shrink-0 mt-0.5">
-                  {timeAgo}
-               </span>
+               <div className="flex items-center gap-1.5 shrink-0 -mt-0.5">
+                  <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+                     {timeAgo}
+                  </span>
+                  {!notification.is_read && (
+                     <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={handleMarkAsRead}
+                        onKeyDown={(e) => {
+                           if (e.key === "Enter" || e.key === " ") {
+                              handleMarkAsRead(e);
+                           }
+                        }}
+                        title={t("markAsRead")}
+                        aria-label={t("markAsRead")}
+                        className={cn(
+                           "inline-flex items-center justify-center size-6 rounded-full transition-all duration-200 cursor-pointer shrink-0 touch-manipulation",
+                           "text-muted-foreground hover:text-primary hover:bg-primary/10",
+                           "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                           "opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-within:opacity-100"
+                        )}
+                     >
+                        <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                     </span>
+                  )}
+               </div>
             </div>
 
             <p

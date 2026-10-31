@@ -1,12 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb, adminMessaging } from '@/lib/firebase-admin';
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(req: NextRequest) {
    try {
       const { recipientId, senderName, conversationId, type = 'chat_message', title = 'New Message', body } = await req.json();
 
       if (!recipientId || !senderName) {
-         return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+         return NextResponse.json({ error: 'Missing required fields' }, { status: 400, headers: corsHeaders });
       }
 
       // 1. Get recipient tokens and unread count
@@ -28,7 +41,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (!tokens || tokens.length === 0) {
-         return NextResponse.json({ success: true, message: 'No tokens found' });
+         return NextResponse.json({ success: true, message: 'No tokens found' }, { headers: corsHeaders });
       }
 
       // 2. Prepare payload
@@ -71,9 +84,9 @@ export async function POST(req: NextRequest) {
          });
       }
 
-      return NextResponse.json({ success: true });
+      return NextResponse.json({ success: true }, { headers: corsHeaders });
    } catch (error: any) {
       console.error('FCM API Error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: error.message }, { status: 500, headers: corsHeaders });
    }
 }

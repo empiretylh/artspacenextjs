@@ -21,6 +21,7 @@ The project follows a "Feature-Sliced" inspired architecture:
     - [src/features/orders/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/README.md): Transaction lifecycle, checkout flow, order stepper, and tracking engine.
     - [src/features/notifications/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/notifications/README.md): In-app notifications, realtime SSE stream, device push tokens, and analytics.
     - [src/features/network/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/network/README.md): Connectivity tracking and the native/web offline experience.
+    - [src/features/events/README.md](file:///d:/data/learning/work/real-work/art-space-next/src/features/events/README.md): Exhibitions, gallery events, artist/artwork curation, and popup announcements.
 
 3.  **`components/` (The Skin)**:
     - Shared UI atoms and molecules (Shadcn UI).

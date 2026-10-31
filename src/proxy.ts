@@ -45,8 +45,14 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/sign-in`, request.url));
   }
 
-  // 3️⃣ Home page is served directly at root path (/)
-  // Preserved marketing landing page is available at (/landing)
+  // 3️⃣ Default root landing routing:
+  // If user has already seen the home page and visits the root ('/'),
+  // redirect them to '/artworks' (catalog) as their default home.
+  // Home page remains explicitly accessible at '/home'.
+  const hasSeenHome = request.cookies.get("artspace_home_seen")?.value === "true";
+  if (localeFreePathname === "/" && hasSeenHome) {
+    return NextResponse.redirect(new URL(`/${locale}/artworks`, request.url));
+  }
 
   // Run next-intl localization routing
   return handleI18nRouting(request);

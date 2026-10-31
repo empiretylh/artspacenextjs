@@ -50,6 +50,7 @@ const EventsPageContainer = () => {
             headerAction={
                isSignedIn ? (
                   <Button
+                     data-testid="header-create-event-button"
                      onClick={() => setIsEventCreateModalOpen(true)}
                      className="rounded-full font-semibold transition-all duration-300 hover:scale-105 active:scale-95 shadow-xs flex items-center gap-1.5 select-none cursor-pointer h-9 px-4"
                   >

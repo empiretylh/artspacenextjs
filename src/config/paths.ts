@@ -4,8 +4,8 @@ export const paths = {
       getHref: () => "/",
    },
    home: {
-      path: "/",
-      getHref: () => "/",
+      path: "/home",
+      getHref: () => "/home",
    },
    landing: {
       path: "/landing",

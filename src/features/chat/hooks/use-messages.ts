@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { 
    collection, 
    query, 
@@ -20,6 +20,7 @@ export const useMessages = (conversationId: string | null) => {
    const [error, setError] = useState<Error | null>(null);
    const [limitAmount, setLimitAmount] = useState(10); // Increased as user scrolls
    const [hasMore, setHasMore] = useState(true);
+   const prevConversationIdRef = useRef<string | null>(conversationId);
 
    useEffect(() => {
       // 1. Reset messages if no conversation
@@ -37,7 +38,12 @@ export const useMessages = (conversationId: string | null) => {
          return;
       }
 
-      setLoading(true);
+      const isNewConversation = prevConversationIdRef.current !== conversationId;
+      prevConversationIdRef.current = conversationId;
+
+      if (isNewConversation || messages.length === 0) {
+         setLoading(true);
+      }
       setError(null);
       
       const q = query(

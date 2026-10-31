@@ -65,7 +65,7 @@ export default function LoginFormView({
       )}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
           {/* Email */}
           <FormField
             control={form.control}
@@ -74,7 +74,7 @@ export default function LoginFormView({
               <FormItem>
                 <FormLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("emailLabel")}</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder={t("emailPlaceholder")} {...field} />
+                  <Input type="email" aria-label="Email address" placeholder={t("emailPlaceholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -92,6 +92,7 @@ export default function LoginFormView({
                   <FormControl>
                     <Input
                       type={showPassword ? "text" : "password"}
+                      aria-label="Password"
                       placeholder="••••••••"
                       {...field}
                       className="pr-10"
@@ -99,6 +100,8 @@ export default function LoginFormView({
                   </FormControl>
                   <button
                     type="button"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
                     onClick={() => setShowPassword((prev) => !prev)}
                     className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
                   >

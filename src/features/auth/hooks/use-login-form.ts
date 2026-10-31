@@ -63,11 +63,7 @@ export function useLoginForm({ returnTo }: { returnTo?: string } = {}) {
         handleFormError(response, form);
       }
     } catch (err) {
-      addNotification({
-        title: "Login Failed",
-        message: "Invalid email or password",
-        type: "error",
-      });
+      handleFormError(err, form);
     }
   };
 

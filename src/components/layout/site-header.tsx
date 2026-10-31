@@ -5,6 +5,7 @@ import ArtworkCreateModal from "@/features/artwork/components/artwork-create-mod
 import { useAuth } from "@/features/auth/store";
 import { useCartStore } from "@/features/cart/store/cart-store";
 import { cn } from "@/lib/utils";
+import AppImage from "@/components/common/app-image";
 import {
    ArrowLeft,
    Bell,
@@ -67,16 +68,22 @@ export function SiteHeader() {
             ) : (
                <div className="flex w-full items-center justify-between gap-2">
                   {/* Left Section (Logo + Sidebar Trigger) */}
-                  <div className="flex gap-2 items-center md:hidden min-w-0">
+                  <div className="flex gap-2 items-center md:hidden shrink-0">
                      <SidebarTrigger className="-ml-1 shrink-0" />
                      <Link
                         to={"/"}
-                        className={cn(
-                           "uppercase font-display font-bold text-sm whitespace-nowrap truncate max-w-[150px] xs:max-w-none",
-                           isMy ? "leading-relaxed py-1 pb-1.5" : "leading-normal py-0.5"
-                        )}
+                        className="flex items-center shrink-0 hover:opacity-90 transition-opacity"
+                        aria-label={t("title")}
                      >
-                        {t("title")}
+                        <AppImage
+                           src="/assets/logo.png"
+                           alt="Logo"
+                           width={32}
+                           height={32}
+                           className="size-8 object-contain shrink-0"
+                           withoutContainer={true}
+                           loading="eager"
+                        />
                      </Link>
                   </div>
  
@@ -109,7 +116,7 @@ export function SiteHeader() {
                            data-testid="header-create-artwork-button"
                            onClick={() => setIsArtworkCreateModalOpen(true)}
                            className={cn(
-                              "rounded-full font-semibold transition-all duration-300 hover:scale-105 active:scale-95 shadow-xs flex items-center gap-1.5 select-none cursor-pointer",
+                              "rounded-full font-semibold shadow-xs flex items-center gap-1.5 select-none cursor-pointer",
                               isMy ? "hidden xl:inline-flex h-9 px-4" : "hidden lg:inline-flex h-9 px-4"
                            )}
                         >
@@ -129,9 +136,9 @@ export function SiteHeader() {
                            </Link>
                            <Link
                               to={paths.auth.register.path}
-                              className={cn(isMy ? "hidden 2xl:inline-flex" : "hidden xl:inline-flex")}
+                              className="inline-flex shrink-0"
                            >
-                              <Button variant="outline" className="rounded-full h-8">
+                              <Button variant="outline" className="rounded-full h-8 px-3 sm:px-4 text-xs sm:text-sm font-medium">
                                  {t("joinNow")}
                               </Button>
                            </Link>

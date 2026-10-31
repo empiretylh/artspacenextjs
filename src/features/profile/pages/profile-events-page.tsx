@@ -136,7 +136,10 @@ const ProfileEventsPage = () => {
             <h2 className="text-xl sm:text-2xl font-semibold font-display tracking-tight text-foreground capitalize">
                Events
             </h2>
-            <Button onClick={() => setIsEventCreateModalOpen(true)}>
+            <Button
+               data-testid="profile-create-event-button"
+               onClick={() => setIsEventCreateModalOpen(true)}
+            >
                Create
             </Button>
          </div>

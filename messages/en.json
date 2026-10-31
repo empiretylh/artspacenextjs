@@ -1,7 +1,9 @@
 {
   "Common": {
     "title": "Myanmar Art Space",
-    "back": "Back"
+    "back": "Back",
+    "backToHome": "Back to Home",
+    "backToWebsite": "Back to website"
   },
   "Header": {
     "title": "Myanmar Art Space",
@@ -27,6 +29,7 @@
     "empty": "No notifications yet",
     "emptyDescription": "When someone follows you, purchases your art, or updates an order, you'll see it here.",
     "markAllAsRead": "Mark all as read",
+    "markAsRead": "Mark as read",
     "viewAll": "View all notifications",
     "loading": "Loading notifications..."
   },
@@ -132,7 +135,11 @@
       "loadMore": "Load More",
       "loadingMore": "Discovering more masterpieces...",
       "endOfCollection": "End of Collection",
-      "inquiryOnly": "Inquiry Only"
+      "inquiryOnly": "Inquiry Only",
+      "available": "Available",
+      "notForSale": "Not for Collect",
+      "sold": "Collected",
+      "soldOut": "Collected"
     },
     "filters": {
       "refineSearch": "Refine Search",
@@ -146,11 +153,11 @@
       "showAllArtworks": "Show All Artworks",
       "available": "Available",
       "availableNow": "Available Now",
-      "sold": "Sold",
+      "sold": "Collected",
       "recentlySold": "Recently Sold",
-      "notForSale": "Not for Sale",
+      "notForSale": "Not for Collect",
       "exhibitionOnly": "Exhibition Only",
-      "soldOut": "Sold Out",
+      "soldOut": "Collected",
       "status": "Status",
       "searchStatus": "Search Status",
       "allStatuses": "All Statuses",
@@ -173,8 +180,8 @@
       "backToArtworks": "Back to Artworks",
       "askForCollect": "Ask for collect",
       "collectNow": "Collect Now",
-      "sold": "Sold",
-      "soldOut": "Sold Out",
+      "sold": "Collected",
+      "soldOut": "Collected",
       "notForSale": "Not For Sale",
       "saveForLater": "Save for Later",
       "needHelp": "Need Help?",
@@ -286,7 +293,16 @@
     "noArtworks": "No artworks available.",
     "images": "Images",
     "noImages": "No images available.",
-    "createEvent": "Create Event"
+    "createEvent": "Create Event",
+    "backToEvents": "Back to Events",
+    "ongoing": "Ongoing",
+    "upcoming": "Upcoming",
+    "concluded": "Concluded",
+    "eventOverview": "Exhibition Overview",
+    "dates": "Dates",
+    "type": "Format",
+    "artworksCount": "Artworks",
+    "viewFullImage": "View full image"
   },
   "Settings": {
     "title": "Settings",

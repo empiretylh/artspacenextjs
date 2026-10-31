@@ -17,6 +17,8 @@ import { useMarkRead } from "../hooks/use-mark-read";
 import { useChatSecurity } from "../hooks/use-chat-security";
 import type { ChatUser, OrderCardData } from "../types";
 import { useEffect, useState, useRef } from "react";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/features/service/firebase/firebase";
 import {
    Sheet,
    SheetContent,
@@ -54,9 +56,19 @@ export const ChatWindow = ({
    variant = "default" 
 }: Props) => {
    const t = useTranslations("Chat");
-   const { activeConversationId: storeConvId, pendingRecipientId: storeRecipId } = useChatStore();
+   const { 
+      activeConversationId: storeConvId, 
+      pendingRecipientId: storeRecipId,
+      setActiveConversationId
+   } = useChatStore();
    
-   const conversationId = propConversationId !== undefined ? propConversationId : storeConvId;
+   const [localConvId, setLocalConvId] = useState<string | null>(null);
+
+   useEffect(() => {
+      setLocalConvId(null);
+   }, [propConversationId]);
+
+   const conversationId = propConversationId || localConvId || storeConvId;
    const recipientId = propRecipientId !== undefined ? propRecipientId : storeRecipId;
    
    const { user: currentUser } = useAuth();
@@ -68,7 +80,7 @@ export const ChatWindow = ({
 
    useEffect(() => {
       const currentKey = orderCard ? `${orderCard.orderId}-${orderCard.orderCode}` : null;
-      if (currentKey && currentKey !== lastLoadedOrderRef.current) {
+      if (currentKey !== lastLoadedOrderRef.current) {
          lastLoadedOrderRef.current = currentKey;
          setActiveOrderCard(orderCard || null);
       }
@@ -78,9 +90,12 @@ export const ChatWindow = ({
    const { sendMessage } = useSendMessage(conversationId);
 
    const activeConversation = conversations.find((c) => c.id === conversationId);
+   const fallbackOtherUserId = conversationId?.startsWith("one-on-one-")
+      ? conversationId.replace("one-on-one-", "").split("-").find(id => id !== String(currentUser?.id))
+      : null;
    const otherUserId = activeConversation?.participants.find(
       (id) => id !== String(currentUser?.id)
-   );
+   ) || fallbackOtherUserId;
    const finalRecipientId = recipientId || otherUserId || null;
 
    const displayUser: ChatUser | null = activeConversation && otherUserId 
@@ -141,6 +156,41 @@ export const ChatWindow = ({
       }
    }, [conversationId, currentUnreadCount, markAsRead]);
 
+   const healedParticipantRef = useRef<Record<string, string>>({});
+
+   // Self-heal stale participant details in Firestore if API returns updated name or avatar
+   useEffect(() => {
+      if (!conversationId || !finalRecipientId || !recipientUser?.name || !activeConversation || !db) return;
+
+      const nameMismatch = !displayUser?.name || recipientUser.name !== displayUser.name;
+      const avatarMismatch = Boolean(recipientUser.avatar && recipientUser.avatar !== displayUser?.avatar);
+
+      const healKey = `${conversationId}-${finalRecipientId}`;
+      if ((nameMismatch || avatarMismatch) && healedParticipantRef.current[healKey] !== recipientUser.name) {
+         healedParticipantRef.current[healKey] = recipientUser.name;
+         const convRef = doc(db, "conversations", conversationId);
+         updateDoc(convRef, {
+            [`participantDetails.${finalRecipientId}.id`]: finalRecipientId,
+            [`participantDetails.${finalRecipientId}.name`]: recipientUser.name,
+            [`participantDetails.${finalRecipientId}.avatar`]: recipientUser.avatar,
+            ...(recipientUser.user_type && { [`participantDetails.${finalRecipientId}.user_type`]: recipientUser.user_type }),
+         }).catch((err) => {
+            if (process.env.NODE_ENV === "development") {
+               console.warn("Could not self-heal participantDetails in conversation:", err);
+            }
+         });
+      }
+   }, [
+      conversationId,
+      finalRecipientId,
+      recipientUser?.name,
+      recipientUser?.avatar,
+      recipientUser?.user_type,
+      displayUser?.name,
+      displayUser?.avatar,
+      activeConversation,
+   ]);
+
    if (!conversationId && !recipientId) {
       return (
          <div className="flex flex-1 items-center justify-center text-muted-foreground">
@@ -186,6 +236,7 @@ export const ChatWindow = ({
              </div>
           ) : (
              <ChatInput 
+                key={finalRecipientId || conversationId || "chat-input"}
                 conversationId={conversationId}
                 initialValue={initialMessage || undefined}
                 attachedOrder={activeOrderCard}
@@ -194,7 +245,18 @@ export const ChatWindow = ({
                    onClearOrderContext?.();
                 }}
                 onSend={async (text, type, mediaUrls, orderCard) => {
-                   await sendMessage(text, recipientUser || undefined, type, mediaUrls as any, orderCard);
+                   const targetRecipient = recipientUser || displayUser || (finalRecipientId ? {
+                      id: finalRecipientId,
+                      name: "User",
+                      avatar: null,
+                      user_type: userType || null,
+                      cover_photo: null,
+                   } : undefined);
+                   const newConvId = await sendMessage(text, targetRecipient, type, mediaUrls as any, orderCard);
+                   if (newConvId && !conversationId) {
+                      setLocalConvId(newConvId);
+                      setActiveConversationId(newConvId);
+                   }
                    setActiveOrderCard(null);
                    onClearOrderContext?.();
                 }} 

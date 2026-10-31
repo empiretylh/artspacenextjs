@@ -32,8 +32,8 @@ export const ChatInput = ({ conversationId, onSend, initialValue, attachedOrder,
    const t = useTranslations("Chat");
 
    useEffect(() => {
-      if (initialValue) {
-         setValue(initialValue);
+      if (initialValue !== undefined) {
+         setValue(initialValue || "");
       }
    }, [initialValue]);
    

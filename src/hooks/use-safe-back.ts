@@ -20,17 +20,23 @@ export function NavigationHistoryTracker() {
  * If the user has internal history within the current tab/session, it calls router.back()
  * (which preserves scroll position, filter state, and React Query cache).
  * Otherwise (cold load, direct URL, new tab, external referrer), it navigates safely
- * to the provided fallback path (default: '/artworks').
+ * to the provided fallback path (default: '/').
  */
-export function useSafeBack(fallbackPath: string = "/artworks") {
+export function useSafeBack(fallbackPath: string = "/") {
    const router = useRouter();
 
    const goBack = () => {
       if (typeof window !== "undefined") {
+         const routerState = window.history.state as any;
+         const hasRouterIndex = typeof routerState?.idx === "number" && routerState.idx > 0;
          const hasInternalReferrer =
-            document.referrer && document.referrer.startsWith(window.location.origin);
+            Boolean(document.referrer && document.referrer.startsWith(window.location.origin));
 
-         if (historyCount > 1 || (hasInternalReferrer && window.history.length > 1)) {
+         if (
+            hasRouterIndex ||
+            historyCount > 1 ||
+            (hasInternalReferrer && window.history.length > 1)
+         ) {
             router.back();
             return;
          }

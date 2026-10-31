@@ -1,4 +1,5 @@
 import { api } from "@/lib/api-client";
+import { extractListItems } from "@/lib/utils";
 import type { QueryConfig } from "@/lib/react-query";
 import {
    queryOptions,
@@ -24,7 +25,7 @@ export const getPopUpEvents = async ({
 }: { filters?: ColumnFiltersState, sorts?: SortingState, page?: number, limit?: number, search?: string } = {}): Promise<Event[]> => {
    const res = await api.get(`/artworks/events/popup`);
 
-   return res.data
+   return extractListItems<Event>(res.data);
 };
 
 // ----------------------------------------------------------------------
