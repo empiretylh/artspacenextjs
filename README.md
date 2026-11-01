@@ -24,14 +24,39 @@ To ensure consistent development and AI-efficiency, please refer to:
 3. Start dev server: `npm run dev`
 4. Visit `http://localhost:3000`.
 
-### Docker (Local Testing & Server)
+### Docker (Local Testing)
 The project is configured with a multi-stage Docker build utilizing Next.js `standalone` mode for optimal performance.
-1. Build and run via Docker Compose:
+1. Build and run via Docker Compose (`next build` reads its env at build time, so the file must arrive as an argument):
    ```bash
-   docker-compose up --build -d
+   export CLIENT_ENV_B64="$(base64 -i .env | tr -d '\n')"   # Linux: base64 -w0 .env
+   docker compose up --build -d
    ```
 2. The app will be available at `http://localhost:3000`.
-To deploy to a server, transfer `docker-compose.yml`, `.dockerignore`, `Dockerfile`, `.env` and run the same command.
+
+### Production deploy (GitHub Actions -> GHCR -> EC2)
+`.github/workflows/launch_to_ec2.yml` runs on every push to `production` in two jobs:
+
+1. **build** — `docker/build-push-action` on the runner, pushed to `ghcr.io/empiretylh/artspacenextjs` as `:production` and as the immutable commit sha. BuildKit layer cache lives in the GitHub Actions cache, so a no-source-change rebuild is a few seconds instead of a full `npm ci`.
+2. **deploy** — SSH through the bastion, `git` sync (the server still needs `docker-compose.yml`), then `docker compose pull app` and `up -d --no-build` with `IMAGE_TAG=<sha>`, and a `curl` health check on `:3000`. Nothing is compiled on EC2 any more.
+
+Repository secrets/variables:
+
+| Name | Required | Purpose |
+| --- | --- | --- |
+| `CLIENT_ENV_B64` | yes | base64 one-liner of the production env file. `src/config/env.ts` hard-requires `NEXT_PUBLIC_API_URL`/`NEXT_PUBLIC_APP_URL`, and `src/lib/firebase-admin.ts` initializes the service account at import, so `FIREBASE_CLIENT_EMAIL`/`FIREBASE_PRIVATE_KEY` must be present for the build to finish. The file only ever exists in the builder stage. |
+| `GHCR_PULL_TOKEN` | only if the package is private | fine-grained PAT with `read:packages` on this repo, used for `docker login ghcr.io` on EC2. A public package needs no login, and the deploy skips it when the secret is empty. |
+| `EC2_SSH_PRIVATE_KEY`, `EC2_SSH_PASSPHRASE`, `BASTION_HOST`, `EC2_HOST`, `EC2_USER`, `EC2_PROJECT_PATH` | already in use | unchanged from the previous workflow. |
+
+`.env.production` stays on the server as the runtime `env_file`; only the build inputs moved to CI.
+
+Before the first run, check the instance architecture and match it to `platforms:` in the workflow (`uname -m`: `x86_64` -> `linux/amd64`, `aarch64` -> `linux/arm64`), otherwise the container fails with an exec format error.
+
+Roll back to an earlier commit without rebuilding:
+
+```bash
+sudo env IMAGE_TAG=<old-commit-sha> docker compose pull app
+sudo env IMAGE_TAG=<old-commit-sha> docker compose up -d --no-build app
+```
 
 ## 📂 Project Structure (The Three Pillars)
 The project follows a vertical-slice architecture. See the [Universal Map](./src/README.md) for details.

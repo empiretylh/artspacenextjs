@@ -1,4 +1,5 @@
 PODS:
+  - Alamofire (5.10.2)
   - AppAuth (2.0.0):
     - AppAuth/Core (= 2.0.0)
     - AppAuth/ExternalUserAgent (= 2.0.0)
@@ -18,6 +19,7 @@ PODS:
   - CapacitorNetwork (7.0.4):
     - Capacitor
   - CapgoCapacitorSocialLogin (7.20.0):
+    - Alamofire (~> 5.10.2)
     - Capacitor
     - GoogleSignIn (~> 9.0.0)
   - FirebaseCore (11.7.0):
@@ -92,6 +94,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Alamofire
     - AppAuth
     - AppCheckCore
     - FirebaseCore
@@ -119,13 +122,14 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capgo/capacitor-social-login"
 
 SPEC CHECKSUMS:
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
   AppAuth: 1c1a8afa7e12f2ec3a294d9882dfa5ab7d3cb063
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
   Capacitor: 1194c38ae1cc820671aefd94c59ebcbca2f33b26
   CapacitorCordova: 2080fc0d6bfbc9dcc0e6d88e77fa624190d343ca
   CapacitorFirebaseMessaging: 6db74cce2af7a8b8b3f617735bc722d528d5116b
   CapacitorNetwork: 3d56050f929a8c86427a5b28558ce605e7cf61b3
-  CapgoCapacitorSocialLogin: 1953e40314b2af3f5dce7b4a71b7637670b10a98
+  CapgoCapacitorSocialLogin: ec07ed57635fe4c0b6b4469d1f8e3d8be0728ea0
   FirebaseCore: 3227e35f4197a924206fbcdc0349325baf4f5de4
   FirebaseCoreInternal: d6c17dafc8dc33614733a8b52df78fcb4394c881
   FirebaseInstallations: 9347e719c3d52d8d7b9074b2c32407dd027305e9

@@ -18,6 +18,20 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# `next build` inlines every NEXT_PUBLIC_* value into the client bundle, and
+# src/config/env.ts throws without API_URL and APP_URL, so the build needs a real
+# env file: .dockerignore keeps `.env` out of the context, and compose's env_file
+# only reaches the running container, never the build. Anything the build imports
+# must be in here — src/lib/firebase-admin.ts initializes the service account at
+# import time, so FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY are required at
+# build, not just at runtime. They stay in this stage: the runner image copies
+# only public/, .next/static and .next/standalone, so /app/.env is never published.
+# Base64 because build args are parsed line by line and cannot carry a file:
+#   base64 -i .env.production | tr -d '\n'      (macOS)
+#   base64 -w0 .env.production                  (Linux)
+ARG CLIENT_ENV_B64
+RUN printf '%s' "${CLIENT_ENV_B64}" | base64 -d > /app/.env
+
 # Next.js telemetry is disabled
 ENV NEXT_TELEMETRY_DISABLED 1
 

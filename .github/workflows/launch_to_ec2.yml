@@ -1,7 +1,9 @@
 name: LAUNCH TO EC2
 
+# The image is built on the runner and pushed to GHCR; EC2 only pulls and runs it.
 permissions:
   contents: read
+  packages: write
 
 on:
   push:
@@ -9,10 +11,54 @@ on:
 
 concurrency:
   group: deploy-production
-  cancel-in-progress: true
+  # Never cancel a run that is mid-deploy on the server; queue it instead.
+  cancel-in-progress: false
 
 jobs:
+  build:
+    name: Build and push image
+    runs-on: ubuntu-latest
+    outputs:
+      repo: ${{ steps.imagename.outputs.repo }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # GHCR only accepts lowercase names, and the repo is CamelCase-ish.
+      - name: Resolve image name
+        id: imagename
+        run: |
+          repo="$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
+          echo "repo=ghcr.io/${repo}" >> "$GITHUB_OUTPUT"
+          echo "image=ghcr.io/${repo}:production" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          # Must match the server: uname -m on EC2 -> x86_64 = linux/amd64, aarch64 = linux/arm64.
+          platforms: linux/amd64
+          tags: |
+            ${{ steps.imagename.outputs.image }}
+            ${{ steps.imagename.outputs.repo }}:${{ github.sha }}
+          build-args: |
+            CLIENT_ENV_B64=${{ secrets.CLIENT_ENV_B64 }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   deploy:
+    name: Deploy image to EC2
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -42,7 +88,7 @@ jobs:
           # Only the bastion is reachable directly from the GitHub runner.
           ssh-keyscan -H ${{ secrets.BASTION_HOST }} >> ~/.ssh/known_hosts
 
-      # 2. Deploy via bastion jump (same as your local command)
+      # 2. Pull the freshly built image through the bastion jump
       - name: Deploy to EC2 via Bastion
         env:
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
@@ -56,6 +102,7 @@ jobs:
           set -e
 
           PROJECT_PATH="${{ secrets.EC2_PROJECT_PATH }}"
+          TAG="${{ github.sha }}"
 
           if [ -z "$PROJECT_PATH" ]; then
             echo "EC2_PROJECT_PATH is not set"
@@ -64,6 +111,7 @@ jobs:
 
           cd "$PROJECT_PATH"
 
+          # docker-compose.yml is read by the deploy below, so it still has to land on disk.
           echo "🔄 Pulling latest code..."
           git fetch "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" production
           git checkout -B production FETCH_HEAD
@@ -79,14 +127,41 @@ jobs:
             exit 1
           fi
 
-          echo "🛑 Stopping existing containers..."
-          sudo $DC down || true
+          # Skip login when the package is public; set GHCR_PULL_TOKEN (fine-grained PAT,
+          # read:packages, scoped to this repo) only if the pull below gets denied.
+          if [ -n "${{ secrets.GHCR_PULL_TOKEN }}" ]; then
+            echo "${{ secrets.GHCR_PULL_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          fi
 
-          echo "🚀 Building and starting containers..."
-          sudo $DC up --build -d
+          # IMAGE_TAG keeps pull and up pointed at the same immutable commit tag;
+          # docker-compose.yml falls back to :production when it is unset.
+          echo "📥 Pulling $TAG..."
+          sudo env IMAGE_TAG="$TAG" $DC pull app
+
+          echo "🚀 Starting container..."
+          sudo env IMAGE_TAG="$TAG" $DC up -d --no-build --remove-orphans app
+
+          echo "🧹 Pruning dangling images..."
+          sudo docker image prune -f
+
+          # Keep :production (the compose fallback tag) and the running commit; the
+          # superseded commit tags are what fills the disk on a small instance.
+          echo "🗄️ Removing superseded build tags..."
+          sudo docker images --format '{{.Repository}}:{{.Tag}}' \
+            | grep "^${{ needs.build.outputs.repo }}:" \
+            | grep -Ev ":(${TAG}|production)$" \
+            | xargs -r sudo docker image rm || true
 
           echo "📊 Container status:"
           $DC ps
+
+          echo "🩺 Health check:"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if curl -fsS -o /dev/null http://127.0.0.1:3000/; then ok=1; break; fi
+            sleep 3
+          done
+          if [ "$ok" = 1 ]; then echo "✅ app answered on :3000"; else echo "⚠️ port 3000 did not answer"; fi
 
           echo "✅ Deployment completed"
 

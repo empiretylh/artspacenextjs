@@ -149,10 +149,24 @@ Google sign-in on Play installs also needs the **Play App Signing SHA-1** (Play 
 
 The two platforms keep different, permanent identifiers. `capacitor.config.ts` `appId` is the published Play `applicationId` (`co.median.android.krrajyp`) and cannot change; iOS ships `com.illuminati.artspace` in `ios/App/App.xcodeproj`, `GoogleService-Info.plist`, the Google Cloud iOS OAuth client and the App Store record. Capacitor has one `appId` for both platforms and `editProjectSettingsIOS()` copies it over `PRODUCT_BUNDLE_IDENTIFIER`, so never run `npx cap add ios` against the existing project (`cap sync ios` is safe — it does not touch the id). If the id is ever rewritten, restore it in both build configurations or push and Google sign-in break silently.
 
-Archive with the **Release** configuration, then Distribute App -> **App Store Connect**. Xcode re-signs at export time: the checked-in `App.entitlements` value `aps-environment = development` becomes `production` and `get-task-allow` becomes `false`. The `.xcarchive` still shows the development identity and profile, so verify the exported IPA instead:
+Archive from the command line with the **Release** configuration; the project file has no `DEVELOPMENT_TEAM`, so pass it or the build stops with *"Signing for 'App' requires a development team"*:
 
 ```bash
-IPA=ios/App/build/export-v4/App.ipa
+npm run cap:ios:pods   # repo root: patches the podspec, then pod install in ios/App
+cd ios/App
+xcodebuild -workspace App.xcworkspace -scheme App -configuration Release \
+  -destination 'generic/platform=iOS' -archivePath build/ArtSpace-v5.xcarchive \
+  DEVELOPMENT_TEAM=87TTGHH95S -allowProvisioningUpdates archive
+xcodebuild -exportArchive -archivePath build/ArtSpace-v5.xcarchive \
+  -exportOptionsPlist build/ExportOptions.plist -exportPath build/export-v5 \
+  -allowProvisioningUpdates DEVELOPMENT_TEAM=87TTGHH95S
+cd ../..   # the verify and upload commands below run from the repo root
+```
+
+Xcode re-signs at export time: the checked-in `App.entitlements` value `aps-environment = development` becomes `production` and `get-task-allow` becomes `false`. The `.xcarchive` still shows the development identity and profile, so verify the exported IPA instead:
+
+```bash
+IPA=ios/App/build/export-v5/App.ipa
 rm -rf /tmp/ipa && unzip -q "$IPA" -d /tmp/ipa
 codesign -d --entitlements :- /tmp/ipa/Payload/App.app
 security cms -D -i /tmp/ipa/Payload/App.app/embedded.mobileprovision | plutil -p - | grep -E 'Name|ProvisionedDevices'
@@ -160,9 +174,23 @@ security cms -D -i /tmp/ipa/Payload/App.app/embedded.mobileprovision | plutil -p
 
 Expect `aps-environment = production`, `get-task-allow = false`, profile name `iOS Team Store Provisioning Profile: com.illuminati.artspace`, and no `ProvisionedDevices` key. An IPA carrying a development profile uploads to TestFlight happily but delivers sandbox-only push.
 
+Upload with the App Store Connect API key in `~/.appstoreconnect/private_keys` (key id `LDY5H66S43`, issuer `1db6ad78-c9b5-4c25-9433-48c891d76b92`):
+
+```bash
+xcrun altool --upload-app -t ios -f ios/App/build/export-v5/App.ipa \
+  --apiKey LDY5H66S43 --apiIssuer 1db6ad78-c9b5-4c25-9433-48c891d76b92
+```
+
+or open the archive in Xcode -> Window -> Organizer -> Distribute App.
+
 Bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in both Debug and Release configurations before archiving: App Store Connect rejects a repeated build number, and the checked-in project drifts behind whatever was last archived in Xcode.
 
-Sign in with Apple is implemented for the iOS shell (see the Apple Login gotcha in `src/features/auth/README.md`): the button, the native nonce flow, `/api/v1/users/auth/apple/` verification and the `com.apple.developer.applesignin` entitlement are in the repo. Two steps stay outside it, and the archive fails or the login rejects until both are done:
+Sign in with Apple is implemented for the iOS shell (see the Apple Login gotcha in `src/features/auth/README.md`): the button, the native nonce flow, `/api/v1/users/auth/apple/` verification and the `com.apple.developer.applesignin` entitlement are in the repo. Portal state, checked on 2026-11-01: **Sign In with Apple is already enabled** on App ID `com.illuminati.artspace` — both cached profiles in `~/Library/Developer/Xcode/UserData/Provisioning Profiles` carry the entitlement, so the archive needs no portal step.
 
-1. Apple Developer portal -> Certificates, Identifiers & Profiles -> Identifiers -> `com.illuminati.artspace` -> tick **Sign In with Apple**. Xcode's automatic signing errors out if the entitlement is present but the capability is not.
-2. `pod install` in `ios/App` (requires CocoaPods, which is not on this machine's PATH) so the `postinstall` patch's Alamofire dependency reaches the plugin pod. Without Alamofire the plugin compiles the Apple provider out and rejects with "Apple Sign-In provider is disabled. Dependencies are not available".
+`npm run cap:ios:pods` is what makes the plugin build the Apple provider at all: it patches `@capgo/capacitor-social-login`'s podspec to add Alamofire, then runs `pod install`. Without Alamofire the plugin's `#if canImport(Alamofire)` guard compiles the whole Apple provider out and login rejects with "Apple Sign-In provider is disabled. Dependencies are not available".
+
+The patch is deliberately an explicit script and not a `postinstall` hook. The `deps` stage of `Dockerfile` copies only `package.json` and `package-lock.json` before `npm ci`, so a `postinstall` that reads `scripts/patch-social-login-podspec.mjs` fails every web build with `MODULE_NOT_FOUND` long before the iOS toolchain is involved.
+
+CocoaPods is installed (`~/.rbenv/shims/pod`, 1.16.2) even though `npx cap doctor` reports it missing, and `pod` aborts with `Unicode Normalization not appropriate for ASCII-8BIT` unless the locale is UTF-8 — the script sets `LANG`/`LC_ALL` for that reason.
+
+The shell loads `https://myanmarartspace.net`, so the Apple button only appears for testers once the Next.js site and the Django `/api/v1/users/auth/apple/` endpoint are deployed — a TestFlight build on its own ships the native plumbing, not the UI. Deploy the API first or the route 500s.
