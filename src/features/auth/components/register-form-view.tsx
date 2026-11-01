@@ -26,6 +26,8 @@ import { useTranslations } from "next-intl";
 
 import { paths } from "@/config/paths";
 import type { RegisterFormValues } from "../hooks/use-register-form";
+import type { AppleNativeCredential } from "../lib/native-apple-auth";
+import AppleAuthButton from "./apple-auth-button";
 import GoogleAuthButton from "./google-auth-button";
 
 type Props = {
@@ -39,6 +41,7 @@ type Props = {
   showConfirmPassword: boolean;
   setShowConfirmPassword: (v: boolean) => void;
   handleGoogleSuccess: (idToken: string) => Promise<void>;
+  handleAppleSuccess: (credential: AppleNativeCredential) => Promise<void>;
 };
 
 export default function RegisterFormView({
@@ -50,6 +53,7 @@ export default function RegisterFormView({
   showConfirmPassword,
   setShowConfirmPassword,
   handleGoogleSuccess,
+  handleAppleSuccess,
 }: Props) {
   const t = useTranslations("Auth.register");
   const { addNotification } = useNotifications();
@@ -296,6 +300,20 @@ export default function RegisterFormView({
                 });
               }}
               label="Continue with Google"
+            />
+          </div>
+
+          {/* Collapses to nothing outside the iOS shell, so no stray gap. */}
+          <div className="flex justify-center w-full overflow-hidden mt-2 empty:hidden">
+            <AppleAuthButton
+              onCredential={handleAppleSuccess}
+              onError={(message) => {
+                addNotification({
+                  type: "error",
+                  title: "Apple sign-up failed",
+                  message: message || "Please try again.",
+                });
+              }}
             />
           </div>
 

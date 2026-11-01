@@ -1,6 +1,12 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
+  // Capacitor has a single appId for both platforms, and `cap add ios` copies it
+  // over PRODUCT_BUNDLE_IDENTIFIER in the Xcode project. This value is the
+  // published Play Store applicationId and cannot change, so iOS intentionally
+  // diverges: its bundle id is com.illuminati.artspace (GoogleService-Info.plist,
+  // Google Cloud iOS OAuth client, the uploaded App Store builds). Never re-add
+  // the ios platform, or push and Google sign-in break silently.
   appId: "co.median.android.krrajyp",
   appName: "Myanmar Art Space",
   webDir: "out",

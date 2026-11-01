@@ -12,6 +12,7 @@ import { handleFormError } from "@/lib/utils";
 import { accessAnalytics, authAnalytics, UserType } from "@/lib/analytics";
 import { useAuth } from "../store";
 import { User } from "@/types";
+import type { AppleNativeCredential } from "../lib/native-apple-auth";
 
 export const loginSchema = z.object({
   email: z
@@ -24,7 +25,7 @@ export const loginSchema = z.object({
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function useLoginForm({ returnTo }: { returnTo?: string } = {}) {
-  const { login, loginWithGoogle, loading } = useAuth();
+  const { login, loginWithGoogle, loginWithApple, loading } = useAuth();
   const router = useRouter();
   const { addNotification } = useNotifications();
 
@@ -106,10 +107,48 @@ export function useLoginForm({ returnTo }: { returnTo?: string } = {}) {
     }
   };
 
+  const handleAppleSuccess = async (credential: AppleNativeCredential) => {
+    try {
+      const response = await loginWithApple(credential);
+
+      if (!(response instanceof Error) && response) {
+        addNotification({
+          title: "Welcome Back!",
+          message: "You’ve successfully signed in with Apple.",
+          type: "success",
+        });
+
+        authAnalytics.login({ method: "apple" });
+
+        const { id, user_type } = response as User;
+        accessAnalytics.setUser(String(id), user_type.toLocaleLowerCase() as UserType);
+
+        if (returnTo) {
+          router.push(returnTo);
+        } else {
+          router.push(paths.root.path);
+        }
+      } else {
+        addNotification({
+          title: "Login Failed",
+          message: "Could not authenticate with Apple",
+          type: "error",
+        });
+      }
+    } catch (err) {
+      addNotification({
+        title: "Login Failed",
+        message: "An unexpected error occurred during Apple sign-in",
+        type: "error",
+      });
+    }
+  };
+
   return {
     form,
     onSubmit,
     handleGoogleSuccess,
+    handleAppleSuccess,
     loading,
     showPassword,
     setShowPassword,

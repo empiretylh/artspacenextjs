@@ -12,6 +12,7 @@ import { handleFormError } from "@/lib/utils";
 import { authAnalytics, accessAnalytics, UserType } from "@/lib/analytics";
 import { useAuth } from "../store";
 import type { User } from "@/types";
+import type { AppleNativeCredential } from "../lib/native-apple-auth";
 
 const myanmarPhoneRegex = /^(?:\+?95|0)9(?:2|3|4|5|6|7|8|9)\d{6,8}$/;
 
@@ -51,6 +52,7 @@ export function useRegisterForm() {
   const {
     register: registerUser,
     loginWithGoogle,
+    loginWithApple,
     loading,
     setRegisterDialogOpen,
     setLoginDialogOpen,
@@ -135,11 +137,45 @@ export function useRegisterForm() {
     }
   };
 
+  const handleAppleSuccess = async (credential: AppleNativeCredential) => {
+    try {
+      const response = await loginWithApple(credential);
+
+      if (!(response instanceof Error) && response) {
+        addNotification({
+          title: "Welcome!",
+          message: "You’ve successfully signed in with Apple.",
+          type: "success",
+        });
+
+        authAnalytics.signUp({ method: "apple" });
+
+        const { id, user_type } = response as User;
+        accessAnalytics.setUser(String(id), user_type.toLocaleLowerCase() as UserType);
+
+        router.push(paths.root.path);
+      } else {
+        addNotification({
+          title: "Sign Up Failed",
+          message: "Could not authenticate with Apple",
+          type: "error",
+        });
+      }
+    } catch (err) {
+      addNotification({
+        title: "Sign Up Failed",
+        message: "An unexpected error occurred during Apple sign-in",
+        type: "error",
+      });
+    }
+  };
+
   return {
     // form + submit
     form,
     onSubmit,
     handleGoogleSuccess,
+    handleAppleSuccess,
 
     // state
     loading,

@@ -11,6 +11,7 @@ export default function RegisterForm() {
          form={vm.form}
          onSubmit={vm.onSubmit}
          handleGoogleSuccess={vm.handleGoogleSuccess}
+         handleAppleSuccess={vm.handleAppleSuccess}
          loading={vm.loading}
          showPassword={vm.showPassword}
          setShowPassword={vm.setShowPassword}

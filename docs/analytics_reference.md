@@ -21,12 +21,12 @@ Called once after login to identify the user across sessions. *(Note: This is no
 
 ### `sign_up`
 Triggered when a user successfully creates a new account.
-- `method` *(string)*: The authentication method used. Values: `'email' | 'google' | 'github'`.
+- `method` *(string)*: The authentication method used. Values: `'email' | 'google' | 'apple' | 'github'`.
 - `source` *(string)*: e.g., `'sign_in_page'`.
 
 ### `login`
 Triggered when an existing user successfully logs in.
-- `method` *(string)*: The authentication method used. Values: `'email' | 'google' | 'github'`.
+- `method` *(string)*: The authentication method used. Values: `'email' | 'google' | 'apple' | 'github'`.
 - `source` *(string)*: e.g., `'sign_up_page'`.
 
 ### `logout`

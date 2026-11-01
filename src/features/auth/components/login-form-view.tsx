@@ -19,6 +19,8 @@ import type { UseFormReturn } from "react-hook-form";
 import { useTranslations } from "next-intl";
 
 import type { LoginFormValues } from "../hooks/use-login-form";
+import type { AppleNativeCredential } from "../lib/native-apple-auth";
+import AppleAuthButton from "./apple-auth-button";
 import GoogleAuthButton from "./google-auth-button";
 
 type Props = {
@@ -29,6 +31,7 @@ type Props = {
   showPassword: boolean;
   setShowPassword: (v: boolean | ((prev: boolean) => boolean)) => void;
   handleGoogleSuccess: (idToken: string) => Promise<void>;
+  handleAppleSuccess: (credential: AppleNativeCredential) => Promise<void>;
 };
 
 export default function LoginFormView({
@@ -39,6 +42,7 @@ export default function LoginFormView({
   setShowPassword,
   reason,
   handleGoogleSuccess,
+  handleAppleSuccess,
 }: Props) {
   const t = useTranslations("Auth.login");
   const { addNotification } = useNotifications();
@@ -148,6 +152,20 @@ export default function LoginFormView({
               label="Continue with Google"
             />
           </div>
+
+            {/* Collapses to nothing outside the iOS shell, so no stray gap. */}
+            <div className="flex justify-center w-full overflow-hidden mt-2 empty:hidden">
+              <AppleAuthButton
+                onCredential={handleAppleSuccess}
+                onError={(message) => {
+                  addNotification({
+                    type: "error",
+                    title: "Apple sign-in failed",
+                    message: message || "Please try again.",
+                  });
+                }}
+              />
+            </div>
 
             <FieldDescription className="text-center">
               {t("dontHaveAccount")}{" "}
