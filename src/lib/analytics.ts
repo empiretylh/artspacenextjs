@@ -200,7 +200,7 @@ export const authAnalytics = {
     method,
     source = 'sign_in_page',
   }: {
-    method: 'email' | 'google' | 'github'
+    method: 'email' | 'google' | 'apple' | 'github'
     source?: AnalyticsSource
   }) {
     track('sign_up', { method, source })
@@ -210,7 +210,7 @@ export const authAnalytics = {
     method,
     source = 'sign_up_page',
   }: {
-    method: 'email' | 'google' | 'github'
+    method: 'email' | 'google' | 'apple' | 'github'
     source?: AnalyticsSource
   }) {
     track('login', { method, source })

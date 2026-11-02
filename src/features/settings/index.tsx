@@ -13,8 +13,10 @@ import {
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
-import { ChevronRight, ShieldAlert, Trash2 } from "lucide-react";
+import { ChevronRight, Globe, Moon, ShieldAlert, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
 const SettingsPage = () => {
    const t = useTranslations("Settings");
@@ -33,6 +35,55 @@ const SettingsPage = () => {
 
          {/* 1. Profile Hero Preview Card (Cover + Avatar + Identity) */}
          <ProfileMedia />
+
+         {/* Preferences Card (Language & Theme, rendered on mobile where header menu was removed) */}
+         <Card className="border border-border/70 shadow-xs gap-0 py-0 overflow-hidden md:hidden">
+            <CardHeader className="p-5 sm:p-6 border-b border-border/60">
+               <CardTitle className="text-lg font-semibold font-display">
+                  {t("preferences")}
+               </CardTitle>
+               <CardDescription>
+                  {t("preferencesDesc")}
+               </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0 divide-y divide-border/60">
+               {/* Language */}
+               <div className="flex items-center justify-between p-5 sm:p-6 gap-4">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                     <div className="p-2.5 rounded-xl bg-muted text-foreground shrink-0">
+                        <Globe className="w-5 h-5 text-muted-foreground" />
+                     </div>
+                     <div className="min-w-0">
+                        <h4 className="text-sm font-medium text-foreground">
+                           {t("language")}
+                        </h4>
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                           {t("languageDesc")}
+                        </p>
+                     </div>
+                  </div>
+                  <LanguageSwitcher />
+               </div>
+
+               {/* Theme */}
+               <div className="flex items-center justify-between p-5 sm:p-6 gap-4">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                     <div className="p-2.5 rounded-xl bg-muted text-foreground shrink-0">
+                        <Moon className="w-5 h-5 text-muted-foreground" />
+                     </div>
+                     <div className="min-w-0">
+                        <h4 className="text-sm font-medium text-foreground">
+                           {t("theme")}
+                        </h4>
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                           {t("themeDesc")}
+                        </p>
+                     </div>
+                  </div>
+                  <ThemeSwitcher />
+               </div>
+            </CardContent>
+         </Card>
 
          {/* 2. Profile Details & Preferences Card */}
          <Card className="border border-border/70 shadow-xs gap-0 py-0 overflow-hidden">

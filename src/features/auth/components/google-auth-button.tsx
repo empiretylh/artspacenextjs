@@ -11,7 +11,8 @@ import { signInWithGoogleNative } from "../lib/native-google-auth";
 type Props = {
    /** Receives the Google idToken from either the native or the web flow. */
    onIdToken: (idToken: string) => void | Promise<void>;
-   onError?: () => void;
+   /** Receives the failure reason (native flow) so the UI can surface it. */
+   onError?: (message?: string) => void;
    label: string;
    disabled?: boolean;
 };
@@ -43,7 +44,7 @@ export default function GoogleAuthButton({
          await onIdToken(idToken);
       } catch (error) {
          console.error("Native Google sign-in failed:", error);
-         onError?.();
+         onError?.(error instanceof Error ? error.message : undefined);
       } finally {
          setLoading(false);
       }
@@ -57,7 +58,7 @@ export default function GoogleAuthButton({
                   void onIdToken(response.credential);
                }
             }}
-            onError={onError}
+            onError={() => onError?.()}
             useOneTap
             theme="outline"
             shape="rectangular"

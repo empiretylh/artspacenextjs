@@ -10,6 +10,7 @@ import { doc, setDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { env } from "@/config/env";
 import { useChatStore } from "@/features/chat/store";
 import Cookies from "js-cookie";
+import type { AppleNativeCredential } from "./lib/native-apple-auth";
 
 interface RegisterForm {
    email: string;
@@ -35,6 +36,9 @@ export type State = {
    ) => Promise<User | AxiosError<{ message: string }>>;
    loginWithGoogle: (
       token: string
+   ) => Promise<User | AxiosError<{ message: string }>>;
+   loginWithApple: (
+      credential: AppleNativeCredential
    ) => Promise<User | AxiosError<{ message: string }>>;
    register: (
       values: RegisterForm
@@ -127,6 +131,45 @@ export const useAuth = create<State>((set, get) => {
             // Proxy through Next.js API route to handle cookies and firebase sync
             const { data } = await axios.post("/api/auth/google", {
                token
+            });
+
+            // 1. SILENT FIREBASE HANDSHAKE
+            if (env.FIREBASE_ENABLE && firebaseAuth && data.firebaseToken) {
+               await signInWithCustomToken(firebaseAuth, data.firebaseToken);
+            }
+
+            const newState = {
+               accessToken: data.access,
+               firebaseToken: data.firebaseToken,
+               user: data.user,
+               isFirebaseReady: true,
+               isBuyer: data.user.user_type === "BUYER",
+               isArtist: data.user.user_type === "ARTIST",
+               isCollector: data.user.user_type === "COLLECTOR",
+               isGallery: data.user.user_type === "GALLERY",
+            };
+            set(newState);
+
+            queryClient.invalidateQueries();
+            return data.user as User;
+         } catch (error) {
+            return error as AxiosError<{ message: string }>;
+         } finally {
+            set({ loading: false });
+         }
+      },
+
+      async loginWithApple(credential) {
+         const queryClient = getQueryClient();
+         try {
+            set({ loading: true });
+
+            // Proxy through Next.js API route to handle cookies and firebase sync
+            const { data } = await axios.post("/api/auth/apple", {
+               token: credential.idToken,
+               nonce: credential.nonce,
+               first_name: credential.firstName,
+               last_name: credential.lastName,
             });
 
             // 1. SILENT FIREBASE HANDSHAKE

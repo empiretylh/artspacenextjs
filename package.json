@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "cap:sync": "npm run build && npx cap sync android",
+    "cap:ios:pods": "node scripts/patch-social-login-podspec.mjs && cd ios/App && LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 pod install",
     "cap:open:android": "npx cap open android",
     "cap:run:android": "npx cap run android",
     "lint": "eslint --quiet",

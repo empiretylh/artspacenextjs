@@ -1,11 +1,13 @@
-version: '3.8'
-
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: art-space-next:latest
+      args:
+        CLIENT_ENV_B64: ${CLIENT_ENV_B64:-}
+    # Pushed by the LAUNCH TO EC2 workflow as :production and :<commit sha>.
+    # The deploy sets IMAGE_TAG to the sha; unset it to run the moving tag.
+    image: ghcr.io/empiretylh/artspacenextjs:${IMAGE_TAG:-production}
     container_name: art-space-next-app
     ports:
       - "3000:3000"

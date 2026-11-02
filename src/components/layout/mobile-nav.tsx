@@ -4,10 +4,11 @@ import React from "react";
 import Link from "../common/link";
 import { usePathname } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { paths } from "@/config/paths";
+import { paths, isProtectedRoute } from "@/config/paths";
 import { env } from "@/config/env";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useAuth } from "@/features/auth/store";
 import { useUnreadCount } from "@/features/chat/hooks/use-unread-count";
 import { useChatStore } from "@/features/chat/store";
 
@@ -49,6 +50,7 @@ export function MobileNav() {
    const t = useTranslations("Navigation");
    const pathname = usePathname();
    const { setOpenMobile } = useSidebar();
+   const user = useAuth((state) => state.user);
    const { hasUnread } = useUnreadCount();
    const activeConversationId = useChatStore((s) => s.activeConversationId);
    const pendingRecipientId = useChatStore((s) => s.pendingRecipientId);
@@ -116,6 +118,7 @@ export function MobileNav() {
                   <Link
                      key={item.title}
                      to={item.url}
+                     prefetch={isProtectedRoute(item.url) && !user ? false : undefined}
                      onClick={() => handleTabClick(active)}
                      className={cn(
                         "flex-1 flex flex-col items-center justify-center py-1 px-1 h-full min-w-0 select-none group touch-manipulation",

@@ -4,6 +4,8 @@ import FacebookIcon from "../icons/facebook-icon";
 import YoutubeIcon from "../icons/youtube-icon";
 import TiktokIcon from "../icons/tiktok-icon";
 import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "./language-switcher";
+import { ThemeSwitcher } from "../theme-switcher";
 
 const AppSidebarFooter = () => {
    const t = useTranslations("Header");
@@ -39,6 +41,10 @@ const AppSidebarFooter = () => {
             >
                <TiktokIcon />
             </a>
+         </div>
+         <div className="flex items-center gap-2 md:hidden pt-1">
+            <LanguageSwitcher />
+            <ThemeSwitcher />
          </div>
       </div>
    );

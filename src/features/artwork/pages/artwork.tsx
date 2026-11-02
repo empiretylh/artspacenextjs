@@ -38,7 +38,6 @@ const ArtworkDetailPage = ({ id }: { id: string }) => {
    const { isLiked, handleLike } = useLike({
       artworkId: String(id),
       initialLiked: Boolean(artwork?.is_liked),
-      initialCount: artwork?.like_count ?? 0,
    });
 
    useEffect(() => {

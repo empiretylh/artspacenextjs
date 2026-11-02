@@ -50,8 +50,10 @@ export async function POST(request: Request) {
   }
 
   // 3. Set persistent cookies so the WebView survives force-close/reopen.
+  // Kept in sync with the backend JWT lifetime (365 days) so the session only
+  // ends when the user taps Logout.
   const cookieOptions = {
-    maxAge: 60 * 60 * 24 * 90,
+    maxAge: 60 * 60 * 24 * 365,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax" as const,
     path: "/",

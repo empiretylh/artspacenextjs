@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.splashscreen.SplashScreen;
 
 import com.getcapacitor.BridgeActivity;
@@ -48,6 +49,7 @@ public class MainActivity extends BridgeActivity implements ModifiedMainActivity
 
         setupOfflineView();
         registerNetworkMonitoring();
+        registerBackHandler();
     }
 
     private void setupOfflineView() {
@@ -108,6 +110,27 @@ public class MainActivity extends BridgeActivity implements ModifiedMainActivity
         };
 
         connectivityManager.registerDefaultNetworkCallback(networkCallback);
+    }
+
+    /**
+     * Site navigation (routes, filter changes) pushes real WebView history
+     * entries, so back should unwind them instead of closing the app. Only the
+     * first page lets the system handle the press, which exits as usual.
+     */
+    private void registerBackHandler() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                WebView webView = getBridge() != null ? getBridge().getWebView() : null;
+                if (webView != null && webView.canGoBack()) {
+                    webView.goBack();
+                    return;
+                }
+
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
     }
 
     private void retry() {

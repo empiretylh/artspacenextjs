@@ -343,3 +343,21 @@ export const paths = {
       getHref: () => "*",
    },
 } as const;
+
+/**
+ * Prefixes the middleware guards with a guest -> /sign-in redirect (src/proxy.ts).
+ * Links to these must not be prefetched while signed out: Next caches the 307
+ * target in the client Router Cache, so the tab opens sign-in after logging in
+ * until the document is reloaded.
+ */
+export const protectedRoutePrefixes = [
+   "/profile",
+   "/settings",
+   "/cart",
+   "/checkout",
+   "/orders",
+   "/chats",
+] as const;
+
+export const isProtectedRoute = (path: string) =>
+   protectedRoutePrefixes.some((prefix) => path.startsWith(prefix));

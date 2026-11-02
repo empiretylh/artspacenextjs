@@ -11,6 +11,10 @@ import { Bell } from "lucide-react";
 import { useRouter } from "@/i18n/routing";
 import Cookies from "js-cookie";
 import { recordNotificationEvent } from "../api/record-notification-event";
+import {
+   isEndpointUnavailable,
+   markUrlUnavailable,
+} from "@/lib/api-unavailable";
 
 export const useNotificationStream = () => {
    const { accessToken: stateToken, user } = useAuth();
@@ -29,12 +33,15 @@ export const useNotificationStream = () => {
          return;
       }
 
+      if (isEndpointUnavailable("notificationStream")) return;
+
       let isMounted = true;
       let retryDelay = 1000;
       let timeoutId: NodeJS.Timeout | null = null;
 
       const connectStream = async () => {
          if (!isMounted) return;
+         if (isEndpointUnavailable("notificationStream")) return;
 
          abortControllerRef.current?.abort();
          const controller = new AbortController();
@@ -53,6 +60,11 @@ export const useNotificationStream = () => {
 
             if (!response.ok) {
                console.error(`[NotificationStream] Failed with status ${response.status} ${response.statusText}`);
+               if (response.status === 503) {
+                  // Service is down; stay off the endpoint for this session.
+                  markUrlUnavailable(streamUrl);
+                  return;
+               }
                throw new Error(`Notification stream failed: ${response.status}`);
             }
 

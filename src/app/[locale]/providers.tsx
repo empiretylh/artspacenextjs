@@ -5,7 +5,6 @@ import GlobalProvider from "@/components/providers/global-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { getQueryClient } from "@/lib/get-query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Toaster } from "sonner";
@@ -32,9 +31,12 @@ export default function AppProvider({ children }: Readonly<IProviderProps>) {
    * and never on the regular website.
    */
   React.useEffect(() => {
-    document.documentElement.classList.toggle(
-      "capacitor-native",
-      Capacitor.isNativePlatform()
+    const isNative = Capacitor.isNativePlatform();
+    const root = document.documentElement;
+    root.classList.toggle("capacitor-native", isNative);
+    root.classList.toggle(
+      "capacitor-ios",
+      isNative && Capacitor.getPlatform() === "ios"
     );
   }, []);
 

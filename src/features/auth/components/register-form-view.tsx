@@ -3,6 +3,7 @@
 import Link from "@/components/common/link";
 import { Button } from "@/components/ui/button";
 import { FieldDescription } from "@/components/ui/field";
+import { useNotifications } from "@/components/ui/notifications";
 import {
   Form,
   FormControl,
@@ -25,6 +26,8 @@ import { useTranslations } from "next-intl";
 
 import { paths } from "@/config/paths";
 import type { RegisterFormValues } from "../hooks/use-register-form";
+import type { AppleNativeCredential } from "../lib/native-apple-auth";
+import AppleAuthButton from "./apple-auth-button";
 import GoogleAuthButton from "./google-auth-button";
 import type { User } from "@/types";
 import { AccountTypeChooserDialog } from "./account-type-chooser-dialog";
@@ -41,7 +44,7 @@ type Props = {
   showConfirmPassword: boolean;
   setShowConfirmPassword: (v: boolean) => void;
   handleGoogleSuccess: (idToken: string) => Promise<void>;
-
+  handleAppleSuccess: (credential: AppleNativeCredential) => Promise<void>;
   onboardingUser?: User | null;
   handleRoleSelect?: (role: SwitchableAccountType) => Promise<void>;
   handleRoleSkip?: () => void;
@@ -59,6 +62,7 @@ export default function RegisterFormView({
   showConfirmPassword,
   setShowConfirmPassword,
   handleGoogleSuccess,
+  handleAppleSuccess,
   onboardingUser,
   handleRoleSelect,
   handleRoleSkip,
@@ -67,6 +71,7 @@ export default function RegisterFormView({
   triggerMockOnboarding,
 }: Props) {
   const t = useTranslations("Auth.register");
+  const { addNotification } = useNotifications();
 
   return (
     <div className="">
@@ -302,10 +307,28 @@ export default function RegisterFormView({
           <div className="flex justify-center w-full overflow-hidden">
             <GoogleAuthButton
               onIdToken={handleGoogleSuccess}
-              onError={() => {
-                console.error("Google Registration Failed");
+              onError={(message) => {
+                addNotification({
+                  type: "error",
+                  title: "Google sign-up failed",
+                  message: message || "Please try again.",
+                });
               }}
               label="Continue with Google"
+            />
+          </div>
+
+          {/* Collapses to nothing outside the iOS shell, so no stray gap. */}
+          <div className="flex justify-center w-full overflow-hidden mt-2 empty:hidden">
+            <AppleAuthButton
+              onCredential={handleAppleSuccess}
+              onError={(message) => {
+                addNotification({
+                  type: "error",
+                  title: "Apple sign-up failed",
+                  message: message || "Please try again.",
+                });
+              }}
             />
           </div>
 

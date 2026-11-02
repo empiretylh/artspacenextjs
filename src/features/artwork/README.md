@@ -64,8 +64,7 @@ The `/artworks` catalog opens as a ranked **Recommended** feed instead of newest
 ### Engagement counts
 `Artwork` payloads now include `view_count`, `like_count` and `save_count` (all optional in the TS type for cached/older payloads):
 
-- `artwork-card.tsx` shows a small red heart + `like_count` when it is greater than zero; the count updates optimistically via `useLike({ initialCount })` and rolls back on mutation error.
-- The detail page shows a compact formatted view count next to the title.
+- The detail page shows a compact formatted view count next to the title. Like counts are intentionally not displayed on catalog cards.
 
 ### View tracking
 `src/features/service/artspace/track-artwork-view.ts` is a fire-and-forget tracker used by the detail page:
@@ -92,6 +91,7 @@ The `/artworks` catalog opens as a ranked **Recommended** feed instead of newest
 - **Resilient List Normalization**: Uses `normalizeListResponse` and `extractListItems` across `ArtworksPageView`, `RelatedArtworksListView`, and artwork queries to seamlessly handle both standard DRF paginated objects (`{ count, results: [] }`) and unpaginated arrays (`[]`) without runtime crashes.
 
 ## 🌐 Localization
+- **Responsive filtering**: `ArtworksPageView` hides the horizontal `FilterRow` pill strip and the default catalog title below `md`, keeping only a single compact row (sort `Select` + round filter button) so mobile catalog screens stay minimal; all filters remain reachable through the `FilterSidebar` sheet. Pages that pass an explicit `title` (e.g. "Liked Artworks") keep their heading on mobile, and desktop (`md+`) is unchanged.
 - **Namespaces**:
   - `Artwork.catalog`: Translates catalog title, active filters bar, sorting dropdown options, empty state fallbacks, infinite scroll sentinels, and inquiry button.
   - `Artwork.filters`: Translates filter sheet drawer headers, section titles (Currency, Value Range, Availability, Art Forms, Art Genres, Art Styles), quick toggle row, and status enum labels.
