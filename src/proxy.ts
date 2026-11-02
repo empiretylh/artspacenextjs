@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
+import { protectedRoutePrefixes } from "@/config/paths";
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -35,12 +36,7 @@ export default async function proxy(request: NextRequest) {
   // 2️⃣ Guest visiting protected routes
   if (
     !isAuthed &&
-    (localeFreePathname.startsWith("/profile") ||
-      localeFreePathname.startsWith("/settings") ||
-      localeFreePathname.startsWith("/cart") ||
-      localeFreePathname.startsWith("/checkout") ||
-      localeFreePathname.startsWith("/orders") ||
-      localeFreePathname.startsWith("/chats"))
+    protectedRoutePrefixes.some((prefix) => localeFreePathname.startsWith(prefix))
   ) {
     return NextResponse.redirect(new URL(`/${locale}/sign-in`, request.url));
   }

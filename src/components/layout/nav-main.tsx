@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import Link from "../common/link";
 import { usePathname, useRouter } from "@/i18n/routing";
 import React from "react";
-import { paths } from "@/config/paths";
+import { paths, isProtectedRoute } from "@/config/paths";
 import { useTranslations } from "next-intl";
 import SmileysIcon from "../icons/smileys-icon";
 import ArtworksIcon from "../icons/artworks-icon";
@@ -143,6 +143,7 @@ export function NavMain() {
                            >
                               <Link
                                  to={item.url}
+                                 prefetch={isProtectedRoute(item.url) && !user ? false : undefined}
                                  onClick={(e) => {
                                     const isDisabled = item.disabled || (item.title === "order" && !user);
                                     if (isDisabled) {
