@@ -187,6 +187,28 @@ Bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in both Debug and Release
 
 Sign in with Apple is implemented for the iOS shell (see the Apple Login gotcha in `src/features/auth/README.md`): the button, the native nonce flow, `/api/v1/users/auth/apple/` verification and the `com.apple.developer.applesignin` entitlement are in the repo. Portal state, checked on 2026-11-01: **Sign In with Apple is already enabled** on App ID `com.illuminati.artspace` — both cached profiles in `~/Library/Developer/Xcode/UserData/Provisioning Profiles` carry the entitlement, so the archive needs no portal step.
 
+`ios/App/App/GoogleService-Info.plist` must be a member of the App target's **Copy Bundle Resources**, not just a file sitting in the folder. The file is tracked in git; the project reference was not, so every archive built from a clean checkout shipped without it and `FirebaseApp.configure()` logged *"could not find a valid GoogleService-Info.plist in your project"* — which kills FCM push and native Google sign-in, both of which read it. A build can pass archiving, upload, and still be broken this way, so check the bundle rather than the build log:
+
+```bash
+ls /tmp/ipa/Payload/App.app/GoogleService-Info.plist
+```
+
+If it is missing, re-add it with the `xcodeproj` gem (CocoaPods already pulls it in) instead of hand-editing the project file:
+
+```bash
+~/.rbenv/versions/3.2.2/bin/ruby -e '
+require "xcodeproj"
+p = Xcodeproj::Project.open("ios/App/App.xcodeproj")
+t = p.targets.find { |x| x.name == "App" }
+g = p.main_group["App"]
+n = "GoogleService-Info.plist"
+r = g.files.find { |f| f.path.to_s.end_with?(n) } || g.new_reference(n)
+t.resources_build_phase.add_file_reference(r) unless t.resources_build_phase.files_references.include?(r)
+p.save'
+```
+
+Deployment target is iOS 15.0 in `Podfile` and in all four `IPHONEOS_DEPLOYMENT_TARGET` settings (project and target, Debug and Release). App Store Connect warns on any build targeting below 15.0 from April 2027, and the value is read from the binary's `minos`, so bump both places and re-run `npm run cap:ios:pods` — the Pods project regenerates from the `platform` line.
+
 `npm run cap:ios:pods` is what makes the plugin build the Apple provider at all: it patches `@capgo/capacitor-social-login`'s podspec to add Alamofire, then runs `pod install`. Without Alamofire the plugin's `#if canImport(Alamofire)` guard compiles the whole Apple provider out and login rejects with "Apple Sign-In provider is disabled. Dependencies are not available".
 
 The patch is deliberately an explicit script and not a `postinstall` hook. The `deps` stage of `Dockerfile` copies only `package.json` and `package-lock.json` before `npm ci`, so a `postinstall` that reads `scripts/patch-social-login-podspec.mjs` fails every web build with `MODULE_NOT_FOUND` long before the iOS toolchain is involved.

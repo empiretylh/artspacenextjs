@@ -39,6 +39,8 @@ The project is configured with a multi-stage Docker build utilizing Next.js `sta
 1. **build** — `docker/build-push-action` on the runner, pushed to `ghcr.io/empiretylh/artspacenextjs` as `:production` and as the immutable commit sha. BuildKit layer cache lives in the GitHub Actions cache, so a no-source-change rebuild is a few seconds instead of a full `npm ci`.
 2. **deploy** — SSH through the bastion, `git` sync (the server still needs `docker-compose.yml`), then `docker compose pull app` and `up -d --no-build` with `IMAGE_TAG=<sha>`, and a `curl` health check on `:3000`. Nothing is compiled on EC2 any more.
 
+`provenance: false` in the build step is load-bearing: BuildKit attestations publish the image as an OCI index, and the EC2 box runs docker-compose 1.29.2, which reads `ContainerConfig` from the previous container's image while recreating and fails with `KeyError: 'ContainerConfig'` (deploy job exits 1). A container already created from an attested image keeps failing even after the flag is restored, so it has to be removed once: `sudo docker rm -f <name>`. Installing the compose v2 plugin on the instance (`docker compose version`) removes the constraint for good — the workflow prefers v2 and only falls back to `docker-compose`.
+
 Repository secrets/variables:
 
 | Name | Required | Purpose |
