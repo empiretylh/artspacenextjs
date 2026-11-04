@@ -23,7 +23,7 @@ import GalleryExportIcon from "../icons/gallery-export-icon";
 import Messages2Icon from "../icons/messages-2-icon";
 import Layers2Icon from "../icons/layers-2-icon";
 import ShoppingCartIcon from "../icons/shopping-cart-icon";
-import { ClipboardPenLineIcon, HomeIcon } from "lucide-react";
+import { ClipboardPenLineIcon, HomeIcon, ShoppingBagIcon } from "lucide-react";
 import { useAuth } from "@/features/auth/store";
 import { useUnreadCount } from "@/features/chat/hooks/use-unread-count";
 
@@ -39,6 +39,11 @@ const data = {
          title: "artwork",
          url: paths.artworks.path,
          icon: ArtworksIcon,
+      },
+      {
+         title: "masStore",
+         url: paths.store.path,
+         icon: ShoppingBagIcon,
       },
       {
          title: "artist",

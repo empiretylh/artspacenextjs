@@ -36,6 +36,8 @@
   "Navigation": {
     "home": "Home",
     "artwork": "Artwork",
+    "store": "Store",
+    "masStore": "MAS Store",
     "artist": "Artist",
     "collectors": "Collectors",
     "gallery": "Gallery",

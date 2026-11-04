@@ -410,4 +410,24 @@ export const queryKeys = {
       list: () => ["customer-details", "list"],
       detail: (id: number) => ["customer-details", "detail", id],
    },
+
+   /* =======================
+    * MAS STORE
+    * ======================= */
+   store: {
+      all: ["store"],
+
+      productTypes: {
+         all: ["store", "product-types"],
+         list: (params?: QueryKeys) =>
+            ["store", "product-types", "list", normalizeParams(params)],
+      },
+
+      products: {
+         all: ["store", "products"],
+         list: (params?: QueryKeys) =>
+            ["store", "products", "list", normalizeParams(params)],
+         detail: (id: string) => ["store", "products", "detail", id],
+      },
+   },
 };

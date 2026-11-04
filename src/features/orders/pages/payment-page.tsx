@@ -18,13 +18,14 @@ import { createPaymentIntent } from '../api/payment'
 import { useUpdateOrder } from '../api/update-order'
 import Price from '@/components/common/price'
 import AppImage from '@/components/common/app-image'
-import { cn, getImage } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { ecommerceAnalytics, itemFromArtwork } from '@/lib/analytics'
 import { useSource } from '@/lib/analytics-source'
+import { getOrderLines, isMerchOrder } from '../lib/order-lines'
 import { OrderStatusBadge } from '../components/order-status-badge'
 import { ThemeSwitcher } from '@/components/theme-switcher'
 
@@ -75,10 +76,20 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
       })
 
       // Tracking: Add Payment Info
+      const merchLines = getOrderLines(order)
       ecommerceAnalytics.addPaymentInfo(
         order.currency || 'MMK',
         parseFloat(String(order.total_price)),
-        order.items?.map((item) => itemFromArtwork(item.artwork as any)) || [],
+        isMerchOrder(order)
+          ? merchLines.map((line) => ({
+              item_id: line.key,
+              item_name: line.title,
+              item_category: line.variant || 'Merch',
+              price: Number(line.unit_price),
+              quantity: line.quantity,
+              currency: order.currency || 'MMK',
+            }))
+          : order.items?.map((item) => itemFromArtwork(item.artwork as any)) || [],
         'Online Payment',
         source
       )
@@ -130,11 +141,8 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
     )
   }
 
-  const firstItem = order.items?.[0]
-  const artwork = firstItem?.artwork
-  const artistDisplayName = artwork?.artist_profile
-    ? `${artwork.artist_profile.first_name} ${artwork.artist_profile.last_name}`
-    : artwork?.artist_name || 'Featured Artist'
+  const lines = getOrderLines(order)
+  const isMerch = isMerchOrder(order)
 
   const currencyObj = {
     code: order.currency || 'MMK',
@@ -211,30 +219,33 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
 
         {mobileSummaryOpen && (
           <div className="px-4 sm:px-6 pb-6 pt-2 border-t border-border/40 space-y-4">
-            {artwork && (
-              <div className="flex gap-3.5 items-start p-3 rounded-xl bg-background border border-border/60 shadow-2xs">
+            {lines.map((line) => (
+              <div key={line.key} className="flex gap-3.5 items-start p-3 rounded-xl bg-background border border-border/60 shadow-2xs">
                 <div className="relative size-16 shrink-0 rounded-lg overflow-hidden border border-border/50 bg-muted/20">
                   <AppImage
-                    src={getImage(artwork.image)}
-                    alt={artwork.title}
+                    src={line.image}
+                    alt={line.title}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div className="space-y-1 min-w-0 flex-1">
                   <h3 className="font-semibold text-sm leading-normal text-foreground line-clamp-1">
-                    {artwork.title}
+                    {line.title}
                   </h3>
-                  <p className="text-xs text-muted-foreground truncate">by {artistDisplayName}</p>
-                  <p className="text-xs text-muted-foreground">Qty: {firstItem?.quantity || 1}</p>
+                  <p className="text-xs text-muted-foreground truncate">by {line.artist}</p>
+                  {line.variant && (
+                    <p className="text-xs text-muted-foreground truncate">{line.variant}</p>
+                  )}
+                  <p className="text-xs text-muted-foreground">Qty: {line.quantity}</p>
                 </div>
               </div>
-            )}
+            ))}
 
             {/* Price Breakdown */}
             <div className="space-y-2 text-xs">
               <div className="flex justify-between items-center text-muted-foreground">
-                <span>Artwork Price</span>
+                <span>{isMerch ? 'Items Subtotal' : 'Artwork Price'}</span>
                 <span className="font-medium text-foreground">
                   <Price price={order.price || '0'} currency={currencyObj} />
                 </span>
@@ -344,7 +355,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
               <div className="p-4 rounded-xl border border-border/50 bg-muted/20 space-y-3">
                 <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
                   <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
-                  <span>Original artwork guaranteed authentic</span>
+                  <span>{isMerch ? 'Printed on demand by MAS from the licensed artwork' : 'Original artwork guaranteed authentic'}</span>
                 </div>
                 <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
                   <Truck className="h-4 w-4 text-primary shrink-0" />
@@ -352,7 +363,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
                 </div>
                 <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
                   <Sparkles className="h-4 w-4 text-primary shrink-0" />
-                  <span>Direct support to the verified artist & gallery</span>
+                  <span>{isMerch ? 'A royalty on this sale goes to the artist who made the artwork' : 'Direct support to the verified artist & gallery'}</span>
                 </div>
               </div>
             </div>
@@ -364,37 +375,40 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
           <div className="w-full max-w-[420px] mx-auto lg:mx-0 space-y-6 lg:sticky lg:top-24">
             <h2 className="text-base font-semibold tracking-tight text-foreground">Order Summary</h2>
 
-            {/* Artwork Preview Card */}
-            {artwork && (
-              <div className="flex gap-4 items-start sm:items-center p-3.5 rounded-xl bg-background/80 border border-border/60 shadow-2xs">
+            {/* Item Preview Cards */}
+            {lines.map((line) => (
+              <div key={line.key} className="flex gap-4 items-start sm:items-center p-3.5 rounded-xl bg-background/80 border border-border/60 shadow-2xs">
                 <div className="relative size-20 shrink-0 rounded-lg overflow-hidden border border-border/50 bg-muted/20 shadow-2xs">
                   <AppImage
-                    src={getImage(artwork.image)}
-                    alt={artwork.title}
+                    src={line.image}
+                    alt={line.title}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div className="space-y-1.5 min-w-0 flex-1">
                   <h3 className="font-semibold text-sm leading-normal sm:leading-relaxed text-foreground line-clamp-1 sm:line-clamp-2">
-                    {artwork.title}
+                    {line.title}
                   </h3>
-                  <p className="text-xs text-muted-foreground truncate">by {artistDisplayName}</p>
-                  <p className="text-[11px] text-muted-foreground">Qty: {firstItem?.quantity || 1}</p>
+                  <p className="text-xs text-muted-foreground truncate">by {line.artist}</p>
+                  {line.variant && (
+                    <p className="text-xs text-muted-foreground truncate">{line.variant}</p>
+                  )}
+                  <p className="text-[11px] text-muted-foreground">Qty: {line.quantity}</p>
                 </div>
               </div>
-            )}
+            ))}
 
-            {order.items && order.items.length > 1 && (
+            {lines.length > 1 && (
               <p className="text-xs text-primary font-medium">
-                + {order.items.length - 1} more item(s) in this order
+                + {lines.length - 1} more item(s) in this order
               </p>
             )}
 
             {/* Price Breakdown */}
             <div className="border-t border-border/50 pt-4 space-y-2.5 text-sm">
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Artwork Price</span>
+                <span className="text-muted-foreground">{isMerch ? 'Items Subtotal' : 'Artwork Price'}</span>
                 <span className="font-medium text-foreground">
                   <Price price={order.price || '0'} currency={currencyObj} />
                 </span>
@@ -421,7 +435,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
             <div className="p-4 rounded-xl border border-border/50 bg-background/60 space-y-3">
               <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
                 <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
-                <span>Original artwork guaranteed authentic</span>
+                <span>{isMerch ? 'Printed on demand by MAS from the licensed artwork' : 'Original artwork guaranteed authentic'}</span>
               </div>
               <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
                 <Truck className="h-4 w-4 text-primary shrink-0" />
@@ -429,7 +443,7 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
               </div>
               <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
                 <Sparkles className="h-4 w-4 text-primary shrink-0" />
-                <span>Direct support to the verified artist & gallery</span>
+                <span>{isMerch ? 'A royalty on this sale goes to the artist who made the artwork' : 'Direct support to the verified artist & gallery'}</span>
               </div>
             </div>
           </div>

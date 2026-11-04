@@ -2,6 +2,10 @@ export * from "./post";
 export * from "./board";
 export * from "./notification";
 export * from "./customer-checkout-details";
+export * from "./store";
+
+// Re-exported names are not local bindings, so Order below needs this import.
+import type { StoreOrderLine } from "./store";
 
 export interface User {
    id: number;
@@ -93,6 +97,10 @@ export interface Order {
    created_at: Date | string;
    updated_at: Date | string;
    items: OrderItem[];
+   /** MERCH orders never transfer an artwork, so artwork is null and store_lines carry the item. */
+   order_type?: "ARTWORK" | "MERCH";
+   artwork?: string | Artwork | null;
+   store_lines?: StoreOrderLine[];
 }
 
 export interface OrderItem {
@@ -125,6 +133,8 @@ export interface Artwork {
    original_width: number;
    original_height: number;
    hide_price: boolean;
+   /** Read only. Only the artwork's own creator (or staff) may flip it, via the MAS Store eligibility endpoint. */
+   mas_store_eligible: boolean;
    visibility: "PRIVATE" | "PUBLIC";
    currency: Currency;
    price: string;

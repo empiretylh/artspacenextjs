@@ -17,6 +17,12 @@
     - **Ownership**: Logic switches between `current_owner` (ID) and `current_owner_name` (string) based on the `are_u_owner` boolean.
     - **Owner Routing**: UI components use the `getUserRouteType` utility to dynamically route links to the correct owner profile (Artist, Gallery, or Collector) based on `current_owner_display.user_type`.
     - **Image**: Though the frontend handles arrays, the backend currently expects the first image as a single string.
+- **MAS Store Merch Rights** (`mas_store_eligible`): both `artwork-create-form.tsx` and `artwork-update-form.tsx` render a "Grant MAS Store Merch Rights" card copied from the Hide Price card pattern. The flag is **not** part of either form's Zod schema and never rides in the create POST or the update PATCH, because the artwork serializer pins it read-only; the only writable path is the dedicated action (`useSetMasStoreEligibility` in `src/features/store/api/set-mas-store-eligibility.ts`).
+    - **Create flow**: the checkbox is local state; once `useCreateArt` succeeds, the new artwork id is read from the create response and the eligibility action is POSTed with `eligible: true`.
+    - **Update flow**: the checkbox is pre-checked from `artwork.mas_store_eligible` (read defensively - the field is not declared on the `Artwork` TS model yet) and is compared against that initial value on submit; only a changed value triggers the POST, and only after the PATCH succeeds.
+    - **Errors**: failures surface as a sonner `toast.error` carrying the backend `{"detail": "..."}` message. A `403` means the signed-in user is neither the artwork's creator nor staff - a collector who bought the physical painting deliberately cannot license merch prints.
+    - Admin publishing is gated on this flag server-side, so an unchecked artwork can never appear in the store catalogue.
+    - **Cross-reference**: the artist-facing listing of published merch is the Store tab on the public profile routes (`src/features/store/pages/artist-store-page.tsx`, grouped by artwork via `useGetProducts({ filters: { artist } })`).
 
 ## 🏗️ Technical Logic: Visual Standards
 

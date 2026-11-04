@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { useNotifications } from "@/components/ui/notifications";
 import { getDirtyValues, handleFormError } from "@/lib/utils";
+import { toast } from "sonner";
 import YearPicker from "@/components/year-picker";
 import MultipleSelector from "@/components/common/multi-select";
 import { TagInput } from "@/components/common/tag-input";
@@ -38,6 +39,7 @@ import AsyncMultipleSelector from "@/components/common/async-multi-select";
 import { FormDialog, FormSection } from "@/components/common/dialogs/form-dialog";
 
 import { updateArtInputSchema, useUpdateArt } from "../api/update-artwork";
+import { useSetMasStoreEligibility } from "@/features/store/api/set-mas-store-eligibility";
 import { useAuth } from "@/features/auth/store";
 import { useGetCategories } from "@/features/service/artspace/get-categories";
 import { useGetGenres } from "@/features/service/artspace/get-genres";
@@ -56,6 +58,29 @@ import {
 } from "lucide-react";
 
 type FormData = z.infer<typeof updateArtInputSchema>;
+
+/**
+ * mas_store_eligible is not declared on the Artwork TS model, so read it
+ * defensively from whatever the payload carries and fall back to unchecked.
+ */
+const readMerchEligibility = (artwork: Artwork): boolean =>
+   Boolean(
+      (artwork as unknown as { mas_store_eligible?: boolean }).mas_store_eligible
+   );
+
+/**
+ * The flag is pinned read-only on the artwork serializer, so the PATCH cannot
+ * carry it. Revoke or grant it through the dedicated action instead.
+ */
+const merchRightsErrorMessage = (error: unknown) => {
+   const status = (error as { response?: { status?: number } })?.response?.status;
+   if (status === 403) {
+      return "Merch rights were not saved: only the artist or uploader of this artwork can grant them.";
+   }
+   const detail = (error as { response?: { data?: { detail?: string } } })?.response
+      ?.data?.detail;
+   return detail || "Merch rights were not saved. The other artwork changes were saved.";
+};
 
 export interface ArtworkUpdateFormProps {
    artwork: Artwork;
@@ -115,6 +140,18 @@ export const ArtworkUpdateForm: React.FC<ArtworkUpdateFormProps> = ({
    // Mutations
    const imageUploadMutation = useImageUpload();
 
+   // Merch rights are not part of the artwork PATCH payload: they are written
+   // through the dedicated eligibility action once the PATCH succeeds. The
+   // baseline state tracks what the server currently holds so a failed toggle
+   // stays dirty and can be retried.
+   const [merchLicensed, setMerchLicensed] = useState(() =>
+      readMerchEligibility(artwork),
+   );
+   const [merchLicensedBaseline, setMerchLicensedBaseline] = useState(() =>
+      readMerchEligibility(artwork),
+   );
+   const setEligibilityMutation = useSetMasStoreEligibility();
+
    const updateArtMutation = useUpdateArt({
       mutationConfig: {
          onError: (error) => handleFormError(error, form),
@@ -124,6 +161,24 @@ export const ArtworkUpdateForm: React.FC<ArtworkUpdateFormProps> = ({
                title: "Artwork Updated",
                message: "Changes have been saved successfully.",
             });
+
+            if (merchLicensed !== merchLicensedBaseline) {
+               setEligibilityMutation.mutate(
+                  {
+                     artworkId: String(artwork.id),
+                     eligible: merchLicensed,
+                  },
+                  {
+                     onSuccess: () => {
+                        setMerchLicensedBaseline(merchLicensed);
+                     },
+                     onError: (error) => {
+                        toast.error(merchRightsErrorMessage(error));
+                     },
+                  },
+               );
+            }
+
             onUpdateSuccess?.();
          },
       },
@@ -612,6 +667,36 @@ export const ArtworkUpdateForm: React.FC<ArtworkUpdateFormProps> = ({
                            </FormItem>
                         )}
                      />
+                  </div>
+
+                  {/* MAS Store Merch Rights */}
+                  <div className="sm:col-span-2">
+                     <FormItem className="rounded-xl border border-border/80 bg-muted/20 p-3.5 space-y-0">
+                        <div className="flex items-center justify-between">
+                           <div className="space-y-0.5">
+                              <Label
+                                 htmlFor="mas_store_eligible"
+                                 className="text-xs font-semibold text-foreground cursor-pointer"
+                              >
+                                 Grant MAS Store Merch Rights
+                              </Label>
+                              <p className="text-[11px] text-muted-foreground">
+                                 Let Myanmar Art Space print this artwork on store
+                                 products such as a t-shirt, tote, mug or art book.
+                                 MAS prints and ships every order, and you earn a
+                                 royalty on each sale.
+                              </p>
+                           </div>
+                           <Checkbox
+                              id="mas_store_eligible"
+                              name="mas_store_eligible"
+                              checked={merchLicensed}
+                              onCheckedChange={(value) =>
+                                 setMerchLicensed(value === true)
+                              }
+                           />
+                        </div>
+                     </FormItem>
                   </div>
 
                   {/* Price & Currency (conditional) */}

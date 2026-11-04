@@ -12,7 +12,7 @@ import { useAuth } from "@/features/auth/store";
 import { useUnreadCount } from "@/features/chat/hooks/use-unread-count";
 import { useChatStore } from "@/features/chat/store";
 
-import { HomeIcon, ClipboardPenLineIcon } from "lucide-react";
+import { HomeIcon, ClipboardPenLineIcon, ShoppingBagIcon } from "lucide-react";
 import ArtworksIcon from "../icons/artworks-icon";
 import ArtistsIcon from "../icons/artists-icon";
 import Messages2Icon from "../icons/messages-2-icon";
@@ -27,6 +27,11 @@ const mobileNavItems = [
       title: "artwork",
       url: paths.artworks.path,
       icon: ArtworksIcon,
+   },
+   {
+      title: "store",
+      url: paths.store.path,
+      icon: ShoppingBagIcon,
    },
    {
       title: "artist",

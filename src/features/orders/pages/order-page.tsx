@@ -7,7 +7,6 @@ import { useUpdateOrder } from '../api/update-order'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import Price from '@/components/common/price'
 import AppImage from '@/components/common/app-image'
-import { getImage, getRelativeImagePath } from '@/lib/utils'
 import { format } from 'date-fns'
 import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
@@ -35,6 +34,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { OrderStatusBadge } from '../components/order-status-badge'
 import { OrderStepper } from '../components/order-stepper'
+import { getOrderLines, isMerchOrder } from '../lib/order-lines'
 
 const OrderDetail = () => {
   const { id } = useParams() as { id: string }
@@ -80,6 +80,8 @@ const OrderDetail = () => {
 
   const orderStatus = order.order_status || order.status || 'PENDING'
   const paymentStatus = order.payment_status || 'PENDING'
+  const lines = getOrderLines(order)
+  const isMerch = isMerchOrder(order)
 
   return (
     <div className="max-w-7xl mx-auto w-full space-y-6">
@@ -138,57 +140,61 @@ const OrderDetail = () => {
             <OrderStepper orderStatus={orderStatus} paymentStatus={paymentStatus} />
           </Card>
 
-          {/* Purchased Artworks Card */}
+          {/* Purchased Items Card */}
           <Card className="border border-border/60 shadow-xs overflow-hidden">
             <div className="bg-muted/30 p-4 px-6 border-b border-border/50">
               <CardTitle className="text-base font-semibold flex items-center gap-2">
                 <Package className="h-4 w-4 text-primary" />
-                Purchased Artworks ({order.items?.length || 0})
+                {isMerch ? 'Purchased Items' : 'Purchased Artworks'} ({lines.length})
               </CardTitle>
             </div>
             <CardContent className="p-0">
               <div className="divide-y divide-border/50">
-                {order.items?.map((item) => (
+                {lines.map((line) => (
                   <div
-                    key={item.id}
+                    key={line.key}
                     className="p-5 sm:p-6 flex flex-col sm:flex-row gap-5 items-start group hover:bg-muted/10 transition-colors"
                   >
                     <div className="relative h-24 w-24 shrink-0 rounded-lg overflow-hidden border bg-muted/20 shadow-2xs">
                       <AppImage
-                        src={getImage(item.artwork.image)}
-                        alt={item.artwork.title}
+                        src={line.image}
+                        alt={line.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
                     <div className="flex-1 space-y-2 text-left w-full min-w-0">
                       <div className="space-y-1">
-                        <Link
-                          to={paths.artworks.detail.getHref(item.artwork.id)}
-                          className="hover:text-primary transition-colors block max-w-full"
-                        >
+                        {line.artwork_id ? (
+                          <Link
+                            to={paths.artworks.detail.getHref(line.artwork_id)}
+                            className="hover:text-primary transition-colors block max-w-full"
+                          >
+                            <h4 className="text-base font-semibold text-foreground leading-normal sm:leading-relaxed line-clamp-1 sm:line-clamp-2">
+                              {line.title}
+                            </h4>
+                          </Link>
+                        ) : (
                           <h4 className="text-base font-semibold text-foreground leading-normal sm:leading-relaxed line-clamp-1 sm:line-clamp-2">
-                            {item.artwork.title}
+                            {line.title}
                           </h4>
-                        </Link>
-                        <p className="text-xs text-muted-foreground truncate">
-                          by{' '}
-                          {item.artwork.artist_profile
-                            ? `${item.artwork.artist_profile.first_name} ${item.artwork.artist_profile.last_name}`
-                            : item.artwork.artist_name || 'Featured Artist'}
-                        </p>
+                        )}
+                        <p className="text-xs text-muted-foreground truncate">by {line.artist}</p>
+                        {line.variant && (
+                          <p className="text-xs text-muted-foreground truncate">{line.variant}</p>
+                        )}
                       </div>
 
                       <div className="flex items-center gap-4 text-xs">
                         <div className="flex items-center gap-1.5 text-muted-foreground">
                           <span>Qty:</span>
-                          <span className="font-semibold text-foreground">{item.quantity}</span>
+                          <span className="font-semibold text-foreground">{line.quantity}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <span className="text-muted-foreground">Price:</span>
                           <span className="font-semibold text-primary">
                             <Price
-                              price={item.price_at_purchase || item.artwork.price}
+                              price={line.unit_price}
                               currency={{
                                 code: order.currency || 'MMK',
                                 name: order.currency || 'MMK',
@@ -201,11 +207,13 @@ const OrderDetail = () => {
                       </div>
 
                       <div className="flex items-center gap-3 pt-1 flex-wrap">
-                        <Link to={paths.artworks.detail.getHref(item.artwork.id)}>
-                          <Button variant="link" className="p-0 h-auto text-xs font-semibold text-primary">
-                            View Artwork Page
-                          </Button>
-                        </Link>
+                        {line.artwork_id && (
+                          <Link to={paths.artworks.detail.getHref(line.artwork_id)}>
+                            <Button variant="link" className="p-0 h-auto text-xs font-semibold text-primary">
+                              {isMerch ? 'View Original Artwork' : 'View Artwork Page'}
+                            </Button>
+                          </Link>
+                        )}
                         {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
                           <Link
                             to={paths.chats.getHref({
@@ -213,19 +221,19 @@ const OrderDetail = () => {
                               initialMessage: generateOrderInquiryMessage({
                                 orderId: order.id,
                                 orderCode: order.id.slice(0, 8).toUpperCase(),
-                                artworkTitle: item.artwork?.title,
-                                artworkId: item.artwork?.id,
-                                artworkImage: getRelativeImagePath(item.artwork?.image),
-                                price: item.price_at_purchase,
+                                artworkTitle: line.title,
+                                artworkId: line.artwork_id ?? undefined,
+                                artworkImage: line.image,
+                                price: line.unit_price,
                                 currency: order.currency || 'MMK',
                                 status: order.status || order.order_status,
                               }),
                               orderId: order.id,
                               orderCode: order.id.slice(0, 8).toUpperCase(),
-                              artworkId: item.artwork?.id,
-                              artworkTitle: item.artwork?.title,
-                              artworkImage: getRelativeImagePath(item.artwork?.image),
-                              price: item.price_at_purchase,
+                              artworkId: line.artwork_id ?? undefined,
+                              artworkTitle: line.title,
+                              artworkImage: line.image,
+                              price: line.unit_price,
                               currency: order.currency || 'MMK',
                               status: order.status || order.order_status,
                             })}
@@ -233,7 +241,7 @@ const OrderDetail = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary transition-colors h-7 px-2 rounded-md hover:bg-primary/10"
+                              className="gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary transition-colors h-7"
                             >
                               <MessageSquare className="h-3.5 w-3.5" />
                               Contact Seller
@@ -267,7 +275,7 @@ const OrderDetail = () => {
 
               {order.price && (
                 <div className="flex justify-between items-center text-xs text-muted-foreground">
-                  <span>Artwork Price</span>
+                  <span>{isMerch ? 'Items Subtotal' : 'Artwork Price'}</span>
                   <span className="font-medium text-foreground">
                     <Price
                       price={order.price}

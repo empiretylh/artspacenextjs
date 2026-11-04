@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Price from '@/components/common/price'
 import AppImage from '@/components/common/app-image'
-import { getImage, getRelativeImagePath, extractListItems } from '@/lib/utils'
+import { getRelativeImagePath, extractListItems } from '@/lib/utils'
 import { format } from 'date-fns'
 import Link from '@/components/common/link'
 import { paths } from '@/config/paths'
@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { OrderStatusBadge } from './order-status-badge'
+import { getOrderLines, isMerchOrder } from '../lib/order-lines'
 
 export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> }) => {
   const { user } = useAuth()
@@ -117,8 +118,8 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
         {orderList.map((order) => {
           const status = order.order_status || order.status || 'PENDING'
           const paymentStatus = order.payment_status || 'PENDING'
-          const firstItem = order.items?.[0]
-          const artwork = firstItem?.artwork
+          const lines = getOrderLines(order)
+          const firstLine = lines[0]
 
           const isPendingPayment =
             status === 'PENDING' && (paymentStatus === 'PENDING' || paymentStatus === 'FAILED')
@@ -152,12 +153,12 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
             {/* Main Content Area */}
             <CardContent className="p-5">
               <div className="flex flex-col sm:flex-row gap-5 items-start justify-between">
-                {artwork ? (
+                {firstLine ? (
                   <div className="flex gap-4 items-start sm:items-center min-w-0 flex-1">
                     <div className="relative h-20 w-20 shrink-0 rounded-lg overflow-hidden border bg-muted/20 shadow-2xs">
                       <AppImage
-                        src={getImage(artwork.image)}
-                        alt={artwork.title}
+                        src={firstLine.image}
+                        alt={firstLine.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
@@ -168,20 +169,20 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
                         className="hover:text-primary transition-colors block max-w-full"
                       >
                         <h4 className="font-semibold text-sm sm:text-base text-foreground leading-normal sm:leading-relaxed line-clamp-1 sm:line-clamp-2">
-                          {artwork.title}
+                          {firstLine.title}
                         </h4>
                       </Link>
                       <p className="text-xs text-muted-foreground truncate">
-                        by{' '}
-                        {artwork.artist_profile
-                          ? `${artwork.artist_profile.first_name} ${artwork.artist_profile.last_name}`
-                          : artwork.artist_name || 'Featured Artist'}
+                        by {firstLine.artist}
                       </p>
+                      {firstLine.variant && (
+                        <p className="text-xs text-muted-foreground truncate">{firstLine.variant}</p>
+                      )}
                       <div className="flex items-center gap-3 text-xs pt-0.5 flex-wrap">
-                        <span className="text-muted-foreground">Qty: {firstItem.quantity}</span>
-                        {order.items && order.items.length > 1 && (
+                        <span className="text-muted-foreground">Qty: {firstLine.quantity}</span>
+                        {lines.length > 1 && (
                           <Badge variant="secondary" className="text-[10px] font-normal py-0 px-1.5">
-                            +{order.items.length - 1} more item(s)
+                            +{lines.length - 1} more item(s)
                           </Badge>
                         )}
                         {env.NEXT_PUBLIC_FEATURE_CHAT_ENABLE && (
@@ -191,18 +192,18 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
                               initialMessage: generateOrderInquiryMessage({
                                 orderId: order.id,
                                 orderCode: order.id.slice(0, 8).toUpperCase(),
-                                artworkTitle: artwork.title,
-                                artworkId: artwork.id,
-                                artworkImage: getRelativeImagePath(artwork.image),
+                                artworkTitle: firstLine.title,
+                                artworkId: firstLine.artwork_id ?? undefined,
+                                artworkImage: getRelativeImagePath(firstLine.image),
                                 price: order.total_price,
                                 currency: order.currency || 'MMK',
                                 status: order.status || order.order_status,
                               }),
                               orderId: order.id,
                               orderCode: order.id.slice(0, 8).toUpperCase(),
-                              artworkId: artwork.id,
-                              artworkTitle: artwork.title,
-                              artworkImage: getRelativeImagePath(artwork.image),
+                              artworkId: firstLine.artwork_id ?? undefined,
+                              artworkTitle: firstLine.title,
+                              artworkImage: getRelativeImagePath(firstLine.image),
                               price: order.total_price,
                               currency: order.currency || 'MMK',
                               status: order.status || order.order_status,
@@ -219,7 +220,7 @@ export const UserOrderList = ({ filters = {} }: { filters?: Record<string, any> 
                 ) : (
                   <div className="flex items-center gap-2 py-4 text-xs text-muted-foreground italic">
                     <Package className="h-4 w-4" />
-                    Artwork information unavailable
+                    {isMerchOrder(order) ? 'Item information unavailable' : 'Artwork information unavailable'}
                   </div>
                 )}
 

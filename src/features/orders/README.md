@@ -13,6 +13,8 @@
   - [order-status-badge.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/order-status-badge.tsx): Standardized status badge for order and payment states with dark mode tokens.
   - [order-stepper.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/order-stepper.tsx): Visual order timeline and progress tracker (`Order Placed → Payment Confirmed → Delivery → Completed`).
   - [user-order-list.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/components/user-order-list.tsx): Mobile-responsive card list for user order history with status filters.
+- **`lib/`**:
+  - [order-lines.ts](file:///Users/mm/projects/Artspace/artspacenextjs/src/features/orders/lib/order-lines.ts): `isMerchOrder(order)` and `getOrderLines(order)`. Every screen that shows "what is in this order" renders through this one normaliser.
 - **`pages/`**:
   - [order-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/pages/order-page.tsx): Single Order Details view with live stepper and fulfillment summary.
   - [orders-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/pages/orders-page.tsx): User order history page wrapper with filter controls.
@@ -68,6 +70,16 @@
   - **`add_payment_info`**: Fired when the user proceeds to the payment gateway in [payment-page.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/pages/payment-page.tsx).
 - **Metadata**: Both events capture `currency`, `total_price`, and specific item data.
 - **Source Context**: Dynamically provided by `useSource()` based on page hierarchy (`order_form`, `payment_page`).
+
+### 7. Two Order Kinds: ARTWORK and MERCH
+- `Order.order_type` is the discriminator. An artwork purchase transfers the piece; a MAS Store purchase prints it onto a physical item and **never** touches ownership.
+- **Branch on `order_type`, never on FK nullness.** A MERCH order has `artwork = null` and an empty `items` list, and carries `store_lines` instead.
+- [order-lines.ts](file:///Users/mm/projects/Artspace/artspacenextjs/src/features/orders/lib/order-lines.ts) normalises both shapes into one `OrderLine` list (title, artist, variant label, image, quantity, unit price, artwork id). `items` is filled by artwork orders, `store_lines` by merch orders, and the merch fields are frozen purchase snapshots, so neither branch needs a live product lookup.
+- **Why this exists:** `payment-page.tsx` used to derive its whole summary from `order.items?.[0]?.artwork`. For a MERCH order that is `undefined`, so the guards passed and the buyer was shown an **empty summary rail** and asked to pay without ever seeing the item. Any new order screen must call `getOrderLines`.
+- The screens that now handle both: `payment-page.tsx` (mobile accordion + desktop rail + `add_payment_info` item list), `order-page.tsx` (purchased items card, subtotal label, trust copy), `user-order-list.tsx` (first-line preview, "+N more item(s)", Contact Seller deep link).
+- **Contact Seller on a merch order routes to `SUPPORT_ACCOUNT`**, which is correct: MAS is the seller of merch, not the artist.
+- Merch orders are created by [store/api/create-merch-order.ts](file:///Users/mm/projects/Artspace/artspacenextjs/src/features/store/api/create-merch-order.ts) and hop into `paths.order.payment.getHref(id)` — there is no separate merch cashier. See [store/README.md](file:///Users/mm/projects/Artspace/artspacenextjs/src/features/store/README.md).
+- **Guarded by** [e2e/store.spec.ts](file:///Users/mm/projects/Artspace/artspacenextjs/e2e/store.spec.ts), which feeds a serializer-shaped MERCH order (`artwork: null`, `items: []`, populated `store_lines`) to the payment, order detail and order history screens and asserts the item, its colourway and the totals render.
 
 ## 📂 Key Files
 - [create-artwork-order.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/orders/api/create-artwork-order.ts): The primary mutation hook for placing orders.

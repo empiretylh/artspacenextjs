@@ -19,7 +19,7 @@ import CollectionIcon from "@/components/icons/collection-icon";
 import HeartIcon from "@/components/icons/heart-icon";
 import OverviewIcon from "@/components/icons/overview-icon";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
-import { ClipboardPenLineIcon, Eye, EyeOff, Settings, X } from "lucide-react";
+import { ClipboardPenLineIcon, Eye, EyeOff, Settings, ShoppingBagIcon, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useGetUserFollowStatus } from "@/features/service/artspace/get-user-follow-status";
 import { useGetUserBlockStatus } from "@/features/service/artspace/user-block-status";
@@ -36,6 +36,7 @@ const getIcon = (key: string) => {
    if (key === "likes") return <HeartIcon />;
    if (key === "save") return <BookmarkIcon />;
    if (key === "events") return <ClipboardPenLineIcon />;
+   if (key === "store") return <ShoppingBagIcon />;
    return <OverviewIcon />;
 };
 

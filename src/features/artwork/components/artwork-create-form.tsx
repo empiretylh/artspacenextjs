@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { useNotifications } from "@/components/ui/notifications";
 import { handleFormError } from "@/lib/utils";
+import { toast } from "sonner";
 import YearPicker from "@/components/year-picker";
 import MultipleSelector from "@/components/common/multi-select";
 import { TagInput } from "@/components/common/tag-input";
@@ -38,6 +39,7 @@ import AsyncMultipleSelector from "@/components/common/async-multi-select";
 import { FormDialog, FormSection } from "@/components/common/dialogs/form-dialog";
 
 import { useCreateArt, createArtInputSchema } from "../api/create-artwork";
+import { useSetMasStoreEligibility } from "@/features/store/api/set-mas-store-eligibility";
 import { useAuth } from "@/features/auth/store";
 import { useGetCategories } from "@/features/service/artspace/get-categories";
 import { useGetGenres } from "@/features/service/artspace/get-genres";
@@ -58,6 +60,31 @@ import {
 } from "lucide-react";
 
 type FormData = z.infer<typeof createArtInputSchema>;
+
+/**
+ * mas_store_eligible is pinned read-only on the artwork serializer, so the merch
+ * licence cannot ride in the create payload. It is granted with a follow-up POST
+ * to the dedicated action once the artwork row exists.
+ */
+const merchRightsErrorMessage = (error: unknown) => {
+   const status = (error as { response?: { status?: number } })?.response?.status;
+   if (status === 403) {
+      return "Merch rights were not saved: only the artist or uploader of this artwork can grant them.";
+   }
+   const detail = (error as { response?: { data?: { detail?: string } } })?.response
+      ?.data?.detail;
+   return detail || "Merch rights were not saved. The artwork itself was created.";
+};
+
+/**
+ * createArt is typed as returning the entity but resolves the raw axios response,
+ * so read the new id from both shapes.
+ */
+const getCreatedArtworkId = (created: unknown): string | undefined => {
+   const nested = (created as { data?: { id?: string } })?.data?.id;
+   const direct = (created as { id?: string })?.id;
+   return nested || direct || undefined;
+};
 
 export interface ArtworkCreateFormProps {
    isOpen: boolean;
@@ -116,6 +143,11 @@ export const ArtworkCreateForm: React.FC<ArtworkCreateFormProps> = ({
    // Mutations
    const imageUploadMutation = useImageUpload();
 
+   // MAS Store merch rights: writable only through the dedicated action, so it
+   // is held outside the artwork form schema.
+   const [merchLicensed, setMerchLicensed] = useState(false);
+   const setEligibilityMutation = useSetMasStoreEligibility();
+
    const form = useForm<FormData>({
       resolver: zodResolver(createArtInputSchema),
       defaultValues: {
@@ -145,14 +177,34 @@ export const ArtworkCreateForm: React.FC<ArtworkCreateFormProps> = ({
    const createArtMutation = useCreateArt({
       mutationConfig: {
          onError: (error) => handleFormError(error, form),
-         onSuccess: () => {
+         onSuccess: (created) => {
             addNotification({
                type: "success",
                title: "Artwork Created",
                message: "Artwork has been successfully showcased in your catalog.",
             });
-            form.reset();
             artworkAnalytics.create(source);
+
+            if (merchLicensed) {
+               const artworkId = getCreatedArtworkId(created);
+               if (artworkId) {
+                  setEligibilityMutation.mutate(
+                     { artworkId, eligible: true },
+                     {
+                        onError: (error) => {
+                           toast.error(merchRightsErrorMessage(error));
+                        },
+                     },
+                  );
+               } else {
+                  toast.error(
+                     "Artwork created, but merch rights could not be attached because the new artwork id was missing from the response.",
+                  );
+               }
+            }
+
+            setMerchLicensed(false);
+            form.reset();
             onCreateSuccess?.();
          },
       },
@@ -182,7 +234,10 @@ export const ArtworkCreateForm: React.FC<ArtworkCreateFormProps> = ({
          submitText="Create Artwork"
          cancelText="Cancel"
          resetText="Reset"
-         onReset={() => form.reset()}
+         onReset={() => {
+            form.reset();
+            setMerchLicensed(false);
+         }}
          isSubmitting={createArtMutation.isPending}
       >
          <Form {...form}>
@@ -595,6 +650,36 @@ export const ArtworkCreateForm: React.FC<ArtworkCreateFormProps> = ({
                            </FormItem>
                         )}
                      />
+                  </div>
+
+                  {/* MAS Store Merch Rights */}
+                  <div className="sm:col-span-2">
+                     <FormItem className="rounded-xl border border-border/80 bg-muted/20 p-3.5 space-y-0">
+                        <div className="flex items-center justify-between">
+                           <div className="space-y-0.5">
+                              <Label
+                                 htmlFor="mas_store_eligible"
+                                 className="text-xs font-semibold text-foreground cursor-pointer"
+                              >
+                                 Grant MAS Store Merch Rights
+                              </Label>
+                              <p className="text-[11px] text-muted-foreground">
+                                 Let Myanmar Art Space print this artwork on store
+                                 products such as a t-shirt, tote, mug or art book.
+                                 MAS prints and ships every order, and you earn a
+                                 royalty on each sale.
+                              </p>
+                           </div>
+                           <Checkbox
+                              id="mas_store_eligible"
+                              name="mas_store_eligible"
+                              checked={merchLicensed}
+                              onCheckedChange={(value) =>
+                                 setMerchLicensed(value === true)
+                              }
+                           />
+                        </div>
+                     </FormItem>
                   </div>
 
                   {/* Price & Currency (conditional) */}

@@ -13,6 +13,10 @@ const UserDetailLayout = async ({ params, children }: { params: Promise<{ userTy
 
   if (id === undefined || user === undefined) return <NotFound />;
 
+  // Merch is only ever published on artwork an artist or gallery licensed, so the
+  // Store tab is meaningless on collector and buyer profiles.
+  const showStoreTab = userType === "artists" || userType === "galleries";
+
   const navLinks = [
     {
       title: "Overview",
@@ -24,6 +28,15 @@ const UserDetailLayout = async ({ params, children }: { params: Promise<{ userTy
       href: paths[pathKey].artworks.getHref(String(user.id)),
       icon: "artworks",
     },
+    ...(showStoreTab
+      ? [
+          {
+            title: "Store",
+            href: paths[pathKey].store.getHref(String(user.id)),
+            icon: "store",
+          },
+        ]
+      : []),
     {
       title: "Collections",
       href: paths[pathKey].collections.getHref(String(user.id)),

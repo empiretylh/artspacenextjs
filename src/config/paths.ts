@@ -47,6 +47,18 @@ export const paths = {
          getHref: (slug: string) => `/events/${slug}`,
       },
    },
+   store: {
+      path: "/store",
+      getHref: () => "/store",
+      detail: {
+         path: "/store/products/:id",
+         getHref: (id: string) => `/store/products/${id}`,
+      },
+   },
+   storeAdmin: {
+      path: "/store-admin",
+      getHref: () => "/store-admin",
+   },
    users: {
       path: "/users",
       getHref: () => "/users",
@@ -57,6 +69,10 @@ export const paths = {
       artworks: {
          path: "/users/:id/artworks",
          getHref: (id: string) => `/users/${id}/artworks`,
+      },
+      store: {
+         path: "/users/:id/store",
+         getHref: (id: string) => `/users/${id}/store`,
       },
       events: {
          path: "/users/:id/events",
@@ -86,6 +102,10 @@ export const paths = {
          path: "/artists/:id/artworks",
          getHref: (id: string) => `/artists/${id}/artworks`,
       },
+      store: {
+         path: "/artists/:id/store",
+         getHref: (id: string) => `/artists/${id}/store`,
+      },
       events: {
          path: "/profile/events",
          getHref: () => "/profile/events",
@@ -113,6 +133,10 @@ export const paths = {
       artworks: {
          path: "/collectors/:id/artworks",
          getHref: (id: string) => `/collectors/${id}/artworks`,
+      },
+      store: {
+         path: "/collectors/:id/store",
+         getHref: (id: string) => `/collectors/${id}/store`,
       },
       events: {
          path: "/profile/events",
@@ -142,6 +166,10 @@ export const paths = {
          path: "/galleries/:id/artworks",
          getHref: (id: string) => `/galleries/${id}/artworks`,
       },
+      store: {
+         path: "/galleries/:id/store",
+         getHref: (id: string) => `/galleries/${id}/store`,
+      },
       events: {
          path: "/profile/events",
          getHref: () => "/profile/events",
@@ -169,6 +197,10 @@ export const paths = {
       artworks: {
          path: "/buyers/:id/artworks",
          getHref: (id: string) => `/buyers/${id}/artworks`,
+      },
+      store: {
+         path: "/buyers/:id/store",
+         getHref: (id: string) => `/buyers/${id}/store`,
       },
       collections: {
          path: "/buyers/:id/collections",
