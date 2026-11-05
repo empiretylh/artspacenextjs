@@ -142,6 +142,17 @@ jobs:
           echo "📥 Pulling $TAG..."
           sudo env IMAGE_TAG="$TAG" $DC pull app
 
+          # Remove the old container so `up` creates instead of recreates: docker-compose
+          # 1.29.2 reads the replaced container's image ContainerConfig during recreate and
+          # dies with KeyError: 'ContainerConfig'. Recreate happens after pull, so removing
+          # here keeps the outage to the create/start window.
+          echo "🧽 Stopping and removing the previous container..."
+          sudo env IMAGE_TAG="$TAG" $DC stop app || true
+          sudo env IMAGE_TAG="$TAG" $DC rm -f app || true
+          # Belt and braces: container_name is pinned, so a stale or renamed-into container
+          # would still block the create.
+          sudo docker rm -f art-space-next-app || true
+
           echo "🚀 Starting container..."
           sudo env IMAGE_TAG="$TAG" $DC up -d --no-build --remove-orphans app
 
