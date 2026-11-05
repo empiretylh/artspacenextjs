@@ -93,7 +93,7 @@ export const BlogPage = () => {
    };
 
    return (
-      <div className="grow transition-all duration-300 w-full space-y-6">
+      <div className="grow transition-all duration-300 w-full min-w-0 space-y-6">
          {/* Page Header matching Events & Artworks pattern */}
          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>

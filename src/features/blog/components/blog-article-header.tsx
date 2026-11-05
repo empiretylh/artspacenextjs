@@ -12,7 +12,7 @@ import {
    Globe,
    ChevronRight,
 } from "lucide-react";
-import { formatBlogDate, getBlogCoverImage, getEstimatedReadingTime } from "../utils";
+import { formatBlogDate, getBlogCoverImage, getEstimatedReadingTime, cleanBlogText } from "../utils";
 import AppImage from "@/components/common/app-image";
 import { getImage } from "@/lib/utils";
 import { useLocale, useTranslations } from "next-intl";
@@ -60,7 +60,7 @@ export const BlogArticleHeader: React.FC<BlogArticleHeaderProps> = ({ post }) =>
             )}
             <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground/60" />
             <span className="text-foreground font-medium truncate max-w-[200px] sm:max-w-xs">
-               {post.title}
+               {cleanBlogText(post.title)}
             </span>
          </nav>
 
@@ -81,37 +81,37 @@ export const BlogArticleHeader: React.FC<BlogArticleHeaderProps> = ({ post }) =>
 
          {/* Title & Subtitle */}
          <div className="space-y-3">
-            <h1 className="font-display font-semibold text-2xl sm:text-3xl md:text-4xl tracking-tight leading-snug text-foreground">
-               {post.title}
+            <h1 className="font-display font-semibold text-2xl sm:text-3xl md:text-4xl tracking-tight leading-snug text-foreground break-words [overflow-wrap:anywhere]">
+               {cleanBlogText(post.title)}
             </h1>
 
             {post.excerpt && (
-               <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-normal">
-                  {post.excerpt}
+               <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-normal break-words [overflow-wrap:anywhere]">
+                  {cleanBlogText(post.excerpt)}
                </p>
             )}
          </div>
 
          {/* Author, Date, and Reading Time Row */}
          <div className="flex items-center justify-between gap-4 py-3.5 border-y border-border/60">
-            <div className="flex items-center gap-3">
-               <Avatar className="w-8 h-8 border border-border">
+            <div className="flex items-center gap-3 min-w-0">
+               <Avatar className="w-8 h-8 shrink-0 border border-border">
                   {authorAvatar && <AvatarImage src={authorAvatar} alt={authorName} />}
                   <AvatarFallback className="text-[10px] font-semibold">
                      {authorName.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                </Avatar>
-               <div>
-                  <p className="text-xs font-semibold text-foreground leading-none">
+               <div className="min-w-0">
+                  <p className="text-xs font-semibold text-foreground leading-none truncate max-w-[200px] sm:max-w-xs">
                      {authorName}
                   </p>
                   <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-1">
-                     <span className="flex items-center gap-1">
+                     <span className="flex items-center gap-1 shrink-0">
                         <Calendar className="w-3 h-3 text-muted-foreground/70" />
                         {formattedDate}
                      </span>
                      <span>•</span>
-                     <span className="flex items-center gap-1">
+                     <span className="flex items-center gap-1 shrink-0">
                         <Clock className="w-3 h-3 text-muted-foreground/70" />
                         {readingTime} {t("minRead")}
                      </span>
@@ -126,14 +126,14 @@ export const BlogArticleHeader: React.FC<BlogArticleHeaderProps> = ({ post }) =>
                <div className="relative w-full aspect-video sm:aspect-[21/9] rounded-2xl overflow-hidden bg-muted border border-border/70 shadow-xs">
                   <AppImage
                      src={coverUrl}
-                     alt={post.cover_alt || post.title}
+                     alt={cleanBlogText(post.cover_alt) || cleanBlogText(post.title)}
                      className="object-cover"
                      priority
                   />
                </div>
                {post.cover_alt && (
-                  <figcaption className="text-center text-xs text-muted-foreground italic">
-                     {post.cover_alt}
+                  <figcaption className="text-center text-xs text-muted-foreground italic break-words [overflow-wrap:anywhere] px-4">
+                     {cleanBlogText(post.cover_alt)}
                   </figcaption>
                )}
             </figure>

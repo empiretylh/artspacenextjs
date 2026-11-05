@@ -28,10 +28,8 @@
   - Removed from the primary sidebar to keep sidebar navigation focused on core application actions.
 
 ### 2. Public Content Model & API Services
-- All public press requests communicate with `/api/v1/blog/posts/`, `/api/v1/blog/posts/{slug}/`, `/api/v1/blog/categories/`, and `/api/v1/blog/tags/`.
-- **Automatic Dev-Only Mock Fallback**:
-  - In `development` mode (`NODE_ENV === "development"`), services automatically fall back to rich curated mock data ([src/mocks/blog.ts](file:///d:/data/learning/work/real-work/art-space-next/src/mocks/blog.ts)) when the backend API returns empty results or is offline.
-  - In `production` mode (`NODE_ENV === "production"`), mock fallbacks are completely bypassed.
+- All public press requests communicate directly with live REST API endpoints: `/api/v1/blog/posts/`, `/api/v1/blog/posts/{slug}/`, `/api/v1/blog/categories/`, and `/api/v1/blog/tags/`.
+- No mock data: All press releases, featured hero posts, taxonomy filters, and related stories are fetched dynamically from the live backend database.
 
 ### 3. Typographic Hierarchy
 - **Page Heading (`Press`)**: `text-2xl sm:text-3xl font-semibold font-display` (~28–30px) &mdash; primary page anchor.

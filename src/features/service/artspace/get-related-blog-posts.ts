@@ -3,10 +3,9 @@ import type { QueryConfig } from "@/lib/react-query";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import type { BlogPost } from "@/types";
 import { queryKeys } from "@/config/query-keys";
-import { MOCK_BLOG_POSTS } from "@/mocks/blog";
 
 // ----------------------------------------------------------------------
-// 1. GET RELATED BLOG POSTS (API CALL WITH DEV-ONLY MOCK FALLBACK)
+// 1. GET RELATED BLOG POSTS
 // ----------------------------------------------------------------------
 
 export const getRelatedBlogPosts = async ({
@@ -16,28 +15,20 @@ export const getRelatedBlogPosts = async ({
    slug: string;
    limit?: number;
 }): Promise<BlogPost[]> => {
-   const isDev = process.env.NODE_ENV === "development";
-
    try {
       const res = await api.get(`/blog/posts/${slug}/related/`, {
          params: { limit },
       });
 
-      if (res?.data && Array.isArray(res.data.results) && res.data.results.length > 0) {
+      if (res?.data && Array.isArray(res.data.results)) {
          return res.data.results;
       }
-      if (Array.isArray(res?.data) && res.data.length > 0) {
+      if (Array.isArray(res?.data)) {
          return res.data;
       }
-      if (isDev) {
-         return MOCK_BLOG_POSTS.filter((p) => p.slug !== slug).slice(0, limit);
-      }
-      return Array.isArray(res?.data) ? res.data : (res?.data?.results || []);
-   } catch (error) {
-      if (isDev) {
-         return MOCK_BLOG_POSTS.filter((p) => p.slug !== slug).slice(0, limit);
-      }
-      throw error;
+      return [];
+   } catch {
+      return [];
    }
 };
 

@@ -9,7 +9,7 @@ import AppImage from "@/components/common/app-image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Calendar, Globe, ArrowRight } from "lucide-react";
-import { formatBlogDate, getBlogCoverImage, getEstimatedReadingTime } from "../utils";
+import { formatBlogDate, getBlogCoverImage, getEstimatedReadingTime, cleanBlogText } from "../utils";
 import { useLocale, useTranslations } from "next-intl";
 
 interface BlogCardProps {
@@ -49,7 +49,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({
             >
                <AppImage
                   src={coverUrl}
-                  alt={post.cover_alt || post.title}
+                  alt={cleanBlogText(post.cover_alt) || cleanBlogText(post.title)}
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                />
                {post.category && (
@@ -74,13 +74,13 @@ export const BlogCard: React.FC<BlogCardProps> = ({
                   </div>
 
                   <Link to={paths.press.detail.getHref(post.slug)} className="block">
-                     <h3 className="font-display font-semibold text-sm sm:text-base leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                        {post.title}
-                     </h3>
+                     <h3 className="font-display font-semibold text-sm sm:text-base leading-snug group-hover:text-primary transition-colors line-clamp-2 break-words [overflow-wrap:anywhere]">
+                     {cleanBlogText(post.title)}
+                  </h3>
                   </Link>
 
-                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                     {post.excerpt}
+                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed break-words [overflow-wrap:anywhere]">
+                     {cleanBlogText(post.excerpt)}
                   </p>
                </div>
 
@@ -123,7 +123,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({
          >
             <AppImage
                src={coverUrl}
-               alt={post.cover_alt || post.title}
+               alt={cleanBlogText(post.cover_alt) || cleanBlogText(post.title)}
                className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
@@ -159,13 +159,13 @@ export const BlogCard: React.FC<BlogCardProps> = ({
                </div>
 
                <Link to={paths.press.detail.getHref(post.slug)} className="block group">
-                  <h3 className="font-display font-semibold text-base leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                     {post.title}
+                  <h3 className="font-display font-semibold text-base leading-snug group-hover:text-primary transition-colors line-clamp-2 break-words [overflow-wrap:anywhere]">
+                     {cleanBlogText(post.title)}
                   </h3>
                </Link>
 
-               <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-                  {post.excerpt}
+               <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed break-words [overflow-wrap:anywhere]">
+                  {cleanBlogText(post.excerpt)}
                </p>
             </div>
 

@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Calendar, Sparkles, ArrowRight } from "lucide-react";
-import { formatBlogDate, getBlogCoverImage, getEstimatedReadingTime } from "../utils";
+import { formatBlogDate, getBlogCoverImage, getEstimatedReadingTime, cleanBlogText } from "../utils";
 import { getImage } from "@/lib/utils";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -40,7 +40,7 @@ export const FeaturedBlogHero: React.FC<FeaturedBlogHeroProps> = ({ post }) => {
             >
                <AppImage
                   src={coverUrl}
-                  alt={post.cover_alt || post.title}
+                  alt={cleanBlogText(post.cover_alt) || cleanBlogText(post.title)}
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                   priority
                />
@@ -73,13 +73,13 @@ export const FeaturedBlogHero: React.FC<FeaturedBlogHeroProps> = ({ post }) => {
                   </div>
 
                   <Link to={paths.blog.detail.getHref(post.slug)} className="group block">
-                     <h2 className="font-display font-semibold text-lg sm:text-xl lg:text-2xl tracking-tight leading-snug group-hover:text-primary transition-colors line-clamp-3">
-                        {post.title}
-                     </h2>
+                     <h2 className="font-display font-semibold text-lg sm:text-xl lg:text-2xl tracking-tight leading-snug group-hover:text-primary transition-colors line-clamp-3 break-words [overflow-wrap:anywhere]">
+                     {cleanBlogText(post.title)}
+                  </h2>
                   </Link>
 
-                  <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-3">
-                     {post.excerpt}
+                  <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-3 break-words [overflow-wrap:anywhere]">
+                     {cleanBlogText(post.excerpt)}
                   </p>
                </div>
 

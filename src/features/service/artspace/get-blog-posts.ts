@@ -11,10 +11,9 @@ import type {
    ListApiResponse,
 } from "@/types";
 import { queryKeys } from "@/config/query-keys";
-import { filterMockBlogPosts } from "@/mocks/blog";
 
 // ----------------------------------------------------------------------
-// 1. GET BLOG POSTS (API CALL WITH DEV-ONLY MOCK FALLBACK)
+// 1. GET BLOG POSTS
 // ----------------------------------------------------------------------
 
 export interface GetBlogPostsParams extends BlogFilters {
@@ -25,34 +24,19 @@ export interface GetBlogPostsParams extends BlogFilters {
 export const getBlogPosts = async (
    params: GetBlogPostsParams = {}
 ): Promise<ListApiResponse<BlogPost>> => {
-   const isDev = process.env.NODE_ENV === "development";
+   const queryParams: Record<string, any> = {};
 
-   try {
-      const queryParams: Record<string, any> = {};
+   if (params.page !== undefined) queryParams.page = params.page;
+   if (params.limit !== undefined) queryParams.limit = params.limit;
+   if (params.language) queryParams.language = params.language;
+   if (params.category) queryParams.category = params.category;
+   if (params.tag) queryParams.tag = params.tag;
+   if (params.featured !== undefined) queryParams.featured = params.featured;
+   if (params.search) queryParams.search = params.search;
+   if (params.ordering) queryParams.ordering = params.ordering;
 
-      if (params.page !== undefined) queryParams.page = params.page;
-      if (params.limit !== undefined) queryParams.limit = params.limit;
-      if (params.language) queryParams.language = params.language;
-      if (params.category) queryParams.category = params.category;
-      if (params.tag) queryParams.tag = params.tag;
-      if (params.featured !== undefined) queryParams.featured = params.featured;
-      if (params.search) queryParams.search = params.search;
-      if (params.ordering) queryParams.ordering = params.ordering;
-
-      const res = await api.get(`/blog/posts/`, { params: queryParams });
-      if (res?.data?.results && res.data.results.length > 0) {
-         return res.data;
-      }
-      if (isDev) {
-         return filterMockBlogPosts(params);
-      }
-      return res.data;
-   } catch (error) {
-      if (isDev) {
-         return filterMockBlogPosts(params);
-      }
-      throw error;
-   }
+   const res = await api.get(`/blog/posts/`, { params: queryParams });
+   return res.data;
 };
 
 // ----------------------------------------------------------------------
@@ -67,10 +51,10 @@ export const getBlogPostsQueryOptions = (params: GetBlogPostsParams = {}) => {
 };
 
 // ----------------------------------------------------------------------
-// 3. HOOK: useGetBlogPosts
+// 3. CUSTOM HOOK (STANDARD QUERY)
 // ----------------------------------------------------------------------
 
-type UseGetBlogPostsOptions = {
+type UseBlogPostsOptions = {
    params?: GetBlogPostsParams;
    queryConfig?: QueryConfig<typeof getBlogPostsQueryOptions>;
 };
@@ -78,7 +62,7 @@ type UseGetBlogPostsOptions = {
 export const useGetBlogPosts = ({
    params = {},
    queryConfig,
-}: UseGetBlogPostsOptions = {}) => {
+}: UseBlogPostsOptions = {}) => {
    return useQuery({
       ...getBlogPostsQueryOptions(params),
       ...queryConfig,
@@ -86,30 +70,28 @@ export const useGetBlogPosts = ({
 };
 
 // ----------------------------------------------------------------------
-// 4. HOOK: useGetBlogPostsInfinite
+// 4. INFINITE QUERY HOOK FOR INFINITE FEED / LOAD MORE
 // ----------------------------------------------------------------------
-
-type UseGetBlogPostsInfiniteOptions = {
-   params?: Omit<GetBlogPostsParams, "page">;
-   limit?: number;
-};
 
 export const useGetBlogPostsInfinite = ({
    params = {},
    limit = 12,
-}: UseGetBlogPostsInfiniteOptions = {}) => {
+}: {
+   params?: Omit<GetBlogPostsParams, "page" | "limit">;
+   limit?: number;
+} = {}) => {
    return useInfiniteQuery({
       queryKey: queryKeys.blog.posts.infinite({ ...params, limit }),
       queryFn: ({ pageParam = 1 }) =>
-         getBlogPosts({ ...params, page: pageParam as number, limit }),
+         getBlogPosts({
+            ...params,
+            page: pageParam,
+            limit,
+         }),
       initialPageParam: 1,
-      getNextPageParam: (lastPage) => {
-         if (lastPage?.next && lastPage?.current_page && lastPage?.total_pages) {
-            if (lastPage.current_page < lastPage.total_pages) {
-               return lastPage.current_page + 1;
-            }
-         }
-         return undefined;
+      getNextPageParam: (lastPage, allPages) => {
+         if (!lastPage || !lastPage.next) return undefined;
+         return allPages.length + 1;
       },
    });
 };

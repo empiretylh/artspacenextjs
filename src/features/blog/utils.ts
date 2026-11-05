@@ -40,12 +40,31 @@ export const formatBlogDate = (
    }
 };
 
+export const cleanBlogHtml = (html: string | null | undefined): string => {
+   if (!html) return "";
+   return html
+      // Replace non-breaking spaces (entity & unicode) with regular spaces so lines can wrap normally
+      .replace(/(&amp;nbsp;|&nbsp;|&#160;|&#xA0;|\u00A0)/g, " ")
+      // Clean empty paragraphs / headings created by WYSIWYG editors
+      .replace(/<(h[1-6]|p)>\s*<\/\1>/gi, "")
+      .trim();
+};
+
+export const cleanBlogText = (text: string | null | undefined): string => {
+   if (!text) return "";
+   return text
+      .replace(/(&amp;nbsp;|&nbsp;|&#160;|&#xA0;|\u00A0)/g, " ")
+      .trim();
+};
+
 export const getEstimatedReadingTime = (post: BlogPost | null | undefined): number => {
    if (post?.reading_time_minutes && post.reading_time_minutes > 0) {
       return post.reading_time_minutes;
    }
    if (!post?.body && !post?.excerpt) return 1;
-   const text = (post?.body || "") + " " + (post?.excerpt || "");
-   const words = text.replace(/<[^>]*>/g, " ").trim().split(/\s+/).length;
+   const cleanBody = cleanBlogHtml(post?.body);
+   const cleanExcerpt = cleanBlogText(post?.excerpt);
+   const text = `${cleanBody} ${cleanExcerpt}`;
+   const words = text.replace(/<[^>]*>/g, " ").trim().split(/\s+/).filter(Boolean).length;
    return Math.max(1, Math.ceil(words / 200));
 };

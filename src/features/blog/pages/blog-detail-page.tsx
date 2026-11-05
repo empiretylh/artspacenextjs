@@ -34,7 +34,7 @@ export const BlogDetailPage: React.FC<BlogDetailPageProps> = ({ slug }) => {
 
    if (isLoading) {
       return (
-         <article className="w-full max-w-4xl mx-auto space-y-6 py-2">
+         <article className="w-full max-w-4xl mx-auto space-y-6 py-2 min-w-0">
             <div className="space-y-3">
                <Skeleton className="h-4 w-32" />
                <Skeleton className="h-8 sm:h-10 w-full" />
@@ -89,7 +89,7 @@ export const BlogDetailPage: React.FC<BlogDetailPageProps> = ({ slug }) => {
    }
 
    return (
-      <main className="w-full max-w-4xl mx-auto py-2 space-y-8 pb-10">
+      <main className="w-full max-w-4xl mx-auto py-2 space-y-8 pb-10 min-w-0">
          {/* Article Header */}
          <BlogArticleHeader post={post} />
 

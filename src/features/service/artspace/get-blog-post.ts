@@ -3,10 +3,9 @@ import type { QueryConfig } from "@/lib/react-query";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import type { BlogPost } from "@/types";
 import { queryKeys } from "@/config/query-keys";
-import { findMockBlogPost, MOCK_BLOG_POSTS } from "@/mocks/blog";
 
 // ----------------------------------------------------------------------
-// 1. GET SINGLE BLOG POST DETAIL (API CALL WITH DEV-ONLY MOCK FALLBACK)
+// 1. GET SINGLE BLOG POST DETAIL
 // ----------------------------------------------------------------------
 
 export const getBlogPost = async ({
@@ -14,25 +13,8 @@ export const getBlogPost = async ({
 }: {
    slug: string;
 }): Promise<BlogPost> => {
-   const isDev = process.env.NODE_ENV === "development";
-
-   try {
-      const res = await api.get(`/blog/posts/${slug}/`);
-      if (res?.data?.id) {
-         return res.data;
-      }
-      if (isDev) {
-         return findMockBlogPost(slug) || MOCK_BLOG_POSTS[0];
-      }
-      return res.data;
-   } catch (error) {
-      if (isDev) {
-         const mock = findMockBlogPost(slug);
-         if (mock) return mock;
-         return MOCK_BLOG_POSTS[0];
-      }
-      throw error;
-   }
+   const res = await api.get(`/blog/posts/${slug}/`);
+   return res.data;
 };
 
 // ----------------------------------------------------------------------

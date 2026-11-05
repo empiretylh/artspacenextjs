@@ -3,33 +3,17 @@ import type { QueryConfig } from "@/lib/react-query";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import type { BlogCategory, BlogTag } from "@/types";
 import { queryKeys } from "@/config/query-keys";
-import { MOCK_BLOG_CATEGORIES, MOCK_BLOG_TAGS } from "@/mocks/blog";
 
 // ----------------------------------------------------------------------
-// 1. GET PUBLIC BLOG CATEGORIES (WITH DEV-ONLY MOCK FALLBACK)
+// 1. GET PUBLIC BLOG CATEGORIES
 // ----------------------------------------------------------------------
 
 export const getBlogCategories = async (): Promise<BlogCategory[]> => {
-   const isDev = process.env.NODE_ENV === "development";
-
-   try {
-      const res = await api.get(`/blog/categories/`);
-      if (res?.data && Array.isArray(res.data.results) && res.data.results.length > 0) {
-         return res.data.results;
-      }
-      if (Array.isArray(res?.data) && res.data.length > 0) {
-         return res.data;
-      }
-      if (isDev) {
-         return MOCK_BLOG_CATEGORIES;
-      }
-      return Array.isArray(res?.data) ? res.data : (res?.data?.results || []);
-   } catch (error) {
-      if (isDev) {
-         return MOCK_BLOG_CATEGORIES;
-      }
-      throw error;
+   const res = await api.get(`/blog/categories/`);
+   if (res?.data && Array.isArray(res.data.results)) {
+      return res.data.results;
    }
+   return Array.isArray(res?.data) ? res.data : [];
 };
 
 export const getBlogCategoriesQueryOptions = () => {
@@ -51,30 +35,15 @@ export const useGetBlogCategories = ({
 };
 
 // ----------------------------------------------------------------------
-// 2. GET PUBLIC BLOG TAGS (WITH DEV-ONLY MOCK FALLBACK)
+// 2. GET PUBLIC BLOG TAGS
 // ----------------------------------------------------------------------
 
 export const getBlogTags = async (): Promise<BlogTag[]> => {
-   const isDev = process.env.NODE_ENV === "development";
-
-   try {
-      const res = await api.get(`/blog/tags/`);
-      if (res?.data && Array.isArray(res.data.results) && res.data.results.length > 0) {
-         return res.data.results;
-      }
-      if (Array.isArray(res?.data) && res.data.length > 0) {
-         return res.data;
-      }
-      if (isDev) {
-         return MOCK_BLOG_TAGS;
-      }
-      return Array.isArray(res?.data) ? res.data : (res?.data?.results || []);
-   } catch (error) {
-      if (isDev) {
-         return MOCK_BLOG_TAGS;
-      }
-      throw error;
+   const res = await api.get(`/blog/tags/`);
+   if (res?.data && Array.isArray(res.data.results)) {
+      return res.data.results;
    }
+   return Array.isArray(res?.data) ? res.data : [];
 };
 
 export const getBlogTagsQueryOptions = () => {
