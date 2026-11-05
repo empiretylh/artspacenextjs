@@ -49,6 +49,16 @@ export async function GET() {
          );
       }
 
+      if (!adminDb) {
+         return NextResponse.json(
+            {
+               success: false,
+               error: "Firebase Admin is not configured on server",
+            },
+            { status: 503 }
+         );
+      }
+
       // 2. Scan Firestore for users without user_type (buyers)
       const firestoreUsersSnap = await adminDb.collection("users").get();
       const buyerIds: string[] = [];

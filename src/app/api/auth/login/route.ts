@@ -3,19 +3,29 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import admin from "firebase-admin";
 import { getMinimalUser } from "@/lib/auth";
-// Initialize Admin SDK (Ensures it only initializes once)
-const privateKey = env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
 
-if (!admin.apps.length && env.FIREBASE_ENABLE) {
-  admin.initializeApp({
-    projectId: env.FIREBASE_PROJECT_ID,
-    storageBucket: env.FIREBASE_STORAGE_BUCKET,
-    credential: admin.credential.cert({
+// Initialize Admin SDK only when valid credentials are provided
+const privateKey = env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
+const hasAdminCredentials = Boolean(
+  env.FIREBASE_PROJECT_ID &&
+  env.FIREBASE_CLIENT_EMAIL &&
+  privateKey
+);
+
+if (!admin.apps.length && env.FIREBASE_ENABLE && hasAdminCredentials) {
+  try {
+    admin.initializeApp({
       projectId: env.FIREBASE_PROJECT_ID,
-      clientEmail: env.FIREBASE_CLIENT_EMAIL,
-      privateKey: privateKey,
-    }),
-  });
+      storageBucket: env.FIREBASE_STORAGE_BUCKET,
+      credential: admin.credential.cert({
+        projectId: env.FIREBASE_PROJECT_ID,
+        clientEmail: env.FIREBASE_CLIENT_EMAIL,
+        privateKey: privateKey,
+      }),
+    });
+  } catch (error) {
+    console.warn("Failed to initialize Firebase Admin SDK in login route:", error);
+  }
 }
 
 export async function POST(request: Request) {
@@ -33,14 +43,31 @@ export async function POST(request: Request) {
   const data = await res.json();
   if (!res.ok) return NextResponse.json(data, { status: res.status });
 
-  // --- NEW: FIREBASE HANDSHAKE ---
-  // 2. Generate a Firebase Custom Token using the User ID from your real backend
+  // --- FIREBASE HANDSHAKE ---
+  // 2. Fetch Firebase Custom Token from Django backend (with local Admin SDK fallback)
   let firebaseToken = "";
-  try {
-    // We use data.user.id (or whatever your backend calls the unique user ID)
-    if (env.FIREBASE_ENABLE) firebaseToken = await admin.auth().createCustomToken(String(data.user.id));
-  } catch (error) {
-    console.error("Firebase token generation failed:", error);
+  if (env.FIREBASE_ENABLE) {
+    try {
+      if (data.access) {
+        const fbRes = await fetch(`${env.API_URL}/api/v1/users/chat/firebase-token/`, {
+          headers: { Authorization: `Bearer ${data.access}` },
+        });
+        if (fbRes.ok) {
+          const fbData = await fbRes.json();
+          firebaseToken = fbData.firebase_token || "";
+        }
+      }
+    } catch (fbErr) {
+      console.warn("Backend Firebase token fetch failed, trying local fallback:", fbErr);
+    }
+
+    if (!firebaseToken && admin.apps.length && data.user?.id) {
+      try {
+        firebaseToken = await admin.auth().createCustomToken(String(data.user.id));
+      } catch (error) {
+        console.error("Firebase local token fallback failed:", error);
+      }
+    }
   }
 
   // 3. Set persistent cookies so the WebView survives force-close/reopen.

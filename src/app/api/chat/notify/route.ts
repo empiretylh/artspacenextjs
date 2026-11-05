@@ -22,13 +22,20 @@ export async function POST(req: NextRequest) {
          return NextResponse.json({ error: 'Missing required fields' }, { status: 400, headers: corsHeaders });
       }
 
+      if (!adminDb || !adminMessaging) {
+         return NextResponse.json({ success: true, message: 'Push notifications not configured on server' }, { headers: corsHeaders });
+      }
+
+      const db = adminDb;
+      const messaging = adminMessaging;
+
       // 1. Get recipient tokens and unread count
-      const userDoc = await adminDb.collection('users').doc(String(recipientId)).get();
+      const userDoc = await db.collection('users').doc(String(recipientId)).get();
       const userData = userDoc.data();
       const tokens = userData?.fcmTokens as string[] | undefined;
 
       // Calculate total unread count for badging
-      const conversationsSnap = await adminDb
+      const conversationsSnap = await db
          .collection('conversations')
          .where('participants', 'array-contains', String(recipientId))
          .get();
@@ -59,7 +66,7 @@ export async function POST(req: NextRequest) {
       // 3. Send to all tokens
       const responses = await Promise.allSettled(
          tokens.map(token => 
-            adminMessaging.send({
+            messaging.send({
                token,
                ...payload
             })
@@ -79,7 +86,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (invalidTokens.length > 0) {
-         await adminDb.collection('users').doc(String(recipientId)).update({
+         await db.collection('users').doc(String(recipientId)).update({
             fcmTokens: tokens.filter(t => !invalidTokens.includes(t))
          });
       }

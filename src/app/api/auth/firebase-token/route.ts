@@ -15,7 +15,7 @@ export async function OPTIONS() {
   });
 }
 
-export async function POST(req: NextRequest) {
+async function handleFirebaseTokenRequest(req: NextRequest) {
   try {
     const authHeader = req.headers.get("authorization") || "";
     const token = authHeader.replace(/^Bearer\s+/i, "").trim();
@@ -27,35 +27,64 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Forward Bearer token to Django to authenticate the user
-    const djangoApiUrl = env.API_URL || "https://artspaceapi-stagging.illuminati.com.mm";
-    const djangoRes = await fetch(`${djangoApiUrl.replace(/\/+$/, "")}/api/v1/users/profile/me/`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const djangoApiUrl = (env.API_URL || "https://artspaceapi-stagging.illuminati.com.mm").replace(/\/+$/, "");
 
-    if (!djangoRes.ok) {
-      return NextResponse.json(
-        { error: "Invalid or expired session" },
-        { status: 401, headers: corsHeaders }
-      );
+    // 1. Primary: Request Firebase Custom Token directly from Django backend
+    try {
+      const djangoRes = await fetch(`${djangoApiUrl}/api/v1/users/chat/firebase-token/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (djangoRes.ok) {
+        const data = await djangoRes.json();
+        return NextResponse.json(
+          {
+            firebaseToken: data.firebase_token,
+            firebase_token: data.firebase_token,
+            uid: data.uid,
+            expires_in: data.expires_in,
+          },
+          { status: 200, headers: corsHeaders }
+        );
+      }
+
+      if (djangoRes.status === 401) {
+        return NextResponse.json(
+          { error: "Invalid or expired session" },
+          { status: 401, headers: corsHeaders }
+        );
+      }
+    } catch (backendError) {
+      console.warn("Backend chat token request failed, checking fallback:", backendError);
     }
 
-    const userData = await djangoRes.json();
-    if (!userData?.id) {
-      return NextResponse.json(
-        { error: "User identity could not be verified" },
-        { status: 401, headers: corsHeaders }
-      );
+    // 2. Fallback: If Django chat token endpoint is unconfigured (503/500) but local adminAuth is available
+    if (adminAuth) {
+      const profileRes = await fetch(`${djangoApiUrl}/api/v1/users/profile/me/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (profileRes.ok) {
+        const userData = await profileRes.json();
+        if (userData?.id) {
+          const verifiedUserId = String(userData.id);
+          const firebaseToken = await adminAuth.createCustomToken(verifiedUserId);
+          return NextResponse.json(
+            {
+              firebaseToken,
+              firebase_token: firebaseToken,
+              uid: verifiedUserId,
+              expires_in: 3600,
+            },
+            { status: 200, headers: corsHeaders }
+          );
+        }
+      }
     }
-
-    const verifiedUserId = String(userData.id);
-
-    // Generate Firebase Custom Token for verified user ID
-    const firebaseToken = await adminAuth.createCustomToken(verifiedUserId);
 
     return NextResponse.json(
-      { firebaseToken },
-      { status: 200, headers: corsHeaders }
+      { error: "Could not create chat token" },
+      { status: 500, headers: corsHeaders }
     );
   } catch (error: any) {
     console.error("Firebase custom token generation error:", error);
@@ -64,4 +93,12 @@ export async function POST(req: NextRequest) {
       { status: 500, headers: corsHeaders }
     );
   }
+}
+
+export async function GET(req: NextRequest) {
+  return handleFirebaseTokenRequest(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleFirebaseTokenRequest(req);
 }

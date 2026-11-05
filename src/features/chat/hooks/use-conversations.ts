@@ -11,6 +11,7 @@ import { db, auth } from "@/features/service/firebase/firebase";
 import { useAuth } from "@/features/auth/store";
 import { useDocumentVisibility } from "@/hooks/use-document-visibility";
 import { signInWithCustomToken } from "firebase/auth";
+import { getFirebaseChatToken } from "@/features/service/artspace/get-firebase-chat-token";
 import type { Conversation } from "../types";
 
 export const useConversations = () => {
@@ -27,10 +28,25 @@ export const useConversations = () => {
       setIsTimedOut(false);
       setError(null);
       setLoading(true);
-      if (auth && firebaseToken && !auth.currentUser) {
+      if (auth && !auth.currentUser) {
          try {
-            await signInWithCustomToken(auth, firebaseToken);
-            setFirebaseReady(true);
+            let token = firebaseToken;
+            if (!token) {
+               const res = await getFirebaseChatToken();
+               token = res.firebase_token;
+               useAuth.setState({ firebaseToken: token });
+            }
+            try {
+               await signInWithCustomToken(auth, token);
+               setFirebaseReady(true);
+            } catch (authError) {
+               // If existing token expired, re-fetch a fresh token from backend
+               const res = await getFirebaseChatToken();
+               token = res.firebase_token;
+               useAuth.setState({ firebaseToken: token });
+               await signInWithCustomToken(auth, token);
+               setFirebaseReady(true);
+            }
          } catch (err: any) {
             console.error("Chat retry failed:", err);
             setError(err);

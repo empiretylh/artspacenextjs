@@ -13,12 +13,15 @@ When exploring or debugging, follow this order to understand the truth of the sy
 
 ## 🏗️ Architecture Overview
 This project uses a **Dual-Token Handshake** system:
-1.  **Primary Auth**: Handled by a custom backend API. Successful login returns an `accessToken` (JWT) and a `firebaseToken` (Custom Token).
-2.  **Secondary Auth (Firebase)**: If `FIREBASE_ENABLE` is true, the frontend uses the `firebaseToken` to perform a `signInWithCustomToken` call. This enables real-time features (like Chat or Notifications) while keeping the primary auth source-of-truth on the backend.
+1.  **Primary Auth**: Handled by the Django backend API. Successful login returns an `accessToken` (JWT) and user profile.
+2.  **Secondary Auth (Firebase Custom Token)**: If `FIREBASE_ENABLE` is true, the system obtains a Firebase Custom Token minted directly by the Django backend via `GET /api/v1/users/chat/firebase-token/` (using the user's primary key `str(user.id)` as `uid`). The frontend performs a `signInWithCustomToken` call. This enables real-time features (like Chat or Notifications) while keeping the primary auth and credentials source-of-truth securely on the backend without requiring sensitive Firebase service accounts in frontend configurations.
+3.  **On-Demand Token Recovery**: If the single-use token or Firebase session expires, `getFirebaseChatToken` (`src/features/service/artspace/get-firebase-chat-token.ts`) and the Next.js auth bridge (`/api/auth/firebase-token`) fetch a fresh custom token from Django without forcing a re-login.
 
 ## 📂 Key Files
 - [store.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/auth/store.ts): Zustand state management. Handles API calls for login/register and manages the `user` object.
 - [auth-initializer.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/auth/auth-initializer.tsx): A client-side "bootstrapper" component that fetches the current session and populates the store on app load.
+- [get-firebase-chat-token.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/service/artspace/get-firebase-chat-token.ts): Direct client service for fetching Firebase custom tokens from Django (`/api/v1/users/chat/firebase-token/`).
+- [route.ts](file:///d:/data/learning/work/real-work/art-space-next/src/app/api/auth/firebase-token/route.ts): Next.js auth bridge endpoint forwarding Bearer token to Django's chat token endpoint with local fallback.
 - [hooks/use-login-form.ts](file:///d:/data/learning/work/real-work/art-space-next/src/features/auth/hooks/use-login-form.ts): React-hook handling form validation and submission.
 - [components/google-auth-button.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/auth/components/google-auth-button.tsx): Cross-platform Google sign-in control (GIS on web, native plugin in the app).
 - [components/apple-auth-button.tsx](file:///d:/data/learning/work/real-work/art-space-next/src/features/auth/components/apple-auth-button.tsx): Sign in with Apple control; renders only inside the iOS shell.

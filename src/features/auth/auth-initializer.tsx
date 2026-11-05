@@ -2,9 +2,10 @@
 import { useEffect, useRef } from "react";
 import { useAuth } from "./store";
 import { accessAnalytics, UserType } from "@/lib/analytics";
-import { auth as firebaseAuth } from "@/features/service/firebase/firebase"; // Your client config
+import { auth as firebaseAuth } from "@/features/service/firebase/firebase";
 import { signInWithCustomToken, onAuthStateChanged } from "firebase/auth";
 import { env } from "@/config/env";
+import { getFirebaseChatToken } from "../service/artspace/get-firebase-chat-token";
 import { useSyncUserProfile } from "../chat/hooks/use-sync-user-profile";
 import { usePresence } from "../chat/hooks/use-presence";
 
@@ -39,11 +40,11 @@ export function AuthInitializer() {
         const res = await fetch('/api/auth/session');
         const data = await res.json();
 
-        // 1. Initialize your Zustand store with all tokens
+        // 1. Initialize Zustand store with tokens
         useAuth.getState().init({
           user: data.user,
           accessToken: data.accessToken,
-          firebaseToken: data.firebaseToken // Make sure your API returns this!
+          firebaseToken: data.firebaseToken
         });
 
         // 2. Analytics
@@ -55,13 +56,40 @@ export function AuthInitializer() {
 
           // 3. SILENT FIREBASE SYNC
           if (env.FIREBASE_ENABLE && firebaseAuth) {
-            if (data.firebaseToken && !firebaseAuth.currentUser) {
-              await signInWithCustomToken(firebaseAuth, data.firebaseToken);
-              useAuth.getState().setFirebaseReady(true);
-              syncProfile();
+            let token = data.firebaseToken;
+
+            // If token is missing from session, fetch directly from Django backend
+            if (!token && data.accessToken && !firebaseAuth.currentUser) {
+              try {
+                const fbRes = await getFirebaseChatToken();
+                token = fbRes.firebase_token;
+                useAuth.setState({ firebaseToken: token });
+              } catch (tokenErr) {
+                console.warn("Could not fetch firebase chat token from backend:", tokenErr);
+              }
+            }
+
+            if (token && !firebaseAuth.currentUser) {
+              try {
+                await signInWithCustomToken(firebaseAuth, token);
+                useAuth.getState().setFirebaseReady(true);
+                syncProfile();
+              } catch (signInErr) {
+                // If token expired, attempt one refresh from backend
+                try {
+                  const fbRes = await getFirebaseChatToken();
+                  token = fbRes.firebase_token;
+                  useAuth.setState({ firebaseToken: token });
+                  await signInWithCustomToken(firebaseAuth, token);
+                  useAuth.getState().setFirebaseReady(true);
+                  syncProfile();
+                } catch (retryErr) {
+                  console.error("Firebase sign-in with refreshed custom token failed:", retryErr);
+                }
+              }
 
               if (env.NODE_ENV === 'development') {
-                console.log("Firebase session re-synced from auth initializer");
+                console.log("Firebase session synced from auth initializer");
               }
             } else if (firebaseAuth.currentUser && firebaseAuth.currentUser.uid === String(data.user.id)) {
               useAuth.getState().setFirebaseReady(true);
