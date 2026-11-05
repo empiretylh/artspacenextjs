@@ -14,6 +14,9 @@ export const getUserBlockStatus = async ({
   userId: string;
   userType?: UserRouteType;
 }): Promise<ApiResponse<User>> => {
+  if (!userId || userId.trim() === "") {
+    throw new Error("userId is required to get user block status");
+  }
   const res = await api.get(`/users/profile/public/${userId}/`);
 
   return res.data;
@@ -34,11 +37,13 @@ type UseArtistOptions = {
 
 export const useGetUserBlockStatus = ({ userId, userType, queryConfig }: UseArtistOptions) => {
   const { accessToken } = useAuth.getState();
+  const isConfigEnabled = queryConfig?.enabled !== undefined ? Boolean(queryConfig.enabled) : true;
+  const hasAuth = accessToken === null || !!accessToken;
 
   return useQuery({
     ...getUserBlockStatusQueryOptions(userId, userType),
     ...queryConfig,
     select: (data) => data.profile.isBlocked,
-    enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
+    enabled: Boolean(userId && userId.trim() !== "" && userId !== "undefined") && isConfigEnabled && hasAuth,
   });
 };

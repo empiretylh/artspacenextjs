@@ -6,13 +6,16 @@ import { queryKeys } from "@/config/query-keys";
 import { cache } from "react";
 import { useAuth } from "@/features/auth/store";
 
-export const getCachedCollector = cache((id: string) => getCollector({ collectorId: id }))
+export const getCachedCollector = cache((id: string) => getCollector({ collectorId: id }));
 
 export const getCollector = async ({
    collectorId,
 }: {
    collectorId: string;
 }): Promise<ApiResponse<User>> => {
+   if (!collectorId || collectorId.trim() === "") {
+      throw new Error("collectorId is required to get collector");
+   }
    const res = await api.get(`/users/profile/public/${collectorId}/`);
 
    return res.data;
@@ -32,10 +35,12 @@ type UseCollectorOptions = {
 
 export const useGetCollector = ({ collectorId, queryConfig }: UseCollectorOptions) => {
    const { accessToken } = useAuth.getState();
+   const isConfigEnabled = queryConfig?.enabled !== undefined ? Boolean(queryConfig.enabled) : true;
+   const hasAuth = accessToken === null || !!accessToken;
 
    return useQuery({
       ...getCollectorQueryOptions(collectorId),
       ...queryConfig,
-      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
+      enabled: Boolean(collectorId && collectorId.trim() !== "" && collectorId !== "undefined") && isConfigEnabled && hasAuth,
    });
 };

@@ -16,6 +16,9 @@ export const getUser = async ({
   userId: string;
   userType?: UserRouteType;
 }): Promise<ApiResponse<User> | undefined> => {
+  if (!userId || userId.trim() === "") {
+    return undefined;
+  }
   try {
     const res = await api.get(`/users/profile/public/${userId}/`);
     return res.data;
@@ -39,11 +42,13 @@ type UseArtistOptions = {
 
 export const useGetUser = ({ userId, userType, queryConfig }: UseArtistOptions) => {
   const { accessToken } = useAuth.getState();
+  const isConfigEnabled = queryConfig?.enabled !== undefined ? Boolean(queryConfig.enabled) : true;
+  const hasAuth = accessToken === null || !!accessToken;
 
   return useQuery({
     ...getUserQueryOptions(userId, userType),
     ...queryConfig,
     select: (data) => data?.profile?.is_following,
-    enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
+    enabled: Boolean(userId && userId.trim() !== "" && userId !== "undefined") && isConfigEnabled && hasAuth,
   });
 };

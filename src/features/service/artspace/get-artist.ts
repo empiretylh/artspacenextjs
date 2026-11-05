@@ -6,13 +6,16 @@ import { queryKeys } from "@/config/query-keys";
 import { cache } from "react";
 import { useAuth } from "@/features/auth/store";
 
-export const getCachedArtist = cache((id: string) => getArtist({ artistId: id }))
+export const getCachedArtist = cache((id: string) => getArtist({ artistId: id }));
 
 export const getArtist = async ({
    artistId,
 }: {
    artistId: string;
 }): Promise<ApiResponse<User>> => {
+   if (!artistId || artistId.trim() === "") {
+      throw new Error("artistId is required to get artist");
+   }
    const res = await api.get(`/users/profile/public/${artistId}/`);
 
    return res.data;
@@ -32,10 +35,12 @@ type UseArtistOptions = {
 
 export const useGetArtist = ({ artistId, queryConfig }: UseArtistOptions) => {
    const { accessToken } = useAuth.getState();
+   const isConfigEnabled = queryConfig?.enabled !== undefined ? Boolean(queryConfig.enabled) : true;
+   const hasAuth = accessToken === null || !!accessToken;
 
    return useQuery({
       ...getArtistQueryOptions(artistId),
       ...queryConfig,
-      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
+      enabled: Boolean(artistId && artistId.trim() !== "" && artistId !== "undefined") && isConfigEnabled && hasAuth,
    });
 };

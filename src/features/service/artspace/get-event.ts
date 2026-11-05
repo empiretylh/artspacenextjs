@@ -29,9 +29,12 @@ type UseEventOptions = {
 
 export const useGetEvent = ({ eventSlug, queryConfig }: UseEventOptions) => {
    const { accessToken } = useAuth.getState();
+   const isConfigEnabled = queryConfig?.enabled !== undefined ? Boolean(queryConfig.enabled) : true;
+   const hasAuth = accessToken === null || !!accessToken;
+
    return useQuery({
       ...getEventQueryOptions(eventSlug),
       ...queryConfig,
-      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
+      enabled: Boolean(eventSlug && eventSlug.trim() !== "" && eventSlug !== "undefined") && isConfigEnabled && hasAuth,
    });
 };

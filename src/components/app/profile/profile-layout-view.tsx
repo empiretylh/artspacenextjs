@@ -80,15 +80,15 @@ const ProfileLayoutView = ({
    const enableStatusQueries = !shouldRedirect && variant !== "profile";
 
    const followStatusQuery = useGetUserFollowStatus({
-      userId: String(user?.id),
+      userId: user?.id ? String(user.id) : "",
       userType,
-      queryConfig: { enabled: enableStatusQueries },
+      queryConfig: { enabled: enableStatusQueries && Boolean(user?.id) },
    });
 
    const blockStatusQuery = useGetUserBlockStatus({
-      userId: String(user?.id),
+      userId: user?.id ? String(user.id) : "",
       userType,
-      queryConfig: { enabled: enableStatusQueries },
+      queryConfig: { enabled: enableStatusQueries && Boolean(user?.id) },
    });
 
    if (shouldRedirect) {

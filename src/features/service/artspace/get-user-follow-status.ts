@@ -13,6 +13,9 @@ export const getUserFollowStatus = async ({
   userId: string;
   userType?: UserRouteType;
 }): Promise<ApiResponse<User>> => {
+  if (!userId || userId.trim() === "") {
+    throw new Error("userId is required to get user follow status");
+  }
   const res = await api.get(`/users/profile/public/${userId}/`);
 
   return res.data;
@@ -32,9 +35,12 @@ type UseArtistOptions = {
 };
 
 export const useGetUserFollowStatus = ({ userId, userType, queryConfig }: UseArtistOptions) => {
+  const isConfigEnabled = queryConfig?.enabled !== undefined ? Boolean(queryConfig.enabled) : true;
+
   return useQuery({
     ...getUserFollowStatusQueryOptions(userId, userType),
     ...queryConfig,
     select: (data) => data.profile.is_following,
+    enabled: Boolean(userId && userId.trim() !== "" && userId !== "undefined") && isConfigEnabled,
   });
 };

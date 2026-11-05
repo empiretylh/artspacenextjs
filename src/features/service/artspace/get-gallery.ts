@@ -6,13 +6,16 @@ import { queryKeys } from "@/config/query-keys";
 import { cache } from "react";
 import { useAuth } from "@/features/auth/store";
 
-export const getCachedGallery = cache((id: string) => getGallery({ galleryId: id }))
+export const getCachedGallery = cache((id: string) => getGallery({ galleryId: id }));
 
 export const getGallery = async ({
    galleryId,
 }: {
    galleryId: string;
 }): Promise<ApiResponse<User>> => {
+   if (!galleryId || galleryId.trim() === "") {
+      throw new Error("galleryId is required to get gallery");
+   }
    const res = await api.get(`/users/profile/public/${galleryId}/`);
 
    return res.data;
@@ -32,10 +35,12 @@ type UseGalleryOptions = {
 
 export const useGetGallery = ({ galleryId, queryConfig }: UseGalleryOptions) => {
    const { accessToken } = useAuth.getState();
+   const isConfigEnabled = queryConfig?.enabled !== undefined ? Boolean(queryConfig.enabled) : true;
+   const hasAuth = accessToken === null || !!accessToken;
 
    return useQuery({
       ...getGalleryQueryOptions(galleryId),
       ...queryConfig,
-      enabled: queryConfig?.enabled ? queryConfig.enabled && (accessToken === null || !!accessToken) : (accessToken === null || !!accessToken)
+      enabled: Boolean(galleryId && galleryId.trim() !== "" && galleryId !== "undefined") && isConfigEnabled && hasAuth,
    });
 };
