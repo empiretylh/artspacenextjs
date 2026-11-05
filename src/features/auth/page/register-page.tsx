@@ -15,8 +15,9 @@ const RegisterPage = () => {
 
    return (
       <div className="bg-[#faf7ef] dark:bg-[#1a1915] flex min-h-svh w-full flex-col gap-3 items-center justify-center p-6 md:p-10 relative">
-         {/* Top-left smart back button */}
-         <div className="fixed top-4 left-4 md:top-6 md:left-8 z-20">
+         {/* Top-left smart back button. Fixed elements ignore the body's
+             safe-area padding, so the native top inset is added explicitly. */}
+         <div className="fixed top-[calc(1.5rem+var(--safe-top,0px))] left-4 z-20 md:left-8">
             <button
                type="button"
                onClick={goBack}
