@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "@/components/common/link";
 import { paths } from "@/config/paths";
 import { useTranslations } from "next-intl";
+import { normalizeBlogBodyHtml } from "../utils";
 
 interface BlogArticleContentProps {
    body?: string;
@@ -17,14 +18,15 @@ export const BlogArticleContent: React.FC<BlogArticleContentProps> = ({
    tags = [],
 }) => {
    const t = useTranslations("Blog");
+   const html = normalizeBlogBodyHtml(body);
 
    return (
       <div className="space-y-8 max-w-4xl mx-auto">
          {/* Article HTML Content */}
-         {body ? (
+         {html ? (
             <div
-               className="blog-prose prose dark:prose-invert max-w-none 
-                  text-foreground/90 text-sm sm:text-base leading-relaxed 
+               className="blog-prose prose dark:prose-invert max-w-none break-words
+                  text-foreground/90 text-sm sm:text-base leading-relaxed
                   [&>h2]:text-xl sm:[&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:font-display [&>h2]:mt-8 [&>h2]:mb-3 [&>h2]:tracking-tight [&>h2]:text-foreground
                   [&>h3]:text-lg sm:[&>h3]:text-xl [&>h3]:font-semibold [&>h3]:font-display [&>h3]:mt-6 [&>h3]:mb-2 [&>h3]:text-foreground
                   [&>h4]:text-base sm:[&>h4]:text-lg [&>h4]:font-semibold [&>h4]:mt-4 [&>h4]:mb-2 [&>h4]:text-foreground
@@ -40,7 +42,7 @@ export const BlogArticleContent: React.FC<BlogArticleContentProps> = ({
                   [&_img]:rounded-xl [&_img]:my-6 [&_img]:mx-auto [&_img]:max-w-full [&_img]:h-auto [&_img]:border [&_img]:border-border/60 [&_img]:shadow-xs
                   [&_a]:text-primary [&_a]:underline-offset-4 hover:[&_a]:underline [&_a]:font-medium
                   [&>hr]:my-8 [&>hr]:border-border"
-               dangerouslySetInnerHTML={{ __html: body }}
+               dangerouslySetInnerHTML={{ __html: html }}
             />
          ) : (
             <div className="py-12 text-center text-muted-foreground">

@@ -40,12 +40,20 @@ export const formatBlogDate = (
    }
 };
 
+// Rich-text editors save ordinary word spacing as &nbsp;, which the browser
+// treats as unbreakable — long paragraphs then render as one line that runs
+// past the article column instead of wrapping.
+export const normalizeBlogBodyHtml = (html?: string | null): string => {
+   if (!html) return "";
+   return html.replace(/&nbsp;|&#160;|\u00a0/gi, " ");
+};
+
 export const getEstimatedReadingTime = (post: BlogPost | null | undefined): number => {
    if (post?.reading_time_minutes && post.reading_time_minutes > 0) {
       return post.reading_time_minutes;
    }
    if (!post?.body && !post?.excerpt) return 1;
-   const text = (post?.body || "") + " " + (post?.excerpt || "");
+   const text = normalizeBlogBodyHtml(post?.body) + " " + (post?.excerpt || "");
    const words = text.replace(/<[^>]*>/g, " ").trim().split(/\s+/).length;
    return Math.max(1, Math.ceil(words / 200));
 };
