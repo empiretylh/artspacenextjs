@@ -77,8 +77,8 @@ export interface Order {
    owner?: string;
    price?: string;
    currency?: string;
-   tax?: string;
-   deli_fee?: string;
+   tax?: string | number;
+   deli_fee?: string | number;
    total_price: number | string;
    name?: string;
    shipping_address: string;

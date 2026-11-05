@@ -299,6 +299,23 @@ const OrderDetail = () => {
                 </div>
               )}
 
+              {order.tax !== undefined && order.tax !== null && order.tax !== '' && (
+                <div className="flex justify-between items-center text-xs text-muted-foreground">
+                  <span>Tax</span>
+                  <span className="font-medium text-foreground">
+                    <Price
+                      price={order.tax || '0'}
+                      currency={{
+                        code: order.currency || 'MMK',
+                        name: order.currency || 'MMK',
+                        symbol: '',
+                        numeric_code: '',
+                      }}
+                    />
+                  </span>
+                </div>
+              )}
+
               <div className="flex justify-between items-center text-xs pb-2 border-b border-border/40">
                 <span className="text-muted-foreground">Payment Date</span>
                 <span className="font-medium text-foreground">

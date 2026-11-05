@@ -49,7 +49,6 @@ import {
   ArrowLeft,
   ChevronDown,
   Loader2,
-  Lock,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
@@ -307,12 +306,8 @@ export const ArtworkOrderForm: React.FC<ArtworkOrderFormProps> = ({ artwork }) =
             </button>
           </div>
 
-          {/* Right: Simple Secure Badge & Theme Switcher */}
+          {/* Right: Theme Switcher */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted/60 text-muted-foreground border border-border/60 text-xs font-medium">
-              <Lock className="h-3.5 w-3.5 text-primary" />
-              <span>Secure Checkout</span>
-            </div>
             <ThemeSwitcher />
           </div>
         </div>

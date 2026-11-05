@@ -176,12 +176,8 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
             </Link>
           </div>
 
-          {/* Right: Simple Secure Badge & Theme Switcher */}
+          {/* Right: Theme Switcher */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted/60 text-muted-foreground border border-border/60 text-xs font-medium">
-              <Lock className="h-3.5 w-3.5 text-primary" />
-              <span>Secure Checkout</span>
-            </div>
             <ThemeSwitcher />
           </div>
         </div>
@@ -239,11 +235,19 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
                   <Price price={order.price || '0'} currency={currencyObj} />
                 </span>
               </div>
-              {parseFloat(order.deli_fee || '0') > 0 && (
+              {parseFloat(String(order.deli_fee || '0')) > 0 && (
                 <div className="flex justify-between items-center text-muted-foreground">
                   <span>Delivery Charge</span>
                   <span className="font-medium text-foreground">
                     <Price price={order.deli_fee || '0'} currency={currencyObj} />
+                  </span>
+                </div>
+              )}
+              {order.tax !== undefined && order.tax !== null && order.tax !== '' && (
+                <div className="flex justify-between items-center text-muted-foreground">
+                  <span>Tax</span>
+                  <span className="font-medium text-foreground">
+                    <Price price={order.tax || '0'} currency={currencyObj} />
                   </span>
                 </div>
               )}
@@ -400,11 +404,20 @@ export const PaymentPage = ({ orderId }: PaymentPageProps) => {
                 </span>
               </div>
 
-              {parseFloat(order.deli_fee || '0') > 0 && (
+              {parseFloat(String(order.deli_fee || '0')) > 0 && (
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Delivery Charge</span>
                   <span className="font-medium text-foreground">
                     <Price price={order.deli_fee || '0'} currency={currencyObj} />
+                  </span>
+                </div>
+              )}
+
+              {order.tax !== undefined && order.tax !== null && order.tax !== '' && (
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Tax</span>
+                  <span className="font-medium text-foreground">
+                    <Price price={order.tax || '0'} currency={currencyObj} />
                   </span>
                 </div>
               )}
